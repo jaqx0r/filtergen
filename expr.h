@@ -10,10 +10,6 @@ enum expression = {
 
 struct expr_s * {
     enum expression type;
-    struct expr_s * 
-    enum expression ex;
-    struct expr_s * e1;
-    struct expr_s * e2;
 };
 
 enum action = {
