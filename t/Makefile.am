@@ -46,7 +46,8 @@ TESTS = t_01_ccomment \
 	t_46_routing \
 	t_47_subrule_list \
 	t_48_chaingroup \
-	t_49_astconverter
+	t_49_astconverter \
+	t_50_convertrulelist
 
 check_PROGRAMS = scan parse emit filter_emit convert
 

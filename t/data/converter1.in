@@ -1,2 +1,2 @@
-# test data for the ast converter
+# check "child" chains
 input eth0 ! dest foo reject;
