@@ -18,7 +18,7 @@ filtergen_SOURCES = \
 	fg-ipfilter.c \
 	fg-cisco.c
 
-headers = filter.h util.h tokens.h
+headers = filter.h util.h
 
 mans = filtergen.8 filter_backends.7 filter_syntax.5
 
