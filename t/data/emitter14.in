@@ -1,0 +1,10 @@
+# test subrule lists
+{};
+# subrule list with a single specifier in it
+{ proto tcp };
+# more specifiers
+{
+	proto tcp;
+	accept;
+	icmptype echo-request;
+};

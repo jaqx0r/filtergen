@@ -583,16 +583,21 @@ routing_specifier: TOK_LOCAL
 compound_specifier: TOK_LCURLY subrule_list TOK_RCURLY
 	{
 		$$ = malloc(sizeof(struct compound_specifier_s));
+		$$->list = $2;
 	}
 	;
 
 subrule_list: specifier_list
 	{
 		$$ = malloc(sizeof(struct subrule_list_s));
+		$$->subrule_list = NULL;
+		$$->specifier_list = $1;
 	}
 	| subrule_list TOK_SEMICOLON specifier_list
 	{
 		$$ = malloc(sizeof(struct subrule_list_s));
+		$$->subrule_list = $1;
+		$$->specifier_list = $3;
 	}
 	;
 
