@@ -1,7 +1,7 @@
 /*
  * filter compilation front-end
  *
- * $Id: filtergen.c,v 1.12 2002/04/28 22:30:41 matthew Exp $
+ * $Id: filtergen.c,v 1.13 2002/07/18 21:20:02 matthew Exp $
  */
 
 #include <stdio.h>
@@ -64,15 +64,21 @@ int main(int argc, char **argv)
 
 	progname = argv[0];
 
-	while((arg = getopt(argc, argv, "nlho:t:")) > 0) {
+	while((arg = getopt(argc, argv, "nlrho:t:")) > 0) {
 		switch(arg) {
 		case 'n': flags |= FF_NOSKEL; break;
 		case 'l': flags |= FF_LSTATE; break;
 		case 'h': flags |= FF_LOCAL; break;
+		case 'r': flags |= FF_ROUTE; break;
 		case 'o': ofn = strdup(optarg); break;
 		case 't': ftn = strdup(optarg); break;
 		case '?': return 1;
 		}
+	}
+
+	if((flags & FF_LOCAL) && (flags & FF_ROUTE)) {
+		fprintf(stderr, "the -h and -r options are mutually exclusive\n");
+		return 1;
 	}
 
 	if (ofn) {
