@@ -17,12 +17,37 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <stdio.h>
+
 #include "filter.h"
 #include "ast.h"
 #include "parser.h"
 
 int yyparse(void *);
 int yyrestart(FILE *);
+
+int ipts_convtrace = 0;
+
+#define eprint(x) if (ipts_convtrace) fprintf(stderr, x)
+
+struct filter * ipts_convert_rule_list(struct rule_list_s * n) {
+    struct filter * res = NULL;
+
+    if (n->list) {
+	res = ipts_convert_rule_list(n->list);
+    }
+    return res;
+}
+
+struct filter * ipts_convert(struct ast_s * ast) {
+    struct filter * res = NULL;
+
+    eprint("converting ast\n");
+
+    if (ast->list)
+	res = ipts_convert_rule_list(ast->list);
+    return res;
+}
 
 struct filter * ipts_filter_parse_list(void) {
     struct filter * f = NULL;
@@ -36,7 +61,7 @@ struct filter * ipts_filter_parse_list(void) {
     }
 
     /* convert iptables-save AST into filtergen IR */
-    if (!(f = convert(&ast))) {
+    if (!(f = ipts_convert(&ast))) {
 	printf("iptables-save conversion failed!\n");
     }
 
