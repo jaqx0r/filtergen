@@ -69,24 +69,5 @@ TESTS = t_01_ccomment \
 	t_69_includeemptynoop \
 	t_70_includesemicolon
 
-check_PROGRAMS = scan parse emit convert factorise
-
-scan_SOURCES = scan.c
-scan_LDADD = ../scanner.o ../parser.o
-
-parse_SOURCES = parse.c
-parse_LDADD = ../scanner.o ../parser.o
-
-emit_SOURCES = emit.c
-emit_LDADD = ../scanner.o ../parser.o
-
-convert_SOURCES = convert.c
-convert_LDADD = ../scanner.o ../parser.o ../glue.o ../filter.o ../fg-util.o
-
-factorise_SOURCES = factorise.c
-factorise_LDADD = ../scanner.o ../parser.o
-
 EXTRA_DIST = $(top_srcdir)/t/data/*.in $(top_srcdir)/t/data/*.out \
 	testlib $(TESTS)
-
-AM_CFLAGS = -g -Wall -Werror -I$(top_srcdir)

@@ -88,7 +88,9 @@ env.Command(['fgadm.conf', 'rules.filter'],
 		  ['fgadm.conf.in', 'rules.filter.in'],
 		  sed)
 
-SConscript(['input/iptables/SConscript'], 'env')
+SConscript(['input/iptables/SConscript',
+			't/SConscript'
+			], 'env')
 
 env.Install(DESTDIR + sbindir, [filtergen, fgadm])
 bin = env.Alias('install-bin', DESTDIR + sbindir)
