@@ -13,6 +13,7 @@
 
 #include "filter.h"
 
+struct filter * yyparse(void);
 
 static FILE *outfile;
 
@@ -134,7 +135,8 @@ int main(int argc, char **argv)
 
 		if(filter_fopen(filepol)) return 1;
 
-		f = filter_parse_list();
+		/*f = filter_parse_list();*/
+		f = yyparse();
 		if (!f) {
 			fprintf(stderr, "couldn't parse file\n");
 			return 1;

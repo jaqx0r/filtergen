@@ -7,6 +7,8 @@
 #include <stdio.h>
 #include "filter.h"
 
+#define YYSTYPE struct filter *
+
 void yyerror(char * s);
 extern int yylex(void);
 
@@ -410,5 +412,34 @@ void yyerror(char * s) {
 
 int yyprint(FILE * f, int type, YYSTYPE v) {
 	fprintf(f, "%s", yytext);
+	return 0;
+}
+
+void yyrestart(FILE *);
+
+int filter_fopen(const char *filename)
+{
+	FILE *file;
+
+	if(filename) {
+		/* XXX - make more effort to find file */
+		if(!(file = fopen(filename, "r"))) {
+		    /*parse_err("can't open file \"%s\"", filename); */
+			return -1;
+		}
+	} else {
+		/* Standard input */
+		file = stdin;
+	}
+	yyrestart(file);
+	/*
+
+	state.incldepth++;
+	yyin = file;
+	yy_switch_to_buffer(yy_create_buffer(yyin, YY_BUF_SIZE));
+	curinc.bufferstat = YY_CURRENT_BUFFER;
+	curinc.filename = filename ? strdup(filename) : NULL;
+	curinc.lineno = 1;
+	*/
 	return 0;
 }

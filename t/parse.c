@@ -1,19 +1,20 @@
 #include <stdlib.h>
+#include "../filter.h"
 
 extern char * yytext;
-int yyparse();
+struct filter * yyparse(void);
 extern int yydebug;
 
 /* void emit(); */
 
 int main(int argc, char ** argv) {
-    int c;
+    struct filter * f;
     char * YYDEBUGTRACE;
 
     YYDEBUGTRACE = getenv("YYDEBUGTRACE");
     yydebug = YYDEBUGTRACE ? atoi(YYDEBUGTRACE) : 0;
 
-    c = yyparse();
+    f = yyparse();
 
     return 0;
 }
