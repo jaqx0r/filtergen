@@ -39,7 +39,35 @@ static int out_filtergen_rule(const struct filterent * ent, struct fg_misc * mis
 	break;
     }
 
-    if (ent->proto.name) APPSS2(rule, "proto", ent->proto.name);
+    if (ent->srcaddr.addrstr) {
+	APPSS2(rule, "source", ent->srcaddr.addrstr);
+	if (ent->srcaddr.maskstr)
+	    APP2(rule, "/", ent->srcaddr.maskstr);
+    }
+
+    if (ent->dstaddr.addrstr) {
+	APPSS2(rule, "dest", ent->dstaddr.addrstr);
+	if (ent->dstaddr.maskstr)
+	    APP2(rule, "/", ent->dstaddr.maskstr);
+    }
+
+    if (ent->proto.name)
+	APPSS2(rule, "proto", ent->proto.name);
+
+    if (ent->u.ports.src.minstr) {
+	APPSS2(rule, "sport", ent->u.ports.src.minstr);
+	if (ent->u.ports.src.maxstr)
+	    APP2(rule, ":", ent->u.ports.src.maxstr);
+    }
+
+    if (ent->u.ports.dst.minstr) {
+	APPSS2(rule, "dport", ent->u.ports.dst.minstr);
+	if (ent->u.ports.dst.maxstr)
+	    APP2(rule, ":", ent->u.ports.dst.maxstr);
+    }
+
+    if (ent->u.icmp)
+	APPSS2(rule, "icmptype", ent->u.icmp);
 
     if (ESET(ent,LOG)) APPS(rule, "log");
 
