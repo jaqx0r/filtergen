@@ -7,12 +7,14 @@ if test $? -ne 0 ; then exit 77 ; fi
 work=${TMP_DIR-/tmp}/filtergen-test-$$
 
 pass () {
+    set +x
     cd $here
     rm -rf $work
     exit 0
 }
 
 fail () {
+    set +x
     cd $here
     rm -rf $work
     echo "FAILED testing $TEST"
@@ -20,6 +22,7 @@ fail () {
 }
 
 no_result () {
+    set +x
     cd $here
     rm -rf $work
     echo "NO RESULT when testing $TEST"
@@ -28,6 +31,16 @@ no_result () {
 
 trap no_result 1 2 3 15
 
+# function for comparing files
+compare () {
+    cmp "$1" "$2"
+    if test $? -ne 0 ; then
+	# only print diff if not run by automake test suite
+	test "x$srcdir" = "x" && diff -u "$1" "$2"
+	fail
+    fi
+}
+
 # check for the source dir
 if test -f ../filtergen.c ; then
     testdir=.
@@ -35,9 +48,9 @@ elif test -f filtergen.c ; then
     testdir=t
 fi
 
+mkdir $work
+if test $? -ne 0 ; then no_result ; fi
+
 # srcdir gets defined by the automake test caller, assume it's not defined
 # by the user's environment, so set debug trace on when run manually
 test "x$srcdir" = "x" && set -x
-
-mkdir $work
-if test $? -ne 0 ; then no_result ; fi

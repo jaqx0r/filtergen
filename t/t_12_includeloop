@@ -6,14 +6,9 @@ TEST="that c style comments are scanned and ignored"
 . ./testlib
 
 $testdir/scan < $testdir/data/scanner12.in > $work/out 2>&1
-# this should fail
-if test $? -ne 1 ; then no_result ; fi
+if test $? -ne 0 ; then no_result ; fi
 
-cmp $testdir/data/scanner12.out $work/out
-if test $? -ne 0 ; then
-    diff -u $testdir/data/scanner12.out $work/out
-    fail
-fi
+compare $testdir/data/scanner12.out $work/out
 
 # got this far?
 pass
