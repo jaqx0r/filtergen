@@ -67,4 +67,4 @@ convert_LDADD = ../scanner.o ../parser.o ../glue.o ../filter.o ../fg-util.o
 
 EXTRA_DIST = $(top_srcdir)/t/data/* testlib $(TESTS)
 
-AM_CFLAGS = -g -Wall -Werror
+AM_CFLAGS = -g -Wall -Werror -I$(top_srcdir)
