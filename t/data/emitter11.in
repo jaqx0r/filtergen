@@ -1,0 +1,4 @@
+# test protocol and arguments
+proto tcp;
+proto { tcp udp icmp };
+proto {};

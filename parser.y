@@ -477,38 +477,47 @@ simple_port_argument: port_range
 protocol_specifier: TOK_PROTO protocol_argument
 	{
 		$$ = malloc(sizeof(struct protocol_specifier_s));
+		$$->arg = $2;
 	}
 	;
 
 protocol_argument: compound_protocol_argument
 	{
 		$$ = malloc(sizeof(struct protocol_argument_s));
+		$$->compound = $1;
+		$$->simple = NULL;
 	}
 	| simple_protocol_argument
 	{
 		$$ = malloc(sizeof(struct protocol_argument_s));
+		$$->compound = NULL;
+		$$->simple = $1;
 	}
 	;
 
 compound_protocol_argument: TOK_LCURLY protocol_argument_list TOK_RCURLY
 	{
 		$$ = malloc(sizeof(struct compound_protocol_argument_s));
+		$$->list = $2;
 	}
 	;
 
-protocol_argument_list: simple_protocol_argument
+protocol_argument_list: /* empty */
 	{
-		$$ = malloc(sizeof(struct protocol_argument_list_s));
+		$$ = NULL;
 	}
 	| protocol_argument_list simple_protocol_argument
 	{
 		$$ = malloc(sizeof(struct protocol_argument_list_s));
+		$$->list = $1;
+		$$->arg = $2;
 	}
 	;
 
 simple_protocol_argument: TOK_IDENTIFIER
 	{
 		$$ = malloc(sizeof(struct simple_protocol_argument_s));
+		$$->proto = strdup($1);
 	}
 	;
 

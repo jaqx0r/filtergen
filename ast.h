@@ -66,7 +66,7 @@ struct icmptype_specifier_s {
 };
 
 struct simple_protocol_argument_s {
-    char * identifier;
+    char * proto;
 };
 
 struct protocol_argument_list_s {
