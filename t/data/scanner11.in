@@ -1,2 +1,1 @@
-/* test include files */
-include t/data/scanner7.in
+include data/scanner7.in

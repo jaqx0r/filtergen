@@ -7,7 +7,8 @@ TESTS = t_01_ccomment \
 	t_07_names \
 	t_08_networknames \
 	t_09_badcomment \
-	t_10_goodcomment
+	t_10_goodcomment \
+	t_11_includeone
 
 check_PROGRAMS = scan
 
