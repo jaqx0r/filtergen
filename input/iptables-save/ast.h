@@ -107,7 +107,8 @@ struct uid_owner_option_s {
 };
 
 struct tcp_flags_option_s {
-    struct identifier_s * identifier;
+    struct identifier_s * flags;
+    struct identifier_s * mask;
 };
 
 struct reject_with_option_s {

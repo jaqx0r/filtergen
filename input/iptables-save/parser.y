@@ -371,7 +371,8 @@ reject_with_option: TOK_IPTS_REJECT_WITH identifier
 tcp_flags_option: TOK_IPTS_TCP_FLAGS identifier identifier
 {
     $$ = malloc(sizeof(struct tcp_flags_option_s));
-    $$->identifier = $2;
+    $$->flags = $2;
+    $$->mask = $3;
 }
 
 uid_owner_option: TOK_IPTS_UID_OWNER identifier
