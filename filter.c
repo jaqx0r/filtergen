@@ -1,4 +1,4 @@
-/* $Id: filter.c,v 1.4 2001/10/06 20:24:35 matthew Exp $ */
+/* $Id: filter.c,v 1.5 2001/11/05 10:35:26 matthew Exp $ */
 
 #include <stdlib.h>
 #include <string.h>
@@ -115,6 +115,7 @@ struct filter *new_filter_icmp(enum filtertype type, const char *matchstr)
 static void filter_append(struct filter *f, struct filter *x)
 {
 	if(!f) abort();
+	if(!x) return;
 	while((f->type != F_SIBLIST) && f->child)
 		f = f->child;
 
