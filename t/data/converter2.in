@@ -1,0 +1,4 @@
+# check "next" chains
+input eth0 reject;
+input eth1 accept;
+input eth2 drop;

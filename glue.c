@@ -227,25 +227,24 @@ struct filter * convert_rule(struct rule_s * r) {
     return res;
 }
 
-struct filter * convert_rule_list(struct rule_list_s * r) {
-    struct filter * res = NULL;
-    struct filter * list = NULL;
-    struct filter * rule = NULL;
+struct filter * convert_rule_list(struct rule_list_s * n) {
+  struct filter * res = NULL, * end = NULL;
 
     eprint("converting rule_list\n");
 
-    if (r->list) {
-	list = convert_rule_list(r->list);
-    }
-    if (r->rule) {
-	rule = convert_rule(r->rule);
-    }
-    if (list) {
-	list->next = rule;
-	res = list;
+    if (n->list) {
+	res = convert_rule_list(n->list);
+	end = res;
+	while (end->next) {
+	  end = end->next;
+	}
+	if (n->rule) {
+	  end->next = convert_rule(n->rule);
+	}
     } else {
-	res = rule;
+      res = convert_rule(n->rule);
     }
+
     return res;
 }
 
