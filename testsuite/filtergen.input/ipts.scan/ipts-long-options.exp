@@ -20,6 +20,14 @@ set options [list \
 		 "syn" \
 		 "state" \
 		 "icmp-type" \
+		 "tcp-flags" \
+		 "tcp-option" \
+		 "mss" \
+		 "source-ports" \
+		 "destination-ports" \
+		 "ports" \
+		 { "sports" "SOURCE_PORTS" } \
+		 { "dports" "DESTINATION_PORTS" } \
 		]
 
 foreach option_pair $options {

@@ -93,7 +93,16 @@ id	[[:alnum:]_+-\.\/]+
 --sport		return TOK_IPTS_SPORT;
 --source-port	return TOK_IPTS_SPORT;
 
+--sports	return TOK_IPTS_SOURCE_PORTS;
+--source-ports	return TOK_IPTS_SOURCE_PORTS;
+--dports	return TOK_IPTS_DESTINATION_PORTS;
+--destination-ports	return TOK_IPTS_DESTINATION_PORTS;
+--ports		return TOK_IPTS_PORTS;
+
+--tcp-flags	return TOK_IPTS_TCP_FLAGS;
 --syn		return TOK_IPTS_SYN;
+--tcp-option	return TOK_IPTS_TCP_OPTION;
+--mss		return TOK_IPTS_MSS;
 
 --state		return TOK_IPTS_STATE;
 

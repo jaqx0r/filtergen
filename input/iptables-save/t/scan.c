@@ -31,6 +31,12 @@ char * tok_map(int c) {
 	tok(SYN);
 	tok(STATE);
 	tok(ICMP_TYPE);
+	tok(TCP_FLAGS);
+	tok(TCP_OPTION);
+	tok(MSS);
+	tok(SOURCE_PORTS);
+	tok(DESTINATION_PORTS);
+	tok(PORTS);
       case TOK_IDENTIFIER:
 	r = strdup("identifier"); break;
       case TOK_LSQUARE:
