@@ -51,7 +51,6 @@ struct option_list_s {
 };
 
 struct rule_s {
-    char * table;
     char * chain;
     char * policy;
     struct pkt_count_s * pkt_count;
@@ -63,8 +62,18 @@ struct rule_list_s {
     struct rule_s * rule;
 };
 
+struct table_s {
+  char * name;
+  struct rule_list_s * rule_list;
+};
+
+struct table_list_s {
+  struct table_list_s * list;
+  struct table_s * table;
+};
+
 struct ast_s {
-    struct rule_list_s * list;
+    struct table_list_s * list;
 };
 
 #endif /* __IPTABLES_AST_H__ */

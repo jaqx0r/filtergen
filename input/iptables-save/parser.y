@@ -37,6 +37,8 @@ extern int ipts_lex(void);
 %debug
 
 %union {
+  struct table_list_s * u_table_list;
+  struct table_s * u_table;
     struct rule_list_s * u_rule_list;
     struct rule_s * u_rule;
     struct option_list_s * u_option_list;
@@ -47,8 +49,11 @@ extern int ipts_lex(void);
     struct pkt_count_s * u_pkt_count;
     char * u_str;
 }
+%type <u_table_list> table_list
+%type <u_table> table
 %type <u_rule_list> rule_list
 %type <u_rule> rule
+%type <u_option_list> rule_specification
 %type <u_option_list> option_list
 %type <u_not_option> not_option
 %type <u_option> option
@@ -97,7 +102,6 @@ extern int ipts_lex(void);
 %token TOK_BANG
 %token TOK_QUOTE
 %token TOK_COMMIT
-%token TOK_NEWLINE
 
 %{
 int ipts_print(FILE * f, int t, YYSTYPE v);
@@ -106,68 +110,69 @@ int ipts_print(FILE * f, int t, YYSTYPE v);
 %start ast
 
 %%
-ast: rule_list
+ast: table_list
 {
     /* we expect parm to be already allocated, and that
      * it is of type (struct ast_s *) */
     ((struct ast_s *) parm)->list = $1;
 }
 
+table_list: /* empty */
+{
+  $$ = NULL;
+}
+| table_list table
+{
+  $$ = malloc(sizeof(struct table_list_s));
+  $$->list = $1;
+  $$->table = $2;
+}
+
+table: TOK_IPTS_TABLE TOK_IDENTIFIER rule_list TOK_COMMIT
+{
+  $$ = malloc(sizeof(struct table_s));
+  $$->name = $2;
+  $$->rule_list = $3;
+}
+
 rule_list: /* empty */
 {
     $$ = NULL;
 }
-| rule_list rule TOK_NEWLINE
+| rule_list rule
 {
     $$ = malloc(sizeof(struct rule_list_s));
     $$->list = $1;
     $$->rule = $2;
 }
 
-rule: TOK_IPTS_TABLE TOK_IDENTIFIER
+rule: TOK_IPTS_CHAIN TOK_IDENTIFIER TOK_IDENTIFIER pkt_count
 {
     $$ = malloc(sizeof(struct rule_s));
-    $$->table = $2;
-    $$->chain = NULL;
-    $$->policy = NULL;
-    $$->pkt_count = NULL;
-    $$->option_list = NULL;
-}
-| TOK_IPTS_CHAIN TOK_IDENTIFIER TOK_IDENTIFIER pkt_count
-{
-    $$ = malloc(sizeof(struct rule_s));
-    $$->table = NULL;
     $$->chain = $2;
     $$->policy = $3;
     $$->pkt_count = $4;
     $$->option_list = NULL;
 }
-| TOK_COMMIT
-{
-    $$ = NULL;
-}
-| pkt_count option_list
+| pkt_count chain_command TOK_IDENTIFIER rule_specification
 {
     $$ = malloc(sizeof(struct rule_s));
-    $$->table = NULL;
-    $$->chain = NULL;
+    $$->chain = $3;
     $$->policy = NULL;
     $$->pkt_count = $1;
-    $$->option_list = $2;
+    $$->option_list = $4;
 }
-| option_list
+
+chain_command: TOK_IPTS_CHAIN_APPEND
+
+rule_specification: option_list
 {
-    $$ = malloc(sizeof(struct rule_s));
-    $$->table = NULL;
-    $$->chain = NULL;
-    $$->policy = NULL;
-    $$->pkt_count = NULL;
-    $$->option_list = $1;
+    $$ = $1;
 }
 
 option_list: /* empty */
 {
-    $$ = NULL;
+  $$ = NULL;
 }
 | option_list not_option
 {

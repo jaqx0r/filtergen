@@ -90,9 +90,7 @@ EMIT(option_list) {
 }
 
 EMIT(rule) {
-    if (n->table) {
-	printf("*%s", n->table);
-    } else if (n->chain) {
+    if (n->chain) {
 	printf(":%s", n->chain);
 	if (n->policy) {
 	    printf(" %s", n->policy);
@@ -122,16 +120,35 @@ EMIT(rule_list) {
     if (n->rule) {
 	eprint("emitting rule\n");
 	emit_rule(n->rule);
-    } else {
-	/* NULL rules only for COMMIT */
-	printf("COMMIT\n");
     }
+}
+
+EMIT(table) {
+  if (n->name) {
+    printf("*%s\n", n->name);
+  }
+  if (n->rule_list) {
+    eprint("emitting rule_list\n");
+    emit_rule_list(n->rule_list);
+  }
+  printf("COMMIT\n");
+}
+
+EMIT(table_list) {
+  if (n->list) {
+    eprint("emitting table_list\n");
+    emit_table_list(n->list);
+  }
+  if (n->table) {
+    eprint ("emitting table\n");
+    emit_table(n->table);
+  }
 }
 
 EMIT(ast) {
     if (n->list) {
 	eprint("emitting rule_list\n");
-	emit_rule_list(n->list);
+	emit_table_list(n->list);
     }
 }
 

@@ -122,10 +122,7 @@ struct filter * ipts_convert_rule(struct rule_s * n) {
 
   eprint("converting rule\n");
 
-  if (n->table) {
-    /* do something with the table declaration */
-    /* nat vs filter */
-  } else if (n->chain) {
+  if (n->chain) {
     /* do something with the chain declaration */
     /* chain, policy, pkt_count are set */
     /* FIXME: somehow append the chain default policy to the end of the
@@ -192,13 +189,37 @@ struct filter * ipts_convert_rule_list(struct rule_list_s * n) {
     return res;
 }
 
+struct filter * ipts_convert_table(struct table_s * n) {
+  struct filter * res = NULL;
+
+  eprint("converting table\n");
+
+  if (n->rule_list)
+    res = ipts_convert_rule_list(n->rule_list);
+
+  return res;
+}
+
+struct filter * ipts_convert_table_list(struct table_list_s * n) {
+  struct filter * res = NULL;
+
+  eprint("converting table_list\n");
+
+  if (n->list)
+    res = ipts_convert_table_list(n->list);
+  if (n->table)
+    res = ipts_convert_table(n->table);
+
+  return res;
+}
+
 struct filter * ipts_convert(struct ast_s * ast) {
   struct filter * res = NULL;
 
     eprint("converting ast\n");
 
     if (ast->list)
-      res = ipts_convert_rule_list(ast->list);
+      res = ipts_convert_table_list(ast->list);
 
     return res;
 }
