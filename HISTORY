@@ -1,4 +1,4 @@
-recent:
+0.7:
 	add "local" and "forward" syntax to state that packets are only
 		for local or remote consumption (and "-h" option to
 		default rules to the former)
@@ -55,4 +55,4 @@ recent:
 	iptables driver
 	a few bugs
 
-$Id: HISTORY,v 1.27 2002/07/21 12:35:39 matthew Exp $
+$Id: HISTORY,v 1.28 2002/07/21 13:33:48 matthew Exp $
