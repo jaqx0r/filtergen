@@ -1,7 +1,7 @@
 /*
  * Filter generator, iptables driver
  *
- * $Id: fg-iptables.c,v 1.13 2001/11/04 22:43:55 matthew Exp $
+ * $Id: fg-iptables.c,v 1.14 2001/11/05 10:35:57 matthew Exp $
  */
 
 /*
@@ -217,7 +217,8 @@ int fg_iptables(struct filter *filter, int skel)
 		puts("iptables -F; iptables -X");
 		puts("iptables -t nat -F; iptables -t nat -X");
 	}
-	r = filtergen_cprod(filter, cb_iptables, (void*)&feat);
+	if((r = filtergen_cprod(filter, cb_iptables, (void*)&feat)) < 0)
+		return r;
 	if(skel) {
 		puts("for f in INPUT OUTPUT FORWARD; do iptables -A $f -j LOG; done");
 		r += 3;

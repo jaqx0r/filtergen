@@ -3,7 +3,7 @@
  *
  * XXX - maybe some of this could be shared with the iptables one?
  *
- * $Id: fg-ipchains.c,v 1.7 2001/11/04 22:43:55 matthew Exp $
+ * $Id: fg-ipchains.c,v 1.8 2001/11/05 10:35:57 matthew Exp $
  */
 
 #include <stdio.h>
@@ -134,7 +134,8 @@ int fg_ipchains(struct filter *filter, int skel)
 		puts("for f in INPUT OUTPUT FORWARD; do ipchains -P $f DENY; done");
 		puts("ipchains -F; ipchains -X");
 	}
-	r = filtergen_cprod(filter, cb_ipchains, NULL);
+	if((r = filtergen_cprod(filter, cb_ipchains, NULL)) < 0)
+		return r;
 	if(skel) {
 		puts("for f in INPUT OUTPUT FORWARD; do ipchains -A $f -l -j DENY; done");
 		r += 3;
