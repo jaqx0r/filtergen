@@ -38,6 +38,23 @@ struct icmpent_s {
     { "0", "echo-reply" },
     /* 1-2 unassigned */
     { "3", "destination-unreachable" },
+    { "3/0", "network-unreachable" },
+    { "3/1", "host-unreachable" },
+    { "3/2", "protocol-unreachable" },
+    { "3/3", "port-unreachable" },
+    { "3/4", "fragmentation-needed" },
+    { "3/5", "source-route-failed" },
+    { "3/6", "network-unknown" },
+    { "3/7", "host-unknown" },
+    { "3/8", "source-host-isolated" },
+    { "3/9", "network-prohibited" },
+    { "3/10", "host-prohibited" },
+    { "3/11", "tos-network-unreachable" },
+    { "3/12", "tos-host-unreachable" },
+    /* RFC1812 defines the next three */
+    { "3/13", "communication-prohibited" },
+    { "3/14", "host-precedence-violation" },
+    { "3/15", "precedence-cutoff" },
     { "4", "source-quench" },
     { "5", "redirect" },
     { "6", "alternate-host-address" },
@@ -65,23 +82,19 @@ struct icmpent_s {
     { "38", "domain-name-reply" },
     { "39", "skip" },
     { "40", "photuris"},
-    { NULL, }
+    { NULL, NULL }
     /* 41-255 reserved */
 };
 
 /* fake netdb-like function for icmp types */
 struct icmpent_s * geticmpentbyname(char * name) {
     struct icmpent_s * icmpent;
-    int i;
 
-    i = 0;
-    icmpent = icmpcodes;
-    while (icmpent[i].i_type != NULL) {
-        if (!strcmp(name, icmpent[i].name))
-            break;
-        i++;
+    for (icmpent = icmpcodes; icmpent->i_type != NULL; icmpent++) {
+      if (!strcmp(name, icmpent->name))
+	break;
     }
-    if (icmpent[i].i_type == NULL)
+    if (icmpent->i_type == NULL)
         icmpent = NULL;
 
     return icmpent;
