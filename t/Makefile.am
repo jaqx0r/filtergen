@@ -47,7 +47,8 @@ TESTS = t_01_ccomment \
 	t_47_subrule_list \
 	t_48_chaingroup \
 	t_49_convertspeclist \
-	t_50_convertrulelist
+	t_50_convertrulelist \
+	t_51_convertdirection
 
 check_PROGRAMS = scan parse emit filter_emit convert
 
