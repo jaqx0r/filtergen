@@ -1,7 +1,7 @@
 /*
  * Filter generator, iptables driver
  *
- * $Id: fg-iptables.c,v 1.21 2002/04/28 22:30:41 matthew Exp $
+ * $Id: fg-iptables.c,v 1.22 2002/07/18 14:04:13 matthew Exp $
  */
 
 /*
@@ -161,7 +161,7 @@ static int cb_iptables_rule(const struct filterent *ent, struct fg_misc *misc)
 			APPSS2(rule, "--icmp-type", ent->u.icmp);
 		}
 		break;
-	default:
+	default:;
 	}
 
 	APPS(natrule, "-j"); APPS(rule, "-j"); APPS(rule_r, "-j");

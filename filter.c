@@ -1,4 +1,4 @@
-/* $Id: filter.c,v 1.8 2002/04/28 22:30:41 matthew Exp $ */
+/* $Id: filter.c,v 1.9 2002/07/18 14:04:13 matthew Exp $ */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -260,7 +260,7 @@ void filter_nogroup(struct filter *f)
 	case F_SIBLIST:
 		filter_nogroup(f->u.sib);
 		break;
-	default:
+	default:;
 	}
 	filter_nogroup(f->child);
 	filter_nogroup(f->next);
