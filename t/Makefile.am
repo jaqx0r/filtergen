@@ -12,11 +12,15 @@ TESTS = t_01_ccomment \
 	t_12_includeloop \
 	t_13_includetwo \
 	t_14_includeinline \
-	t_15_includenotfound
+	t_15_includenotfound \
+	t_16_emptyfilter
 
-check_PROGRAMS = scan
+check_PROGRAMS = scan parse
 
 scan_SOURCES = scan.c
 scan_LDADD = ../scanner.o
+
+parse_SOURCES = parse.c
+parse_LDADD = ../scanner.o ../parser.o
 
 EXTRA_DIST = data/* testlib $(TESTS)

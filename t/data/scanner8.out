@@ -1,35 +1,35 @@
-kind = 28 [<number>], spelling = "0", file = "(standard input)", line = 2
-kind = 29 [<dot>], spelling = ".", file = "(standard input)", line = 2
-kind = 28 [<number>], spelling = "0", file = "(standard input)", line = 2
-kind = 29 [<dot>], spelling = ".", file = "(standard input)", line = 2
-kind = 28 [<number>], spelling = "0", file = "(standard input)", line = 2
-kind = 29 [<dot>], spelling = ".", file = "(standard input)", line = 2
-kind = 28 [<number>], spelling = "0", file = "(standard input)", line = 2
-kind = 28 [<number>], spelling = "127", file = "(standard input)", line = 3
-kind = 29 [<dot>], spelling = ".", file = "(standard input)", line = 3
-kind = 28 [<number>], spelling = "0", file = "(standard input)", line = 3
-kind = 29 [<dot>], spelling = ".", file = "(standard input)", line = 3
-kind = 28 [<number>], spelling = "0", file = "(standard input)", line = 3
-kind = 29 [<dot>], spelling = ".", file = "(standard input)", line = 3
-kind = 28 [<number>], spelling = "1", file = "(standard input)", line = 3
-kind = 30 [<slash>], spelling = "/", file = "(standard input)", line = 3
-kind = 28 [<number>], spelling = "255", file = "(standard input)", line = 3
-kind = 29 [<dot>], spelling = ".", file = "(standard input)", line = 3
-kind = 28 [<number>], spelling = "255", file = "(standard input)", line = 3
-kind = 29 [<dot>], spelling = ".", file = "(standard input)", line = 3
-kind = 28 [<number>], spelling = "255", file = "(standard input)", line = 3
-kind = 29 [<dot>], spelling = ".", file = "(standard input)", line = 3
-kind = 28 [<number>], spelling = "255", file = "(standard input)", line = 3
-kind = 27 [<name>], spelling = "http", file = "(standard input)", line = 4
-kind = 27 [<name>], spelling = "bar", file = "(standard input)", line = 5
-kind = 30 [<slash>], spelling = "/", file = "(standard input)", line = 5
-kind = 28 [<number>], spelling = "29", file = "(standard input)", line = 5
-kind = 27 [<name>], spelling = "bar", file = "(standard input)", line = 6
-kind = 30 [<slash>], spelling = "/", file = "(standard input)", line = 6
-kind = 28 [<number>], spelling = "255", file = "(standard input)", line = 6
-kind = 29 [<dot>], spelling = ".", file = "(standard input)", line = 6
-kind = 28 [<number>], spelling = "255", file = "(standard input)", line = 6
-kind = 29 [<dot>], spelling = ".", file = "(standard input)", line = 6
-kind = 28 [<number>], spelling = "255", file = "(standard input)", line = 6
-kind = 29 [<dot>], spelling = ".", file = "(standard input)", line = 6
-kind = 28 [<number>], spelling = "248", file = "(standard input)", line = 6
+kind = number, spelling = "0", file = "(standard input)", line = 2
+kind = dot, spelling = ".", file = "(standard input)", line = 2
+kind = number, spelling = "0", file = "(standard input)", line = 2
+kind = dot, spelling = ".", file = "(standard input)", line = 2
+kind = number, spelling = "0", file = "(standard input)", line = 2
+kind = dot, spelling = ".", file = "(standard input)", line = 2
+kind = number, spelling = "0", file = "(standard input)", line = 2
+kind = number, spelling = "127", file = "(standard input)", line = 3
+kind = dot, spelling = ".", file = "(standard input)", line = 3
+kind = number, spelling = "0", file = "(standard input)", line = 3
+kind = dot, spelling = ".", file = "(standard input)", line = 3
+kind = number, spelling = "0", file = "(standard input)", line = 3
+kind = dot, spelling = ".", file = "(standard input)", line = 3
+kind = number, spelling = "1", file = "(standard input)", line = 3
+kind = slash, spelling = "/", file = "(standard input)", line = 3
+kind = number, spelling = "255", file = "(standard input)", line = 3
+kind = dot, spelling = ".", file = "(standard input)", line = 3
+kind = number, spelling = "255", file = "(standard input)", line = 3
+kind = dot, spelling = ".", file = "(standard input)", line = 3
+kind = number, spelling = "255", file = "(standard input)", line = 3
+kind = dot, spelling = ".", file = "(standard input)", line = 3
+kind = number, spelling = "255", file = "(standard input)", line = 3
+kind = name, spelling = "http", file = "(standard input)", line = 4
+kind = name, spelling = "bar", file = "(standard input)", line = 5
+kind = slash, spelling = "/", file = "(standard input)", line = 5
+kind = number, spelling = "29", file = "(standard input)", line = 5
+kind = name, spelling = "bar", file = "(standard input)", line = 6
+kind = slash, spelling = "/", file = "(standard input)", line = 6
+kind = number, spelling = "255", file = "(standard input)", line = 6
+kind = dot, spelling = ".", file = "(standard input)", line = 6
+kind = number, spelling = "255", file = "(standard input)", line = 6
+kind = dot, spelling = ".", file = "(standard input)", line = 6
+kind = number, spelling = "255", file = "(standard input)", line = 6
+kind = dot, spelling = ".", file = "(standard input)", line = 6
+kind = number, spelling = "248", file = "(standard input)", line = 6

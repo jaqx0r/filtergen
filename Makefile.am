@@ -4,7 +4,8 @@ bin_PROGRAMS = filtergen
 
 filtergen_SOURCES = \
 	tmpmain.c \
-	scanner.l
+	scanner.l \
+	parser.y
 
 #	filtergen.c \
 #	gen.c \
@@ -26,3 +27,4 @@ EXTRA_DIST = HISTORY HONESTY README TODO $(headers) $(mans)
 
 AM_CFLAGS = -g -Wall -Werror
 AM_LDFLAGS = -g
+AM_YFLAGS = -d
