@@ -1,42 +1,56 @@
 TODO for pfc
+============
 
-Easy:
- * Better documentation.
- * Support scripts, documentation
- * Better logging options.
- * Translate icmp names (at least for ipfilter and cisco) 
- * ICMP codes (--icmp-type x/y syntax for iptables)
- * "Loose" option to allow not-quite-correct rulesets to run, eg.,
-   using forward-only with ipchains
- * New backend: FreeBSD ipfw
- * {iptables,ipchains}-restore target format
- * handle resolver errors in resolve.c
- * fix up negations
- * extra iptables-like commands: user, related state
-   have them carry through to the generator and then have the
-   generator discard rulesets it doesn't like (but be aware of them)
+* Better documentation.
 
-Medium:
- * Fixup and maintain the cisco and ipfilter backends
-   + Cisco needs testing, negation fixes and options for
-     reflexive ACLs
-   + ipfilter needs testing and masq, transproxy and
-     grouping support
- * support sysctl tuning in iptables/ipchains (i.e. linux) targets
- * "limit" rate limiting support
+o [jaq] Support scripts, documentation
 
-Harder:
- * iproute2 "ip rule" backend
- * Testing and auditing of generated rulesets.
+* Better logging options.
 
-Hard:
- * Optimiser (de-pessimiser :-) for intermediate step, and also
+* Translate icmp names (at least for ipfilter and cisco) 
+
+o [jaq] ICMP codes (--icmp-type x/y syntax for iptables)
+
+* "Loose" option to allow not-quite-correct rulesets to run, eg.,
+  using forward-only with ipchains
+
+* New backend: FreeBSD ipfw
+
+o [jaq] {iptables,ipchains}-restore target format
+
+o [jaq] handle resolver errors in resolve.c
+
+o [jaq] extra iptables-like commands: user, related state have them carry
+  through to the generator and then have the generator discard
+  rulesets it doesn't like (but be aware of them)
+
+* Fixup and maintain the cisco and ipfilter backends
+  - Cisco needs testing, negation fixes and options for reflexive
+  ACLs
+  - ipfilter needs testing and masq, transproxy and grouping support
+
+* support sysctl tuning in iptables/ipchains (i.e. linux) targets
+
+o [jaq] "limit" rate limiting support
+
+* iproute2 "ip rule" backend
+
+* Testing and auditing of generated rulesets.
+
+o [jaq] Optimiser (de-pessimiser :-) for intermediate step, and also
    generated rulesets (the latter could be done with a peephole
    optimiser, I think).
-   -- equation factoriser should be simpler and quite good.
- * Implement a negation unroller for filters which can't negate
-   a match.  (For example, Ciscos can't say "match all but this
+
+  - equation factoriser should be simpler and quite good.
+   factorising should be trivial, boolean factorisation never
+   involves polynomials.   must watch out for rules with side effects
+   though.  order matters.
+
+  - optimise orthogonal rules by branch counts
+
+  - future optimise orthogonal rules based on hit frequency
+
+o [jaq] Implement a negation unroller for filters which can't negate   a
+   match.  (For example, Ciscos can't say "match all but this
    host".)  This gives us negation of {}-groups, too.
 
-   This is possible, but tiresome, and will require an optimiser
-   if the generated rulesets are not to Suck.
