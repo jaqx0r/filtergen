@@ -61,7 +61,9 @@ TESTS = t_01_ccomment \
 	t_61_convertlog \
 	t_62_convertoptions \
 	t_63_includedir \
-	t_64_includedirwfile
+	t_64_includedirwfile \
+	t_65_includedirwdir \
+	t_66_includedirtwofiles
 
 check_PROGRAMS = scan parse emit convert factorise
 
