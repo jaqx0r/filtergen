@@ -29,7 +29,7 @@ man_MANS = $(mans)
 
 dist_sysconf_DATA = fgadm.conf rules.filter
 
-dist_pkgdoc_DATA = t/*.filter examples/*.filter
+dist_pkgdoc_DATA = examples/*.filter
 
 EXTRA_DIST = HISTORY HONESTY README TODO $(headers) $(mans) filtergen.spec
 
