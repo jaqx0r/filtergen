@@ -1,4 +1,4 @@
-recent:
+0.9:
 	fix install target to install section 7 manpages too
 	do protocol lookups properly, support protocol numbers
 	lookup/normalise service names
@@ -68,4 +68,4 @@ recent:
 	iptables driver
 	a few bugs
 
-$Id: HISTORY,v 1.35 2002/08/20 22:54:38 matthew Exp $
+$Id: HISTORY,v 1.36 2002/08/23 14:41:11 matthew Exp $
