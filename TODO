@@ -12,7 +12,7 @@ o [jaq] Support scripts, documentation
 o [jaq] ICMP codes (--icmp-type x/y syntax for iptables)
 
 * "Loose" option to allow not-quite-correct rulesets to run, eg.,
-  using forward-only with ipchains
+    using forward-only with ipchains
 
 * New backend: FreeBSD ipfw
 
@@ -20,13 +20,13 @@ o [jaq] {iptables,ipchains}-restore target format
 
 o [jaq] handle resolver errors in resolve.c
 
-o [jaq] extra iptables-like commands: user, related state have them carry
-  through to the generator and then have the generator discard
-  rulesets it doesn't like (but be aware of them)
+o [jaq] extra iptables-like commands: user, related state have them
+    carry through to the generator and then have the generator discard
+    rulesets it doesn't like (but be aware of them)
 
 * Fixup and maintain the cisco and ipfilter backends
   - Cisco needs testing, negation fixes and options for reflexive
-  ACLs
+    ACLs
   - ipfilter needs testing and masq, transproxy and grouping support
 
 * support sysctl tuning in iptables/ipchains (i.e. linux) targets
@@ -38,13 +38,13 @@ o [jaq] "limit" rate limiting support
 * Testing and auditing of generated rulesets.
 
 o [jaq] Optimiser (de-pessimiser :-) for intermediate step, and also
-   generated rulesets (the latter could be done with a peephole
-   optimiser, I think).
+    generated rulesets (the latter could be done with a peephole
+    optimiser, I think).
 
-  - equation factoriser should be simpler and quite good.
-   factorising should be trivial, boolean factorisation never
-   involves polynomials.   must watch out for rules with side effects
-   though.  order matters.
+  - equation factoriser should be simpler and quite good.  factorising
+    should be trivial, boolean factorisation never involves
+    polynomials.   must watch out for rules with side effects though.
+    order matters.
 
   - optimise orthogonal rules by branch counts
 
@@ -54,9 +54,9 @@ o [jaq] Optimiser (de-pessimiser :-) for intermediate step, and also
 
 * no conntrack (i.e. designed for large fast filters) option for iptables
 
-o [jaq] Implement a negation unroller for filters which can't negate   a
-   match.  (For example, Ciscos can't say "match all but this
-   host".)  This gives us negation of {}-groups, too.
+o [jaq] Implement a negation unroller for filters which can't negate
+    a match.  (For example, Ciscos can't say "match all but this
+    host".)  This gives us negation of {}-groups, too.
 
 * reject-with for reject target in iptables
 
@@ -65,3 +65,14 @@ o [jaq] Implement a negation unroller for filters which can't negate   a
 * New backend: iptables-save format
 
 * New frontend: iptables-save format
+
+* unit tests for recursive include
+
+* unit tests for all code paths in include directive
+
+* " characters in identifiers, do they need to exist?
+
+* forward/local specifiers in filtergen language removed.  add them
+    back?
+
+* generate icmp filters completely

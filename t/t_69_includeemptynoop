@@ -1,0 +1,49 @@
+#!/bin/sh
+
+TEST="that empty includes that create noops get parsed correctly"
+
+testdir=`dirname $0`
+. $testdir/testlib
+
+cat > $work/rules <<EOF
+input eth0 {
+    proto tcp dport ssh accept;
+    include $work/empty ;
+};
+EOF
+if test $? -ne 0 ; then no_result ; fi
+
+cat > $work/empty <<EOF
+
+EOF
+if test $? -ne 0 ; then no_result ; fi
+
+$here/convert < $work/rules > $work/out
+if test $? -ne 0 ; then fail ; fi
+
+cat > $work/good <<EOF
+( siblist
+  ( input eth0
+   )
+  child
+  ( siblist
+    ( siblist
+      ( proto tcp
+       )
+      child
+      ( siblist
+        ( dport ssh
+         )
+        child
+        ( accept
+         )
+       )
+     )
+   )
+ )
+EOF
+
+compare $work/good $work/out
+
+# got this far?
+pass

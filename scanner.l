@@ -23,6 +23,10 @@
 
 #include <string.h>
 #include <stdarg.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <dirent.h>
 #include "parser.h"
 
 /* include file stack */
@@ -39,6 +43,7 @@ int inc_stackptr = 0;
 long int lineno();
 char * filename();
 static void scan_err(const char * fmt, ...);
+void include_file(const char *);
 %}
 
 string  \"[^\n]+\"
@@ -117,27 +122,18 @@ text         return TOK_TEXT;
 .            return TOK_ERR;
 
 <include>[ \t]*       /* eat whitespace after include */
-<include>[^ \t\n]+    { /* include file name */
+<include>[^ \t\n;]+    { /* include file name */
                           if (inc_stackptr >= MAXINCLUDES) {
                               scan_err("warning: too many nested includes");
     			      scan_err("warning: skipping include of file %s", yytext);
 
 			  } else {
-                              if (yytext) {
-                                  FILE * f;
-                                  if (!(f = fopen(yytext, "r"))) {
-                                      scan_err("error: can't open file \"%s\"", yytext);
-                                  } else {
-                                      inc_stack[inc_stackptr++].state = YY_CURRENT_BUFFER;
-                                      inc_stack[inc_stackptr].lineno = 1;
-                                      inc_stack[inc_stackptr].filename = strdup(yytext);
-                                      yyin = f;
-                                      yy_switch_to_buffer(yy_create_buffer(yyin, YY_BUF_SIZE));
-                                  }
-                              } else {
-                                  scan_err("error: file is null");
-                              }    
-                          }
+				char * name;
+
+				name = strdup(yytext);
+				include_file(name);
+				free(name);
+			  }
                           BEGIN(INITIAL);
                        }
 
@@ -173,4 +169,48 @@ static void scan_err(const char * fmt, ...) {
 	fprintf(stderr, "%s:%ld: ", filename(), lineno());
     vfprintf(stderr, fmt, args);
     fprintf(stderr, "\n");
+}
+
+
+void step_into_include_file(const char * fn) {
+	FILE * f;
+
+        if (!(f = fopen(fn, "r"))) {
+                scan_err("warning: can't open file \"%s\"", fn);
+        } else {
+                inc_stack[inc_stackptr++].state = YY_CURRENT_BUFFER;
+                inc_stack[inc_stackptr].lineno = 1;
+                inc_stack[inc_stackptr].filename = strdup(fn);
+                yyin = f;
+                yy_switch_to_buffer(yy_create_buffer(yyin, YY_BUF_SIZE));
+	}
+}
+
+/* include a file or directory */
+void include_file(const char * name) {
+	struct stat st;
+	DIR * d;
+	struct dirent * r;
+	char * fn;
+
+	if (stat(name, &st)) {
+		scan_err("warning: stat failed on %s: %s", name, strerror(errno));
+	} else {
+		if (S_ISDIR(st.st_mode)) {
+			if ((d = opendir(name)) == NULL) {
+				scan_err("warning: opendir failed on %s: %s", name, strerror(errno));
+			} else {
+				while ((r = readdir(d)) != NULL) {
+					/* FIXME: assumes d_name */
+					if (r->d_name[0] == '.')
+						continue;
+					asprintf(&fn, "%s/%s", name, r->d_name);
+					include_file(fn);
+					free(fn);
+				}
+				closedir(d);
+			}
+		} else
+			step_into_include_file(name);
+	}
 }

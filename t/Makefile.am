@@ -59,7 +59,15 @@ TESTS = t_01_ccomment \
 	t_59_convertnested \
 	t_60_bigugly \
 	t_61_convertlog \
-	t_62_convertoptions
+	t_62_convertoptions \
+	t_63_includedir \
+	t_64_includedirwfile \
+	t_65_includedirwdir \
+	t_66_includedirtwofiles \
+	t_67_includeemptyfile \
+	t_68_noop \
+	t_69_includeemptynoop \
+	t_70_includesemicolon
 
 check_PROGRAMS = scan parse emit convert factorise
 
