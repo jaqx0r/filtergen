@@ -118,6 +118,8 @@ id	[[:alnum:]_+-\.\/]+
 
 --uid-owner	return TOK_IPTS_UID_OWNER;
 
+--reject-with	return TOK_IPTS_REJECT_WITH;
+
 	/* everything else */
 {id}	{
 		ipts_lval.u_str = strndup(ipts_text, ipts_leng);

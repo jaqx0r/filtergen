@@ -63,6 +63,8 @@ extern int ipts_lex(void);
     struct sport_option_s * u_sport_option;
     struct uid_owner_option_s * u_uid_owner_option;
     struct tcp_flags_option_s * u_tcp_flags_option;
+    struct reject_with_option_s * u_reject_with_option;
+
     struct not_identifier_s * u_not_identifier;
     struct identifier_s * u_identifier;
     struct pkt_count_s * u_pkt_count;
@@ -77,6 +79,7 @@ extern int ipts_lex(void);
 %type <u_not_option> not_option
 %type <u_option> option
 
+%type <u_reject_with_option> reject_with_option
 %type <u_tcp_flags_option> tcp_flags_option
 %type <u_uid_owner_option> uid_owner_option
 %type <u_sport_option> sport_option
@@ -139,6 +142,8 @@ extern int ipts_lex(void);
 %token TOK_IPTS_LOG_PREFIX
 
 %token TOK_IPTS_UID_OWNER
+
+%token TOK_IPTS_REJECT_WITH
 
 %token <u_str> TOK_IDENTIFIER
 %token <u_str> TOK_OPTION
@@ -320,6 +325,17 @@ option: in_interface_option
 {
     $$ = malloc(sizeof(struct option_s));
     $$->tcp_flags_option = $1;
+}
+| reject_with_option
+{
+    $$ = malloc(sizeof(struct option_s));
+    $$->reject_with_option = $1;
+}
+
+reject_with_option: TOK_IPTS_REJECT_WITH identifier
+{
+    $$ = malloc(sizeof(struct reject_with_option_s));
+    $$->identifier = $2;
 }
 
 tcp_flags_option: TOK_IPTS_TCP_FLAGS identifier

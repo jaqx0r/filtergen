@@ -32,7 +32,8 @@ set options [list \
 		 "to-source" \
 		 "limit" \
 		 "log-prefix" \
-		 "uid-owner"
+		 "uid-owner" \
+		 "reject-with"
 		]
 
 foreach option_pair $options {

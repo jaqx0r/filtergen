@@ -42,6 +42,7 @@ char * tok_map(int c) {
 	tok(LIMIT);
 	tok(LOG_PREFIX);
 	tok(UID_OWNER);
+	tok(REJECT_WITH);
       case TOK_IDENTIFIER:
 	r = strdup("identifier"); break;
       case TOK_LSQUARE:
