@@ -1,7 +1,11 @@
-( input eth0
+( siblist
+  ( input eth0
+   )
   child
   ( neg
-    ( dest foo
+    ( siblist
+      ( dest foo
+       )
      )
     child
     ( reject

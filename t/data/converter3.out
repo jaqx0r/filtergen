@@ -1,9 +1,13 @@
-( input eth0
+( siblist
+  ( input eth0
+   )
   child
   ( reject
    )
   next
-  ( output eth0
+  ( siblist
+    ( output eth0
+     )
     child
     ( reject
      )

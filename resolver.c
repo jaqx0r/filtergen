@@ -87,7 +87,7 @@ struct icmpent_s * geticmpentbyname(char * name) {
     return icmpent;
 }
 
-void resolve_simple_icmptype_argument(struct simple_icmptype_argument_s * n) {
+void resolve_icmptype_argument(struct icmptype_argument_s * n) {
     struct icmpent_s * i;
 
     if (n->icmptype) {
@@ -112,31 +112,17 @@ void resolve_icmptype_argument_list(struct icmptype_argument_list_s * n) {
         resolve_icmptype_argument_list(n->list);
     }
     if (n->arg) {
-        resolve_simple_icmptype_argument(n->arg);
-    }
-}
-
-void resolve_compound_icmptype_argument(struct compound_icmptype_argument_s * n) {
-    if (n->list) {
-        resolve_icmptype_argument_list(n->list);
-    }
-}
-
-void resolve_icmptype_argument(struct icmptype_argument_s * n) {
-    if (n->compound) {
-	resolve_compound_icmptype_argument(n->compound);
-    } else if (n->simple) {
-        resolve_simple_icmptype_argument(n->simple);
+        resolve_icmptype_argument(n->arg);
     }
 }
 
 void resolve_icmptype_specifier(struct icmptype_specifier_s * n) {
-    if (n->arg) {
-	resolve_icmptype_argument(n->arg);
+    if (n->list) {
+	resolve_icmptype_argument_list(n->list);
     }
 }
 
-void resolve_simple_port_argument(struct simple_port_argument_s * n) {
+void resolve_port_argument(struct port_argument_s * n) {
     struct servent * s;
 
     if (n->port_min) {
@@ -178,31 +164,17 @@ void resolve_port_argument_list(struct port_argument_list_s * n) {
 	resolve_port_argument_list(n->list);
     }
     if (n->arg) {
-	resolve_simple_port_argument(n->arg);
+	resolve_port_argument(n->arg);
     }
 }
 
-void resolve_compound_port_argument(struct compound_port_argument_s * n) {
+void resolve_port_specifier(struct port_specifier_s * n) {
     if (n->list) {
 	resolve_port_argument_list(n->list);
     }
 }
 
-void resolve_port_argument(struct port_argument_s * n) {
-    if (n->compound) {
-	resolve_compound_port_argument(n->compound);
-    } else if (n->simple) {
-	resolve_simple_port_argument(n->simple);
-    }
-}
-
-void resolve_port_specifier(struct port_specifier_s * n) {
-    if (n->arg) {
-	resolve_port_argument(n->arg);
-    }
-}
-
-void resolve_simple_protocol_argument(struct simple_protocol_argument_s * n) {
+void resolve_protocol_argument(struct protocol_argument_s * n) {
     struct protoent * p;
 
     if (n->proto) {
@@ -227,31 +199,17 @@ void resolve_protocol_argument_list(struct protocol_argument_list_s * n) {
 	resolve_protocol_argument_list(n->list);
     }
     if (n->arg) {
-	resolve_simple_protocol_argument(n->arg);
+	resolve_protocol_argument(n->arg);
     }
 }
 
-void resolve_compound_protocol_argument(struct compound_protocol_argument_s * n) {
+void resolve_protocol_specifier(struct protocol_specifier_s * n) {
     if (n->list) {
 	resolve_protocol_argument_list(n->list);
     }
 }
 
-void resolve_protocol_argument(struct protocol_argument_s * n) {
-    if (n->compound) {
-	resolve_compound_protocol_argument(n->compound);
-    } else if (n->simple) {
-	resolve_simple_protocol_argument(n->simple);
-    }
-}
-
-void resolve_protocol_specifier(struct protocol_specifier_s * n) {
-    if (n->arg) {
-	resolve_protocol_argument(n->arg);
-    }
-}
-
-void resolve_simple_host_argument(struct simple_host_argument_s * n) {
+void resolve_host_argument(struct host_argument_s * n) {
     struct addrinfo * a = NULL;
     struct addrinfo hints;
     int r;
@@ -298,36 +256,20 @@ void resolve_host_argument_list(struct host_argument_list_s * n) {
         resolve_host_argument_list(n->list);
     }
     if (n->arg) {
-        resolve_simple_host_argument(n->arg);
-    }
-}
-
-void resolve_compound_host_argument(struct compound_host_argument_s * n) {
-    if (n->list) {
-        resolve_host_argument_list(n->list);
-    }
-}
-
-void resolve_host_argument(struct host_argument_s * n) {
-    if (n->compound) {
-        resolve_compound_host_argument(n->compound);
-    } else if (n->simple) {
-        resolve_simple_host_argument(n->simple);
+        resolve_host_argument(n->arg);
     }
 }
 
 void resolve_host_specifier(struct host_specifier_s * n) {
-    if (n->arg) {
-        resolve_host_argument(n->arg);
+    if (n->list) {
+        resolve_host_argument_list(n->list);
     }
 }
 
 void resolve_target_specifier(struct target_specifier_s * n) {
 }
 
-void resolve_simple_direction_argument(struct simple_direction_argument_s * n) {
-    if (n->identifier) {
-    }
+void resolve_direction_argument(struct direction_argument_s * n) {
 }
 
 void resolve_direction_argument_list(struct direction_argument_list_s * n) {
@@ -335,27 +277,13 @@ void resolve_direction_argument_list(struct direction_argument_list_s * n) {
 	resolve_direction_argument_list(n->list);
     }
     if (n->arg) {
-	resolve_simple_direction_argument(n->arg);
-    }
-}
-
-void resolve_compound_direction_argument(struct compound_direction_argument_s * n) {
-    if (n->list) {
-	resolve_direction_argument_list(n->list);
-    }
-}
-
-void resolve_direction_argument(struct direction_argument_s * n) {
-    if (n->compound) {
-	resolve_compound_direction_argument(n->compound);
-    } else if (n->simple) {
-	resolve_simple_direction_argument(n->simple);
+	resolve_direction_argument(n->arg);
     }
 }
 
 void resolve_direction_specifier(struct direction_specifier_s * n) {
-    if (n->arg) {
-	resolve_direction_argument(n->arg);
+    if (n->list) {
+	resolve_direction_argument_list(n->list);
     }
 }
 

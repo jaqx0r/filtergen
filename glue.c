@@ -85,13 +85,13 @@ struct filter * convert_compound_specifier(struct compound_specifier_s * r) {
     return res;
 }
 
-struct filter * convert_direction_arg(struct simple_direction_argument_s * n, int type) {
+struct filter * convert_direction_argument(struct direction_argument_s * n, int type) {
     struct filter * res = NULL;
 
-    if (n->identifier) {
-        res = new_filter_device(type, n->identifier);
+    if (n->direction) {
+        res = new_filter_device(type, n->direction);
     } else {
-        printf("error: no direction argument (simple) identifier\n");
+        printf("error: no direction argument contents\n");
     }
 
     return res;
@@ -110,13 +110,13 @@ struct filter * convert_direction_argument_list(struct direction_argument_list_s
                 end = end->next;
             }
             if (n->arg) {
-                end->next = convert_direction_arg(n->arg, type);
+                end->next = convert_direction_argument(n->arg, type);
             }
         } else {
             printf("warning: convert_direction_argument_list returned NULL\n");
         }
     } else {
-        res = convert_direction_arg(n->arg, type);
+        res = convert_direction_argument(n->arg, type);
     }
 
     return res;
@@ -140,32 +140,20 @@ struct filter * convert_direction(struct direction_specifier_s * n) {
 	type = YYEOF;
 	break;
     }
-    if (n->arg) {
-        if (n->arg->simple) {
-            res = convert_direction_arg(n->arg->simple, type);
-        } else if (n->arg->compound) {
-            eprint("converting compound direction argument\n");
-
-            if (n->arg->compound->list) {
-                res = new_filter_sibs(convert_direction_argument_list(n->arg->compound->list, type));
-            } else {
-                printf("error: no direction argument (compound) list\n");
-            }
-        } else {
-            printf("error: neither simple nor compound argument\n");
-        }
+    if (n->list) {
+      res = new_filter_sibs(convert_direction_argument_list(n->list, type));
     } else {
-        printf("error: no direction argument\n");
+      printf("error: no direction argument list\n");
     }
 
     return res;
 }
 
-struct filter * convert_host_argument(struct simple_host_argument_s * n, int type) {
+struct filter * convert_host_argument(struct host_argument_s * n, int type) {
     struct filter * res = NULL;
     char * h;
 
-    eprint("converting simple_host_argument\n");
+    eprint("converting host_argument\n");
 
     if (n->host) {
         if (n->mask) {
@@ -224,34 +212,24 @@ struct filter * convert_host_specifier(struct host_specifier_s * n) {
         type = YYEOF;
         break;
     }
-    if (n->arg) {
-        if (n->arg->simple) {
-            res = convert_host_argument(n->arg->simple, type);
-        } else if (n->arg->compound) {
-            if (n->arg->compound->list) {
-                res = new_filter_sibs(convert_host_argument_list(n->arg->compound->list, type));
-            } else {
-                printf("error: no host argument (compound) list\n");
-            }
-        } else {
-            printf("error: neither simple nor compound argument\n");
-        }
+    if (n->list) {
+      res = new_filter_sibs(convert_host_argument_list(n->list, type));
     } else {
-        printf("error: no host argument\n");
+      printf("error: no host argument list\n");
     }
 
     return res;        
 }
 
-struct filter * convert_protocol_argument(struct simple_protocol_argument_s * n) {
+struct filter * convert_protocol_argument(struct protocol_argument_s * n) {
     struct filter * res = NULL;
 
-    eprint("converting simple_protocol_argument\n");
+    eprint("converting protocol argument\n");
 
     if (n->proto) {
         res = new_filter_proto(F_PROTO, n->proto);
     } else {
-        printf("error: no proto part\n");
+        printf("error: no protocol argument contents\n");
     }
 
     return res;
@@ -287,30 +265,20 @@ struct filter * convert_protocol_specifier(struct protocol_specifier_s * n) {
 	
     eprint("converting protocol specifier\n");
 
-    if (n->arg) {
-        if (n->arg->simple) {
-            res = convert_protocol_argument(n->arg->simple);
-        } else if (n->arg->compound) {
-            if (n->arg->compound->list) {
-                res = new_filter_sibs(convert_protocol_argument_list(n->arg->compound->list));
-            } else {
-                printf("error: no protocol argument (compound) list\n");
-            }
-        } else {
-            printf("error: neither simple nor compound argument\n");
-        }
+    if (n->list) {
+      res = new_filter_sibs(convert_protocol_argument_list(n->list));
     } else {
-        printf("error: no protocol argument\n");
+      printf("error: no protocol argument list\n");
     }
 
     return res;        
 }
 
-struct filter * convert_port_argument(struct simple_port_argument_s * n, int type) {
+struct filter * convert_port_argument(struct port_argument_s * n, int type) {
     struct filter * res = NULL;
     char * p;
 
-    eprint("converting simple_port_argument\n");
+    eprint("converting port argument\n");
 
     if (n->port_min) {
         if (n->port_max) {
@@ -369,29 +337,19 @@ struct filter * convert_port_specifier(struct port_specifier_s * n) {
         type = YYEOF;
         break;
     }
-    if (n->arg) {
-        if (n->arg->simple) {
-            res = convert_port_argument(n->arg->simple, type);
-        } else if (n->arg->compound) {
-            if (n->arg->compound->list) {
-                res = new_filter_sibs(convert_port_argument_list(n->arg->compound->list, type));
-            } else {
-                printf("error: no port argument (compound) list\n");
-            }
-        } else {
-            printf("error: neither simple nor compound argument\n");
-        }
+    if (n->list) {
+      res = new_filter_sibs(convert_port_argument_list(n->list, type));
     } else {
-        printf("error: no port argument\n");
+      printf("error: no port argument list\n");
     }
 
     return res;        
 }
 
-struct filter * convert_icmptype_argument(struct simple_icmptype_argument_s * n) {
+struct filter * convert_icmptype_argument(struct icmptype_argument_s * n) {
     struct filter * res = NULL;
 
-    eprint("converting simple_icmptype_argument\n");
+    eprint("converting icmptype_argument\n");
 
     if (n->icmptype) {
         res = new_filter_icmp(F_ICMPTYPE, n->icmptype);
@@ -432,20 +390,10 @@ struct filter * convert_icmptype_specifier(struct icmptype_specifier_s * n) {
 	
     eprint("converting icmptype specifier\n");
 
-    if (n->arg) {
-        if (n->arg->simple) {
-            res = convert_icmptype_argument(n->arg->simple);
-        } else if (n->arg->compound) {
-            if (n->arg->compound->list) {
-                res = new_filter_sibs(convert_icmptype_argument_list(n->arg->compound->list));
-            } else {
-                printf("error: no icmptype argument (compound) list\n");
-            }
-        } else {
-            printf("error: neither simple nor compound argument\n");
-        }
+    if (n->list) {
+      res = new_filter_sibs(convert_icmptype_argument_list(n->list));
     } else {
-        printf("error: no icmptype argument\n");
+      printf("error: no icmptype argument list\n");
     }
 
     return res;        

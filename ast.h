@@ -38,126 +38,81 @@ struct compound_specifier_s {
 
 struct option_specifier_s {
     int type;
-  char * logmsg;
+    char * logmsg;
 };
 
-struct simple_icmptype_argument_s {
+struct icmptype_argument_s {
     char * icmptype;
 };
 
 struct icmptype_argument_list_s {
     struct icmptype_argument_list_s * list;
-    struct simple_icmptype_argument_s * arg;
-};
-
-struct compound_icmptype_argument_s {
-    struct icmptype_argument_list_s * list;
-};
-
-struct icmptype_argument_s {
-    struct compound_icmptype_argument_s * compound;
-    struct simple_icmptype_argument_s * simple;
-};
-
-struct icmptype_specifier_s {
     struct icmptype_argument_s * arg;
 };
 
-struct simple_protocol_argument_s {
+struct icmptype_specifier_s {
+    struct icmptype_argument_list_s * list;
+};
+
+struct protocol_argument_s {
     char * proto;
 };
 
 struct protocol_argument_list_s {
     struct protocol_argument_list_s * list;
-    struct simple_protocol_argument_s * arg;
-};
-
-struct compound_protocol_argument_s {
-    struct protocol_argument_list_s * list;
-};
-
-struct protocol_argument_s {
-    struct compound_protocol_argument_s * compound;
-    struct simple_protocol_argument_s * simple;
-};
-
-struct protocol_specifier_s {
     struct protocol_argument_s * arg;
 };
 
-struct simple_port_argument_s {
+struct protocol_specifier_s {
+    struct protocol_argument_list_s * list;
+};
+
+struct port_argument_s {
     char * port_min;
     char * port_max;
 };
 
 struct port_argument_list_s {
     struct port_argument_list_s * list;
-    struct simple_port_argument_s * arg;
-};
-
-struct compound_port_argument_s {
-    struct port_argument_list_s * list;
-};
-
-struct port_argument_s {
-    struct compound_port_argument_s * compound;
-    struct simple_port_argument_s * simple;
+    struct port_argument_s * arg;
 };
 
 struct port_specifier_s {
     int type;
-    struct port_argument_s * arg;
+    struct port_argument_list_s * list;
 };
 
-struct simple_host_argument_s {
+struct host_argument_s {
     char * host;
     char * mask;
 };
 
 struct host_argument_list_s {
     struct host_argument_list_s * list;
-    struct simple_host_argument_s * arg;
-};
-
-struct compound_host_argument_s {
-    struct host_argument_list_s * list;
-};
-
-struct host_argument_s {
-    struct compound_host_argument_s * compound;
-    struct simple_host_argument_s * simple;
+    struct host_argument_s * arg;
 };
 
 struct host_specifier_s {
     int type;
-    struct host_argument_s * arg;
+    struct host_argument_list_s * list;
 };
 
 struct target_specifier_s {
     int type;
 };
 
-struct simple_direction_argument_s {
-    char * identifier;
+struct direction_argument_s {
+    char * direction;
 };
 
 struct direction_argument_list_s {
     struct direction_argument_list_s * list;
-    struct simple_direction_argument_s * arg;
-};
-
-struct compound_direction_argument_s {
-    struct direction_argument_list_s * list;
-};
-
-struct direction_argument_s {
-    struct compound_direction_argument_s * compound;
-    struct simple_direction_argument_s * simple;
+    struct direction_argument_s * arg;
 };
 
 struct direction_specifier_s {
     int type;
-    struct direction_argument_s * arg;
+    struct direction_argument_list_s * list;
 };
 
 struct specifier_s {

@@ -1,31 +1,53 @@
 ( siblist
-  ( input lo
+  ( siblist
+    ( input lo
+     )
     next
-    ( output lo
+    ( siblist
+      ( output lo
+       )
      )
    )
   child
   ( accept
    )
   next
-  ( input eth0
+  ( siblist
+    ( input eth0
+     )
     child
-    ( source foo
+    ( siblist
+      ( source foo
+       )
       child
-      ( dest bar
+      ( siblist
+        ( dest bar
+         )
         child
-        ( proto tcp
+        ( siblist
+          ( proto tcp
+           )
           child
           ( siblist
-            ( dport www
+            ( siblist
+              ( dport www
+               )
               next
-              ( dport https
+              ( siblist
+                ( dport https
+                 )
                 next
-                ( dport nntp
+                ( siblist
+                  ( dport nntp
+                   )
                   next
-                  ( sport 1:1023
+                  ( siblist
+                    ( sport 1:1023
+                     )
                     child
-                    ( dport ssh
+                    ( siblist
+                      ( dport ssh
+                       )
                      )
                    )
                  )

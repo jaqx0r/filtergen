@@ -1,2 +1,2 @@
-input eth0 accept;
+input { eth0 } accept;
 drop;

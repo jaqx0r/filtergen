@@ -1,6 +1,6 @@
 {};
-{proto tcp};
-{proto tcp;
+{proto { tcp }};
+{proto { tcp };
 accept;
-icmptype echo-request;
+icmptype { echo-request };
 };

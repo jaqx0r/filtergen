@@ -1,4 +1,6 @@
-( input eth0
+( siblist
+  ( input eth0
+   )
   child
   ( local
     child
