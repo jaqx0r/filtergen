@@ -54,9 +54,9 @@ void usage(char * prog) {
 #endif
 
 #ifdef HAVE_GETOPT_H
-    fprintf(stderr, " --target/-t target        generate for target (default: iptables\n");
+    fprintf(stderr, " --target/-t target        generate for target (default: iptables)\n");
 #else
-    fprintf(stderr, "          -t target        generate for target (default: iptables\n");
+    fprintf(stderr, "          -t target        generate for target (default: iptables)\n");
 #endif
 
 #ifdef HAVE_GETOPT_H
