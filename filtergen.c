@@ -57,6 +57,12 @@ void usage(char * prog) {
 #endif
 
 #ifdef HAVE_GETOPT_H
+    fprintf(stderr, " --source/-s source        source language (default: filtergen)\n");
+#else
+    fprintf(stderr, "\t-s source\tsource language (default: filtergen)\n");
+#endif
+
+#ifdef HAVE_GETOPT_H
     fprintf(stderr, " --target/-t target        generate for target (default: iptables)\n");
 #else
     fprintf(stderr, "\t-t target\tgenerate for target (default: iptables)\n");
@@ -109,7 +115,16 @@ int oprintf(const char *fmt, ...)
     return vfprintf(outfile, fmt, args);
 }
 
-/* Function pointer table containing target filter types and the emitter
+/** Function pointer table containing source parsers */
+struct source_parser_s {
+    const char * name;
+    source_parser * parser;
+} source_parsers[] = {
+    { "filtergen", filtergen_source_parser },
+    { NULL, NULL }
+};
+
+/** Function pointer table containing target filter types and the emitter
  * functions */
 struct filtyp {
     const char * name;
@@ -121,7 +136,7 @@ struct filtyp {
     { "ipfilter", fg_ipfilter, NULL },
     { "cisco", fg_cisco, NULL },
     { "filtergen", emit_filtergen, NULL },
-    { NULL, NULL, NULL },
+    { NULL, NULL, NULL }
 };
 
 #ifdef HAVE_GETOPT_H
@@ -133,6 +148,7 @@ static struct option long_options[] = {
     {"flush", required_argument, 0, 'F'},
     {"version", no_argument, 0, 'V'},
     {"no-resolve", no_argument, 0, 'r'},
+    {"source", required_argument, 0, 's'},
     {0, 0, 0, 0}
 };
 # define GETOPT(x, y, z) getopt_long(x, y, z, long_options, NULL)
@@ -144,7 +160,8 @@ static struct option long_options[] = {
 int main(int argc, char **argv) {
     struct filter *f;
     int l;
-    char *filename = NULL, *ftn = NULL, *ofn = NULL;
+    char *filename = NULL, *ftn = NULL, *ofn = NULL, * source_name = NULL;
+    struct source_parser_s * sp;
     struct filtyp *ft = NULL; 
     int flags = 0;
     char *progname;
@@ -154,7 +171,7 @@ int main(int argc, char **argv) {
 
     progname = argv[0];
 
-    while ((arg = GETOPT(argc, argv, "hco:t:F:Vr")) > 0) {
+    while ((arg = GETOPT(argc, argv, "hco:t:F:Vrs:")) > 0) {
 	switch (arg) {
 	  case ':':
 	    usage(progname);
@@ -169,6 +186,9 @@ int main(int argc, char **argv) {
 	    break;
 	  case 'o':
 	    ofn = strdup(optarg);
+	    break;
+	  case 's':
+	    source_name = strdup(optarg);
 	    break;
 	  case 't':
 	    ftn = strdup(optarg);
@@ -216,6 +236,19 @@ int main(int argc, char **argv) {
     } else
 	outfile = stdout;
 
+    /* work out which source parser to use */
+    if (!source_name || !*source_name) source_name = strdup("filtergen");
+    for (sp = source_parsers; sp->name; ++sp) {
+	if (!strcmp(source_name, sp->name))
+	    break;
+    }
+    if (!sp->name) {
+	fprintf(stderr, "%s: source parser unrecognised: %s", progname, source_name);
+	usage(progname);
+	exit(1);
+    }
+
+    /* work out which target emitter to use */
     if(!ftn || !*ftn) ftn = strdup("iptables");
     for (ft = filter_types; ft->name; ft++)
 	if (!strcmp(ftn, ft->name))
@@ -244,7 +277,7 @@ int main(int argc, char **argv) {
 	} else {
 	    file = stdin;
 	}
-	f = filtergen_source_parser(file, resolve_names);
+	f = sp->parser(file, resolve_names);
 	l = ft->compiler(f, flags);
     }
 

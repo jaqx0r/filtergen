@@ -7,9 +7,9 @@ filtergen \- packet filter compiler
 
 .SH SYNOPSIS
 
-\fBfiltergen\fR [ \fB-h\fR | \fB--help\fR ] [ \fB-V\fR | \fB--version\fR ] [ \fB-c\fR | \fB--compile\fR ] [ \fB-r\fR | \fB--no-resolve\fR ] [ \fB-t \fItarget\fB\fR | \fB--target=\fItarget\fB\fR ] [ \fB-o \fIoutfile\fB\fR | \fB--output=\fIoutfile\fB\fR ] \fIinfile\fR
+\fBfiltergen\fR [ \fB-h\fR | \fB--help\fR ] [ \fB-V\fR | \fB--version\fR ] [ \fB-c\fR | \fB--compile\fR ] [ \fB-r\fR | \fB--no-resolve\fR ] [ \fB-s \fIsource\fB\fR | \fB--source=\fIsource\fB\fR ] [ \fB-t \fItarget\fB\fR | \fB--target=\fItarget\fB\fR ] [ \fB-o \fIoutfile\fB\fR | \fB--output=\fIoutfile\fB\fR ] \fIinfile\fR
 
-\fBfiltergen\fR [ \fB-h\fR | \fB--help\fR ] [ \fB-V\fR | \fB--version\fR ] [ \fB-c\fR | \fB--compile\fR ] [ \fB-r\fR | \fB--no-resolve\fR ] [ \fB-t \fItarget\fB\fR | \fB--target=\fItarget\fB\fR ] [ \fB-o \fIoutfile\fB\fR | \fB--output=\fIoutfile\fB\fR ] [ \fB-F \fIpolicy\fB\fR | \fB--flush=\fIpolicy\fB\fR ]
+\fBfiltergen\fR [ \fB-h\fR | \fB--help\fR ] [ \fB-V\fR | \fB--version\fR ] [ \fB-c\fR | \fB--compile\fR ] [ \fB-r\fR | \fB--no-resolve\fR ] [ \fB-s \fIsource\fB\fR | \fB--source=\fIsource\fB\fR ] [ \fB-t \fItarget\fB\fR | \fB--target=\fItarget\fB\fR ] [ \fB-o \fIoutfile\fB\fR | \fB--output=\fIoutfile\fB\fR ] [ \fB-F \fIpolicy\fB\fR | \fB--flush=\fIpolicy\fB\fR ]
 
 .SH DESCRIPTION
 
@@ -44,11 +44,19 @@ affect what you let through or block on your packet filter.  Use with
 caution.
 
 .TP
+\fB-s \fIsource\fB, --source=\fIsource\fB\fR
+
+If specified, \fBfiltergen\fR will use the \fIsource\fR language
+parser to read the input file, otherwise the default of
+\fBfiltergen\fR will be used.  Supported source languages are
+\fBfiltergen\fR.
+
+.TP
 \fB-t \fItarget-filter\fB, --target=\fItarget-filter\fB\fR
 
 If specified, \fItarget-filter\fR will be used to select an output
 filter type, otherwise the default of \fBiptables\fR will be used.
-Supported backends are \fBiptables\fR, \fBipchains\fR, \fBipfilter\fR
+Supported backends are \fBiptables\fR, \fBipchains\fR, \fBipfilter\fR,
 \fBcisco\fR (for Cisco IOS access-lists), and \fBfiltergen\fR (to
 re-emit the input in \fBfiltergen\fR's native syntax).
 
