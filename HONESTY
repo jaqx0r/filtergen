@@ -12,7 +12,11 @@ STATUS
 Hard to tell.  I believe that the iptables and ipchains drivers
 support all the features of the parser and seem to generate sane-
 looking rules.  The ipfilter backend seems to generate OK-looking
-rules, but I don't even have a BSD box to test it on.
+rules, but I don't have a BSD box to test it on.
+
+The language is likely to evolve as more features are implemented.
+Specifically, I'd like it to express fundamental filtering and
+networking concepts, rather than being an iptables macro language.
 
 The Cisco ACL generator will silently drop negations, which makes
 is essentially useless for a lot of things.  This will be fixed,
@@ -26,4 +30,10 @@ working well.  But "working well" does not imply security, and I
 have not expended a great deal of effort in auditing.
 
 
-$Id: HONESTY,v 1.4 2001/10/06 18:55:36 matthew Exp $
+STOP PRESS!
+
+The iptables driver _does_ leak.  iptables is a pain in the arse,
+but I hope to have this sorted out shortly.
+
+
+$Id: HONESTY,v 1.5 2001/10/09 10:01:17 matthew Exp $
