@@ -1,0 +1,28 @@
+( input eth0
+  child
+  ( dest foo
+    child
+    ( proto tcp
+      child
+      ( accept
+       )
+     )
+   )
+  next
+  ( input eth0
+    child
+    ( dest foo
+      child
+      ( siblist
+        ( proto tcp
+          next
+          ( proto udp
+           )
+         )
+        child
+        ( accept
+         )
+       )
+     )
+   )
+ )

@@ -214,6 +214,86 @@ struct filter * convert_host_specifier(struct host_specifier_s * n) {
     return res;        
 }
 
+struct filter * convert_port_argument(struct simple_port_argument_s * n, int type) {
+    struct filter * res = NULL;
+
+    eprint("converting simple_port_argument\n");
+
+    if (n->port) {
+        if (n->port->port) {
+            res = new_filter_port(type, n->port->port);
+        } else {
+            printf("error: no port identifier\n");
+        }
+    } else {
+        printf("error: no port part\n");
+    }
+
+    return res;
+}
+
+struct filter * convert_port_argument_list(struct port_argument_list_s * n, int type) {
+    struct filter * res = NULL, * end = NULL;
+
+    eprint("converting port argument list\n");
+
+    if (n->list) {
+        res = convert_port_argument_list(n->list, type);
+        if (res) {
+            end = res;
+            while (end->next) {
+                end = end->next;
+            }
+            if (n->arg) {
+                end->next = convert_port_argument(n->arg, type);
+            }
+        } else {
+            printf("warning: convert_port_argument_list returned NULL\n");
+        }
+    } else {
+        res = convert_port_argument(n->arg, type);
+    }
+
+    return res;
+}
+
+struct filter * convert_port_specifier(struct port_specifier_s * n) {
+    struct filter * res = NULL;
+    enum filtertype type;
+	
+    eprint("converting port specifier\n");
+
+    switch (n->type) {
+    case TOK_SOURCE:
+        type = F_SOURCE;
+        break;
+    case TOK_DEST:
+        type = F_DEST;
+        break;
+    default:
+        printf("error: incorrect port type encountered\n");
+        type = YYEOF;
+        break;
+    }
+    if (n->arg) {
+        if (n->arg->simple) {
+            res = convert_port_argument(n->arg->simple, type);
+        } else if (n->arg->compound) {
+            if (n->arg->compound->list) {
+                res = new_filter_sibs(convert_port_argument_list(n->arg->compound->list, type));
+            } else {
+                printf("error: no port argument (compound) list\n");
+            }
+        } else {
+            printf("error: neither simple nor compound argument\n");
+        }
+    } else {
+        printf("error: no port argument\n");
+    }
+
+    return res;        
+}
+
 struct filter * convert_specifier(struct specifier_s * r) {
     struct filter * res = NULL;
     eprint("converting specifier\n");
@@ -256,8 +336,7 @@ struct filter * convert_specifier(struct specifier_s * r) {
     } else if (r->host) {
         res = convert_host_specifier(r->host);
     } else if (r->port) {
-      eprint("converting port specifier\n");
-	res = new_filter_ports(F_SPORT, "bar");
+        res = convert_port_specifier(r->port);
     } else if (r->protocol) {
       eprint("converting proto specifier\n");
 	res = new_filter_proto(F_PROTO, "53");

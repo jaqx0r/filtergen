@@ -1,0 +1,3 @@
+# convert protocols
+input eth0 dest foo proto tcp accept;
+input eth0 dest foo proto { tcp udp } accept;
