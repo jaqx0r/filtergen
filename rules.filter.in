@@ -1,6 +1,6 @@
 # @sysconfdir@/rules.filter
 
-# Please read @pkgdocdir@/*.filter for
+# Please read @pkgexdir@/*.filter for
 # more comprehensive filter examples.
 
 # allow all traffic on the loopback interface

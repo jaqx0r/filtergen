@@ -80,9 +80,9 @@ test "$exec_prefix" = "NONE" && exec_prefix=$prefix
 eval SYSCONFDIR="$sysconfdir"
 AC_SUBST(SYSCONFDIR)
 
-eval pkgdocdir="$datadir/doc/$PACKAGE"
-AC_SUBST(pkgdocdir)
-AC_DEFINE_UNQUOTED(PKGDOCDIR, "$pkgdocdir", [Define this to be the path to system documentation])
+eval pkgexdir="$datadir/doc/$PACKAGE/examples"
+AC_SUBST(pkgexdir)
+AC_DEFINE_UNQUOTED(PKGEXDIR, "$pkgexdir", [Define this to be the path to filtergen example scripts])
 
 dnl ----------------------------------------------------------
 dnl configuration tests complete, provide a summary of results
