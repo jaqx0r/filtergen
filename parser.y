@@ -9,6 +9,8 @@
 
 void yyerror(char * s);
 extern int yylex(void);
+
+#define YYPRINT(f, t, v) yyprint(f, t, v)
 %}
 %debug
 %union {
@@ -46,51 +48,105 @@ extern int yylex(void);
 %token TOK_ERR
 %token TOK_BANG
 %token TOK_COLON
-
+%{
+int yyprint(FILE * f, int t, YYSTYPE v);
+%}
 %%
 rule_list: /* empty */
 	| rule_list rule
 	;
 
-rule:	  TOK_SEMICOLON
-	| crap TOK_SEMICOLON
-	| list TOK_SEMICOLON
-	| crap list TOK_SEMICOLON
-	| list crap TOK_SEMICOLON
-	| crap list crap TOK_SEMICOLON
+rule:	  specifier_list TOK_SEMICOLON
 	;
 
-list:	  TOK_LCURLY rule TOK_RCURLY
+specifier_list: /* empty */
+	| specifier_list negated_specifier
 	;
 
-crap:	  /* empty */
-	| crap TOK_ACCEPT
-	| crap TOK_DEST
-	| crap TOK_DPORT
-	| crap TOK_DROP
-	| crap TOK_FORWARD
-	| crap TOK_ICMPTYPE
-	| crap TOK_INPUT
-	| crap TOK_LOCAL
-	| crap TOK_LOG
-	| crap TOK_MASQ
-	| crap TOK_OUTPUT
-	| crap TOK_PROTO
-	| crap TOK_PROXY
-	| crap TOK_REDIRECT
-	| crap TOK_REJECT
-	| crap TOK_SOURCE
-	| crap TOK_SPORT
-	| crap TOK_STRINGLITERAL
-	| crap TOK_TEXT
-	| crap TOK_IDENTIFIER
-	| crap TOK_NUMBER
-	| crap TOK_DOT
-	| crap TOK_SLASH
-	| crap TOK_BANG
-	| crap TOK_COLON
+specifier: compound_specifier
+	| direction_specifier
+	| target_specifier
+	| host_specifier
+	| port_specifier
+	| protocol_specifier
+	| icmptype_specifier
 	;
-	
+
+negated_specifier: specifier
+	| TOK_BANG specifier
+	;
+
+direction_specifier: TOK_INPUT direction_argument
+	| TOK_OUTPUT direction_argument
+	;
+
+target_specifier: TOK_ACCEPT
+	| TOK_REJECT
+	| TOK_DROP
+	| TOK_FORWARD
+	| TOK_MASQ
+	| TOK_PROXY
+	| TOK_REDIRECT
+	| log_target_specifier
+	;
+
+log_target_specifier: TOK_LOG
+	| TOK_LOG TOK_TEXT log_text_argument
+	;
+
+host_specifier: TOK_SOURCE host_argument
+	| TOK_DEST host_argument
+	;
+
+port_specifier: TOK_SPORT port_argument_or_list
+	| TOK_DPORT port_argument_or_list
+	;
+
+protocol_specifier: TOK_PROTO protocol_argument
+	;
+
+icmptype_specifier: TOK_ICMPTYPE icmptype_argument;
+	;
+
+/* dunno what to do with this one
+	| TOK_LOCAL
+	;
+*/
+
+compound_specifier: TOK_LCURLY compound_specifier_list TOK_RCURLY
+	;
+
+compound_specifier_list: specifier
+	| compound_specifier_list TOK_SEMICOLON specifier
+	;
+
+direction_argument: TOK_IDENTIFIER
+	;
+
+log_text_argument: TOK_STRINGLITERAL
+	;
+
+host_argument: TOK_IDENTIFIER
+	| TOK_IDENTIFIER TOK_SLASH TOK_NUMBER
+	;
+
+port_argument_or_list: port_argument
+	| TOK_LCURLY port_argument_list TOK_RCURLY
+	;
+
+port_argument_list: port_argument
+	| port_argument_list port_argument
+	;
+
+port_argument: TOK_IDENTIFIER
+	| TOK_NUMBER
+	;
+
+protocol_argument: TOK_IDENTIFIER
+	;
+
+icmptype_argument: TOK_IDENTIFIER
+	;
 
 /*
 accept;
@@ -277,7 +333,13 @@ RCURLY SEMICOLON
 %%
 char * filename();
 long int lineno();
+extern char * yytext;
 
 void yyerror(char * s) {
-	fprintf(stderr, "%s:%ld: error: %s\n", filename(), lineno(), s);
+	fprintf(stderr, "%s:%ld: %s\n", filename(), lineno(), s);
+}
+
+int yyprint(FILE * f, int type, YYSTYPE v) {
+	fprintf(f, "%s", yytext);
+	return 0;
 }

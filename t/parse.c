@@ -3,10 +3,9 @@
 
 extern char * yytext;
 int yyparse();
+extern int yydebug;
 
 /* void emit(); */
-
-extern int yydebug;
 
 int main(int argc, char ** argv) {
     int c;
