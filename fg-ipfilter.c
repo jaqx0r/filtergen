@@ -1,7 +1,7 @@
 /*
  * Filter generator, ipfilter driver
  *
- * $Id: fg-ipfilter.c,v 1.9 2002/08/20 17:29:07 matthew Exp $
+ * $Id: fg-ipfilter.c,v 1.10 2002/08/20 22:54:38 matthew Exp $
  */
 
 /* TODO:
@@ -16,27 +16,24 @@
 #include "filter.h"
 #include "util.h"
 
-static char *appip(char *r, const char *h)
+static char *appip(char *r, const struct addr_spec *h)
 {
-	if(!h) return APPS(r, "any");
-	return APPS(r, h);
+	if(!h->addrstr) return APPS(r, "any");
+	APPS(r, h->addrstr);
+	if(h->maskstr) APP2(r, "/", h->maskstr);
+	return r;
 }
 
-static char *appport(char *r, const char *p, int neg)
+static char *appport(char *r, const struct port_spec *p, int neg)
 {
-	char *f;
-	if(!p) return r;
+	if(!p->minstr) return r;
 
 	APPS(r, "port");
-	if(!(f = strchr(p, ':')))
-		return APPSS2(r, neg ? "!=" : "=", p);
+	if(!p->maxstr)
+		return APPSS2(r, neg ? "!=" : "=", p->minstr);
 
-	/* XXX - const? hardly :-) */
-	*f = 0;
-
-	APPS(r, p);
-	APPSS2(r, neg ? "><" : "<>", f+1);
-	*f = ':';
+	APPS(r, p->minstr);
+	APPSS2(r, neg ? "><" : "<>", p->maxstr);
 	return r;
 }
 
@@ -89,11 +86,11 @@ static int cb_ipfilter_rule(const struct filterent *ent, struct fg_misc *misc)
 		APPSS2(rule, "proto", ent->proto.name);
 
 	APPS(rule, "from");
-	rule = appip(rule, ent->srcaddr);
-	rule = appport(rule, ent->u.ports.src, NEG(SPORT));
+	rule = appip(rule, &ent->srcaddr);
+	rule = appport(rule, &ent->u.ports.src, NEG(SPORT));
 	APPS(rule, "to");
-	rule = appip(rule, ent->dstaddr);
-	rule = appport(rule, ent->u.ports.dst, NEG(DPORT));
+	rule = appip(rule, &ent->dstaddr);
+	rule = appport(rule, &ent->u.ports.dst, NEG(DPORT));
 
 	rule = appicmp(rule, ent->u.icmp, NEG(ICMPTYPE));
 
@@ -114,5 +111,6 @@ int fg_ipfilter(struct filter *filter, int flags)
 
 	filter_nogroup(filter);
 	filter_unroll(&filter);
+	filter_apply_flags(filter, flags);
 	return filtergen_cprod(filter, &cb_ipfilter, &misc);
 }

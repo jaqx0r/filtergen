@@ -1,7 +1,7 @@
 /*
  * filter compilation routines
  *
- * $Id: gen.c,v 1.12 2002/08/20 17:29:08 matthew Exp $
+ * $Id: gen.c,v 1.13 2002/08/20 22:54:38 matthew Exp $
  */
 
 #include <stdio.h>
@@ -21,10 +21,10 @@ void applydefaults(struct filterent *e, long flags)
 int checkmatch(const struct filterent *e)
 {
 	int r = 0;
-#define	MUST(t)							\
-	do if(!(e->t)) {					\
-		fprintf(stderr, #t " missing from filter\n");	\
-		r++;						\
+#define	MUST(t)								\
+	do if(!(e->t)) {						\
+		fprintf(stderr, "%s missing from filter\n", #t);	\
+		r++;							\
 	} while(0)
 	if(!e->subgroup)
 		MUST(target);
@@ -34,7 +34,7 @@ int checkmatch(const struct filterent *e)
 	}
 #undef MUST
 
-	if((e->u.ports.src || e->u.ports.dst)
+	if((e->u.ports.src.minstr || e->u.ports.dst.minstr)
 	&& (e->proto.num != IPPROTO_TCP) && (e->proto.num != IPPROTO_UDP)) {
 		fprintf(stderr, "can only use ports with tcp or udp\n");
 		r++;
@@ -78,11 +78,12 @@ int __fg_apply(struct filterent *_e, const struct filter *f,
 int __fg_applyone(struct filterent *e, const struct filter *f,
 		fg_callback *cb, struct fg_misc *misc)
 {
-#define NA(t)							\
-	if(e->t) {						\
-		fprintf(stderr, "filter has already defined a " #t "\n"); \
+#define _NA(t,f)						\
+	if(e->f) {						\
+		fprintf(stderr, "filter has already defined a %s\n", t); \
 		return -1;					\
 	}
+#define NA(t)	_NA(#t,t)
 
 	switch(f->type) {
 	case F_TARGET:
@@ -124,21 +125,15 @@ int __fg_applyone(struct filterent *e, const struct filter *f,
 
 	case F_LOG: e->log = f->u.log; break;
 
-	case F_PROTO:
-		if(e->proto.name) {
-			fprintf(stderr, "filter has already defined a protocol\n");
-			return -1;
-		}
-		e->proto.num = f->u.proto.num;
-		e->proto.name = f->u.proto.name;
-		break;
+#define	_DV(tag, str, test, targ, source)						\
+	case F_ ## tag: _NA(str, test); e->targ = f->u.source; break
+#define	DV(tag, targ, source) _DV(tag, #targ, targ, targ, source)
 
-#define	DV(n, v, p)						\
-	case F_ ## n: NA(v); e->v = f->u.p; break;
-	DV(SOURCE, srcaddr, addrs);
-	DV(DEST, dstaddr, addrs);
-	DV(SPORT, u.ports.src, ports);
-	DV(DPORT, u.ports.dst, ports);
+	_DV(PROTO, "protocol", proto.name, proto, proto);
+	_DV(SOURCE, "source address", srcaddr.addrstr, srcaddr, addrs);
+	_DV(DEST, "destination address", dstaddr.addrstr, dstaddr, addrs);
+	_DV(SPORT, "source port", u.ports.src.minstr, u.ports.src, ports);
+	_DV(DPORT, "destination port", u.ports.src.maxstr, u.ports.dst, ports);
 	DV(ICMPTYPE, u.icmp, icmp);
 	DV(RTYPE, rtype, rtype);
 
@@ -147,7 +142,6 @@ int __fg_applyone(struct filterent *e, const struct filter *f,
 
 	default: abort();
 	}
-#undef NA
 
 	if(f->negate)
 		e->whats_negated |= (1 << f->type);

@@ -17,9 +17,8 @@ There's a basic webpage at http://hairy.beasts.org/filter/
 
 WARNING!
 
-This package isn't perfect.  There are a couple of bugs that I'm working
-on.  Nevertheless, I don't believe that the ipchains or iptables drivers
-leak packets (though I'm less confident of the latter).
+This package isn't perfect.  Nevertheless, I don't believe that the
+ipchains or iptables drivers leak packets.
 
 
 LICENCE
@@ -41,7 +40,7 @@ Similarly, it seems odd that people continue to write packet filters
 in the equivalent of assembler, or in inflexible macro languages.
 
 Hence this package -- my intent is that "filter" will be to iptables
-and shell what a C compiler is to assembly.
+and shell what a C compiler (but not a 4GL) is to assembly.
 
 
 USAGE
@@ -162,4 +161,4 @@ to permit or refuse a connection -- it acts only on single packets,
 and is not really able to reason about connections (whatever the blurb
 claims).  It also matches the terminology used by Linux's iptables.
 
-$Id: README,v 1.8 2001/11/04 22:43:55 matthew Exp $
+$Id: README,v 1.9 2002/08/20 22:54:38 matthew Exp $

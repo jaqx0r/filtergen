@@ -1,7 +1,7 @@
 /*
  * Filter generator, Cisco IOS driver
  *
- * $Id: fg-cisco.c,v 1.10 2002/08/20 17:29:07 matthew Exp $
+ * $Id: fg-cisco.c,v 1.11 2002/08/20 22:54:38 matthew Exp $
  */
 
 /* XXX - does this need skeleton rules? */
@@ -13,30 +13,23 @@
 #include "filter.h"
 #include "util.h"
 
-static char *appip(char *r, const char *h)
+static char *appip(char *r, const struct addr_spec *h)
 {
-	if(!h) return APPS(r, "any");
-
-	/* XXX - split netmask, don't expect host */
-	return APPS2(r, "host ", h);
+	if(!h->addrstr) return APPS(r, "any");
+	if(!h->maskstr) return APPS2(r, "host ", h->addrstr);
+	return APPSS2(r, h->addrstr, h->maskstr);
 }
 
-static char *appport(char *r, const char *p, int neg)
+static char *appport(char *r, const struct port_spec *p, int neg)
 {
-	char *f;
+	if(!p->minstr) return APPS(r, "any");
 
-	if(!p) return APPS(r, "any");
-
-	if(!(f = strchr(p, ':')))
-		return APPS2(r, neg ? "ne " : "eq ", p);
-
-	/* XXX - const? hardly :-) */
-	*f = 0;
+	if(!p->maxstr)
+		return APPS2(r, neg ? "ne " : "eq ", p->minstr);
 
 	if(neg) abort();
 	APPS(r, "range");
-	APPSS2(r, p, f+1);
-	*f = ':';
+	APPSS2(r, p->minstr, p->maxstr);
 	return r;
 }
 
@@ -82,16 +75,16 @@ static int cb_cisco_rule(const struct filterent *ent, struct fg_misc *misc)
 		APPS(rule, "ip"); APPS(rule_r, "ip");
 	}
 
-	rule = appip(rule, ent->srcaddr);
-	rule = appip(rule, ent->dstaddr);
-	rule_r = appip(rule_r, ent->dstaddr);
-	rule_r = appip(rule_r, ent->srcaddr);
+	rule = appip(rule, &ent->srcaddr);
+	rule = appip(rule, &ent->dstaddr);
+	rule_r = appip(rule_r, &ent->dstaddr);
+	rule_r = appip(rule_r, &ent->srcaddr);
 
 	if(needports) {
-		rule = appport(rule, ent->u.ports.src, NEG(SPORT));
-		rule = appport(rule, ent->u.ports.dst, NEG(DPORT));
-		rule_r = appport(rule_r, ent->u.ports.dst, NEG(DPORT));
-		rule_r = appport(rule_r, ent->u.ports.src, NEG(SPORT));
+		rule = appport(rule, &ent->u.ports.src, NEG(SPORT));
+		rule = appport(rule, &ent->u.ports.dst, NEG(DPORT));
+		rule_r = appport(rule_r, &ent->u.ports.dst, NEG(DPORT));
+		rule_r = appport(rule_r, &ent->u.ports.src, NEG(SPORT));
 	}
 
 	if(ent->proto.num == IPPROTO_TCP) APPS(rule_r, "established");
@@ -114,5 +107,6 @@ int fg_cisco(struct filter *filter, int flags)
 		"can generate broken rulesets.");
 	filter_nogroup(filter);
 	filter_unroll(&filter);
+	filter_apply_flags(filter, flags);
 	return filtergen_cprod(filter, &cb_cisco, &misc);
 }

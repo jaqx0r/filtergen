@@ -3,7 +3,7 @@
  *
  * XXX - maybe some of this could be shared with the iptables one?
  *
- * $Id: fg-ipchains.c,v 1.21 2002/08/20 17:29:07 matthew Exp $
+ * $Id: fg-ipchains.c,v 1.22 2002/08/20 22:54:38 matthew Exp $
  */
 
 #include <stdio.h>
@@ -11,6 +11,26 @@
 
 #include "filter.h"
 #include "util.h"
+
+
+static char *appip(char *r, const struct addr_spec *h)
+{
+	APPS(r, h->addrstr);
+	if(h->maskstr) APP2(r, "/", h->maskstr);
+	return r;
+}
+#define	APPIP(r, h)	(r = appip(r, h))
+#define	APPIP2(f, r, h)	(APPS(r, f), APPIP(r, h))
+
+
+static char *appport(char *r, const struct port_spec *h)
+{
+	APPS(r, h->minstr);
+	if(h->maxstr) APP2(r, ":", h->maxstr);
+	return r;
+}
+#define	APPPORT(r, h)		(r = appport(r, h))
+#define	APPPORT2(f, r, h)	(APPS(r, f), APPPORT(r, h))
 
 
 static int cb_ipchains_rule(const struct filterent *ent, struct fg_misc *misc)
@@ -73,29 +93,31 @@ static int cb_ipchains_rule(const struct filterent *ent, struct fg_misc *misc)
 		}
 	}
 
-	if(ent->srcaddr) {
+	if(ent->srcaddr.addrstr) {
 		NEGA(rule, SOURCE); NEGA(rule_r, SOURCE);
-		APPSS2(rule, "-s", ent->srcaddr);
-		APPSS2(rule_r, "-d", ent->srcaddr);
+		APPIP2("-s", rule, &ent->srcaddr);
+		APPIP2("-d", rule_r, &ent->srcaddr);
 	}
-	if(ent->dstaddr) {
+	if(ent->dstaddr.addrstr) {
 		NEGA(rule, DEST); NEGA(rule_r, DEST);
-		APPSS2(rule, "-d", ent->dstaddr);
-		APPSS2(rule_r, "-s", ent->dstaddr);
+		APPIP2("-d", rule, &ent->dstaddr);
+		APPIP2("-s", rule_r, &ent->dstaddr);
 	}
 
 	switch(ent->proto.num) {
 	case 0: break;
 	case IPPROTO_UDP: case IPPROTO_TCP:
-		if(ent->u.ports.src) {
-			NEGA(rule, SPORT); NEGA(rule_r, SPORT);
-			APPSS2(rule, "--sport", ent->u.ports.src);
-			APPSS2(rule_r, "--dport", ent->u.ports.src);
+		if(ent->u.ports.src.minstr) {
+			NEGA(rule, SPORT);
+			NEGA(rule_r, SPORT);
+			APPPORT2("--sport", rule, &ent->u.ports.src);
+			APPPORT2("--dport", rule_r, &ent->u.ports.src);
 		}
-		if(ent->u.ports.dst) {
-			NEGA(rule, DPORT); NEGA(rule_r, DPORT);
-			APPSS2(rule, "--dport", ent->u.ports.dst);
-			APPSS2(rule_r, "--sport", ent->u.ports.dst);
+		if(ent->u.ports.dst.minstr) {
+			NEGA(rule, DPORT);
+			NEGA(rule_r, DPORT);
+			APPPORT2("--dport", rule, &ent->u.ports.dst);
+			APPPORT2("--sport", rule_r, &ent->u.ports.dst);
 		}
 		break;
 	case IPPROTO_ICMP:
@@ -155,6 +177,7 @@ int fg_ipchains(struct filter *filter, int flags)
 	};
 
 	filter_unroll(&filter);
+	filter_apply_flags(filter, flags);
 	if(!(flags & FF_NOSKEL)) {
 		oputs("for f in INPUT OUTPUT FORWARD; do ipchains -P $f DENY; done");
 		oputs("ipchains -F; ipchains -X");

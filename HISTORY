@@ -1,6 +1,10 @@
 recent:
 	fix install target to install section 7 manpages too
-	do protocol lookups properly
+	do protocol lookups properly, support protocol numbers
+	lookup/normalise service names
+	force normalisation of netmasks
+	add "-m" to force service and host names and to be
+		turned into port numbers and IP addresses
 
 0.8:
 	cleanup for iptables and ipchains to save reallocs
@@ -64,4 +68,4 @@ recent:
 	iptables driver
 	a few bugs
 
-$Id: HISTORY,v 1.34 2002/08/20 17:29:07 matthew Exp $
+$Id: HISTORY,v 1.35 2002/08/20 22:54:38 matthew Exp $
