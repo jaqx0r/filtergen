@@ -57,7 +57,8 @@ id	[[:alnum:]_+-\.\/]+
                 return TOK_IDENTIFIER;
                 }
 
--A	return TOK_IPTS_CHAIN_APPEND;
+-A		return TOK_IPTS_CHAIN_APPEND;
+--append	return TOK_IPTS_CHAIN_APPEND;
 
 -p		return TOK_IPTS_PROTOCOL;
 --protocol	return TOK_IPTS_PROTOCOL;
