@@ -3,7 +3,7 @@
  *
  * XXX - maybe some of this could be shared with the iptables one?
  *
- * $Id: fg-ipchains.c,v 1.20 2002/07/31 22:37:05 matthew Exp $
+ * $Id: fg-ipchains.c,v 1.21 2002/08/20 17:29:07 matthew Exp $
  */
 
 #include <stdio.h>
@@ -61,23 +61,16 @@ static int cb_ipchains_rule(const struct filterent *ent, struct fg_misc *misc)
 	}
 
 	/* state and reverse rules here */
-	switch(ent->proto) {
-	case 0:	break;
-	case TCP:
-		needret++;
-		APPSS2(rule, "-p", "tcp");
-		APPSS2(rule_r, "-p", "tcp");
-		APPS(rule_r, "! --syn");
-		break;
-	case UDP:
-		needret++;
-		APPSS2(rule, "-p", "udp");
-		APPSS2(rule_r, "-p", "udp");
-		break;
-	case ICMP:
-		APPSS2(rule, "-p", "icmp");
-		break;
-	default: abort();
+	if(ent->proto.name) {
+		APPSS2(rule, "-p", ent->proto.name);
+		APPSS2(rule_r, "-p", ent->proto.name);
+		switch(ent->proto.num) {
+		case IPPROTO_TCP:
+			APPS(rule_r, "! --syn");
+			/* fall through */
+		case IPPROTO_UDP:
+			needret++;
+		}
 	}
 
 	if(ent->srcaddr) {
@@ -91,9 +84,9 @@ static int cb_ipchains_rule(const struct filterent *ent, struct fg_misc *misc)
 		APPSS2(rule_r, "-s", ent->dstaddr);
 	}
 
-	switch(ent->proto) {
+	switch(ent->proto.num) {
 	case 0: break;
-	case UDP: case TCP:
+	case IPPROTO_UDP: case IPPROTO_TCP:
 		if(ent->u.ports.src) {
 			NEGA(rule, SPORT); NEGA(rule_r, SPORT);
 			APPSS2(rule, "--sport", ent->u.ports.src);
@@ -105,7 +98,7 @@ static int cb_ipchains_rule(const struct filterent *ent, struct fg_misc *misc)
 			APPSS2(rule_r, "--sport", ent->u.ports.dst);
 		}
 		break;
-	case ICMP:
+	case IPPROTO_ICMP:
 		if(ent->u.icmp) {
 			NEGA(rule, ICMPTYPE);
 			APPSS2(rule, "--icmp-type", ent->u.icmp);

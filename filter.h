@@ -1,4 +1,4 @@
-/* $Id: filter.h,v 1.14 2002/07/18 21:20:02 matthew Exp $ */
+/* $Id: filter.h,v 1.15 2002/08/20 17:29:08 matthew Exp $ */
 #ifndef _FK_FILTER_H
 #define _FK_FILTER_H
 
@@ -17,7 +17,6 @@ enum filtertype {
 	OPENBRACKET, CLOSEBRACKET,
 	SEMICOLON, STRING,
 	INCLUDE,
-	TCP, UDP, ICMP,			/* for F_PROTO */
 	LOCALONLY, ROUTEDONLY,		/* for F_RTYPE */
 	F_INPUT, F_OUTPUT,
 	F_ACCEPT, F_DROP, F_REJECT,
@@ -44,7 +43,10 @@ struct filter {
 		char *addrs;
 		char *ports;
 		char *icmp;
-		enum filtertype proto;
+		struct {
+			int num;
+			char *name;
+		} proto;
 		struct filter *neg;
 		struct filter *sib;
 		struct {
@@ -66,8 +68,7 @@ struct filter *new_filter_neg(struct filter *sub);
 struct filter *new_filter_sibs(struct filter *list);
 struct filter *new_filter_subgroup(char *name, struct filter *list);
 typedef struct filter *filter_ctor(enum filtertype, const char*);
-filter_ctor new_filter_device, new_filter_host, new_filter_ports, new_filter_icmp;
-filter_tctor new_filter_proto;
+filter_ctor new_filter_device, new_filter_host, new_filter_ports, new_filter_icmp, new_filter_proto;
 
 /* filter manipulations */
 void filter_unroll(struct filter **f);
@@ -95,7 +96,10 @@ struct filterent {
 	char *srcaddr, *dstaddr;
 
 	enum filtertype rtype;
-	enum filtertype proto;
+	struct {
+		int num;
+		char *name;
+	} proto;
 	enum filtertype log;
 
 

@@ -2,7 +2,7 @@
 /*
  * lexer/parser for packet filtering rules
  *
- * $Id: filterlex.l,v 1.10 2002/07/21 12:35:39 matthew Exp $
+ * $Id: filterlex.l,v 1.11 2002/08/20 17:29:08 matthew Exp $
  */
 
 #include <sys/types.h>
@@ -60,9 +60,6 @@ input		{ return F_INPUT; }
 output		{ return F_OUTPUT; }
 
 proto		{ return F_PROTO; }
-tcp		{ return TCP; }
-udp		{ return UDP; }
-icmp		{ return ICMP; }
 
 source		{ return F_SOURCE; }
 dest		{ return F_DEST; }
@@ -166,20 +163,20 @@ static struct filter *filter_parse_subgroup(void)
 
 
 static struct filter *filter_parse_group(enum filtertype itok,
-			filter_tctor *tctor, filter_ctor *ctor)
+			filter_ctor *ctor)
 {
 	enum filtertype tok;
 	struct filter *res = NULL, *end = NULL, *cur;
 
-	if(!tctor && !ctor) abort();
+	if(!ctor) abort();
 
 	tok = filter_yylex();
 	if(tok != OPENBRACE)
-		return ctor ? ctor(itok, yytext) : tctor(tok);
+		return ctor(itok, yytext);
 
 	tok = filter_yylex();
 	do {
-		cur = ctor ? ctor(itok, yytext) : tctor(tok);
+		cur = ctor(itok, yytext);
 		if(end)	end->next = cur;
 		else	res = cur;
 		end = cur;
@@ -200,20 +197,20 @@ static struct filter *filter_parse_single(void)
 	switch(tok) {
 	case F_NEG: return new_filter_neg(filter_parse_single());
 	case F_INPUT: case F_OUTPUT:
-		return filter_parse_group(tok, NULL, new_filter_device);
+		return filter_parse_group(tok, new_filter_device);
 	case F_ACCEPT: case F_DROP: case F_REJECT:
 	case F_MASQ: case F_REDIRECT:
 		return new_filter_target(tok);
 	case F_LOG:
 		return new_filter_log(tok);
 	case F_SOURCE: case F_DEST:
-		return filter_parse_group(tok, NULL, new_filter_host);
+		return filter_parse_group(tok, new_filter_host);
 	case F_SPORT: case F_DPORT:
-		return filter_parse_group(tok, NULL, new_filter_ports);
+		return filter_parse_group(tok, new_filter_ports);
 	case F_ICMPTYPE:
-		return filter_parse_group(tok, NULL, new_filter_icmp);
+		return filter_parse_group(tok, new_filter_icmp);
 	case F_PROTO:
-		return filter_parse_group(tok, new_filter_proto, NULL);
+		return filter_parse_group(tok, new_filter_proto);
 	case LOCALONLY: case ROUTEDONLY:
 		return new_filter_rtype(tok);
 	case OPENBRACE:
