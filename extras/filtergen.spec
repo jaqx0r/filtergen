@@ -28,9 +28,9 @@ make CFLAGS="${RPM_OPT_FLAGS}" LDFLAGS="-lfl"
 rm -rf $RPM_BUILD_ROOT
 make PREFIX=${RPM_BUILD_ROOT}/usr BINDIR=${RPM_BUILD_ROOT}/sbin install
 install -d ${RPM_BUILD_ROOT}/etc/init.d
-install extras/filter.init ${RPM_BUILD_ROOT}/etc/init.d/filter
+install -m755 extras/filter.init ${RPM_BUILD_ROOT}/etc/init.d/filter
 install -d ${RPM_BUILD_ROOT}/etc/filter
-install extras/etc-filter-Makefile ${RPM_BUILD_ROOT}/etc/filter
+install extras/etc-filter-Makefile ${RPM_BUILD_ROOT}/etc/filter/Makefile
 
 %post
 /sbin/chkconfig --add filter

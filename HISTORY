@@ -4,6 +4,8 @@ recent:
 	fixed iptables and ipchains brace-grouping
 	fix filter_unroll loop-making bug
 	add RPM spec file from Wil Cooley <wcooley@nakedape.cc>
+	rename package to "filtergen"
+	add init scripts and makefile
 
 0.9:
 	fix install target to install section 7 manpages too
@@ -75,4 +77,4 @@ recent:
 	iptables driver
 	a few bugs
 
-$Id: HISTORY,v 1.39 2002/09/02 12:53:06 matthew Exp $
+$Id: HISTORY,v 1.40 2002/09/02 13:18:44 matthew Exp $
