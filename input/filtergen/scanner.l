@@ -1,5 +1,7 @@
 %option noyywrap
 %option nounput
+%option prefix="filtergen_"
+%option yylineno
 %x include
 %{
 /* input scanner for filtergen language
@@ -78,7 +80,7 @@ id      {word}|({word})?:(({word})?:)+({word})?
 		 * characters in this regex are ", otherwise there's a bug
 		 * in flex...  The result is somethign that is syntactically
 		 * identical to an identifier for our purposes. */
-		yylval.u_str = strndup(yytext + 1, yyleng - 2);
+		filtergen_lval.u_str = strndup(filtergen_text + 1, filtergen_leng - 2);
 		return TOK_IDENTIFIER;
              }
 
@@ -117,8 +119,8 @@ text         return TOK_TEXT;
 "!"          return TOK_BANG;
 "*"          return TOK_STAR;
 
-{id}		{
-			yylval.u_str = strndup(yytext, yyleng);
+{id}(\.{id})*	{
+			filtergen_lval.u_str = strndup(filtergen_text, filtergen_leng);
 			return TOK_IDENTIFIER;
 		}
 
@@ -128,7 +130,7 @@ text         return TOK_TEXT;
 
 <include>[ \t]*       /* eat whitespace after include */
 <include>[^ \t\n;]+    { /* include file name */
-			  char * name = strdup(yytext);
+			  char * name = strdup(filtergen_text);
               if (name == NULL) {
                 scan_err("warning: internal error trying to alloc for include of %s: %s", yytext, strerror(errno));
               } else {
@@ -153,24 +155,25 @@ text         return TOK_TEXT;
 			}
 %%
 
-long int lineno(void) {
-  return inc_stack[inc_stackptr].lineno;
+/*
+long int filtergen_lineno() {
+	return inc_stack[inc_stackptr].lineno;
 }
+*/
 
-const char *filename(void) {
-  return inc_stack[inc_stackptr].filename ? inc_stack[inc_stackptr].filename
+const char * filtergen_filename(void) {
+    return inc_stack[inc_stackptr].filename ? inc_stack[inc_stackptr].filename
                                           : kStandardInput;
 }
 
 static void scan_err(const char *fmt, ...) {
   va_list args;
 
-  va_start(args, fmt);
-  if (inc_stackptr >= 0) {
-    fprintf(stderr, "%s:%ld: ", filename(), lineno());
-  }
-  vfprintf(stderr, fmt, args);
-  fprintf(stderr, "\n");
+    va_start(args, fmt);
+    if (inc_stackptr >= 0)
+	fprintf(stderr, "%s:%d: ", filtergen_filename(), filtergen_lineno);
+    vfprintf(stderr, fmt, args);
+    fprintf(stderr, "\n");
 }
 
 void step_into_include_file(const char *fn) {

@@ -63,7 +63,7 @@ int main(int argc __attribute__((unused)),
   }
 
     while ((c = ipts_lex())) {
-	printf("kind = %s, spelling = \"%s\", file = \"%s\", line = %ld\n", tok_map(c), ipts_text, ipts_filename(), ipts_lineno);
+	printf("kind = %s, spelling = \"%s\", file = \"%s\", line = %d\n", tok_map(c), ipts_text, ipts_filename(), ipts_lineno);
     }
     return 0;
 }

@@ -17,16 +17,20 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+/* prepent all functions with filtergen_ to keep the namespace separate
+ * from other parsers */
+%name-prefix="filtergen_"
+
 %{
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "ast.h"
 
-void yyerror(void *parse_arg, const char * s);
-extern int yylex(void);
+void filtergen_error(void *parse_arg, const char * s);
+extern int filtergen_lex(void);
 
-#define YYPRINT(f, t, v) yyprint(f, t, v)
+#define YYPRINT(f, t, v) filtergen_print(f, t, v)
 %}
 %debug
 %parse-param {void *parse_arg}
@@ -124,7 +128,7 @@ extern int yylex(void);
 %token TOK_COLON
 %token TOK_STAR
 %{
-int yyprint(FILE * f, int t, YYSTYPE v);
+int filtergen_print(FILE * f, int t, YYSTYPE v);
 %}
 %start ast
 %%
@@ -559,15 +563,15 @@ chaingroup_specifier: TOK_LSQUARE TOK_IDENTIFIER subrule_list TOK_RSQUARE
 	;
 
 %%
-char * filename();
-long int lineno();
-extern char * yytext;
+char * filtergen_filename();
+long int filtergen_lineno();
+extern char * filtergen_text;
 
-void yyerror(void * parse_arg __attribute__((unused)), const char * s) {
-	fprintf(stderr, "%s:%ld: %s\n", filename(), lineno(), s);
+void filtergen_error(void * parse_arg __attribute__((unused)), const char * s) {
+    fprintf(stderr, "%s:%ld: %s\n", filtergen_filename(), filtergen_lineno(), s);
 }
 
-int yyprint(FILE * f, int type, YYSTYPE v) {
-	fprintf(f, "%d:\"%s\":%p", type, yytext, (void *) &v);
+int filtergen_print(FILE * f, int type, YYSTYPE v) {
+  fprintf(f, "%d:\"%s\":%p", type, filtergen_text, (void *) &v);
 	return 0;
 }
