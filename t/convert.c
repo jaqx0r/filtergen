@@ -5,7 +5,7 @@
 
 int indent = -2;
 
-#ifdef CONVERT
+#ifndef FILTER_EMIT
 extern int convtrace;
 
 int yyparse(void *);
@@ -154,7 +154,7 @@ void emit_filter(struct filter * f) {
 int main(int argc, char ** argv) {
     struct filter * f = NULL;
 
-#ifdef CONVERT
+#ifndef FILTER_EMIT
     char * CONVTRACE;
     struct ast_s ast;
     int r;
