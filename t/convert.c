@@ -104,7 +104,11 @@ void emit_filter(struct filter * f) {
 	emit_filter(f->u.sub.list);
 	break;
       case F_LOG:
-	printf("log \"%s\"\n", f->u.logmsg);
+	if (f->u.logmsg) {
+	  printf("log \"%s\"\n", f->u.logmsg);
+	} else {
+	  printf("log \"\"\n");
+	}
 	break;
       case F_RTYPE:
 	switch (f->u.rtype) {

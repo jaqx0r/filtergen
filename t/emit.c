@@ -48,12 +48,19 @@ EMIT(compound_specifier) {
     printf("}");
 }
 
-EMIT(routing_specifier) {
+EMIT(option_specifier) {
     switch (n->type) {
       case TOK_LOCAL:
 	printf("local"); break;
       case TOK_FORWARD:
 	printf("forward"); break;
+      case TOK_LOG:
+	if (n->logmsg) {
+	  printf("log text \"%s\"", n->logmsg);
+	} else {
+	  printf("log");
+	}
+	break;
       default:
 	printf("error"); break;
     }
@@ -222,11 +229,6 @@ EMIT(target_specifier) {
 	printf("redirect"); break;
       case TOK_MASQ:
 	printf("masq"); break;
-      case TOK_LOG:
-	printf("log");
-	if (n->logtext) {
-	    printf(" text \"%s\"", n->logtext);
-	}
 	break;
       default:
 	printf("error"); break;
@@ -299,9 +301,9 @@ EMIT(specifier) {
     } else if (n->icmptype) {
 	eprint("emitting icmptype_specifier\n");
 	emit_icmptype_specifier(n->icmptype);
-    } else if (n->routing) {
+    } else if (n->option) {
 	eprint("emitting routing_specifier\n");
-	emit_routing_specifier(n->routing);
+	emit_option_specifier(n->option);
     } else {
 	eprint("emitting chaingroup_specifier\n");
 	emit_chaingroup_specifier(n->chaingroup);

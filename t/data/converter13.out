@@ -1,0 +1,17 @@
+( input eth0
+  child
+  ( log ""
+    child
+    ( drop
+     )
+   )
+  next
+  ( input eth0
+    child
+    ( log "foo"
+      child
+      ( drop
+       )
+     )
+   )
+ )
