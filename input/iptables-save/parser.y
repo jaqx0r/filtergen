@@ -57,6 +57,7 @@ extern int ipts_lex(void);
     struct out_interface_option_s * u_out_interface_option;
     struct to_source_option_s * u_to_source_option;
     struct state_option_s * u_state_option;
+    struct limit_option_s * u_limit_option;
 
     struct not_identifier_s * u_not_identifier;
     struct identifier_s * u_identifier;
@@ -72,6 +73,7 @@ extern int ipts_lex(void);
 %type <u_not_option> not_option
 %type <u_option> option
 
+%type <u_limit_option> limit_option
 %type <u_state_option> state_option
 %type <u_to_source_option> to_source_option
 %type <u_out_interface_option> out_interface_option
@@ -121,6 +123,8 @@ extern int ipts_lex(void);
 
 %token TOK_IPTS_TO_PORTS
 %token TOK_IPTS_TO_SOURCE
+
+%token TOK_IPTS_LIMIT
 
 %token <u_str> TOK_IDENTIFIER
 %token <u_str> TOK_OPTION
@@ -277,6 +281,17 @@ option: in_interface_option
 {
     $$ = malloc(sizeof(struct option_s));
     $$->state_option = $1;
+}
+| limit_option
+{
+    $$ = malloc(sizeof(struct option_s));
+    $$->limit_option = $1;
+}
+
+limit_option: TOK_IPTS_LIMIT identifier
+{
+    $$ = malloc(sizeof(struct limit_option_s));
+    $$->identifier = $2;
 }
 
 state_option: TOK_IPTS_STATE identifier

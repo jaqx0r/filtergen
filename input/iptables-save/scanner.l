@@ -112,6 +112,8 @@ id	[[:alnum:]_+-\.\/]+
 --to-ports	return TOK_IPTS_TO_PORTS;
 --to-source	return TOK_IPTS_TO_SOURCE;
 
+--limit		return TOK_IPTS_LIMIT;
+
 	/* everything else */
 {id}	{
 		ipts_lval.u_str = strndup(ipts_text, ipts_leng);

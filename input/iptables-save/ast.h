@@ -79,6 +79,10 @@ struct state_option_s {
     struct identifier_s * identifier;
 };
 
+struct limit_option_s {
+    struct identifier_s * identifier;
+};
+
 struct option_s {
     struct in_interface_option_s * in_interface_option;
     struct jump_option_s * jump_option;
@@ -91,6 +95,7 @@ struct option_s {
     struct out_interface_option_s * out_interface_option;
     struct to_source_option_s * to_source_option;
     struct state_option_s * state_option;
+    struct limit_option_s * limit_option;
 };
 
 struct not_option_s {
