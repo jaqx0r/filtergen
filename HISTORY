@@ -1,3 +1,7 @@
+Recent: testing begins
+	add transproxy and masquerading support
+	fix syntax problems with iptables output
+
 0.3:
 	add ipfilter backend
 	fix yet another silly bug in main()
@@ -15,4 +19,4 @@
 	iptables driver
 	a few bugs
 
-$Id: HISTORY,v 1.4 2001/10/04 14:35:46 matthew Exp $
+$Id: HISTORY,v 1.5 2001/10/06 17:22:09 matthew Exp $

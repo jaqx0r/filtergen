@@ -1,4 +1,4 @@
-/* $Id: filter.h,v 1.4 2001/10/04 14:02:43 matthew Exp $ */
+/* $Id: filter.h,v 1.5 2001/10/06 17:22:09 matthew Exp $ */
 #ifndef _FK_FILTER_H
 #define _FK_FILTER_H
 
@@ -19,6 +19,7 @@ enum filtertype {
 	TCP, UDP, ICMP,
 	F_INPUT, F_OUTPUT,
 	F_ACCEPT, F_DROP, F_REJECT,
+	F_MASQ, F_REDIRECT,
 	F_SOURCE, F_DEST, F_SPORT, F_DPORT,
 	F_PROTO, 
 	F_NEG, F_SIBLIST,
@@ -48,8 +49,7 @@ struct filter {
 
 /* from filter.c */
 typedef struct filter *filter_tctor(enum filtertype);
-filter_tctor __new_filter;
-struct filter *new_filter_target(enum filtertype);
+filter_tctor __new_filter, new_filter_target;
 struct filter *new_filter_neg(struct filter *sub);
 struct filter *new_filter_sibs(struct filter *list);
 typedef struct filter *filter_ctor(enum filtertype, const char*);

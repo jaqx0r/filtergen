@@ -1,7 +1,7 @@
 /*
  * Filter generator, iptables driver
  *
- * $Id: fg-iptables.c,v 1.8 2001/10/04 14:02:43 matthew Exp $
+ * $Id: fg-iptables.c,v 1.9 2001/10/06 17:22:09 matthew Exp $
  */
 
 #include <stdio.h>
@@ -16,13 +16,28 @@ static int cb_iptables(const struct filterent *ent, void *misc)
 	char *rule = NULL, *rule_r = NULL;
 	int needret = 0;
 
-	APP(rule, "iptables -A");
-	APP(rule_r, "iptables -A");
+	APP(rule, "iptables");
+	APP(rule_r, "iptables");
 
-	/* this should all be put in a table somehow */
+	/* nat rule */
+	if((ent->target == F_MASQ) || (ent->target == F_REDIRECT)) {
+		if((ent->target == F_MASQ) && (ent->direction == F_OUTPUT)) {
+			fprintf(stderr, "can't masquerade on input\n");
+			return -1;
+		} else if((ent->target == F_MASQ) && (ent->direction == F_OUTPUT)) {
+			fprintf(stderr, "can't redirect on output\n");
+			return -1;
+		}
+		APPSS2(rule, "-t", "nat");
+		/* NB: we don't need NAT for the return packets */
+	}
+
+	APPS(rule, "-A");
+	APPS(rule_r, "-A");
 
 	switch(ent->direction) {
-	case F_INPUT:	APPS(rule, "INPUT"); APPS(rule_r, "OUTPUT");
+	case F_INPUT:	APPS(rule, (ent->target == F_REDIRECT) ? "PREROUTING" : "INPUT");
+			APPS(rule_r, "OUTPUT");
 			if(ent->iface) {
 				if(NEG(INPUT)) {
 					APPS(rule, "!");
@@ -32,7 +47,8 @@ static int cb_iptables(const struct filterent *ent, void *misc)
 				APPSS2(rule_r, "-o", ent->iface);
 			}
 			break;
-	case F_OUTPUT:	APPS(rule, "OUTPUT"); APPS(rule_r, "INPUT");
+	case F_OUTPUT:	APPS(rule, (ent->target == F_MASQ) ? "POSTROUTING" : "OUTPUT");
+			APPS(rule_r, "INPUT");
 			if(ent->iface) {
 				if(NEG(OUTPUT)) {
 					APPS(rule, "!");
@@ -52,15 +68,15 @@ static int cb_iptables(const struct filterent *ent, void *misc)
 		needret++;
 		APPSS2(rule, "-p", "tcp");
 		APPSS2(rule_r, "-p", "tcp");
-		APPS(rule, "-m state --state=NEW,ESTABLISHED");
-		APPS(rule_r, "-m state --state=ESTABLISHED ! --syn");
+		APPS(rule, "-m state --state NEW,ESTABLISHED");
+		APPS(rule_r, "-m state --state ESTABLISHED ! --syn");
 		break;
 	case UDP:
 		needret++;
 		APPSS2(rule, "-p", "udp");
 		APPSS2(rule_r, "-p", "udp");
-		APPS(rule, "-m state --state=NEW,ESTABLISHED");
-		APPS(rule_r, "-m state --state=ESTABLISHED");
+		APPS(rule, "-m state --state NEW,ESTABLISHED");
+		APPS(rule_r, "-m state --state ESTABLISHED");
 		break;
 	default: abort();
 	}
@@ -81,24 +97,29 @@ static int cb_iptables(const struct filterent *ent, void *misc)
 	case UDP: case TCP:
 		if(ent->u.ports.src) {
 			NEGA(rule, SPORT); NEGA(rule_r, SPORT);
-			APPS2(rule, "--sport=", ent->u.ports.src);
-			APPS2(rule_r, "--dport=", ent->u.ports.src);
+			APPSS2(rule, "--sport", ent->u.ports.src);
+			APPSS2(rule_r, "--dport", ent->u.ports.src);
 		}
 		if(ent->u.ports.dst) {
 			NEGA(rule, DPORT); NEGA(rule_r, DPORT);
-			APPS2(rule, "--dport=", ent->u.ports.dst);
-			APPS2(rule_r, "--sport=", ent->u.ports.dst);
+			APPSS2(rule, "--dport", ent->u.ports.dst);
+			APPSS2(rule_r, "--sport", ent->u.ports.dst);
 		}
 		break;
 	default:
 	}
 
+	APPS(rule, "-j"); APPS(rule_r, "-j");
+
 	switch(ent->target) {
-	case F_ACCEPT:	APPSS2(rule, "-j", "ACCEPT");
-			APPSS2(rule_r, "-j", "ACCEPT"); break;
-	case F_DROP:	APPSS2(rule, "-j", "DROP");
-			APPSS2(rule_r, "-j", "DROP"); break;
-	case F_REJECT:	APPSS2(rule, "-j", "REJECT"); needret = 0; break;
+	case F_ACCEPT:	APPS(rule, "ACCEPT");
+			APPS(rule_r, "ACCEPT"); break;
+	case F_DROP:	APPS(rule, "DROP"); needret = 0; break;
+	case F_REJECT:	APPS(rule, "REJECT"); needret = 0; break;
+	case F_MASQ:	APPS(rule, "MASQUERADE");
+			APPS(rule_r, "ACCEPT"); break;
+	case F_REDIRECT:APPS(rule, "REDIRECT");
+			APPS(rule_r, "ACCEPT"); break;
 	default: abort();
 	}
 
