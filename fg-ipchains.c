@@ -3,7 +3,7 @@
  *
  * XXX - maybe some of this could be shared with the iptables one?
  *
- * $Id: fg-ipchains.c,v 1.10 2002/04/14 11:38:40 matthew Exp $
+ * $Id: fg-ipchains.c,v 1.11 2002/04/14 14:24:03 matthew Exp $
  */
 
 #include <stdio.h>
@@ -13,7 +13,7 @@
 #include "util.h"
 
 
-static int cb_ipchains_rule(const struct filterent *ent, void *misc)
+static int cb_ipchains_rule(const struct filterent *ent, struct fg_misc *misc)
 {
 	char *rule = NULL, *rule_r = NULL;
 	int needret = 0;
@@ -139,6 +139,7 @@ static int cb_ipchains_group(const char *name)
 int fg_ipchains(struct filter *filter, int flags)
 {
 	int r;
+	struct fg_misc misc = { flags, NULL };
 	fg_callback cb_ipchains = {
 	rule:	cb_ipchains_rule,
 	group:	cb_ipchains_group,
@@ -149,7 +150,7 @@ int fg_ipchains(struct filter *filter, int flags)
 		puts("for f in INPUT OUTPUT FORWARD; do ipchains -P $f DENY; done");
 		puts("ipchains -F; ipchains -X");
 	}
-	if((r = filtergen_cprod(filter, &cb_ipchains, NULL)) < 0)
+	if((r = filtergen_cprod(filter, &cb_ipchains, &misc)) < 0)
 		return r;
 	if(!(flags & FF_NOSKEL)) {
 		puts("for f in INPUT OUTPUT FORWARD; do ipchains -A $f -l -j DENY; done");

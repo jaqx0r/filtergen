@@ -1,7 +1,7 @@
 /*
  * filter compilation routines
  *
- * $Id: gen.c,v 1.7 2002/04/08 21:54:45 matthew Exp $
+ * $Id: gen.c,v 1.8 2002/04/14 14:24:03 matthew Exp $
  */
 
 #include <stdio.h>
@@ -152,7 +152,7 @@ int __fg_apply(struct filterent *_e, const struct filter *f,
 }
 
 
-int filtergen_cprod(struct filter *filter, fg_callback *cb, void *misc)
+int filtergen_cprod(struct filter *filter, fg_callback *cb, struct fg_misc *misc)
 {
 	struct filterent e;
 	memset(&e, 0, sizeof(e));
