@@ -1,0 +1,3 @@
+Import('env')
+
+env.Library('in_iptables', ['parser.y', 'scanner.l'])
