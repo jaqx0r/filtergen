@@ -92,7 +92,7 @@ static int out_filtergen_rule(const struct filterent * ent, struct fg_misc * mis
     return 1;
 }
 
-/** Emit the filter into filtergen language */
+/** Emit the filter's internal representation into the filtergen language */
 int emit_filtergen(struct filter * filter, int flags) {
     struct fg_misc misc = { flags, NULL };
     fg_callback out_filtergen_cb = {

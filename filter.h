@@ -32,7 +32,7 @@
 #endif
 
 
-/*
+/**
  * If it doesn't begin with "F_", it's a simple token, not an
  * filter type
  */
@@ -61,7 +61,7 @@ enum filtertype {
     TEXT,				/* for F_LOG */
 };
 
-/* Structures which appear in both the parse tree and the output rule */
+/** Structures which appear in both the parse tree and the output rule */
 struct proto_spec {
     int num;
     char *name;
@@ -77,7 +77,7 @@ struct port_spec {
     char *minstr, *maxstr;
 };
 
-/* This is basically just a parse tree */
+/** This is basically just a parse tree */
 struct filter {
     enum filtertype type;
     union {
@@ -130,16 +130,16 @@ struct filter *filter_parse_list(void);
 /* from gen.c */
 #define	ESET(e,f)	(e->whats_set & (1 << F_ ##f))
 struct filterent {
-    /* Either direction+iface or groupname must be set */
+  /** Either direction+iface or groupname must be set */
     enum filtertype direction;
     char *iface;
     char *groupname;
 
-    /* One of these must be set */
+  /** One of these must be set */
     enum filtertype target;
     char *subgroup;
 
-    /* These may or may not be set */
+  /** These may or may not be set */
     int whats_set:F_FILTER_MAX;
     int whats_negated:F_FILTER_MAX;
     struct addr_spec srcaddr, dstaddr;
@@ -149,7 +149,7 @@ struct filterent {
     char *logmsg;
     int oneway;
 
-    /* We need this not to be a union, for error-checking reasons */
+  /** We need this not to be a union, for error-checking reasons */
     struct {
 	struct {
 	    struct port_spec src, dst;
@@ -176,13 +176,13 @@ char *strapp(char *s, const char *n);
 int str_to_int(const char *s, int *i);
 char *int_to_str_dup(int i);
 
-/* various drivers */
+/** various drivers */
 typedef int filtergen(struct filter *filter, int flags);
 filtergen fg_iptables, fg_ipchains, fg_ipfilter, fg_cisco, emit_filtergen;
 typedef int filter_flush(enum filtertype policy);
 filter_flush flush_iptables, flush_ipchains;
 
-/* ("flags" arguments) */
+/** ("flags" arguments) */
 #define	FF_NOSKEL	(1 << 0)	/* omit any "skeleton" rules */
 #define	FF_LSTATE	(1 << 1)	/* lightweight state matching */
 #define	FF_LOCAL	(1 << 2)	/* assume packets are local only */

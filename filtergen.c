@@ -43,6 +43,7 @@ extern struct filter * convert(struct ast_s * n);
 
 static FILE *outfile;
 
+/** Print the program usage to stderr. */
 void usage(char * prog) {
     fprintf(stderr, "Usage: %s [-chV] [-t backend] [-o output] input\n", prog);
     fprintf(stderr, "       %s [-chV] [-t backend] [-o output] -F policy\n\n", prog);
@@ -91,6 +92,7 @@ void usage(char * prog) {
 #endif
 }
 
+/** Output a string, and appends a newline, to the target file. */
 int oputs(const char *s)
 {
     int r = 0;
@@ -104,6 +106,7 @@ int oputs(const char *s)
     return r;
 }
 
+/** Write a string, printf style, to the target file. */
 int oprintf(const char *fmt, ...)
 {
     va_list args;
@@ -111,6 +114,8 @@ int oprintf(const char *fmt, ...)
     return vfprintf(outfile, fmt, args);
 }
 
+/* Function pointer table containing target filter types and the emitter
+ * functions */
 struct filtyp {
     const char * name;
     filtergen * compiler;
@@ -140,6 +145,7 @@ static struct option long_options[] = {
 # define GETOPT(x, y, z) getopt(x, y, z)
 #endif
 
+/** Program entry point. */
 int main(int argc, char **argv) {
     struct filter *f;
     int l;

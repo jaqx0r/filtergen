@@ -21,7 +21,7 @@
 #include <string.h>
 #include "icmpent.h"
 
-/* icmp codes from RFC1700 */
+/** Lookup table of icmp codes from RFC1700 */
 struct icmpent_s icmpcodes[] = {
     { "0", "echo-reply" },
     /* 1-2 unassigned */
@@ -93,7 +93,7 @@ struct icmpent_s icmpcodes[] = {
     { NULL, NULL }
 };
 
-/* fake netdb-like function for icmp types */
+/** fake netdb-like function for resolving icmp types */
 struct icmpent_s * geticmpbyname(char * name) {
     struct icmpent_s * icmpent;
 
