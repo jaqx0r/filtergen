@@ -1,0 +1,81 @@
+.\" filter command-line reference
+.\" $Id: filtergen.8,v 1.1 2002/04/28 22:15:39 matthew Exp $
+.TH FILTERGEN 8
+
+.SH NAME
+filtergen \- A packet filter compiler
+
+.SH SYNOPSIS
+.B filtergen
+[
+.B -n
+] [
+.B -l
+] [
+.B -h
+] [
+.B -o
+.BI output-file
+] [
+.B -t
+.BI driver
+] [
+.B input-file
+]
+
+.SH DESCRIPTION
+.B filtergen
+generates packet filtering rules from a high-level description language.
+The same ruleset can be converted into a number of output rule types,
+depending upon which backend is chosen.
+
+.SH USAGE
+.B filtergen
+reads the ruleset from the file specified on the command-line (or standard
+input if \fBinput-file\fR is "\-" or not specified) and outputs to standard
+output or \fBoutput-file\fR via an optionally specified backend.
+
+.PP
+These options are accepted:
+.TP
+.BI "\-n"
+Omit "skeleton" rules.  Some backends (notably the
+.I iptables
+and
+.I ipchains
+ones) generate extra rules at the beginning or end of the output, which
+might flush any existing rules, set default handling, etc.  This option
+suppresses any such rules, which can be useful for debugging, or to
+better integrate with other scripts or rule generators.
+
+.TP
+.BI "\-l"
+Lightweight state matching.  The backend can use this option to generate
+shorter rulesets by reducing the number of rules required for matching
+packets on established connections.  This can be more efficient to
+execute, but may be less tight, depending upon the quality of the state
+engine in the underlying packet filter.
+
+.TP
+.BI "\-h"
+Operate in "host" mode.  The backend will default to omitting rules
+which allow packets to be routed, as though every rule had the "local"
+option set.  This can be overridden per-rule with the "forward" option.
+(See \fBfilter_syntax\fR(8) for more details.)
+
+.TP
+.BI "\-o output-file"
+Write output to \fIoutput-file\fR instead of standard output.
+
+.TP
+.BI "\-t driver"
+If specified, \fIdriver\fR will be used to select an output ruleset type,
+otherwise the default of \fIiptables\fR will be used.  Supported backends
+are \fIiptables\fR, \fIipchains\fR, \fIipfilter\fR and \fIcisco\fR (for
+Cisco IOS access-lists).
+
+.SH BUGS
+Not all backends implement all features.  
+
+.SH SEE ALSO
+\fBfilter_syntax\fR(5), \fBfilter_backends\fR(7)
