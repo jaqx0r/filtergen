@@ -1,5 +1,6 @@
 0.12.4:
 	Added directory include support.
+	Fixed relative-path include error in fgadm.
 
 0.12.3:
 	Fix critical resolver bug.
