@@ -211,6 +211,19 @@ EMIT(fragment_option) {
     }
 }
 
+EMIT(clamp_mss_to_pmtu_option) {
+    if (n) {
+	printf("--clamp-mss-to-pmtu");
+    }
+}
+
+EMIT(helper_option) {
+    if (n->identifier) {
+	printf("--helper ");
+	emit_identifier(n->identifier);
+    }
+}
+
 EMIT(option) {
     if (n->in_interface_option) {
       emit_in_interface_option(n->in_interface_option);
@@ -241,6 +254,8 @@ EMIT(option) {
     else EMITOPTION(reject_with)
     else EMITOPTION(icmp_type)
     else EMITOPTION(fragment)
+    else EMITOPTION(clamp_mss_to_pmtu)
+    else EMITOPTION(helper)
     else {
 	eprint("WARNING: no option\n");
     }
