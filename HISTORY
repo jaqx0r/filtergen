@@ -9,6 +9,7 @@ recent:
 	add "-l" option to minimise the number of rules for established
 		connections, implemented for iptables backend
 	add more stuff to the iptables skeleton
+	warning fixups
 
 0.6:
 	disable negation of conjunctions ("or"s, aka brace-grouping) for now
@@ -46,4 +47,4 @@ recent:
 	iptables driver
 	a few bugs
 
-$Id: HISTORY,v 1.19 2002/04/28 22:30:41 matthew Exp $
+$Id: HISTORY,v 1.20 2002/07/18 14:04:12 matthew Exp $

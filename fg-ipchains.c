@@ -3,7 +3,7 @@
  *
  * XXX - maybe some of this could be shared with the iptables one?
  *
- * $Id: fg-ipchains.c,v 1.12 2002/04/28 22:30:41 matthew Exp $
+ * $Id: fg-ipchains.c,v 1.13 2002/07/18 14:04:13 matthew Exp $
  */
 
 #include <stdio.h>
@@ -106,7 +106,7 @@ static int cb_ipchains_rule(const struct filterent *ent, struct fg_misc *misc)
 			APPSS2(rule, "--icmp-type", ent->u.icmp);
 		}
 		break;
-	default:
+	default:;
 	}
 
 	if(ent->log) APPS(rule, "-l");
