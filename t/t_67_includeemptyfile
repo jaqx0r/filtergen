@@ -1,0 +1,27 @@
+#!/bin/sh
+
+TEST="that inclusion of empty files works"
+
+testdir=`dirname $0`
+. $testdir/testlib
+
+cat > $work/rules <<EOF
+include $work/empty
+EOF
+if test $? -ne 0 ; then no_result ; fi
+
+cat > $work/empty <<EOF
+
+EOF
+if test $? -ne 0 ; then no_result ; fi
+
+$here/scan < $work/rules > $work/out
+if test $? -ne 0 ; then fail ; fi
+
+cat > $work/good <<EOF
+EOF
+
+compare $work/good $work/out
+
+# got this far?
+pass
