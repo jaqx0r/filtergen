@@ -1,7 +1,7 @@
 /*
  * Filter generator, ipfilter driver
  *
- * $Id: fg-ipfilter.c,v 1.1 2001/10/04 14:02:43 matthew Exp $
+ * $Id: fg-ipfilter.c,v 1.2 2001/10/06 18:25:16 matthew Exp $
  */
 
 #include <stdio.h>
@@ -61,8 +61,11 @@ static int cb_ipfilter(const struct filterent *ent, void *misc)
 	default: fprintf(stderr, "unknown direction\n"); abort();
 	}
 
-	/* XXX - all our rules have to be "quick".  ipfilter
+	if(ent->log) APPS(rule, "log");
+
+	/* XXX - All our rules have to be "quick", but ipfilter
 	 * people seem to prefer having defaults at the top.
+	 * It would be nice to improve the output readability.
 	 */
 	APPS(rule, "quick");
 

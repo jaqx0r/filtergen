@@ -1,9 +1,9 @@
 /*
  * Filter generator, ipchains driver
  *
- * XXX - maybe this should be shared with the ipchains one?
+ * XXX - maybe some of this could be shared with the iptables one?
  *
- * $Id: fg-ipchains.c,v 1.4 2001/10/06 17:22:09 matthew Exp $
+ * $Id: fg-ipchains.c,v 1.5 2001/10/06 18:25:16 matthew Exp $
  */
 
 #include <stdio.h>
@@ -95,6 +95,8 @@ static int cb_ipchains(const struct filterent *ent, void *misc)
 		break;
 	default:
 	}
+
+	if(ent->log) APPS(rule, "-l");
 
 	APPS(rule, "-j"); APPS(rule_r, "-j");
 

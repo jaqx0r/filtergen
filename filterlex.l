@@ -2,7 +2,7 @@
 /*
  * lexer/parser for packet filtering rules
  *
- * $Id: filterlex.l,v 1.4 2001/10/06 17:22:09 matthew Exp $
+ * $Id: filterlex.l,v 1.5 2001/10/06 18:25:16 matthew Exp $
  */
 
 #include <sys/types.h>
@@ -46,6 +46,8 @@ include		{ return INCLUDE; }
 accept		{ return F_ACCEPT; }
 drop		{ return F_DROP; }
 reject		{ return F_REJECT; }
+
+log		{ return F_LOG; }
 
 masq		{ return F_MASQ; }
 redirect	{ return F_REDIRECT; }
@@ -162,6 +164,8 @@ static struct filter *filter_parse_single(void)
 	case F_ACCEPT: case F_DROP: case F_REJECT:
 	case F_MASQ: case F_REDIRECT:
 		return new_filter_target(tok);
+	case F_LOG:
+		return new_filter_log(tok);
 	case F_SOURCE: case F_DEST:
 		return filter_parse_group(tok, NULL, new_filter_host);
 	case F_SPORT: case F_DPORT:

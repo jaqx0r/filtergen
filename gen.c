@@ -1,7 +1,7 @@
 /*
  * filter compilation routines
  *
- * $Id: gen.c,v 1.2 2001/10/06 17:22:09 matthew Exp $
+ * $Id: gen.c,v 1.3 2001/10/06 18:25:16 matthew Exp $
  */
 
 #include <stdio.h>
@@ -72,6 +72,8 @@ int __fg_applyone(struct filterent *e, const struct filter *f,
 		e->direction = f->type;
 		e->iface = f->u.iface;
 		break;
+
+	case F_LOG: e->log = f->u.log; break;
 
 #define	DV(n, v, p)						\
 	case F_ ## n: NA(v); e->v = f->u.p; break;
