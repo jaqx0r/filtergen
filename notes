@@ -1,4 +1,81 @@
-http://www.securityfocus.com/infocus/1711
-http://coombs.anu.edu.au/ipfilter/examples.html
-http://hr.uoregon.edu/davidrl/rc.icmp
-http://www.cs.iupui.edu/~ddillow/N301/deMorgan.html
+#http://www.securityfocus.com/infocus/1711
+#http://coombs.anu.edu.au/ipfilter/examples.html
+#http://hr.uoregon.edu/davidrl/rc.icmp
+#http://www.cs.iupui.edu/~ddillow/N301/deMorgan.html
+
+#demorgans law:  ~(a + b) = ~a . ~b and ~(a . b) = ~a + ~b
+
+#input eth0 proto tcp dport http:https accept;
+#input eth0 proto icmp icmptype { echo-request timestamp-request } accept;
+#input eth0 dest monitors.anchor.net.au accept;
+#input eth0 dest localhost accept;
+#input eth0 proto icmp icmptype host-unreachable accept;
+#input eth+ {
+#	 ! source { a b } proto icmp icmptype echo-request accept;
+#	 };
+
+
+#input eth+ and ( source a or source b ) and proto icmp and icmptype echo-request and target accept;
+
+#input eth+ and not ( source a or source b ) and proto icmp and icmptypte er and accept;
+# demorgans:
+#input e and not source a and not source b and proto icmp and it er and a;
+
+
+# semicolons = OR
+# sibs = OR
+# braces and chains = () 
+# implicit gap between specifier = AND
+# ! = NOT
+# specifiers are predicates
+# targets are actions to perform.  actions have side effects, predicates do not
+
+# guarded expressions
+
+# filtergen:
+input eth0 source { c d } accept;
+input eth0 ! source { a b } accept;
+#||
+# lisp-like:
+#(and (input eth0) (not ((source a) or (source b))) (accept));
+#
+#input eth0 accept;
+#output eth0 accept;
+#||
+#(or (and (input eth0) (accept)) (and (output eth0) (accept)))
+# also:
+#{input eth0; output eth0} accept;
+#||
+#(and (or (input eth0) (output eth0)) (accept))
+#which by factorisation of the above:
+#(or (and input accept) (and output accept))
+#||
+#(input eth0) * (accept) + (output eth0) * (accept)
+#||
+#(accept) * ((input eth0) + (output eth0))
+#||
+#(and accept (or input output)
+# expands to:
+#input accept
+#output accept
+#
+#
+# ORDER MATTERS when factoring/expanding, e.g.:
+#
+# order of targets matters, actions are not swappable (commutative?)
+#
+# input eth0 {
+#    proto icmp accept;
+#    proto tcp dport auth reject;
+#    proto { tcp udp } dport domain accept;
+#};
+#=
+#(and input (or (and proto accept) (and  proto dport reject) (and (or proto proto) dport accept)))
+#expands to:
+#input proto accept [1]
+#input proto dport reject [2]
+#input proto dport accept [3]
+#input proto dport accept [4]
+# where 3,4's target is explicitly after [2] target inthe initial input
+#
+# TODO: prove that reordering targets has congruence
