@@ -9,7 +9,8 @@
 
 #include <string.h>
 #include <stdarg.h>
-#include "tokens.h"
+/*#include "tokens.h"*/
+#include "parser.h"
 
 /* include file stack */
 #define MAXINCLUDES 16
@@ -123,9 +124,14 @@ text         return TOK_TEXT;
                        }
 
 <<EOF>>                {
-                           if (--inc_stackptr < 0) {
+                           if (!inc_stackptr) {
                               yyterminate();
 			   } else {
+			      if (inc_stack[inc_stackptr].filename) {
+				  free(inc_stack[inc_stackptr].filename);
+				  inc_stack[inc_stackptr].filename = NULL;
+                              }
+ 			      inc_stackptr--;
                               yy_delete_buffer(YY_CURRENT_BUFFER);
                               yy_switch_to_buffer(inc_stack[inc_stackptr].state);
                            }

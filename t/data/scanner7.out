@@ -1,4 +1,4 @@
-kind = 27 [<name>], spelling = "foo", file = "(standard input)", line = 2
-kind = 27 [<name>], spelling = "bar", file = "(standard input)", line = 3
-kind = 27 [<name>], spelling = "baz", file = "(standard input)", line = 4
-kind = 27 [<name>], spelling = "quux", file = "(standard input)", line = 5
+kind = name, spelling = "foo", file = "(standard input)", line = 2
+kind = name, spelling = "bar", file = "(standard input)", line = 3
+kind = name, spelling = "baz", file = "(standard input)", line = 4
+kind = name, spelling = "quux", file = "(standard input)", line = 5

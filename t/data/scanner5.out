@@ -1,9 +1,9 @@
-kind = 9 [<lcurly>], spelling = "{", file = "(standard input)", line = 1
-kind = 17 [<rcurly>], spelling = "}", file = "(standard input)", line = 2
-kind = 12 [<lsquare>], spelling = "[", file = "(standard input)", line = 3
-kind = 20 [<rsquare>], spelling = "]", file = "(standard input)", line = 4
-kind = 21 [<semicolon>], spelling = ";", file = "(standard input)", line = 5
-kind = 29 [<dot>], spelling = ".", file = "(standard input)", line = 6
-kind = 30 [<slash>], spelling = "/", file = "(standard input)", line = 7
-kind = 33 [<colon>], spelling = ":", file = "(standard input)", line = 8
-kind = 32 [<bang>], spelling = "!", file = "(standard input)", line = 9
+kind = lcurly, spelling = "{", file = "(standard input)", line = 1
+kind = rcurly, spelling = "}", file = "(standard input)", line = 2
+kind = lsquare, spelling = "[", file = "(standard input)", line = 3
+kind = rsquare, spelling = "]", file = "(standard input)", line = 4
+kind = semicolon, spelling = ";", file = "(standard input)", line = 5
+kind = dot, spelling = ".", file = "(standard input)", line = 6
+kind = slash, spelling = "/", file = "(standard input)", line = 7
+kind = colon, spelling = ":", file = "(standard input)", line = 8
+kind = bang, spelling = "!", file = "(standard input)", line = 9
