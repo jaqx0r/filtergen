@@ -45,27 +45,27 @@ and shell what a C compiler (but not a 4GL) is to assembly.
 
 USAGE
 
-The filter generator is called "filtergen".  It can be invoked as:
+The filter generator is called "pfc".  It can be invoked as:
 
-$ filtergen source.file > output.rules
+$ pfc source.file > output.rules
 
 or as a filter itself:
 
-$ cat source.file | filtergen > output.rules
+$ cat source.file | pfc > output.rules
 
 The default output mode is for iptables, but you can override this
 by giving an extra argument on the command-line:
 
-$ filtergen oldbox.filter ipchains > oldbox.rules
+$ pfc oldbox.filter ipchains > oldbox.rules
 
 and using "-" to imply standard input:
 
-$ cat oldbox.filter | filtergen - ipchains > oldbox.rules
+$ cat oldbox.filter | pfc - ipchains > oldbox.rules
 
 Some of the backends (notably iptables and ipchains) generate a "skeleton"
 around the rules that they output.  This can be disabled with "-n":
 
-$ filtergen -n tests/ticmp.filter ipchains
+$ pfc -n tests/ticmp.filter ipchains
 
 The rulesets generated with this option may not be complete, but the
 flag is useful to allow one to see what sort of output is generated.
