@@ -1,0 +1,14 @@
+kind = 27 [<name>], spelling = "inpu", line = 2
+kind = 27 [<name>], spelling = "foo", line = 4
+kind = 27 [<name>], spelling = "bar", line = 5
+kind = 27 [<name>], spelling = "baz", line = 6
+kind = 27 [<name>], spelling = "quux", line = 7
+kind = 1 [<accept>], spelling = "accept", line = 9
+kind = 21 [<semicolon>], spelling = ";", line = 10
+kind = 14 [<output>], spelling = "output", line = 11
+kind = 27 [<name>], spelling = "foo", line = 13
+kind = 27 [<name>], spelling = "bar", line = 14
+kind = 27 [<name>], spelling = "baz", line = 15
+kind = 27 [<name>], spelling = "quux", line = 16
+kind = 1 [<accept>], spelling = "accept", line = 18
+kind = 21 [<semicolon>], spelling = ";", line = 18
