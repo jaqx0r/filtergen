@@ -70,6 +70,7 @@ specifier: compound_specifier
 	| port_specifier
 	| protocol_specifier
 	| icmptype_specifier
+	| routing_specifier
 	;
 
 negated_specifier: specifier
@@ -179,11 +180,9 @@ icmptype_argument_list: simple_icmptype_argument
 simple_icmptype_argument: TOK_IDENTIFIER
 	;
 
-/* dunno what to do with this one
-	| TOK_LOCAL
+routing_specifier: TOK_LOCAL
 	| TOK_FORWARD
 	;
-*/
 
 compound_specifier: TOK_LCURLY subrule_list TOK_RCURLY
 	;
