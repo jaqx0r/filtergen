@@ -1,5 +1,5 @@
 #include <stdlib.h>
-#include "ast.h"
+#include "../ast.h"
 
 extern char * yytext;
 int yyparse(void *);

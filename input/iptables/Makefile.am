@@ -1,10 +1,8 @@
-bin_PROGRAMS = scan parse emit
+SUBDIRS = . t
 
-scan_SOURCES = parser.y scanner.l scan.c
+lib_LIBRARIES = in_iptables.a
 
-parse_SOURCES = parser.y scanner.l parse.c
-
-emit_SOURCES = parser.y scanner.l emit.c
+in_iptables_a_SOURCES = parser.y scanner.l
 
 AM_CFLAGS = -D_GNU_SOURCE
 AM_LDFLAGS = -g
