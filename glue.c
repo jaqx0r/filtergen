@@ -214,6 +214,69 @@ struct filter * convert_host_specifier(struct host_specifier_s * n) {
     return res;        
 }
 
+struct filter * convert_protocol_argument(struct simple_protocol_argument_s * n) {
+    struct filter * res = NULL;
+
+    eprint("converting simple_protocol_argument\n");
+
+    if (n->proto) {
+        res = new_filter_proto(F_PROTO, n->proto);
+    } else {
+        printf("error: no proto part\n");
+    }
+
+    return res;
+}
+
+struct filter * convert_protocol_argument_list(struct protocol_argument_list_s * n) {
+    struct filter * res = NULL, * end = NULL;
+
+    eprint("converting protocol argument list\n");
+
+    if (n->list) {
+        res = convert_protocol_argument_list(n->list);
+        if (res) {
+            end = res;
+            while (end->next) {
+                end = end->next;
+            }
+            if (n->arg) {
+                end->next = convert_protocol_argument(n->arg);
+            }
+        } else {
+            printf("warning: convert_protocol_argument_list returned NULL\n");
+        }
+    } else {
+        res = convert_protocol_argument(n->arg);
+    }
+
+    return res;
+}
+
+struct filter * convert_protocol_specifier(struct protocol_specifier_s * n) {
+    struct filter * res = NULL;
+	
+    eprint("converting protocol specifier\n");
+
+    if (n->arg) {
+        if (n->arg->simple) {
+            res = convert_protocol_argument(n->arg->simple);
+        } else if (n->arg->compound) {
+            if (n->arg->compound->list) {
+                res = new_filter_sibs(convert_protocol_argument_list(n->arg->compound->list));
+            } else {
+                printf("error: no protocol argument (compound) list\n");
+            }
+        } else {
+            printf("error: neither simple nor compound argument\n");
+        }
+    } else {
+        printf("error: no protocol argument\n");
+    }
+
+    return res;        
+}
+
 struct filter * convert_port_argument(struct simple_port_argument_s * n, int type) {
     struct filter * res = NULL;
 
@@ -345,11 +408,10 @@ struct filter * convert_specifier(struct specifier_s * r) {
       res = new_filter_target(type);
     } else if (r->host) {
         res = convert_host_specifier(r->host);
+    } else if (r->protocol) {
+        res = convert_protocol_specifier(r->protocol);
     } else if (r->port) {
         res = convert_port_specifier(r->port);
-    } else if (r->protocol) {
-      eprint("converting proto specifier\n");
-	res = new_filter_proto(F_PROTO, "53");
     } else if (r->icmptype) {
       eprint("converting icmp specifier\n");
 	res = __new_filter(F_SIBLIST);
