@@ -1,7 +1,7 @@
 Import('env')
 
 env = env.Copy()
-env.Append(CPPPATH = '..', LIBPATH = '..', LIBS = 'in_iptables')
+env.Append(CPPPATH = '..', LIBPATH = '..', LIBS = 'in_iptables_save')
 
 env.Program('scan.c')
 env.Program('parse.c')

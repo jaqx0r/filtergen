@@ -26,7 +26,8 @@ struct pkt_count_s {
 };
 
 struct identifier_s {
-    char * id;
+    char * id1;
+    char * id2;
 };
 
 struct not_identifier_s {

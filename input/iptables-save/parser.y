@@ -183,22 +183,27 @@ not_identifier: TOK_BANG identifier
 identifier: TOK_IDENTIFIER TOK_IDENTIFIER
 {
     $$ = malloc(sizeof(struct identifier_s));
-    $$->id = $1;
+    $$->id1 = $1;
+    $$->id2 = $2;
 }
 | TOK_IDENTIFIER TOK_COLON TOK_IDENTIFIER
 {
     $$ = malloc(sizeof(struct identifier_s));
-    asprintf(&($$->id), "%s:%s", $1, $3);
+    asprintf(&($$->id1), "%s:%s", $1, $3);
+    $$->id2 = NULL;
 }
 | TOK_QUOTE TOK_IDENTIFIER TOK_QUOTE
 {
     $$ = malloc(sizeof(struct identifier_s));
-    $$->id = $2;
+    $$->id1 = $2;
+    $$->id2 = NULL;
+
 }
 | TOK_IDENTIFIER
 {
     $$ = malloc(sizeof(struct identifier_s));
-    $$->id = $1;
+    $$->id1 = $1;
+    $$->id2 = NULL;
 }
 
 pkt_count: TOK_LSQUARE TOK_IDENTIFIER TOK_COLON TOK_IDENTIFIER TOK_RSQUARE

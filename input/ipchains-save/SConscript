@@ -1,0 +1,6 @@
+Import('env')
+
+env.Library('in_ipchains_save',
+			source=['parser.y', 'scanner.l']
+			)
+env.SideEffect('parser.h', 'parser.c')

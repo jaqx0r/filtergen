@@ -1,0 +1,11 @@
+expr.h: factoriser
+factoriser.c: factoriser
+factoriser.h: factoriser
+fg-util.c: output utility
+filter.c: internal representation
+filter.h: internal representation
+filtergen.c: main program
+gen.c: output generator
+icmpent.h: input utility
+icmpent.c: input utility
+util.h: output utility
