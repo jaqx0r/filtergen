@@ -1,6 +1,6 @@
 AC_PREREQ(2.50)
 
-AC_INIT(filtergen, 0.12.1, jaq@spacepants.org)
+AC_INIT(filtergen, 0.12.2, jaq@spacepants.org)
 AM_INIT_AUTOMAKE([foreign dist-bzip2 dist-zip])
 
 AC_CONFIG_AUX_DIR(.)
@@ -48,7 +48,7 @@ dnl -----------------
 
 if test "x$ac_cv_c_compiler_gnu" = xyes ; then
 	CFLAGS="$CFLAGS -W -Wall -Werror -Waggregate-return"
-	CFLAGS="$CFLAGS -Wcast-qual -Wnested-externs"
+	CFLAGS="$CFLAGS -Wcast-align -Wcast-qual -Wnested-externs"
 	CFLAGS="$CFLAGS -Wshadow -Wbad-function-cast -Wwrite-strings"
 fi
 
