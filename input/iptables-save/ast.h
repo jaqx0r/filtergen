@@ -43,9 +43,14 @@ struct jump_option_s {
   struct identifier_s * identifier;
 };
 
+struct destination_option_s {
+    struct identifier_s * identifier;
+};
+
 struct option_s {
   struct in_interface_option_s * in_interface_option;
   struct jump_option_s * jump_option;
+    struct destination_option_s * destination_option;
 };
 
 struct not_option_s {

@@ -48,6 +48,7 @@ extern int ipts_lex(void);
     struct option_s * u_option;
   struct in_interface_option_s * u_in_interface_option;
   struct jump_option_s * u_jump_option;
+    struct destination_option_s * u_destination_option;
     struct not_identifier_s * u_not_identifier;
     struct identifier_s * u_identifier;
     struct pkt_count_s * u_pkt_count;
@@ -61,6 +62,7 @@ extern int ipts_lex(void);
 %type <u_option_list> option_list
 %type <u_not_option> not_option
 %type <u_option> option
+%type <u_destination_option> destination_option
 %type <u_jump_option> jump_option
 %type <u_in_interface_option> in_interface_option
 %type <u_not_identifier> not_identifier
@@ -210,6 +212,17 @@ option: in_interface_option
 {
   $$ = malloc(sizeof(struct option_s));
   $$->jump_option = $1;
+}
+| destination_option
+{
+    $$ = malloc(sizeof(struct option_s));
+    $$->destination_option = $1;
+}
+
+destination_option: TOK_IPTS_DESTINATION identifier
+{
+    $$ = malloc(sizeof(struct destination_option_s));
+    $$->identifier = $2;
 }
 
 jump_option: TOK_IPTS_JUMP identifier
