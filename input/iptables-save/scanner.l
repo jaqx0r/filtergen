@@ -89,7 +89,11 @@ id	[[:alnum:]_+-\.\/]+
 
 
 --dport		return TOK_IPTS_DPORT;
+--destination-port	return TOK_IPTS_DPORT;
 --sport		return TOK_IPTS_SPORT;
+--source-port	return TOK_IPTS_SPORT;
+
+--syn		return TOK_IPTS_SYN;
 
 {id}	{
 		ipts_lval.u_str = strndup(ipts_text, ipts_leng);
