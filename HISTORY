@@ -1,4 +1,4 @@
-Recent:
+0.2: Various improvements
 	rewrote iptables driver
 	added ipchains driver
 	added beginnings of Cisco IOS ACL driver
@@ -9,4 +9,4 @@ Recent:
 	iptables driver
 	a few bugs
 
-$Id: HISTORY,v 1.1 2001/10/03 20:39:42 matthew Exp $
+$Id: HISTORY,v 1.2 2001/10/03 20:43:43 matthew Exp $
