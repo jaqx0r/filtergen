@@ -44,7 +44,7 @@ struct jump_option_s {
 };
 
 struct destination_option_s {
-    struct identifier_s * identifier;
+    struct not_identifier_s * not_identifier;
 };
 
 struct protocol_option_s {

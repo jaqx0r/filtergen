@@ -257,10 +257,10 @@ protocol_option: TOK_IPTS_PROTOCOL identifier
     $$->identifier = $2;
 }
 
-destination_option: TOK_IPTS_DESTINATION identifier
+destination_option: TOK_IPTS_DESTINATION not_identifier
 {
     $$ = malloc(sizeof(struct destination_option_s));
-    $$->identifier = $2;
+    $$->not_identifier = $2;
 }
 
 jump_option: TOK_IPTS_JUMP identifier
