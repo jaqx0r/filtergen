@@ -1,7 +1,7 @@
 /*
  * filter compilation routines
  *
- * $Id: gen.c,v 1.5 2001/10/06 20:24:35 matthew Exp $
+ * $Id: gen.c,v 1.6 2001/11/05 10:35:26 matthew Exp $
  */
 
 #include <stdio.h>
@@ -71,8 +71,8 @@ int __fg_applyone(struct filterent *e, const struct filter *f,
 	switch(f->type) {
 	case F_TARGET:
 		NA(target);
-		if(f->child) abort();
 #if 0		/* XXX - surely this never made sense? */
+		if(f->child) abort();
 		if(f->next) abort();
 #endif
 		e->target = f->u.target;
