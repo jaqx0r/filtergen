@@ -76,7 +76,7 @@ void resolve_port_argument(struct port_argument_s * n) {
 	/* try to resolve the port name */
 	if ((s = getservbyname(n->port_min, NULL))) {
 	    free(n->port_min);
-	    asprintf(&n->port_min, "%d", s->s_port);
+	    asprintf(&n->port_min, "%d", ntohs(s->s_port));
 	} else {
 	    /* check that the port is a number if we can't resolve it */
 	    long m;
@@ -92,7 +92,7 @@ void resolve_port_argument(struct port_argument_s * n) {
 	/* try to resolve the port name */
 	if ((s = getservbyname(n->port_max, NULL))) {
 	    free(n->port_max);
-	    asprintf(&n->port_max, "%d", s->s_port);
+	    asprintf(&n->port_max, "%d", ntohs(s->s_port));
 	} else {
 	    /* check that the port is a number if we can't resolve it */
 	    long m;
