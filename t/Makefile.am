@@ -38,7 +38,8 @@ TESTS = t_01_ccomment \
 	t_38_specifier \
 	t_39_negated_specifier \
 	t_40_direction \
-	t_41_target
+	t_41_target \
+	t_42_host
 
 check_PROGRAMS = scan parse emit
 

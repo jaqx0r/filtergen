@@ -285,9 +285,6 @@ compound_direction_argument: TOK_LCURLY direction_argument_list TOK_RCURLY
 direction_argument_list: /* empty */
 	{
 		$$ = NULL;
-/*malloc(sizeof(struct direction_argument_list_s));
-		$$->list = NULL;
-		$$->arg = NULL;*/
 	}
 	| direction_argument_list simple_direction_argument
 	{
@@ -389,11 +386,9 @@ compound_host_argument: TOK_LCURLY host_argument_list TOK_RCURLY
 	}
 	;
 
-host_argument_list: simple_host_argument
+host_argument_list: /* empty */
 	{
-		$$ = malloc(sizeof(struct host_argument_list_s));
-		$$->list = NULL;
-		$$->arg = $1;
+		$$ = NULL;
 	}
 	| host_argument_list simple_host_argument
 	{
@@ -608,28 +603,50 @@ host_part: TOK_IDENTIFIER
 	{
 		$$ = malloc(sizeof(struct host_part_s));
 		$$->host = strdup($1);
+		$$->ip1 = $$->ip2 = $$->ip3 = $$->ip4 = 0;
 	}
 	| TOK_NUMBER TOK_DOT TOK_NUMBER TOK_DOT TOK_NUMBER TOK_DOT TOK_NUMBER
 	{
 		$$ = malloc(sizeof(struct host_part_s));
+		$$->host = NULL;
+		$$->ip1 = $1;
+		$$->ip2 = $3;
+		$$->ip3 = $5;
+		$$->ip4 = $7;
 	}
 	;
 
 netmask_part: TOK_NUMBER
 	{
 		$$ = malloc(sizeof(struct netmask_part_s));
+		/* ugly! there's got to be a nice way to do this */
+		$$->mask1 = ((0xffffffff << (32 - $1)) >> 24) & 0xff;
+		$$->mask2 = ((0xffffffff << (32 - $1)) >> 16) & 0xff;
+		$$->mask3 = ((0xffffffff << (32 - $1)) >>  8) & 0xff;
+		$$->mask4 = ((0xffffffff << (32 - $1)) >>  0) & 0xff;
 	}
 	| TOK_NUMBER TOK_DOT TOK_NUMBER
 	{
 		$$ = malloc(sizeof(struct netmask_part_s));
+		$$->mask1 = $1;
+		$$->mask2 = $3;
+		$$->mask3 = $$->mask4 = 0;
 	}
 	| TOK_NUMBER TOK_DOT TOK_NUMBER TOK_DOT TOK_NUMBER
 	{
 		$$ = malloc(sizeof(struct netmask_part_s));
+		$$->mask1 = $1;
+		$$->mask2 = $3;
+		$$->mask3 = $5;
+		$$->mask4 = 0;
 	}
 	| TOK_NUMBER TOK_DOT TOK_NUMBER TOK_DOT TOK_NUMBER TOK_DOT TOK_NUMBER
 	{
 		$$ = malloc(sizeof(struct netmask_part_s));
+		$$->mask1 = $1;
+		$$->mask2 = $3;
+		$$->mask3 = $5;
+		$$->mask4 = $7;
 	}
 	;
 
