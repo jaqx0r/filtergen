@@ -14,7 +14,8 @@ TESTS = t_01_ccomment \
 	t_14_includeinline \
 	t_15_includenotfound \
 	t_16_emptyfilter \
-	t_17_oneemptyrule
+	t_17_oneemptyrule \
+	t_18_manyemptyrules
 
 check_PROGRAMS = scan parse
 
