@@ -1,3 +1,4 @@
+# $Id: filtergen.spec,v 1.5 2002/09/12 10:03:01 matthew Exp $
 Summary: Firewall rule generator
 Name: filtergen
 Version: 0.10
@@ -45,7 +46,9 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)
-%{_sbindir}/filtergen
+/sbin/filtergen
+/etc/init.d/filter
+/etc/filter/
 %{_mandir}/*
 %doc HISTORY HONESTY README TODO INSTALL tests/host-sample.filter tests/router-sample.filter tests/proxy-fw-sample.filter
 
