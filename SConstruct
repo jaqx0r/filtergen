@@ -24,12 +24,13 @@ e.Append(CPPFLAGS = '-D_GNU_SOURCE ')
 
 Help(opts.GenerateHelpText(e))
 
-conf = Configure(e)
-if conf.CheckCHeader('getopt.h'):
-	conf.env.Append(CPPFLAGS = '-DHAVE_GETOPT_H ')
-if conf.CheckLib('getopt', 'getopt'):
-	conf.env.append(LIBS = 'getopt')
-e = conf.Finish()
+if not e.GetOption("clean"):
+	conf = Configure(e)
+	if conf.CheckCHeader('getopt.h'):
+		conf.env.Append(CPPFLAGS = '-DHAVE_GETOPT_H ')
+	if conf.CheckLib('getopt', 'getopt'):
+		conf.env.append(LIBS = 'getopt')
+	e = conf.Finish()
 
 filtergen  = e.Program('filtergen', ['filtergen.c',
 					  'gen.c',
@@ -46,6 +47,26 @@ filtergen  = e.Program('filtergen', ['filtergen.c',
 					  'icmpent.c',
 					  'factoriser.c'])
 
+#fgadm = e.Command('fgadm', 'fgadm.in')
+
 DESTDIR = ARGUMENTS.get('DESTDIR', '')
-e.Install('%s/usr/sbin' % (DESTDIR,), filtergen)
-e.Alias('install', '%s/usr/sbin' % (DESTDIR,))
+
+sbindir = DESTDIR + '/usr/sbin'
+mandir = DESTDIR + '/usr/share/man'
+sysconfdir = DESTDIR + '/etc/filtergen'
+
+e.Install(sbindir, filtergen)
+bin = e.Alias('install-bin', sbindir)
+
+e.Install(mandir + '/man5', 'filter_syntax.5')
+man5 = e.Alias('install-man5', mandir + '/man5')
+e.Install(mandir + '/man7', 'filter_backends.7')
+man7 = e.Alias('install-man7', mandir + '/man7')
+e.Install(mandir + '/man8', ['filtergen.8', 'fgadm.8'])
+man8 = e.Alias('install-man8', mandir + '/man8')
+man = e.Alias('install-man', [man5, man7, man8])
+
+e.Install(sysconfdir, ['fgadm.conf', 'rules.filter'])
+sysconf = e.Alias('install-sysconf', sysconfdir)
+
+e.Alias('install', [bin, man, sysconf])
