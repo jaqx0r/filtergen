@@ -69,7 +69,11 @@ static int cb_cisco_rule(const struct filterent *ent, struct fg_misc *misc __att
     switch(ent->target) {
       case T_ACCEPT:	APPS(rule, "permit"); APPS(rule_r, "permit"); break;
       case DROP: 	APPS(rule, "deny"); APPS(rule_r, "deny"); break;
-      case T_REJECT:	fprintf(stderr, "Cisco IOS does not support REJECT\n"); return -1;
+      case T_REJECT:
+	fprintf(stderr, "warning: Cisco IOS does not support REJECT\n");
+	APPS(rule, "deny");
+	APPS(rule_r, "deny");
+	break;
       default: abort();
     }
 
