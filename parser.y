@@ -56,6 +56,10 @@ extern int yylex(void);
 	struct log_text_argument_s * u_log_text_argument;
 	struct chaingroup_specifier_s * u_chaingroup_specifier;
 	struct subrule_list_s * u_subrule_list;
+	struct host_part_s * u_host_part;
+	struct netmask_part_s * u_netmask_part;
+	struct port_range_s * u_port_range;
+	struct port_single_s * u_port_single;
 	char * u_str;
 	int u_int;
 }
@@ -70,7 +74,6 @@ extern int yylex(void);
 %type <u_direction_argument_list> direction_argument_list
 %type <u_simple_direction_argument> simple_direction_argument
 %type <u_target_specifier> target_specifier
-%type <u_log_target_specifier> log_target_specifier
 %type <u_host_specifier> host_specifier
 %type <u_host_argument> host_argument
 %type <u_compound_host_argument> compound_host_argument
@@ -93,9 +96,12 @@ extern int yylex(void);
 %type <u_simple_icmptype_argument> simple_icmptype_argument
 %type <u_routing_specifier> routing_specifier
 %type <u_compound_specifier> compound_specifier
-%type <u_log_text_argument> log_text_argument
 %type <u_chaingroup_specifier> chaingroup_specifier
 %type <u_subrule_list> subrule_list
+%type <u_host_part> host_part
+%type <u_netmask_part> netmask_part
+%type <u_port_range> port_range
+%type <u_port_single> port_single
 
 %defines
 %token TOK_ACCEPT
@@ -120,8 +126,7 @@ extern int yylex(void);
 %token TOK_SEMICOLON
 %token TOK_SOURCE
 %token TOK_SPORT
-%token <u_str> TOK_STRINGLITERAL
-%token <u_str> TOK_TEXT
+%token TOK_TEXT
 %token <u_str> TOK_IDENTIFIER
 %token <u_int> TOK_NUMBER
 %token TOK_DOT
@@ -300,78 +305,62 @@ target_specifier: TOK_ACCEPT
 	{
 		$$ = malloc(sizeof(struct target_specifier_s));
 		$$->type = TOK_ACCEPT;
-		$$->log = NULL;
+		$$->logtext = NULL;
 	}
 	| TOK_REJECT
 	{
 		$$ = malloc(sizeof(struct target_specifier_s));
 		$$->type = TOK_REJECT;
-		$$->log = NULL;
+		$$->logtext = NULL;
 	}
 	| TOK_DROP
 	{
 		$$ = malloc(sizeof(struct target_specifier_s));
 		$$->type = TOK_DROP;
-		$$->log = NULL;
+		$$->logtext = NULL;
 	}
 	| TOK_MASQ
 	{
 		$$ = malloc(sizeof(struct target_specifier_s));
 		$$->type = TOK_MASQ;
-		$$->log = NULL;
+		$$->logtext = NULL;
 	}
 	| TOK_PROXY
 	{
 		$$ = malloc(sizeof(struct target_specifier_s));
 		$$->type = TOK_PROXY;
-		$$->log = NULL;
+		$$->logtext = NULL;
 	}
 	| TOK_REDIRECT
 	{
 		$$ = malloc(sizeof(struct target_specifier_s));
-		$$->type = TOK_PROXY;
-		$$->log = NULL;
+		$$->type = TOK_REDIRECT;
+		$$->logtext = NULL;
 	}
-	| log_target_specifier
+	| TOK_LOG
 	{
 		$$ = malloc(sizeof(struct target_specifier_s));
 		$$->type = TOK_LOG;
-		$$->log = $1;
+		$$->logtext = NULL;
 	}
-	;
-
-log_target_specifier: TOK_LOG
+	| TOK_LOG TOK_TEXT TOK_IDENTIFIER
 	{
-		$$ = malloc(sizeof(struct log_target_specifier_s));
-		$$->arg = NULL;
-	}
-	| TOK_LOG TOK_TEXT log_text_argument
-	{
-		$$ = malloc(sizeof(struct log_target_specifier_s));
-		$$->arg = $3;
-	}
-	;
-
-log_text_argument: TOK_STRINGLITERAL
-	{
-		$$ = malloc(sizeof(struct log_text_argument_s));
-		$$->text = $1;
-	}
-	| TOK_IDENTIFIER
-	{
-		$$ = malloc(sizeof(struct log_text_argument_s));
-		$$->text = $1;
+		$$ = malloc(sizeof(struct target_specifier_s));
+		$$->type = TOK_LOG;
+		$$->logtext = $3;
 	}
 	;
 
 host_specifier: TOK_SOURCE host_argument
 	{
 		$$ = malloc(sizeof(struct host_specifier_s));
+		$$->type = TOK_SOURCE;
 		$$->arg = $2;
 	}
 	| TOK_DEST host_argument
 	{
 		$$ = malloc(sizeof(struct host_specifier_s));
+		$$->type = TOK_DEST;
 		$$->arg = $2;
 	}
 	;
@@ -414,56 +403,76 @@ host_argument_list: simple_host_argument
 simple_host_argument: host_part
 	{
 		$$ = malloc(sizeof(struct simple_host_argument_s));
+		$$->host = $1;
 	}
 	| host_part TOK_SLASH netmask_part
 	{
 		$$ = malloc(sizeof(struct simple_host_argument_s));
+		$$->host = $1;
+		$$->netmask = $3;
 	}
 	;
 
 port_specifier: TOK_SPORT port_argument
 	{
 		$$ = malloc(sizeof(struct port_specifier_s));
+		$$->type = TOK_SPORT;
+		$$->arg = $2;
 	}
 	| TOK_DPORT port_argument
 	{
 		$$ = malloc(sizeof(struct port_specifier_s));
+		$$->type = TOK_DPORT;
+		$$->arg = $2;
 	}
 	;
 
 port_argument: compound_port_argument
 	{
 		$$ = malloc(sizeof(struct port_argument_s));
+		$$->compound = $1;
+		$$->simple = NULL;
 	}
 	| simple_port_argument
 	{
 		$$ = malloc(sizeof(struct port_argument_s));
+		$$->compound = NULL;
+		$$->simple = $1;
 	}
 	;
 
 compound_port_argument: TOK_LCURLY port_argument_list TOK_RCURLY
 	{
 		$$ = malloc(sizeof(struct compound_port_argument_s));
+		$$->list = $2;
 	}
 	;
 
 port_argument_list: simple_port_argument
 	{
 		$$ = malloc(sizeof(struct port_argument_list_s));
+		$$->list = NULL;
+		$$->arg = $1;
 	}
 	| port_argument_list simple_port_argument
 	{
 		$$ = malloc(sizeof(struct port_argument_list_s));
+		$$->list = $1;
+		$$->arg = $2;
 	}
 	;
 
 simple_port_argument: port_range
 	{
 		$$ = malloc(sizeof(struct simple_port_argument_s));
+		$$->range = $1;
+		$$->single = NULL;
 	}
 	| port_single
 	{
 		$$ = malloc(sizeof(struct simple_port_argument_s));
+		$$->range = NULL;
+		$$->single = $1;
 	}
 	;
 
@@ -508,48 +517,61 @@ simple_protocol_argument: TOK_IDENTIFIER
 icmptype_specifier: TOK_ICMPTYPE icmptype_argument
 	{
 		$$ = malloc(sizeof(struct icmptype_specifier_s));
+		$$->arg = $2;
 	}
 	;
 
 icmptype_argument: compound_icmptype_argument
 	{
 		$$ = malloc(sizeof(struct icmptype_argument_s));
+		$$->compound = $1;
+		$$->simple = NULL;
 	}
 	| simple_icmptype_argument
 	{
 		$$ = malloc(sizeof(struct icmptype_argument_s));
+		$$->compound = NULL;
+		$$->simple = $1;
 	}
 	;
 
 compound_icmptype_argument: TOK_LCURLY icmptype_argument_list TOK_RCURLY
 	{
 		$$ = malloc(sizeof(struct compound_icmptype_argument_s));
+		$$->list = $2;
 	}
 	;
 
 icmptype_argument_list: simple_icmptype_argument
 	{
 		$$ = malloc(sizeof(struct icmptype_argument_list_s));
+		$$->list = NULL;
+		$$->arg = $1;
 	}
 	| icmptype_argument_list simple_icmptype_argument
 	{
 		$$ = malloc(sizeof(struct icmptype_argument_list_s));
+		$$->list = $1;
+		$$->arg = $2;
 	}
 	;
 
 simple_icmptype_argument: TOK_IDENTIFIER
 	{
 		$$ = malloc(sizeof(struct simple_icmptype_argument_s));
+		$$->identifier = strdup($1);
 	}
 	;
 
 routing_specifier: TOK_LOCAL
 	{
 		$$ = malloc(sizeof(struct routing_specifier_s));
+		$$->type = TOK_LOCAL;
 	}
 	| TOK_FORWARD
 	{
 		$$ = malloc(sizeof(struct routing_specifier_s));
+		$$->type = TOK_FORWARD;
 	}
 	;
 
@@ -569,7 +591,7 @@ subrule_list: specifier_list
 	}
 	;
 
-chaingroup_specifier: TOK_LSQUARE TOK_STRINGLITERAL subrule_list TOK_RSQUARE
+chaingroup_specifier: TOK_LSQUARE TOK_IDENTIFIER subrule_list TOK_RSQUARE
 	{
 		$$ = malloc(sizeof(struct chaingroup_specifier_s));
 	}
@@ -580,20 +602,52 @@ chaingroup_specifier: TOK_LSQUARE TOK_STRINGLITERAL subrule_list TOK_RSQUARE
 	;
 
 host_part: TOK_IDENTIFIER
+	{
+		$$ = malloc(sizeof(struct host_part_s));
+		$$->host = strdup($1);
+	}
 	| TOK_NUMBER TOK_DOT TOK_NUMBER TOK_DOT TOK_NUMBER TOK_DOT TOK_NUMBER
+	{
+		$$ = malloc(sizeof(struct host_part_s));
+	}
 	;
 
 netmask_part: TOK_NUMBER
+	{
+		$$ = malloc(sizeof(struct netmask_part_s));
+	}
 	| TOK_NUMBER TOK_DOT TOK_NUMBER
+	{
+		$$ = malloc(sizeof(struct netmask_part_s));
+	}
 	| TOK_NUMBER TOK_DOT TOK_NUMBER TOK_DOT TOK_NUMBER
+	{
+		$$ = malloc(sizeof(struct netmask_part_s));
+	}
 	| TOK_NUMBER TOK_DOT TOK_NUMBER TOK_DOT TOK_NUMBER TOK_DOT TOK_NUMBER
+	{
+		$$ = malloc(sizeof(struct netmask_part_s));
+	}
 	;
 
 port_range: port_single TOK_COLON port_single
+	{
+		$$ = malloc(sizeof(struct port_range_s));
+		$$->min = $1;
+		$$->max = $3;
+	}
 	;
 
 port_single: TOK_IDENTIFIER
+	{
+		$$ = malloc(sizeof(struct port_single_s));
+		$$->name = strdup($1);
+	}
 	| TOK_NUMBER
+	{
+		$$ = malloc(sizeof(struct port_single_s));
+		$$->num = $1;
+	}
 	;
 
 %%

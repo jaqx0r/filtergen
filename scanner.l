@@ -51,8 +51,13 @@ number  [[:digit:]]+
 #[^\n]*      /* strip shell style comments */
 
 {string}     {
-                 yylval.u_str = strndup(yytext, yyleng);
-                 return TOK_STRINGLITERAL;
+		/* we do not store the " characters in the string, so lop
+		 * them off.  We can "safely" assume that the first and last
+		 * characters in this regex are ", otherwise there's a bug
+		 * in flex...  The result is somethign that is syntactically
+		 * identical to an identifier for our purposes. */
+		yylval.u_str = strndup(yytext + 1, yyleng - 2);
+		return TOK_IDENTIFIER;
              }
 
 {space}      /* ignore */
