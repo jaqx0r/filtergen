@@ -259,6 +259,8 @@ void resolve_simple_host_argument(struct simple_host_argument_s * n) {
     memset(&hints, 0, sizeof(struct addrinfo));
     hints.ai_family = PF_UNSPEC;
     hints.ai_flags = AI_CANONNAME;
+    /* limit socktype so duplicate hosts aren't returned for each socktype */
+    hints.ai_socktype = SOCK_STREAM;
     
     if (n->host) {
         r = getaddrinfo(n->host, NULL, &hints, &a);
@@ -269,9 +271,13 @@ void resolve_simple_host_argument(struct simple_host_argument_s * n) {
 
             for (i = a; i != NULL; i = i->ai_next) {
                
-                /* printf("addrinfo: ai_canonname: %s\n\tai_addrlen: %ld\n", i->ai_canonname, (long) i->ai_addrlen); */
+                /*
+                printf("addrinfo: ai_canonname: %s\n\tai_family: %d\n\tai_socktype: %d\n", i->ai_canonname, i->ai_family, i->ai_socktype);
+                */
                 long addr = (long) ntohl(*(int *)&((struct sockaddr_in *) i->ai_addr)->sin_addr);
-                /* printf("\taddr: %ld.%ld.%ld.%ld\n", addr >> 24 & 255, addr >> 16 & 255, addr >> 8 & 255, addr & 255); */
+                /*
+                printf("\taddr: %ld.%ld.%ld.%ld\n", addr >> 24 & 255, addr >> 16 & 255, addr >> 8 & 255, addr & 255);
+                */
                 free(n->host);
                 asprintf(&n->host, "%ld.%ld.%ld.%ld", addr >> 24 & 255, addr >> 16 & 255, addr >> 8 & 255, addr & 255);
             }

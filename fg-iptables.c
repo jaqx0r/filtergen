@@ -330,7 +330,9 @@ int fg_iptables(struct filter *filter, int flags)
 
 		oputs("# Setup INVALID chain");
 		oputs(IPTABLES" -N INVALID");
+#if 0
 		oputs(IPTABLES" -A INVALID -j LOG --log-prefix \"invalid \"");
+#endif
 		oputs(IPTABLES" -A INVALID -j DROP");
 		oputs("for f in $CHAINS; do\n"
 		     "\t"IPTABLES" -I $f -m state --state INVALID -j INVALID;\n"
@@ -353,8 +355,10 @@ int fg_iptables(struct filter *filter, int flags)
 			}
 			oputs("done");
 		}
+#if 0
 		oputs("for f in $CHAINS; do "IPTABLES" -A $f -j LOG; done");
 		r += nchains;
+#endif
 	}
 	return r;
 }
