@@ -13,7 +13,8 @@ pfc_SOURCES = \
 	fg-cisco.c \
 	parser.y \
 	scanner.l \
-	glue.c
+	glue.c \
+	resolver.c
 
 pfc_LDADD = @GETOPT_LIBS@
 

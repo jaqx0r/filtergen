@@ -2,10 +2,11 @@ TODO for pfc
 
 Easy:
  * Better documentation.
- * Support scripts, documentation and Makefiles for various systems.
+ * Support scripts, documentation
  * Better logging options.
  * Option to do all name lookups (hosts, services, ICMP)
- * Translate icmp names (at least for ipfilter and cisco)
+ * Translate icmp names (at least for ipfilter and cisco) 
+ * ICMP codes (--icmp-type x/y syntax for iptables)
  * "Loose" option to allow not-quite-correct rulesets to run, eg.,
    using forward-only with ipchains
  * New backend: FreeBSD ipfw
