@@ -549,11 +549,9 @@ compound_icmptype_argument: TOK_LCURLY icmptype_argument_list TOK_RCURLY
 	}
 	;
 
-icmptype_argument_list: simple_icmptype_argument
+icmptype_argument_list: /* empty */
 	{
-		$$ = malloc(sizeof(struct icmptype_argument_list_s));
-		$$->list = NULL;
-		$$->arg = $1;
+		$$ = NULL;
 	}
 	| icmptype_argument_list simple_icmptype_argument
 	{

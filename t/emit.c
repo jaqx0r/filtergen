@@ -64,7 +64,9 @@ EMIT(icmptype_argument_list) {
 
 EMIT(compound_icmptype_argument) {
     printf("{ ");
-    emit_icmptype_argument_list(n->list);
+    if (n->list) {
+	emit_icmptype_argument_list(n->list);
+    }
     printf(" }");
 };
 
