@@ -17,6 +17,7 @@ recent:
 	fix bug where accept would get lost from:
 		input eth0 { ! dest bar drop; accept; };
 	iptables and ipchains add "established packet" rules to head of chain
+	add "proxy" as an alias for "redirect"
 
 0.6:
 	disable negation of conjunctions ("or"s, aka brace-grouping) for now
@@ -54,4 +55,4 @@ recent:
 	iptables driver
 	a few bugs
 
-$Id: HISTORY,v 1.26 2002/07/19 16:30:58 matthew Exp $
+$Id: HISTORY,v 1.27 2002/07/21 12:35:39 matthew Exp $
