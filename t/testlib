@@ -33,7 +33,7 @@ trap no_result 1 2 3 15
 
 # function for comparing files
 compare () {
-    cmp "$1" "$2"
+    cmp "$1" "$2" >/dev/null 2>&1
     case "$?" in
 	0)
 	    ;;
