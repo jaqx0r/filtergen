@@ -57,13 +57,26 @@ struct icmpent_s {
     { "3/15", "precedence-cutoff" },
     { "4", "source-quench" },
     { "5", "redirect" },
+    { "5/0", "redirect-network" },
+    { "5/1", "redirect-host" },
+    { "5/2", "redirect-tos-network" },
+    { "5/3", "redirect-tos-host" },
     { "6", "alternate-host-address" },
     /* 7 unassigned */
     { "8", "echo-request" },
     { "9", "router-advertisement" },
+    { "9/0", "router-advertisement-normal" },
+    /* RFC2002 */
+    { "9/16", "router-advertisement-uncommon" },
     { "10", "router-selection" },
     { "11", "time-exceeded" },
+    { "11/0", "time-exceeded-in-transmit" },
+    { "11/1", "time-exceeded-fragment-reassembly" },
     { "12", "parameter-problem" },
+    { "12/0", "parameter-problem-pointer" },
+    /* RFC1108 */
+    { "12/1", "parameter-problem-missing-option" },
+    { "12/2", "parameter-problem-bad-length" },
     { "13", "timestamp-request" },
     { "14", "timestamp-reply" },
     { "15", "information-request" },
@@ -82,8 +95,14 @@ struct icmpent_s {
     { "38", "domain-name-reply" },
     { "39", "skip" },
     { "40", "photuris"},
-    { NULL, NULL }
+    { "40/0", "photuris-bad-spi" },
+    { "40/1", "photuris-authn-failed" },
+    { "40/2", "photuris-decompression-failed" },
+    { "40/3", "photuris-decryption-failed" },
+    { "40/4", "photuris-need-authn" },
+    { "40/5", "photuris-need-authz" },
     /* 41-255 reserved */
+    { NULL, NULL }
 };
 
 /* fake netdb-like function for icmp types */
