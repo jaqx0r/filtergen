@@ -1,0 +1,3 @@
+# convert routing specifiers
+input eth0 dest foo local accept;
+input eth0 dest foo forward accept;

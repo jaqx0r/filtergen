@@ -421,6 +421,29 @@ struct filter * convert_icmptype_specifier(struct icmptype_specifier_s * n) {
     return res;        
 }
 
+struct filter * convert_routing_specifier(struct routing_specifier_s * n) {
+    struct filter * res = NULL;
+    enum filtertype type;
+	
+    eprint("converting routing specifier\n");
+
+    switch (n->type) {
+      case TOK_LOCAL:
+	type = LOCALONLY;
+	break;
+      case TOK_FORWARD:
+	type = ROUTEDONLY;
+	break;
+      default:
+	printf("error: incorrect routing type encountered\n");
+	type = YYEOF;
+	break;
+    }
+    res = new_filter_rtype(type);
+
+    return res;        
+}
+
 struct filter * convert_specifier(struct specifier_s * r) {
     struct filter * res = NULL;
     eprint("converting specifier\n");
@@ -469,8 +492,7 @@ struct filter * convert_specifier(struct specifier_s * r) {
     } else if (r->icmptype) {
         res = convert_icmptype_specifier(r->icmptype);
     } else if (r->routing) {
-      eprint("converting routing specifier\n");
-	res = __new_filter(F_SUBGROUP);
+      res = convert_routing_specifier(r->routing);
     } else if (r->chaingroup) {
       eprint("converting chaingroup specifier\n");
 	res = __new_filter(F_RTYPE);

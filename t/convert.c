@@ -118,6 +118,7 @@ void emit_filter(struct filter * f) {
 	    printf("error: encountered a rtype %d\n", (int) f->u.rtype);
 	    break;
 	}
+	break;
       default:
 	printf("error: encountered a token %d\n", (int) f->type);
 	break;

@@ -52,7 +52,8 @@ TESTS = t_01_ccomment \
 	t_52_converthost \
 	t_53_convertproto \
 	t_54_convertport \
-	t_55_converticmptype
+	t_55_converticmptype \
+	t_56_convertrouting
 
 check_PROGRAMS = scan parse emit filter_emit convert
 
