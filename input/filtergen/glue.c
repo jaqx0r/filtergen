@@ -576,25 +576,6 @@ struct filter * convert(struct ast_s * ast) {
     return res;
 }
 
-struct filter * filter_parse_list(void) {
-    struct filter * f = NULL;
-    struct ast_s ast;
-    int r;
-
-    /* parse the input */
-    r = yyparse((void *) &ast);
-    if (r != 0) {
-	printf("parser failed: %d\n", r);
-    }
-
-    /* convert our new style AST into the old style struct */
-    if (!(f = convert(&ast))) {
-	printf("conversion failed!\n");
-    }
-
-    return f;
-}
-
 struct filter * filtergen_source_parser(FILE * file, int resolve_names) {
     struct ast_s ast;
     struct filter * f;
