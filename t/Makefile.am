@@ -40,3 +40,5 @@ parse_SOURCES = parse.c
 parse_LDADD = ../scanner.o ../parser.o
 
 EXTRA_DIST = $(top_srcdir)/t/data/* testlib $(TESTS)
+
+AM_CFLAGS = -g -Wall -Werror

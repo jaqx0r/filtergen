@@ -1,22 +1,18 @@
 SUBDIRS = . t
 
-bin_PROGRAMS = tmp filtergen
-
-tmp_SOURCES = \
-	tmpmain.c \
-	parser.y \
-	scanner.l
+bin_PROGRAMS = filtergen
 
 filtergen_SOURCES = \
 	filtergen.c \
 	gen.c \
 	filter.c \
-	filterlex.l \
 	fg-util.c \
 	fg-iptables.c \
 	fg-ipchains.c \
 	fg-ipfilter.c \
-	fg-cisco.c
+	fg-cisco.c \
+	parser.y \
+	scanner.l
 
 headers = filter.h util.h
 
