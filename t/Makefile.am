@@ -55,7 +55,9 @@ TESTS = t_01_ccomment \
 	t_55_converticmptype \
 	t_56_convertrouting \
 	t_57_convertchains \
-	t_58_convertcompound
+	t_58_convertcompound \
+	t_59_convertnested \
+	t_60_bigugly
 
 check_PROGRAMS = scan parse emit filter_emit convert
 
