@@ -1,6 +1,8 @@
-# $Id: Makefile,v 1.1 2001/09/25 17:22:39 matthew Exp $
+# $Id: Makefile,v 1.2 2001/09/25 17:39:19 matthew Exp $
 
-include ../fk/Makefile.defs
+CC=gcc
+CFLAGS=-g
+LDFLAGS=-g
 
 PROGS=filtergen
 
