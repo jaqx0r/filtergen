@@ -1,5 +1,6 @@
-/* test input file emitter, should spit out identical (syntactically)
-   as the input */
+/* ast emitter
+ * output should be identical (syntactically) to the input
+ */
 
 #include <stdio.h>
 #include "../ast.h"
@@ -12,15 +13,12 @@ void emit_rule(struct rule_s * rule) {
 }
 
 void emit_rule_list(struct rule_list_s * rule_list) {
-    printf("rule list\n");
     if (rule_list->rule_list) {
 	emit_rule_list(rule_list->rule_list);
     }
     if (rule_list->rule) {
 	emit_rule(rule_list->rule);
     }
-    /* rule lists end with a newline */
-    printf("\n");
 };
 
 void emit_ast(struct ast_s * ast) {

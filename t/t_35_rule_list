@@ -1,0 +1,25 @@
+#!/bin/sh
+
+TEST="that the parser reads a rule list correctly"
+DATA=emitter2
+
+testdir=`dirname $0`
+. $testdir/testlib
+
+cd $work
+if test $? -ne 0 ; then no_result ; fi
+
+$here/emit < $testdir/data/${DATA}.in > $work/out 2>&1
+if test $? -ne 0 ; then no_result ; fi
+
+compare $testdir/data/${DATA}.out $work/out
+
+# now see if the emitter is now idempotent
+$here/emit < $work/out > $work/out.out 2>&1
+if test $? -ne 0 ; then no_result ; fi
+
+compare $work/out $work/out.out
+
+# got this far?
+pass
+
