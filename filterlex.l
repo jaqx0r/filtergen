@@ -2,7 +2,7 @@
 /*
  * lexer/parser for packet filtering rules
  *
- * $Id: filterlex.l,v 1.7 2002/01/02 14:49:33 matthew Exp $
+ * $Id: filterlex.l,v 1.8 2002/04/08 21:54:45 matthew Exp $
  */
 
 #include <sys/types.h>
@@ -41,6 +41,9 @@ include		{ return INCLUDE; }
 [{]		{ return OPENBRACE; }
 [}]		{ return CLOSEBRACE; }
 
+[[]		{ return OPENBRACKET; }
+[]]		{ return CLOSEBRACKET; }
+
 [!]		{ return F_NEG; }
 
 accept		{ return F_ACCEPT; }
@@ -67,7 +70,7 @@ dport		{ return F_DPORT; }
 
 icmptype	{ return F_ICMPTYPE; }
 
-[-:[:alnum:]./+]+ { return STRING; }
+[-"_:[:alnum:]./+]+ { return STRING; }
 
 %%
 
@@ -127,6 +130,37 @@ static struct filter *filter_parse_sibs(void)
 }
 
 
+static struct filter *filter_parse_subgroup(void)
+{
+	char *name;
+	struct filter *f;
+	enum filtertype t;
+
+	filter_yylex();
+	if(yytext[0] == '"') {
+		if((name = strchr(yytext+1, '"')))
+			*name = 0;
+		name = strdup(yytext+1);
+	} else {
+		/* Allocate a filter name */
+		static int ccount = 0;
+		char nbuf[100];
+		snprintf(nbuf, sizeof(nbuf)-1, "chain_%d", ccount++);
+		nbuf[sizeof(nbuf)-1] = 0;
+		name = strdup(nbuf);
+		yyless(0);
+	}
+	f = filter_parse_list();
+	t = filter_yylex();
+	if(t != CLOSEBRACKET) {
+		fprintf(stderr, "%d: group not ended by a bracket, but by \"%s\"\n",
+				yylineno, yytext);
+		yyless(0);
+	}
+	return new_filter_subgroup(name, f);
+}
+
+
 static struct filter *filter_parse_group(enum filtertype itok,
 			filter_tctor *tctor, filter_ctor *ctor)
 {
@@ -178,7 +212,9 @@ static struct filter *filter_parse_single(void)
 		return filter_parse_group(tok, new_filter_proto, NULL);
 	case OPENBRACE:
 		return filter_parse_sibs();
-	case CLOSEBRACE:
+	case OPENBRACKET:
+		return filter_parse_subgroup();
+	case CLOSEBRACE: case CLOSEBRACKET:
 	case SEMICOLON: yyless(0);
 	case YYEOF:	break;
 	default:

@@ -1,7 +1,7 @@
 /*
  * Filter generator, iptables driver
  *
- * $Id: fg-iptables.c,v 1.14 2001/11/05 10:35:57 matthew Exp $
+ * $Id: fg-iptables.c,v 1.15 2002/04/08 21:54:45 matthew Exp $
  */
 
 /*
@@ -37,7 +37,7 @@
 /* bitfields for features used */
 #define	REJECT	0x01
 
-static int cb_iptables(const struct filterent *ent, void *misc)
+static int cb_iptables_rule(const struct filterent *ent, void *misc)
 {
 	char *natchain = NULL, *rulechain = NULL, *revchain = NULL;
 	char *natrule = NULL, *rule = NULL, *rule_r = NULL;
@@ -58,6 +58,9 @@ static int cb_iptables(const struct filterent *ent, void *misc)
 	}
 
 	switch(ent->direction) {
+	case 0:		/* This is a rule in a subgroup */
+			revchain = rulechain = ent->groupname;
+			break;
 	case F_INPUT:	natchain = "PREROUTING";
 			rulechain = "INPUT";
 			revchain = "OUTPUT";
@@ -194,6 +197,8 @@ static int cb_iptables(const struct filterent *ent, void *misc)
 			revchain = "FORWARD";
 			++needret;
 			*feat |= F_REJECT; break;
+	case F_SUBGROUP:APPS(rule, ent->subgroup);
+			APPS(rule_r, ent->subgroup); break;
 	default: abort();
 	}
 
@@ -205,11 +210,20 @@ static int cb_iptables(const struct filterent *ent, void *misc)
 	return 1 + !!needret + !!neednat;
 }
 
+static int cb_iptables_group(const char *name)
+{
+	printf("iptables -N %s\n", name);
+	return 1;
+}
 
 int fg_iptables(struct filter *filter, int skel)
 {
 	long feat;
 	int r;
+	fg_callback cb_iptables = {
+	rule:	cb_iptables_rule,
+	group:	cb_iptables_group,
+	};
 
 	filter_unroll(&filter);
 	if(skel) {
@@ -217,7 +231,7 @@ int fg_iptables(struct filter *filter, int skel)
 		puts("iptables -F; iptables -X");
 		puts("iptables -t nat -F; iptables -t nat -X");
 	}
-	if((r = filtergen_cprod(filter, cb_iptables, (void*)&feat)) < 0)
+	if((r = filtergen_cprod(filter, &cb_iptables, (void*)&feat)) < 0)
 		return r;
 	if(skel) {
 		puts("for f in INPUT OUTPUT FORWARD; do iptables -A $f -j LOG; done");

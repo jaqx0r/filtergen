@@ -1,10 +1,13 @@
 /*
  * Filter generator, ipfilter driver
  *
- * $Id: fg-ipfilter.c,v 1.4 2001/11/04 22:43:55 matthew Exp $
+ * $Id: fg-ipfilter.c,v 1.5 2002/04/08 21:54:45 matthew Exp $
  */
 
-/* XXX - does this need skeleton routines? */
+/* TODO:
+ * - does this need skeleton routines?
+ * - implement grouping
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -44,7 +47,7 @@ static char *appicmp(char *r, const char *h, int neg)
 	return APPSS2(r, "icmp-type", h);
 }
 
-static int cb_ipfilter(const struct filterent *ent, void *misc)
+static int cb_ipfilter_rule(const struct filterent *ent, void *misc)
 {
 	char *rule = NULL;
 
@@ -109,6 +112,11 @@ static int cb_ipfilter(const struct filterent *ent, void *misc)
 
 int fg_ipfilter(struct filter *filter, int skel)
 {
+	fg_callback cb_ipfilter = {
+	rule:	cb_ipfilter_rule,
+	};
+
+	filter_nogroup(filter);
 	filter_unroll(&filter);
-	return filtergen_cprod(filter, cb_ipfilter, NULL);
+	return filtergen_cprod(filter, &cb_ipfilter, NULL);
 }

@@ -3,7 +3,7 @@
  *
  * XXX - maybe some of this could be shared with the iptables one?
  *
- * $Id: fg-ipchains.c,v 1.8 2001/11/05 10:35:57 matthew Exp $
+ * $Id: fg-ipchains.c,v 1.9 2002/04/08 21:54:45 matthew Exp $
  */
 
 #include <stdio.h>
@@ -13,7 +13,7 @@
 #include "util.h"
 
 
-static int cb_ipchains(const struct filterent *ent, void *misc)
+static int cb_ipchains_rule(const struct filterent *ent, void *misc)
 {
 	char *rule = NULL, *rule_r = NULL;
 	int needret = 0;
@@ -36,6 +36,10 @@ static int cb_ipchains(const struct filterent *ent, void *misc)
 	APPS(rule_r, "-A");
 
 	switch(ent->direction) {
+	case 0:		/* This is a rule in a subgroup */
+			APPS(rule, ent->groupname);
+			APPS(rule_r, ent->groupname);
+			break;
 	case F_INPUT:	APPS(rule, "input"); APPS(rule_r, "output"); break;
 	case F_OUTPUT:	APPS(rule, (ent->target == F_MASQ) ? "forward" : "output");
 			APPS(rule_r, "input"); break;
@@ -115,6 +119,7 @@ static int cb_ipchains(const struct filterent *ent, void *misc)
 	case F_REJECT:	APPS(rule, "REJECT"); needret = 0; break;
 	case F_MASQ:	APPS(rule, "MASQ"); APPS(rule_r, "ACCEPT"); break;
 	case F_REDIRECT:APPS(rule, "REDIRECT"); APPS(rule_r, "ACCEPT"); break;
+	case F_SUBGROUP:APPS(rule, ent->subgroup); APPS(rule_r, ent->subgroup); break;
 	default: abort();
 	}
 
@@ -125,16 +130,26 @@ static int cb_ipchains(const struct filterent *ent, void *misc)
 	return 1 + !!needret;
 }
 
+static int cb_ipchains_group(const char *name)
+{
+	printf("ipchains -N %s\n", name);
+	return 1;
+}
 
 int fg_ipchains(struct filter *filter, int skel)
 {
 	int r;
+	fg_callback cb_ipchains = {
+	rule:	cb_ipchains_rule,
+	group:	cb_ipchains_group,
+	};
+
 	filter_unroll(&filter);
 	if(skel) {
 		puts("for f in INPUT OUTPUT FORWARD; do ipchains -P $f DENY; done");
 		puts("ipchains -F; ipchains -X");
 	}
-	if((r = filtergen_cprod(filter, cb_ipchains, NULL)) < 0)
+	if((r = filtergen_cprod(filter, &cb_ipchains, NULL)) < 0)
 		return r;
 	if(skel) {
 		puts("for f in INPUT OUTPUT FORWARD; do ipchains -A $f -l -j DENY; done");

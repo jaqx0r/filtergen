@@ -1,9 +1,10 @@
 recent:
 	disable negation of conjunctions ("or"s, aka brace-grouping) for now
 	add "no skeleton" option
-	fix a couple of segfaults/aborts where input filter
-	is invalid
-	allow literal "+" signs in input
+	fix a couple of segfaults/aborts where input filter is invalid
+	allow literal +, ", and _ signs in input
+	add sub-groups -- where supported, large sub-sections can be moved
+		out-of-line to improve performance
 
 0.5: that's better
 	much fixing of iptables driver.  Now shouldn't leak
@@ -33,4 +34,4 @@ recent:
 	iptables driver
 	a few bugs
 
-$Id: HISTORY,v 1.14 2002/01/25 17:04:55 matthew Exp $
+$Id: HISTORY,v 1.15 2002/04/08 21:54:44 matthew Exp $

@@ -1,7 +1,7 @@
 /*
  * filter compilation routines
  *
- * $Id: gen.c,v 1.6 2001/11/05 10:35:26 matthew Exp $
+ * $Id: gen.c,v 1.7 2002/04/08 21:54:45 matthew Exp $
  */
 
 #include <stdio.h>
@@ -14,13 +14,16 @@ int checkmatch(const struct filterent *e)
 {
 	int r = 0;
 #define	MUST(t)							\
-	if(!(e->t)) {						\
+	do if(!(e->t)) {						\
 		fprintf(stderr, #t " missing from filter\n");	\
 		r++;						\
+	} while(0)
+	if(!e->subgroup)
+		MUST(target);
+	if(!e->groupname) {
+		MUST(direction);
+		MUST(iface);
 	}
-	MUST(direction);
-	MUST(target);
-	MUST(iface);
 #undef MUST
 
 	if((e->u.ports.src || e->u.ports.dst)
@@ -39,10 +42,10 @@ int checkmatch(const struct filterent *e)
 
 
 int __fg_apply(struct filterent *e, const struct filter *f,
-		fg_callback cb, void *misc);
+		fg_callback *cb, void *misc);
 
 int __fg_applylist(struct filterent *e, const struct filter *f,
-			fg_callback cb, void *misc)
+			fg_callback *cb, void *misc)
 {
 	/* This is the interesting one.  The filters are
 	 * unrolled by now, so there's only one way to
@@ -57,10 +60,10 @@ int __fg_applylist(struct filterent *e, const struct filter *f,
 }
 
 int __fg_apply(struct filterent *_e, const struct filter *f,
-		fg_callback cb, void *misc);
+		fg_callback *cb, void *misc);
 
 int __fg_applyone(struct filterent *e, const struct filter *f,
-		fg_callback cb, void *misc)
+		fg_callback *cb, void *misc)
 {
 #define NA(t)							\
 	if(e->t) {						\
@@ -71,12 +74,33 @@ int __fg_applyone(struct filterent *e, const struct filter *f,
 	switch(f->type) {
 	case F_TARGET:
 		NA(target);
-#if 0		/* XXX - surely this never made sense? */
-		if(f->child) abort();
-		if(f->next) abort();
-#endif
 		e->target = f->u.target;
 		break;
+
+	case F_SUBGROUP: {
+		struct filterent fe;
+		int r;
+
+		NA(subgroup);
+		if(e->subgroup) {
+			fprintf(stderr, "cannot compose subgroups\n");
+			return -1;
+		}
+		if(!cb->group) {
+			fprintf(stderr, "backend doesn't support grouping, but hasn't removed groups\n");
+			abort();
+		}
+		e->target = f->type;
+		e->subgroup = f->u.sub.name;
+
+		memset(&fe, 0, sizeof(fe));
+		fe.groupname = f->u.sub.name;
+		cb->group(fe.groupname);
+		if((r = __fg_applylist(&fe, f->u.sub.list, cb, misc)) < 0)
+			return r;
+
+		break;
+	}
 
 	case F_INPUT: case F_OUTPUT:
 		NA(direction);
@@ -110,7 +134,7 @@ int __fg_applyone(struct filterent *e, const struct filter *f,
 }
 
 int __fg_apply(struct filterent *_e, const struct filter *f,
-		fg_callback cb, void *misc)
+		fg_callback *cb, void *misc)
 {
 	struct filterent e = *_e;
 
@@ -120,7 +144,7 @@ int __fg_apply(struct filterent *_e, const struct filter *f,
 			fprintf(stderr, "filter definition incomplete\n");
 			return -1;
 		}
-		return cb(&e, misc);
+		return cb->rule(&e, misc);
 	}
 
 	return __fg_applyone(&e, f, cb, misc)
@@ -128,7 +152,7 @@ int __fg_apply(struct filterent *_e, const struct filter *f,
 }
 
 
-int filtergen_cprod(struct filter *filter, fg_callback cb, void *misc)
+int filtergen_cprod(struct filter *filter, fg_callback *cb, void *misc)
 {
 	struct filterent e;
 	memset(&e, 0, sizeof(e));

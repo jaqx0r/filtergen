@@ -17,21 +17,26 @@ couple of issues with the iptables one.
 The ipfilter backend seems to generate OK-looking rules, but it
 doesn't support NAT and I don't even have a BSD box to test it on.
 
-The language is likely to evolve as more features are implemented.
-Specifically, I'd like it to express fundamental networking and,
-specifically, filtering concepts, rather than being an iptables
-macro language.
+The Cisco IOS driver is incomplete and can ignore negations.  I'd
+love for someone who can test it to take it over.
 
-The Cisco ACL generator will silently drop negations, which makes
-is essentially useless for a lot of things.  This will be fixed,
-but probably not soon.
+The language is likely to evolve as more features are implemented.
+Specifically, I'd like it to express fundamental networking and
+filtering concepts, rather than being an iptables macro language.
 
 The transparent proxying, masquerading and logging support is not
 as flexible as I'd like it to be.
 
-I have recently converted my home gateway to use it and it is
-working well.  But "working well" does not imply security, and I
-have not expended a great deal of effort in auditing.
+"Grouping" (sub-chain) support is a recent addition, and I can't
+be 100% sure it's working properly, as it was written to support
+configs more complication that I need.
+
+And the documentation could use some attention.
+
+I have been using it on my personal gateway for around six months
+now, and have two production webservers using it too.  It has all
+worked very well.  But "working well" does not imply security, and
+I have not expended a great deal of effort in auditing.
 
 
-$Id: HONESTY,v 1.7 2001/11/04 22:43:55 matthew Exp $
+$Id: HONESTY,v 1.8 2002/04/08 21:54:45 matthew Exp $
