@@ -20,8 +20,6 @@ Medium:
 Harder:
  * iproute2 "ip rule" backend
  * Testing and auditing of generated rulesets.
- * Option to have just a single "state OK -> accept" rule, instead
-   of one per bit of allowed traffic.
 
 Hard:
  * Optimiser (de-pessimiser :-) for intermediate step, and also
@@ -34,4 +32,4 @@ Hard:
    This is possible, but tiresome, and will require an optimiser
    if the generated rulesets are not to Suck.
 
-$Id: TODO,v 1.12 2002/07/18 21:26:58 matthew Exp $
+$Id: TODO,v 1.13 2002/09/02 09:41:40 matthew Exp $
