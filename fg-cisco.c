@@ -1,7 +1,7 @@
 /*
  * Filter generator, Cisco IOS driver
  *
- * $Id: fg-cisco.c,v 1.6 2002/04/08 21:54:45 matthew Exp $
+ * $Id: fg-cisco.c,v 1.7 2002/04/14 11:38:40 matthew Exp $
  */
 
 /* XXX - does this need skeleton rules? */
@@ -106,7 +106,7 @@ static int cb_cisco_rule(const struct filterent *ent, void *misc)
 	return 1 + !!needret;
 }
 
-int fg_cisco(struct filter *filter, int skel)
+int fg_cisco(struct filter *filter, int flags)
 {
 	fg_callback cb_cisco = {
 	rule:	cb_cisco_rule,

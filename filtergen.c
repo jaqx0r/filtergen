@@ -1,7 +1,7 @@
 /*
  * filter compilation front-end
  *
- * $Id: filtergen.c,v 1.8 2001/11/04 22:43:55 matthew Exp $
+ * $Id: filtergen.c,v 1.9 2002/04/14 11:38:40 matthew Exp $
  */
 
 #include <stdio.h>
@@ -33,14 +33,14 @@ int main(int argc, char **argv)
 	char buf[100];
 	char *ftn;
 	struct filtyp *ft;
-	int skel = 1;
+	int flags = 0;
 	char *progname;
 
 	progname = argv[0];
 
 	if((argc > 1) && !strcmp(argv[1], "-n")) {
 		argc--; argv++;
-		skel = 0;
+		flags |= FF_NOSKEL;
 	}
 
 	if((argc > 1) && strcmp(argv[1], "-")) {
@@ -72,7 +72,7 @@ int main(int argc, char **argv)
 			localtime((time(&t),&t)));
 	printf("# filter generated from %s via %s backend at %s\n",
 		argv[1] ?: "standard input", ft->name, buf);
-	l = ft->compiler(f, skel);
+	l = ft->compiler(f, flags);
 
 	if(l < 0) {
 		fprintf(stderr, "an error occurred: most likely the filters defined make no sense\n");

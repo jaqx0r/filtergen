@@ -1,7 +1,7 @@
 /*
  * Filter generator, ipfilter driver
  *
- * $Id: fg-ipfilter.c,v 1.5 2002/04/08 21:54:45 matthew Exp $
+ * $Id: fg-ipfilter.c,v 1.6 2002/04/14 11:38:40 matthew Exp $
  */
 
 /* TODO:
@@ -110,7 +110,7 @@ static int cb_ipfilter_rule(const struct filterent *ent, void *misc)
 	return 1;
 }
 
-int fg_ipfilter(struct filter *filter, int skel)
+int fg_ipfilter(struct filter *filter, int flags)
 {
 	fg_callback cb_ipfilter = {
 	rule:	cb_ipfilter_rule,
