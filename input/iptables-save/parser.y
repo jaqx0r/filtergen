@@ -57,10 +57,24 @@ extern int ipts_lex(void);
 %type <u_pkt_count> pkt_count
 
 %defines
-%token TOK_TABLE
-%token TOK_CHAIN
-%token <u_str> TOK_OPTION
+%token TOK_IPTS_TABLE
+%token TOK_IPTS_CHAIN
+
+%token TOK_IPTS_CHAIN_APPEND
+
+%token TOK_IPTS_PROTOCOL
+%token TOK_IPTS_SOURCE
+%token TOK_IPTS_DESTINATION
+%token TOK_IPTS_JUMP
+%token TOK_IPTS_IN_INTERFACE
+%token TOK_IPTS_OUT_INTERFACE
+%token TOK_IPTS_FRAGMENT
+%token TOK_IPTS_SET_COUNTERS
+%token TOK_IPTS_MATCH
+
 %token <u_str> TOK_IDENTIFIER
+%token <u_str> TOK_OPTION
+
 %token TOK_LSQUARE
 %token TOK_RSQUARE
 %token TOK_COLON
@@ -94,7 +108,7 @@ rule_list: /* empty */
     $$->rule = $2;
 }
 
-rule: TOK_TABLE TOK_IDENTIFIER
+rule: TOK_IPTS_TABLE TOK_IDENTIFIER
 {
     $$ = malloc(sizeof(struct rule_s));
     $$->table = $2;
@@ -103,7 +117,7 @@ rule: TOK_TABLE TOK_IDENTIFIER
     $$->pkt_count = NULL;
     $$->option_list = NULL;
 }
-| TOK_CHAIN TOK_IDENTIFIER TOK_IDENTIFIER pkt_count
+| TOK_IPTS_CHAIN TOK_IDENTIFIER TOK_IDENTIFIER pkt_count
 {
     $$ = malloc(sizeof(struct rule_s));
     $$->table = NULL;
@@ -158,6 +172,7 @@ not_option: TOK_BANG option
     $$->neg = 0;
     $$->option = $1;
 }
+
 
 option: TOK_OPTION not_identifier
 {

@@ -26,8 +26,6 @@
 #include <string.h>
 #include "parser.h"
 
-long int ipts_ln = 1;
-
 char * ipts_filename(void);
 %}
 
@@ -37,20 +35,15 @@ id	[[:alnum:]_+-\.\/]+
 
 %%
 
-#[^\n]*[\n] { /* strip shell-style comments and the trailing newline */ 
-		ipts_ln++;
-	    }
+#[^\n]*[\n] { /* strip shell-style comments and the trailing newline */  }
 
-^[*]	return TOK_TABLE;
+^[*]	return TOK_IPTS_TABLE;
 
-^:	return TOK_CHAIN;
+^:	return TOK_IPTS_CHAIN;
 
 {space}	/* ignore */
 
-\n	{
-		ipts_ln++;
-		return TOK_NEWLINE;
-	}
+\n	return TOK_NEWLINE;
 
 ^COMMIT	return TOK_COMMIT;
 
@@ -64,11 +57,34 @@ id	[[:alnum:]_+-\.\/]+
                 return TOK_IDENTIFIER;
                 }
 
--{id}	{
-		/* ignore the first character */
-		ipts_lval.u_str = strndup(ipts_text + 1, ipts_leng - 1);
-		return TOK_OPTION;
-	}
+-A	return TOK_IPTS_CHAIN_APPEND;
+
+-p		return TOK_IPTS_PROTOCOL;
+--protocol	return TOK_IPTS_PROTOCOL;
+
+-s		return TOK_IPTS_SOURCE;
+--source	return TOK_IPTS_SOURCE;
+
+-d		return TOK_IPTS_DESTINATION;
+--destination	return TOK_IPTS_DESTINATION;
+
+-j		return TOK_IPTS_JUMP;
+--jump		return TOK_IPTS_JUMP;
+
+-i		return TOK_IPTS_IN_INTERFACE;
+--in-interface	return TOK_IPTS_IN_INTERFACE;
+
+-o		return TOK_IPTS_OUT_INTERFACE;
+--out-interface	return TOK_IPTS_OUT_INTERFACE;
+
+-f		return TOK_IPTS_FRAGMENT;
+--fragment	return TOK_IPTS_FRAGMENT;
+
+-c		return TOK_IPTS_SET_COUNTERS;
+--set-counters	return TOK_IPTS_SET_COUNTERS;
+
+-m		return TOK_IPTS_MATCH;
+--match		return TOK_IPTS_MATCH;
 
 {id}	{
 		ipts_lval.u_str = strndup(ipts_text, ipts_leng);
@@ -77,7 +93,7 @@ id	[[:alnum:]_+-\.\/]+
 
 "["	return TOK_LSQUARE;
 "]"	return TOK_RSQUARE;
-":"	return TOK_COLON;
+":"	return TOK_COLON; 
 "!"	return TOK_BANG;
 
 \"	return TOK_QUOTE;

@@ -10,15 +10,22 @@ extern int ipts_lineno;
 int ipts_lex();
 char * ipts_filename();
 
+#define tok(x) case TOK_IPTS_##x: r = strdup(#x); break
 char * tok_map(int c) {
     char * r;
     switch (c) {
-      case TOK_TABLE:
-	r = strdup("table"); break;
-      case TOK_CHAIN:
-	r = strdup("chain"); break;
-      case TOK_OPTION:
-	r = strdup("option"); break;
+	tok(TABLE);
+	tok(CHAIN);
+	tok(CHAIN_APPEND);
+	tok(PROTOCOL);
+	tok(SOURCE);
+	tok(DESTINATION);
+	tok(JUMP);
+	tok(IN_INTERFACE);
+	tok(OUT_INTERFACE);
+	tok(FRAGMENT);
+	tok(SET_COUNTERS);
+	tok(MATCH);
       case TOK_IDENTIFIER:
 	r = strdup("identifier"); break;
       case TOK_LSQUARE:

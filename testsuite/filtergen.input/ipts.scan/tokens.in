@@ -3,10 +3,10 @@
 :INPUT DROP [0:1]
 -A INPUT -i lo ! -f --dport ntp:"
 COMMIT
-# { dg-warning "kind = table" "" { target *-*-* } 2 }
+# { dg-warning "kind = TABLE" "" { target *-*-* } 2 }
 # { dg-warning "kind = identifier, spelling = \"filter" "" { target *-*-* } 2 }
 # { dg-warning "kind = newline" "" { target *-*-* } 3 }
-# { dg-warning "kind = chain" "" { target *-*-* } 3 }
+# { dg-warning "kind = CHAIN" "" { target *-*-* } 3 }
 # { dg-warning "kind = identifier, spelling = \"INPUT" "" { target *-*-* } 3 }
 # { dg-warning "kind = identifier, spelling = \"DROP" "" { target *-*-* } 3 }
 # { dg-warning "kind = lsquare" "" { target *-*-* } 3 }
@@ -15,13 +15,13 @@ COMMIT
 # { dg-warning "kind = identifier, spelling = \"1" "" { target *-*-* } 3 }
 # { dg-warning "kind = rsquare" "" { target *-*-* } 3 }
 # { dg-warning "kind = newline" "" { target *-*-* } 4 }
-# { dg-warning "kind = option, spelling = \"-A" "" { target *-*-* } 4 }
+# { dg-warning "kind = CHAIN_APPEND" "" { target *-*-* } 4 }
 # { dg-warning "kind = identifier, spelling = \"INPUT" "" { target *-*-* } 4 }
-# { dg-warning "kind = option, spelling = \"-i" "" { target *-*-* } 4 }
+# { dg-warning "kind = IN_INTERFACE" "" { target *-*-* } 4 }
 # { dg-warning "kind = identifier, spelling = \"lo" "" { target *-*-* } 4 }
 # { dg-warning "kind = bang" "" { target *-*-* } 4 }
-# { dg-warning "kind = option, spelling = \"-f" "" { target *-*-* } 4 }
-# { dg-warning "kind = option, spelling = \"--dport" "" { target *-*-* } 4 }
+# { dg-warning "kind = FRAGMENT" "" { target *-*-* } 4 }
+# { dg-warning "kind = identifier, spelling = \"--dport" "" { target *-*-* } 4 }
 # { dg-warning "kind = identifier, spelling = \"ntp" "" { target *-*-* } 4 }
 # { dg-warning "kind = colon" "" { target *-*-* } 4 }
 # { dg-warning "kind = quote" "" { target *-*-* } 4 }
