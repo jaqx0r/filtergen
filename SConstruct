@@ -39,10 +39,10 @@ if not env.GetOption("clean"):
 	conf.CheckLib('getopt', 'getopt')
 	env = conf.Finish()
 
-if ARGUMENTS.get('debug') == 'yes':
-	env.Append(CPPFLAGS = '-g -O0 ')
+if ARGUMENTS.get('debug') != 'no':
+	env.AppendUnique(CCFLAGS=['-g', '-O0'])
 else:
-	env.Append(CPPFLAGS = '-O2 ')
+	env.AppendUnique(CCFLAGS=['-O2'])
 
 DESTDIR = ARGUMENTS.get('DESTDIR', '')
 
