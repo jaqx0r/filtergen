@@ -3,7 +3,7 @@
  *
  * XXX - maybe some of this could be shared with the iptables one?
  *
- * $Id: fg-ipchains.c,v 1.13 2002/07/18 14:04:13 matthew Exp $
+ * $Id: fg-ipchains.c,v 1.14 2002/07/18 21:23:19 matthew Exp $
  */
 
 #include <stdio.h>
@@ -16,10 +16,8 @@
 static int cb_ipchains_rule(const struct filterent *ent, struct fg_misc *misc)
 {
 	char *rule = NULL, *rule_r = NULL;
+	char *rulechain = NULL, *revchain = NULL;
 	int needret = 0;
-
-	APP(rule, "ipchains");
-	APP(rule_r, "ipchains");
 
 	/* nat rule */
 	if((ent->target == F_MASQ) || (ent->target == F_REDIRECT)) {
@@ -32,17 +30,18 @@ static int cb_ipchains_rule(const struct filterent *ent, struct fg_misc *misc)
 		}
 	}
 
-	APPS(rule, "-A");
-	APPS(rule_r, "-A");
+	if(ent->rtype == ROUTEDONLY) {
+		fprintf(stderr, "ipchains can't do forward-only rules\n");
+		return -1;
+	}
 
 	switch(ent->direction) {
 	case 0:		/* This is a rule in a subgroup */
-			APPS(rule, ent->groupname);
-			APPS(rule_r, ent->groupname);
-			break;
-	case F_INPUT:	APPS(rule, "input"); APPS(rule_r, "output"); break;
-	case F_OUTPUT:	APPS(rule, (ent->target == F_MASQ) ? "forward" : "output");
-			APPS(rule_r, "input"); break;
+			rulechain = revchain = ent->groupname; break;
+	case F_INPUT:	rulechain = "input"; revchain = "output"; break;
+	case F_OUTPUT:	rulechain = (ent->target == F_MASQ)
+						? "forward" : "output";
+			revchain = "input"; break;
 	default: fprintf(stderr, "unknown direction\n"); abort();
 	}
 
@@ -123,8 +122,8 @@ static int cb_ipchains_rule(const struct filterent *ent, struct fg_misc *misc)
 	default: abort();
 	}
 
-	oputs(rule);
-	if(needret) oputs(rule_r);
+	oprintf("ipchains -A %s %s\n", rulechain, rule+1);
+	if(needret) oprintf("ipchains -A %s %s\n", revchain, rule_r+1);
 
 	free(rule); free(rule_r);
 	return 1 + !!needret;
