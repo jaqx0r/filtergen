@@ -4,11 +4,13 @@ Version: @VERSION@
 Release: 1
 License: GPL
 Group: Applications/System
-Source: http://spacepants.org/src/filtergen/download/%name-%version.tar.gz
 URL: http://spacepants.org/src/filtergen
+Packager: Jamie Wilkinson <jaq@spacepants.org>
+
+Source: http://spacepants.org/src/filtergen/download/%name-%version.tar.gz
+
 Buildroot: %{_tmppath}/%{name}-root
 BuildPrereq: rpm-build gcc flex make
-Packager: Jamie Wilkinson <jaq@spacepants.org>
 
 %description
 filtergen is a packet filter generator.  It compiles a fairly high-level
@@ -49,7 +51,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Wed Mar 10 2004 Jamie Wilkinson <jaq@spacepants.org> - 0.12-1
-- New release.
+- New upstream release.
 
 * Wed Nov 13 2002 Matthew Kirkwood <matthew@hairy.beasts.org> 0.11-1
 - Release 0.11, rename init script from "filter" to "filtergen"

@@ -27,6 +27,10 @@ mans = filter_backends.7 filter_syntax.5 filtergen.8
 
 man_MANS = $(mans)
 
+dist_sysconf_DATA = fgadm.conf rules.filter
+
+dist_pkgdoc_DATA = t/*.filter examples/*.filter
+
 EXTRA_DIST = HISTORY HONESTY README TODO $(headers) $(mans) filtergen.spec
 
 AM_CFLAGS = -D_GNU_SOURCE

@@ -65,6 +65,25 @@ AC_ARG_ENABLE(debug,
 	AC_MSG_RESULT(no)
 )
 
+dnl ------------------------------
+dnl fill in path variable expandos
+dnl ------------------------------
+
+dnl $libdir usually gets set to ${exec_prefix}/lib,
+dnl $prefix and $exec_prefix is likely to be "NONE"
+dnl Autoconf usually sets pkglibdir correctly in the Makefile, but not in
+dnl the configure script :(
+
+test "$prefix" = "NONE" && prefix=/usr/local
+test "$exec_prefix" = "NONE" && exec_prefix=$prefix
+
+eval SYSCONFDIR="$sysconfdir"
+AC_SUBST(SYSCONFDIR)
+
+eval pkgdocdir="$datadir/doc/$PACKAGE"
+AC_SUBST(pkgdocdir)
+AC_DEFINE_UNQUOTED(PKGDOCDIR, "$pkgdocdir", [Define this to be the path to system documentation])
+
 dnl ----------------------------------------------------------
 dnl configuration tests complete, provide a summary of results
 dnl ----------------------------------------------------------
@@ -79,6 +98,8 @@ AC_CONFIG_FILES([
 	t/Makefile
 	filtergen.spec
 	fgadm
+	fgadm.conf
+	rules.filter
 ])
 AC_OUTPUT
 
