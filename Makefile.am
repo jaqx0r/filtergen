@@ -4,8 +4,8 @@ bin_PROGRAMS = tmp filtergen
 
 tmp_SOURCES = \
 	tmpmain.c \
-	scanner.l \
-	parser.y
+	parser.y \
+	scanner.l
 
 filtergen_SOURCES = \
 	filtergen.c \
