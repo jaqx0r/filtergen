@@ -3,7 +3,7 @@
  *
  * XXX - maybe some of this could be shared with the iptables one?
  *
- * $Id: fg-ipchains.c,v 1.23 2002/08/26 22:10:37 matthew Exp $
+ * $Id: fg-ipchains.c,v 1.24 2002/11/11 19:48:38 matthew Exp $
  */
 
 #include <stdio.h>
@@ -214,4 +214,26 @@ int fg_ipchains(struct filter *filter, int flags)
 		r += 3;
 	}
 	return r;
+}
+
+
+/* Rules which just flush the packet filter */
+int flush_ipchains(enum filtertype policy, int flags)
+{
+	char *ostr;
+	oputs("CHAINS=\"INPUT OUTPUT FORWARD\"");
+	oputs("");
+
+	switch(policy) {
+	case T_ACCEPT: ostr = "ACCEPT"; break;
+	case DROP: ostr = "DENY"; break;
+	case T_REJECT: ostr = "REJECT"; break;
+	default:
+		fprintf(stderr, "invalid filtertype %d\n", policy);
+		abort();
+	}
+	oprintf("for f in $CHAINS; do ipchains -P $f %s; done\n", ostr);
+	oputs("ipchains -F; ipchains -X");
+
+	return 0;
 }

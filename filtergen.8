@@ -1,5 +1,5 @@
 .\" filter command-line reference
-.\" $Id: filtergen.8,v 1.3 2002/08/20 22:54:38 matthew Exp $
+.\" $Id: filtergen.8,v 1.4 2002/11/11 19:48:38 matthew Exp $
 .TH FILTERGEN 8
 
 .SH NAME
@@ -24,7 +24,11 @@ filtergen \- A packet filter compiler
 .B -t
 .BI driver
 ] [
+.B -F
+] [
 .B input-file
+|
+.B policy
 ]
 
 .SH DESCRIPTION
@@ -90,6 +94,15 @@ If specified, \fIdriver\fR will be used to select an output ruleset type,
 otherwise the default of \fIiptables\fR will be used.  Supported backends
 are \fIiptables\fR, \fIipchains\fR, \fIipfilter\fR and \fIcisco\fR (for
 Cisco IOS access-lists).
+
+.TP
+.BI "\-F"
+Flush mode.  Generate a set of rules for clearing all rules from the packet
+filter.  Useful for firewall scripts that need to `shutdown' the firewall.
+You can supply a \fIpolicy\fR argument in place of the usual filename, to
+specify whether the flushed filter should default to \fBaccept\fR,
+\fBreject\fB, or \fBdrop\fR.  It defaults to \fBaccept\fR, equivalent to
+having no filter loaded at all.
 
 .SH BUGS
 Not all backends implement all features.  
