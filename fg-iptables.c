@@ -229,14 +229,15 @@ static int cb_iptables_rule(const struct filterent *ent, struct fg_misc *misc)
 	 * fail if any mangling has been done above.
 	 */
 	if(ESET(ent, LOG)) {
-		char *lc, *la;
+		char *lc, *la, *ls;
 		if(ent->logmsg) {
 			lc = " --log-prefix=";
 			la = ent->logmsg;
+			ls = "\" \"";
 		} else
-			lc = la = "";
-		if(islocal) orules++,oprintf(IPTABLES" -A %s %s LOG%s%s\n", rulechain, rule+1, lc, la);
-		if(isforward) orules++,oprintf(IPTABLES" -A %s %s LOG%s%s\n", forchain, rule+1, lc, la);
+			lc = la = ls = "";
+		if(islocal) orules++,oprintf(IPTABLES" -A %s %s LOG%s%s%s\n", rulechain, rule+1, lc, la, ls);
+		if(isforward) orules++,oprintf(IPTABLES" -A %s %s LOG%s%s%s\n", forchain, rule+1, lc, la, ls);
 	}
 
 	/* Do this twice, once for NAT, once for filter */
