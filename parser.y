@@ -98,8 +98,23 @@ host_specifier: TOK_SOURCE host_argument
 	| TOK_DEST host_argument
 	;
 
-port_specifier: TOK_SPORT port_argument_or_list
-	| TOK_DPORT port_argument_or_list
+port_specifier: TOK_SPORT port_argument
+	| TOK_DPORT port_argument
+	;
+
+port_argument: compound_port_argument
+	| simple_port_argument
+	;
+
+compound_port_argument: TOK_LCURLY port_argument_list TOK_RCURLY
+	;
+
+port_argument_list: simple_port_argument
+	| port_argument_list simple_port_argument
+	;
+
+simple_port_argument: TOK_IDENTIFIER
+	| TOK_NUMBER
 	;
 
 protocol_specifier: TOK_PROTO protocol_argument
@@ -129,18 +144,6 @@ log_text_argument: TOK_STRINGLITERAL
 
 host_argument: TOK_IDENTIFIER
 	| TOK_IDENTIFIER TOK_SLASH TOK_NUMBER
-	;
-
-port_argument_or_list: port_argument
-	| TOK_LCURLY port_argument_list TOK_RCURLY
-	;
-
-port_argument_list: port_argument
-	| port_argument_list port_argument
-	;
-
-port_argument: TOK_IDENTIFIER
-	| TOK_NUMBER
 	;
 
 protocol_argument: TOK_IDENTIFIER

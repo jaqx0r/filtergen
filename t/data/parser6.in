@@ -1,0 +1,2 @@
+# a rule with a compound port argument
+input eth0 proto tcp dport { ssh http } accept;
