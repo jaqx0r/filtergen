@@ -1,7 +1,7 @@
 /*
  * Filter generator, iptables driver
  *
- * $Id: fg-iptables.c,v 1.19 2002/04/14 15:39:22 matthew Exp $
+ * $Id: fg-iptables.c,v 1.20 2002/04/28 15:18:58 matthew Exp $
  */
 
 /*
@@ -16,9 +16,9 @@
  * 3. NAT is done in PRE- and POSTROUTING, as required.
  *    However, we also must add rules to INPUT (for
  *    transproxy) and OUTPUT (for masquerading).
- * 5. Reject rules need to go into FORWARD as well as
+ * 4. Reject rules need to go into FORWARD as well as
  *    INPUT or OUTPUT.
- * 6. Other than for Reject rules, FORWARD stays empty
+ * 5. Other than for Reject rules, FORWARD stays empty
  *    for now.  The language needs to be extended to
  *    be able to say "please forward this one" - it
  *    shouldn't be default.
