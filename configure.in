@@ -2,7 +2,7 @@ AC_INIT
 AC_PREREQ(2.50)
 
 AM_INIT_AUTOMAKE(filtergen, 0.12, jaq@spacepants.org)
-AC_CONFIG_SRCDIR(tmpmain.c)
+AC_CONFIG_SRCDIR(filtergen.c)
 AM_CONFIG_HEADER(config.h)
 
 AM_MAINTAINER_MODE

@@ -54,3 +54,11 @@ if test $? -ne 0 ; then no_result ; fi
 # srcdir gets defined by the automake test caller, assume it's not defined
 # by the user's environment, so set debug trace on when run manually
 test "x$srcdir" = "x" && set -x
+
+# fix testdir
+testdir=`pwd`/$testdir
+
+if test -d $testdir/t/data ; then
+	echo "fucken, testdir not in $testdir"
+	fail
+fi
