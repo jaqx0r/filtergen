@@ -22,7 +22,7 @@ but supports a useful subset.
 %setup -q -n filtergen-%{version}
 
 %build
-make CFLAGS="${RPM_OPT_FLAGS}" LDFLAGS=""
+make CFLAGS="${RPM_OPT_FLAGS}" LDFLAGS="-lfl"
 
 %install
 rm -rf $RPM_BUILD_ROOT
