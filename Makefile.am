@@ -11,9 +11,13 @@ filtergen_SOURCES = \
 	fg-ipfilter.c \
 	fg-cisco.c
 
-man_MANS = filtergen.8 filter_backends.7 filter_syntax.5
+headers = filter.h util.h
 
-EXTRA_DIST = HISTORY HONESTY README TODO
+mans = filtergen.8 filter_backends.7 filter_syntax.5
+
+man_MANS = $(mans)
+
+EXTRA_DIST = HISTORY HONESTY README TODO $(headers) $(mans)
 
 AM_CFLAGS = -g -Wall -Werror
 AM_LDFLAGS = -g
