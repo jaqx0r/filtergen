@@ -555,7 +555,7 @@ icmptype_argument_list: /* empty */
 simple_icmptype_argument: TOK_IDENTIFIER
 	{
 		$$ = malloc(sizeof(struct simple_icmptype_argument_s));
-		$$->identifier = strdup($1);
+		$$->icmptype = $1;
 	}
 	;
 
@@ -595,7 +595,7 @@ subrule_list: specifier_list
 chaingroup_specifier: TOK_LSQUARE TOK_IDENTIFIER subrule_list TOK_RSQUARE
 	{
 		$$ = malloc(sizeof(struct chaingroup_specifier_s));
-		$$->name = strdup($2);
+		$$->name = $2;
 		$$->list = $3;
 	}
 	| TOK_LSQUARE subrule_list TOK_RSQUARE

@@ -60,7 +60,7 @@ EMIT(routing_specifier) {
 }
 
 EMIT(simple_icmptype_argument) {
-    printf("%s", n->identifier);
+    printf("%s", n->icmptype);
 }
 
 EMIT(icmptype_argument_list) {

@@ -358,6 +358,69 @@ struct filter * convert_port_specifier(struct port_specifier_s * n) {
     return res;        
 }
 
+struct filter * convert_icmptype_argument(struct simple_icmptype_argument_s * n) {
+    struct filter * res = NULL;
+
+    eprint("converting simple_icmptype_argument\n");
+
+    if (n->icmptype) {
+        res = new_filter_icmp(F_ICMPTYPE, n->icmptype);
+    } else {
+        printf("error: no icmptype argument contents\n");
+    }
+
+    return res;
+}
+
+struct filter * convert_icmptype_argument_list(struct icmptype_argument_list_s * n) {
+    struct filter * res = NULL, * end = NULL;
+
+    eprint("converting icmptype argument list\n");
+
+    if (n->list) {
+        res = convert_icmptype_argument_list(n->list);
+        if (res) {
+            end = res;
+            while (end->next) {
+                end = end->next;
+            }
+            if (n->arg) {
+                end->next = convert_icmptype_argument(n->arg);
+            }
+        } else {
+            printf("warning: convert_icmptype_argument_list returned NULL\n");
+        }
+    } else {
+        res = convert_icmptype_argument(n->arg);
+    }
+
+    return res;
+}
+
+struct filter * convert_icmptype_specifier(struct icmptype_specifier_s * n) {
+    struct filter * res = NULL;
+	
+    eprint("converting icmptype specifier\n");
+
+    if (n->arg) {
+        if (n->arg->simple) {
+            res = convert_icmptype_argument(n->arg->simple);
+        } else if (n->arg->compound) {
+            if (n->arg->compound->list) {
+                res = new_filter_sibs(convert_icmptype_argument_list(n->arg->compound->list));
+            } else {
+                printf("error: no icmptype argument (compound) list\n");
+            }
+        } else {
+            printf("error: neither simple nor compound argument\n");
+        }
+    } else {
+        printf("error: no icmptype argument\n");
+    }
+
+    return res;        
+}
+
 struct filter * convert_specifier(struct specifier_s * r) {
     struct filter * res = NULL;
     eprint("converting specifier\n");
@@ -404,8 +467,7 @@ struct filter * convert_specifier(struct specifier_s * r) {
     } else if (r->port) {
         res = convert_port_specifier(r->port);
     } else if (r->icmptype) {
-      eprint("converting icmp specifier\n");
-	res = __new_filter(F_SIBLIST);
+        res = convert_icmptype_specifier(r->icmptype);
     } else if (r->routing) {
       eprint("converting routing specifier\n");
 	res = __new_filter(F_SUBGROUP);
