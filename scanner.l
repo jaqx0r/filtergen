@@ -94,6 +94,7 @@ text         return TOK_TEXT;
 <include>[^ \t\n]+    { /* include file name */
                           if (inc_stackptr >= MAXINCLUDES) {
                               fprintf(stderr, "too many nested includes\n");
+                              exit(1);
                           }
                           inc_stack[inc_stackptr++] = YY_CURRENT_BUFFER;
                           yyin = fopen(yytext, "r");
