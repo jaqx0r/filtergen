@@ -28,7 +28,8 @@ TESTS = t_01_ccomment \
 	t_28_routing \
 	t_29_nocommentend \
 	t_30_chaingroup \
-	t_31_chaingroupbad
+	t_31_chaingroupbad \
+	t_32_syntaxexamples
 
 check_PROGRAMS = scan parse
 

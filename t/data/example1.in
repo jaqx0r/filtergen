@@ -1,0 +1,85 @@
+# this file contains all the examples from the filter_syntax.7 manpage
+
+# MATCHES
+            input eth0 ! dest 10.0.0.3 reject;
+
+# OPTIONS
+            input eth0 source {
+                 10.0.0.0/8 192.168.0.0/16
+            } log text "private addresses" drop;
+
+
+# GROUPING
+            input eth0 source foo dest bar proto tcp dport http accept;
+            input eth0 source foo dest bar proto tcp dport https accept;
+            input eth0 source foo dest bar proto tcp dport nntp accept;
+            input eth0 source foo dest bar proto tcp sport 1:1023 dport ssh accept;
+
+            input eth0 source foo dest bar proto tcp {
+                 dport http;
+                 dport https;
+                 dport nntp;
+                 sport 1:1023 dport ssh;
+            } accept;
+ 
+            input eth0 source foo dest bar proto tcp {
+                 dport {http https nntp};
+                 sport 1:1023 dport ssh;
+            } accept;
+
+# OUT-OF-LINE GROUPS 
+            input eth0 source foo dest bar proto tcp {
+                 dport {http https nntp};
+                 sport 1:1023 dport ssh;
+            } accept;
+            input eth0 source baz dest quux proto tcp {
+                 dport {1264 1521 1984 8008 8080 26000};
+            } accept;
+
+            input eth0 source foo dest bar [
+                 proto tcp {
+                      dport {http https nntp};
+                      sport 1:1023 dport ssh;
+                 } accept;
+            ];
+            input eth0 source baz dest quux [
+                 proto tcp { dport {1264 1521 1984 8008 8080 26000}; } accept;
+            ];
+
+# EXAMPLE
+           #
+            # Example filter for (for example) a mail server
+            #
+ 
+            # Unfortunately, we don't have time to audit the
+            # communications which go on locally
+            {input lo; output lo} accept;
+ 
+            # But we want to be a bit more careful when speaking
+            # to the outside world
+            input eth0 {
+                 # Sadly, we share a DMZ with Windows machines.
+                 # Don't log their netbios noise
+                 proto {tcp udp} source ournet/24 dport 137:139 drop;
+ 
+                 proto tcp {
+                      dport { smtp pop-3 } accept;
+                      dport ssh source ournet/24 accept;
+                      # We don't answer this, but don't want to
+                      # cause timeouts by blocking it
+                      dport auth reject;
+                      log drop;
+                 };
+                 # We don't run any UDP (or other non-TCP)
+                 # services
+                 log drop;
+            };
+            output eth0 {
+                 proto tcp {
+                      dport { smtp auth } accept;
+                      log drop;
+                 };
+                 # Outbound DNS is OK
+                 proto udp dport domain dest { ns0 ns1 } accept;
+                 log drop;
+            };
