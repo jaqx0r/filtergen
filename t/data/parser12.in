@@ -1,0 +1,17 @@
+# compound specifiers
+{ dport http; };
+{ dport http dest www };
+dest www { dport http; sport https };
+# specifier lists inside subrule group
+source foo { dport http; dport ssh dest bar; } accept;
+# big nested one
+input eth0 {
+	dest foo {
+		dport { ssh http } accept;
+		dport ntp sport ntp proto udp accept;
+		dport bootps drop;
+	};
+	drop;
+};
+# empty subrules
+input eth0 {};
