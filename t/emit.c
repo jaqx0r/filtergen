@@ -258,8 +258,10 @@ EMIT(direction_argument_list) {
 
 EMIT(compound_direction_argument) {
     printf("{ ");
-    eprint("emitting direction_argument_list\n");
-    emit_direction_argument_list(n->list);
+    if (n->list) {
+	eprint("emitting direction_argument_list\n");
+	emit_direction_argument_list(n->list);
+    }
     printf(" }");
 }
 
