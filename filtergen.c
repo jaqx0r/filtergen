@@ -1,7 +1,7 @@
 /*
  * filter compilation front-end
  *
- * $Id: filtergen.c,v 1.3 2001/10/03 19:47:17 matthew Exp $
+ * $Id: filtergen.c,v 1.4 2001/10/03 19:51:48 matthew Exp $
  */
 
 #include <stdio.h>
@@ -34,9 +34,10 @@ int main(int argc, char **argv)
 	struct filtyp *ft;
 
 	if((argc > 1) && strcmp(argv[1], "-")) {
-		if((yyin = fopen(argv[1], "r"))) {
+		if(!(yyin = fopen(argv[1], "r"))) {
 			fprintf(stderr, "%s: can't open file \"%s\"\n",
 					argv[0], argv[1]);
+			return 1;
 		}
 	}
 
