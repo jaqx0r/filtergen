@@ -25,7 +25,8 @@ TESTS = t_01_ccomment \
 	t_25_target \
 	t_26_negation \
 	t_27_compoundspecifier \
-	t_28_routing
+	t_28_routing \
+	t_29_nocommentend
 
 check_PROGRAMS = scan parse
 
