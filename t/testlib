@@ -1,3 +1,4 @@
+# -*- sh -*-
 # source this file for a few useful functions that get repeated at the top
 # of every test
 
