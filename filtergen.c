@@ -55,7 +55,7 @@ void usage(char * prog) {
 #endif
 
 #ifdef HAVE_GETOPT_H
-    fprintf(stderr, "--no-resolve/-r            don't resolve names\n");
+    fprintf(stderr, " --no-resolve/-r           don't resolve names\n");
 #else
     fprintf(stderr, "\t-r\t\tdon't resolve names\n");
 #endif
