@@ -444,6 +444,30 @@ struct filter * convert_routing_specifier(struct routing_specifier_s * n) {
     return res;        
 }
 
+struct filter * convert_chaingroup_specifier(struct chaingroup_specifier_s * n) {
+  struct filter * res = NULL, * sub = NULL;
+  char * name = NULL;
+
+  if (n->name) {
+    name = n->name;
+  } else {
+    /* Allocate a filter name */
+    static int ccount = 0;
+
+    asprintf(&name, "chain_%d", ccount++);
+  }
+  
+  if (n->list) {
+    sub = convert_subrule_list(n->list);
+
+    res = new_filter_subgroup(name, sub);
+  } else {
+    printf("error: no list in chaingroup\n");
+  }
+
+  return res;
+}
+
 struct filter * convert_specifier(struct specifier_s * r) {
     struct filter * res = NULL;
     eprint("converting specifier\n");
@@ -494,8 +518,7 @@ struct filter * convert_specifier(struct specifier_s * r) {
     } else if (r->routing) {
       res = convert_routing_specifier(r->routing);
     } else if (r->chaingroup) {
-      eprint("converting chaingroup specifier\n");
-	res = __new_filter(F_RTYPE);
+      res = convert_chaingroup_specifier(r->chaingroup);
     } else
 	printf("error: no specifiers\n");
     
