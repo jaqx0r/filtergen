@@ -1,0 +1,7 @@
+kind = 9 [<lcurly>], spelling = "{", line = 1
+kind = 17 [<rcurly>], spelling = "}", line = 2
+kind = 12 [<lsquare>], spelling = "[", line = 3
+kind = 20 [<rsquare>], spelling = "]", line = 4
+kind = 21 [<semicolon>], spelling = ";", line = 5
+kind = 29 [<dot>], spelling = ".", line = 6
+kind = 30 [<slash>], spelling = "/", line = 7

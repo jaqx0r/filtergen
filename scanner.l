@@ -9,11 +9,13 @@
 #include <string.h>
 #include "tokens.h"
 
-long int lineno = 0;
+long int lineno = 1;
 %}
 
 string  \"[^\n]+\"
 space   [ \t]+
+id      [[:alpha:]_][[:alnum:]_]*
+number  [[:digit:]]+
 
 %%
 
@@ -33,15 +35,22 @@ space   [ \t]+
                 } while (c != '/' && c != EOF);
              }
 
-#.*$         /* strip shell style comments */
+"#"          { /* strip shell style comments */
+                 int c;
+                 while ((c = input()) != '\n' && c != EOF)
+		    ;
+             }
 
 {string}     {
-                 /* yylval.ustr = strdup(yytext); */
+                 /* spelling = strdup(yytext); */
                  return TOK_STRINGLITERAL;
              }
+
 {space}      /* ignore */
 
 \n           lineno++;
+
+include      return TOK_INCLUDE;
 
 accept       return TOK_ACCEPT;
 dest         return TOK_DEST;
@@ -49,7 +58,6 @@ dport        return TOK_DPORT;
 drop         return TOK_DROP;
 forward      return TOK_FORWARD;
 icmptype     return TOK_ICMPTYPE;
-include      return TOK_INCLUDE;
 input        return TOK_INPUT;
 local        return TOK_LOCAL;
 log          return TOK_LOG;
@@ -69,4 +77,10 @@ text         return TOK_TEXT;
 "["          return TOK_LSQUARE;
 "]"          return TOK_RSQUARE;
 
+{id}         return TOK_IDENTIFIER;
+{number}     return TOK_NUMBER;
+"."          return TOK_DOT;
+"/"          return TOK_SLASH;
+
+.            return TOK_ERR;
 %%

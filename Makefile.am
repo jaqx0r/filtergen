@@ -1,15 +1,20 @@
+SUBDIRS = . t
+
 bin_PROGRAMS = filtergen
 
 filtergen_SOURCES = \
-	filtergen.c \
-	gen.c \
-	filter.c \
-	filterlex.l \
-	fg-util.c \
-	fg-iptables.c \
-	fg-ipchains.c \
-	fg-ipfilter.c \
-	fg-cisco.c
+	tmpmain.c \
+	scanner.l
+
+#	filtergen.c \
+#	gen.c \
+#	filter.c \
+#	filterlex.l \
+#	fg-util.c \
+#	fg-iptables.c \
+#	fg-ipchains.c \
+#	fg-ipfilter.c \
+#	fg-cisco.c
 
 headers = filter.h util.h
 
