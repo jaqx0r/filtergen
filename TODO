@@ -27,24 +27,23 @@ milestones for version 1.3
 milestones for version 1.4
 --------------------------
 
-Optimiser
-
-* Optimiser for intermediate step, and also
-  generated rulesets (the latter could be done with a peephole
-  optimiser, I think).
-
-  - equation factoriser should be simpler and quite good.  factorising
-    should be trivial, boolean factorisation never involves
-    polynomials.   must watch out for rules with side effects though.
-    order matters.
-
-  - optimise orthogonal rules by branch counts
-
-  - future optimise orthogonal rules based on hit frequency
+* Factoriser for intermediate representation.
+  prior to conversion to target format.  Should be simple to create and
+  quite effective.  boolean factorisation never involves polynomials.
+  watch out for rules with side effects though.  order must be preserved.
 
 * Implement a negation unroller for filters which can't negate
   a match.  (For example, Ciscos can't say "match all but this
   host".)  This gives us negation of {}-groups, too.
+
+* Order orthogonal rules by branch count.
+
+* Order orthogonal rules by packet counts if possible.
+  more popular rules to the top for faster traversal.
+
+* Peephold optimiser for target representation.
+  Remove redundant rules.   Split common subsets into separate chains
+  (if chaining available).
 
 other items
 -----------
