@@ -1,4 +1,4 @@
-kind = 31 [<error>], spelling = "*", file = "(null)", line = 1
-kind = 31 [<error>], spelling = "*", file = "(null)", line = 1
-kind = 31 [<error>], spelling = "*", file = "(null)", line = 1
-kind = 30 [<slash>], spelling = "/", file = "(null)", line = 1
+kind = 31 [<error>], spelling = "*", file = "(standard input)", line = 1
+kind = 31 [<error>], spelling = "*", file = "(standard input)", line = 1
+kind = 31 [<error>], spelling = "*", file = "(standard input)", line = 1
+kind = 30 [<slash>], spelling = "/", file = "(standard input)", line = 1

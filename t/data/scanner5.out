@@ -1,7 +1,7 @@
-kind = 9 [<lcurly>], spelling = "{", file = "(null)", line = 1
-kind = 17 [<rcurly>], spelling = "}", file = "(null)", line = 2
-kind = 12 [<lsquare>], spelling = "[", file = "(null)", line = 3
-kind = 20 [<rsquare>], spelling = "]", file = "(null)", line = 4
-kind = 21 [<semicolon>], spelling = ";", file = "(null)", line = 5
-kind = 29 [<dot>], spelling = ".", file = "(null)", line = 6
-kind = 30 [<slash>], spelling = "/", file = "(null)", line = 7
+kind = 9 [<lcurly>], spelling = "{", file = "(standard input)", line = 1
+kind = 17 [<rcurly>], spelling = "}", file = "(standard input)", line = 2
+kind = 12 [<lsquare>], spelling = "[", file = "(standard input)", line = 3
+kind = 20 [<rsquare>], spelling = "]", file = "(standard input)", line = 4
+kind = 21 [<semicolon>], spelling = ";", file = "(standard input)", line = 5
+kind = 29 [<dot>], spelling = ".", file = "(standard input)", line = 6
+kind = 30 [<slash>], spelling = "/", file = "(standard input)", line = 7

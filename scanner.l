@@ -8,6 +8,7 @@
  */
 
 #include <string.h>
+#include <stdarg.h>
 #include "tokens.h"
 
 /* include file stack */
@@ -23,6 +24,7 @@ int inc_stackptr = 0;
 
 long int lineno();
 char * filename();
+static void scan_err(const char * fmt, ...);
 %}
 
 string  \"[^\n]+\"
@@ -100,25 +102,32 @@ text         return TOK_TEXT;
 <include>[ \t]*       /* eat whitespace after include */
 <include>[^ \t\n]+    { /* include file name */
                           if (inc_stackptr >= MAXINCLUDES) {
-                              fprintf(stderr, "%s:%ld: warning: too many nested includes\n", filename(), lineno());
-    			      fprintf(stderr, "%s:%ld: warning: skipping include of file %s\n", filename(), lineno(), yytext);
+                              scan_err("warning: too many nested includes");
+    			      scan_err("warning: skipping include of file %s", yytext);
 
 			  } else {
-                          inc_stack[inc_stackptr++].state = YY_CURRENT_BUFFER;
-                          inc_stack[inc_stackptr].lineno = 1;
-                          inc_stack[inc_stackptr].filename = strdup(yytext);
-                          yyin = fopen(yytext, "r");
-                          if (!yyin)
-                              fprintf(stderr, "fopen failed on %s\n", yytext);
-                          yy_switch_to_buffer(yy_create_buffer(yyin, YY_BUF_SIZE));
+                              if (yytext) {
+                                  FILE * f;
+                                  if (!(f = fopen(yytext, "r"))) {
+                                      scan_err("error: can't open file \"%s\"", yytext);
+                                  } else {
+                                      inc_stack[inc_stackptr++].state = YY_CURRENT_BUFFER;
+                                      inc_stack[inc_stackptr].lineno = 1;
+                                      inc_stack[inc_stackptr].filename = strdup(yytext);
+                                      yyin = f;
+                                      yy_switch_to_buffer(yy_create_buffer(yyin, YY_BUF_SIZE));
+                                  }
+                              } else {
+                                  scan_err("error: file is null");
+                              }    
                           }
                           BEGIN(INITIAL);
                        }
 
 <<EOF>>                {
-                           if (--inc_stackptr < 0)
+                           if (--inc_stackptr < 0) {
                               yyterminate();
-			   else {
+			   } else {
                               yy_delete_buffer(YY_CURRENT_BUFFER);
                               yy_switch_to_buffer(inc_stack[inc_stackptr].state);
                            }
@@ -131,5 +140,16 @@ long int lineno(void) {
 
 /* FIXME: make this return an immutable string */
 char * filename(void) {
-    return inc_stack[inc_stackptr].filename;
+    return inc_stack[inc_stackptr].filename ?: "(standard input)";
 }
+
+static void scan_err(const char * fmt, ...) {
+    va_list args;
+
+    va_start(args, fmt);
+    if (inc_stackptr >= 0)
+	fprintf(stderr, "%s:%ld: ", filename(), lineno());
+    vfprintf(stderr, fmt, args);
+    fprintf(stderr, "\n");
+}
+	

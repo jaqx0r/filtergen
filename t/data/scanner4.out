@@ -1,18 +1,18 @@
-kind = 1 [<accept>], spelling = "accept", file = "(null)", line = 1
-kind = 2 [<dest>], spelling = "dest", file = "(null)", line = 2
-kind = 3 [<dport>], spelling = "dport", file = "(null)", line = 3
-kind = 4 [<drop>], spelling = "drop", file = "(null)", line = 4
-kind = 5 [<forward>], spelling = "forward", file = "(null)", line = 5
-kind = 6 [<icmptype>], spelling = "icmptype", file = "(null)", line = 6
-kind = 8 [<input>], spelling = "input", file = "(null)", line = 7
-kind = 10 [<local>], spelling = "local", file = "(null)", line = 8
-kind = 11 [<log>], spelling = "log", file = "(null)", line = 9
-kind = 13 [<masq>], spelling = "masq", file = "(null)", line = 10
-kind = 14 [<output>], spelling = "output", file = "(null)", line = 11
-kind = 15 [<proto>], spelling = "proto", file = "(null)", line = 12
-kind = 16 [<proxy>], spelling = "proxy", file = "(null)", line = 13
-kind = 18 [<redirect>], spelling = "redirect", file = "(null)", line = 14
-kind = 19 [<reject>], spelling = "reject", file = "(null)", line = 15
-kind = 22 [<source>], spelling = "source", file = "(null)", line = 16
-kind = 23 [<sport>], spelling = "sport", file = "(null)", line = 17
-kind = 25 [<text>], spelling = "text", file = "(null)", line = 18
+kind = 1 [<accept>], spelling = "accept", file = "(standard input)", line = 1
+kind = 2 [<dest>], spelling = "dest", file = "(standard input)", line = 2
+kind = 3 [<dport>], spelling = "dport", file = "(standard input)", line = 3
+kind = 4 [<drop>], spelling = "drop", file = "(standard input)", line = 4
+kind = 5 [<forward>], spelling = "forward", file = "(standard input)", line = 5
+kind = 6 [<icmptype>], spelling = "icmptype", file = "(standard input)", line = 6
+kind = 8 [<input>], spelling = "input", file = "(standard input)", line = 7
+kind = 10 [<local>], spelling = "local", file = "(standard input)", line = 8
+kind = 11 [<log>], spelling = "log", file = "(standard input)", line = 9
+kind = 13 [<masq>], spelling = "masq", file = "(standard input)", line = 10
+kind = 14 [<output>], spelling = "output", file = "(standard input)", line = 11
+kind = 15 [<proto>], spelling = "proto", file = "(standard input)", line = 12
+kind = 16 [<proxy>], spelling = "proxy", file = "(standard input)", line = 13
+kind = 18 [<redirect>], spelling = "redirect", file = "(standard input)", line = 14
+kind = 19 [<reject>], spelling = "reject", file = "(standard input)", line = 15
+kind = 22 [<source>], spelling = "source", file = "(standard input)", line = 16
+kind = 23 [<sport>], spelling = "sport", file = "(standard input)", line = 17
+kind = 25 [<text>], spelling = "text", file = "(standard input)", line = 18
