@@ -1,7 +1,7 @@
 /*
  * Filter generator, iptables driver
  *
- * $Id: fg-iptables.c,v 1.10 2001/10/06 18:25:16 matthew Exp $
+ * $Id: fg-iptables.c,v 1.11 2001/10/06 20:24:34 matthew Exp $
  */
 
 #include <stdio.h>
@@ -79,6 +79,9 @@ static int cb_iptables(const struct filterent *ent, void *misc)
 		APPS(rule, "-m state --state NEW,ESTABLISHED");
 		APPS(rule_r, "-m state --state ESTABLISHED");
 		break;
+	case ICMP:
+		APPSS2(rule, "-p", "icmp");
+		break;
 	default: abort();
 	}
 
@@ -105,6 +108,12 @@ static int cb_iptables(const struct filterent *ent, void *misc)
 			NEGA(rule, DPORT); NEGA(rule_r, DPORT);
 			APPSS2(rule, "--dport", ent->u.ports.dst);
 			APPSS2(rule_r, "--sport", ent->u.ports.dst);
+		}
+		break;
+	case ICMP:
+		if(ent->u.icmp) {
+			NEGA(rule, ICMPTYPE);
+			APPSS2(rule, "--icmp-type", ent->u.icmp);
 		}
 		break;
 	default:

@@ -1,4 +1,4 @@
-/* $Id: filter.c,v 1.3 2001/10/06 18:25:16 matthew Exp $ */
+/* $Id: filter.c,v 1.4 2001/10/06 20:24:35 matthew Exp $ */
 
 #include <stdlib.h>
 #include <string.h>
@@ -91,6 +91,16 @@ struct filter *new_filter_ports(enum filtertype type, const char *matchstr)
 	struct filter *f;
 	if ((f = __new_filter(type))) {
 		f->u.ports = strdup(matchstr);
+	}
+	return f;
+}
+
+
+struct filter *new_filter_icmp(enum filtertype type, const char *matchstr)
+{
+	struct filter *f;
+	if ((f = __new_filter(F_ICMPTYPE))) {
+		f->u.icmp = strdup(matchstr);
 	}
 	return f;
 }

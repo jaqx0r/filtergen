@@ -1,7 +1,7 @@
 /*
  * filter compilation routines
  *
- * $Id: gen.c,v 1.4 2001/10/06 19:07:17 matthew Exp $
+ * $Id: gen.c,v 1.5 2001/10/06 20:24:35 matthew Exp $
  */
 
 #include <stdio.h>
@@ -28,6 +28,12 @@ int checkmatch(const struct filterent *e)
 		fprintf(stderr, "can only use ports with tcp or udp\n");
 		r++;
 	}
+
+	if(e->u.icmp && (e->proto != ICMP)) {
+		fprintf(stderr, "icmptype can only be used with icmp\n");
+		r++;
+	}
+	
 	return r;
 }
 
@@ -88,6 +94,7 @@ int __fg_applyone(struct filterent *e, const struct filter *f,
 	DV(SPORT, u.ports.src, ports);
 	DV(DPORT, u.ports.dst, ports);
 	DV(PROTO, proto, proto);
+	DV(ICMPTYPE, u.icmp, icmp);
 
 	case F_SIBLIST:
 		return __fg_applylist(e, f->u.sib, cb, misc);

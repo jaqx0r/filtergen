@@ -1,7 +1,7 @@
 /*
  * Filter generator, ipfilter driver
  *
- * $Id: fg-ipfilter.c,v 1.2 2001/10/06 18:25:16 matthew Exp $
+ * $Id: fg-ipfilter.c,v 1.3 2001/10/06 20:24:34 matthew Exp $
  */
 
 #include <stdio.h>
@@ -33,6 +33,13 @@ static char *appport(char *r, const char *p, int neg)
 	APPSS2(r, neg ? "><" : "<>", f+1);
 	*f = ':';
 	return r;
+}
+
+static char *appicmp(char *r, const char *h, int neg)
+{
+	if(!h) return r;
+	if(neg) APPS(r, "!");
+	return APPSS2(r, "icmp-type", h);
 }
 
 static int cb_ipfilter(const struct filterent *ent, void *misc)
@@ -77,6 +84,7 @@ static int cb_ipfilter(const struct filterent *ent, void *misc)
 	case 0: break;
 	case TCP: APPSS2(rule, "proto", "tcp"); break;
 	case UDP: APPSS2(rule, "proto", "udp"); break;
+	case ICMP: APPSS2(rule, "proto", "icmp"); break;
 	default: abort();
 	}
 
@@ -86,6 +94,8 @@ static int cb_ipfilter(const struct filterent *ent, void *misc)
 	APPS(rule, "to");
 	rule = appip(rule, ent->dstaddr);
 	rule = appport(rule, ent->u.ports.dst, NEG(DPORT));
+
+	rule = appicmp(rule, ent->u.icmp, NEG(ICMPTYPE));
 
 	if(ent->proto && (ent->target == F_ACCEPT))
 		APPS(rule, "keep state");

@@ -1,0 +1,2 @@
+output eth0 proto icmp icmptype ping accept;
+input eth0 proto icmp icmptype pong accept;
