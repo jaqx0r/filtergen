@@ -1,5 +1,6 @@
 %option noyywrap
 %option nounput
+%x include
 %{
 /* input scanner for filtergen
  *
@@ -8,6 +9,11 @@
 
 #include <string.h>
 #include "tokens.h"
+
+/* include file stack */
+#define MAXINCLUDES 10
+YY_BUFFER_STATE inc_stack[MAXINCLUDES];
+int inc_stackptr = 0;
 
 long int lineno = 1;
 %}
@@ -50,7 +56,7 @@ number  [[:digit:]]+
 
 \n           lineno++;
 
-include      return TOK_INCLUDE;
+include      BEGIN(include);
 
 accept       return TOK_ACCEPT;
 dest         return TOK_DEST;
@@ -83,4 +89,26 @@ text         return TOK_TEXT;
 "/"          return TOK_SLASH;
 
 .            return TOK_ERR;
+
+<include>[ \t]*       /* eat whitespace after include */
+<include>[^ \t\n]+    { /* include file name */
+                          if (inc_stackptr >= MAXINCLUDES) {
+                              fprintf(stderr, "too many nested includes\n");
+                          }
+                          inc_stack[inc_stackptr++] = YY_CURRENT_BUFFER;
+                          yyin = fopen(yytext, "r");
+                          if (!yyin)
+                              fprintf(stderr, "fopen failed on %s\n", yytext);
+                          yy_switch_to_buffer(yy_create_buffer(yyin, YY_BUF_SIZE));
+                          BEGIN(INITIAL);
+                       }
+
+<<EOF>>                {
+                           if (--inc_stackptr < 0)
+                              yyterminate();
+			   else {
+                              yy_delete_buffer(YY_CURRENT_BUFFER);
+                              yy_switch_to_buffer(inc_stack[inc_stackptr]);
+                           }
+                       }
 %%

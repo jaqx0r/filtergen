@@ -1,0 +1,4 @@
+kind = 27 [<name>], spelling = "foo", line = 2
+kind = 27 [<name>], spelling = "bar", line = 3
+kind = 27 [<name>], spelling = "baz", line = 4
+kind = 27 [<name>], spelling = "quux", line = 5
