@@ -1,0 +1,31 @@
+DAG for rule generation
+
+a { b c d } e { f g } x;
+h { f g } z;
+i { b c } y;
+
+precompute common subexpressions == separate into chains
+
+caution: actions are commutative with subexpressions:
+
+  { f g } x is not the same as { f g } z
+
+visit nodes in a dag: when the end of the path is reached, enter a rule into
+an assembler-like list of tuples
+
+
+chain | if | src ip | dst ip | proto | src port | dst port | options... | action
+
+ports ignored for non tcp/udp (i.e. they're NULL)
+
+NULL values are assumed to be any:  if they were assumed to be none, then
+all rules missing a value would be no-ops.  leaving a specifier out meaning
+less specifity seems more intuitive.
+
+options inclue icmp type, special flags, iptables modifiers
+
+apply peephole optimisations:
+
+* redundant rules that are more specific than later rules with the same action
+  potential for shadowing warning
+* rule reordering with other rules having the same action

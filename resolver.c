@@ -211,7 +211,7 @@ void resolve_host_argument_list(struct host_argument_list_s * n) {
                 freeaddrinfo(a);
                 break;
               default:
-                printf("warning: %s\n", gai_strerror(r));
+                fprintf(stderr, "warning: %s: %s\n", gai_strerror(r), n->arg->host);
                 break;
             }
         }

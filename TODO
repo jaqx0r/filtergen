@@ -61,3 +61,7 @@ o [jaq] Implement a negation unroller for filters which can't negate   a
 * reject-with for reject target in iptables
 
 * ipac-friendly filters
+
+* New backend: iptables-save format
+
+* New frontend: iptables-save format
