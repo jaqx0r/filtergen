@@ -35,6 +35,7 @@
 
 #include "filter.h"
 #include "ast.h"
+#include "resolver.h"
 
 int yyparse(void *);
 void yyrestart(FILE *);
@@ -217,6 +218,7 @@ int main(int argc, char **argv) {
 	    struct ast_s ast;
 
 	    if (yyparse((void *) &ast) == 0) {
+		resolve(&ast);
 		f = convert(&ast);
 		if (!f) {
 		    fprintf(stderr, "couldn't convert file\n");
