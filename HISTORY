@@ -1,0 +1,12 @@
+Recent:
+	rewrote iptables driver
+	added ipchains driver
+	added beginnings of Cisco IOS ACL driver
+		(see TODO for why this doesn't work yet)
+	added TODO and HONESTY files
+
+0.1: Initial release
+	iptables driver
+	a few bugs
+
+$Id: HISTORY,v 1.1 2001/10/03 20:39:42 matthew Exp $
