@@ -1,0 +1,23 @@
+( input eth0
+  child
+  ( dest foo
+    child
+    ( local
+      child
+      ( accept
+       )
+     )
+   )
+  next
+  ( input eth0
+    child
+    ( dest foo
+      child
+      ( forward
+        child
+        ( accept
+         )
+       )
+     )
+   )
+ )
