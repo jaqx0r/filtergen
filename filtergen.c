@@ -44,8 +44,8 @@ extern struct filter * convert(struct ast_s * n);
 static FILE *outfile;
 
 void usage(char * prog) {
-    fprintf(stderr, "Usage: %s [-cht] [-o output] input\n", prog);
-    fprintf(stderr, "       %s [-cht] [-o output] -F policy\n\n", prog);
+    fprintf(stderr, "Usage: %s [-chV] [-t backend] [-o output] input\n", prog);
+    fprintf(stderr, "       %s [-chV] [-t backend] [-o output] -F policy\n\n", prog);
     fprintf(stderr, "Options:\n");
 
 #ifdef HAVE_GETOPT_H
@@ -76,6 +76,12 @@ void usage(char * prog) {
     fprintf(stderr, " --help/-h                 show this help\n");
 #else
     fprintf(stderr, "        -h                 show this help\n");
+#endif
+
+#ifdef HAVE_GETOPT_H
+    fprintf(stderr, " --version/-V              show program version\n");
+#else
+    fprintf(stderr, "           -V              show program version\n");
 #endif
 }
 
@@ -118,6 +124,7 @@ static struct option long_options[] = {
     {"target", required_argument, 0, 't'},
     {"output", required_argument, 0, 'o'},
     {"flush", required_argument, 0, 'F'},
+    {"version", no_argument, 0, 'V'},
     {0, 0, 0, 0}
 };
 # define GETOPT(x, y, z) getopt_long(x, y, z, long_options, NULL)
@@ -139,7 +146,7 @@ int main(int argc, char **argv) {
 
     progname = argv[0];
 
-    while ((arg = GETOPT(argc, argv, "hco:t:F:")) > 0) {
+    while ((arg = GETOPT(argc, argv, "hco:t:F:V")) > 0) {
 	switch (arg) {
 	  case ':':
 	    usage(progname);
@@ -171,6 +178,10 @@ int main(int argc, char **argv) {
 		usage(progname);
 		exit(1);
 	    }
+	    break;
+	  case 'V':
+	    printf(PACKAGE " " VERSION "\n");
+	    exit(0);
 	    break;
 	  default:
 	    break;
