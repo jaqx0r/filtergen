@@ -28,11 +28,20 @@ EMIT(pkt_count) {
 }
 
 EMIT(identifier) {
-    if (n->id) {
-	char * spaces = strstr(n->id, " ");
+    if (n->id1) {
+	char * spaces = strstr(n->id1, " ");
 	if (spaces)
 	    printf("\"");
-	printf("%s", n->id);
+	printf("%s", n->id1);
+	if (spaces)
+	    printf("\"");
+    }
+    if (n->id2) {
+	printf(" ");
+	char * spaces = strstr(n->id2, " ");
+	if (spaces)
+	    printf("\"");
+	printf("%s", n->id2);
 	if (spaces)
 	    printf("\"");
     }
@@ -50,9 +59,10 @@ EMIT(not_identifier) {
 
 EMIT(option) {
     if (n->option) {
-	printf(" -%s ", n->option);
+	printf("-%s", n->option);
     }
     if (n->not_identifier) {
+	printf(" ");
 	emit_not_identifier(n->not_identifier);
     }
 }
@@ -71,6 +81,7 @@ EMIT(option_list) {
     if (n->option_list) {
 	eprint("emitting option_list\n");
 	emit_option_list(n->option_list);
+	printf(" ");
     }
     if (n->not_option) {
 	eprint("emitting not_option\n");
