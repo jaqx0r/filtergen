@@ -91,11 +91,21 @@ rule_list: /* empty */
 
 rule: TOK_TABLE TOK_IDENTIFIER
 {
-    $$ = NULL;
+    $$ = malloc(sizeof(struct rule_s));
+    $$->table = $2;
+    $$->chain = NULL;
+    $$->policy = NULL;
+    $$->pkt_count = NULL;
+    $$->option_list = NULL;
 }
 | TOK_CHAIN TOK_IDENTIFIER TOK_IDENTIFIER pkt_count
 {
-    $$ = NULL;
+    $$ = malloc(sizeof(struct rule_s));
+    $$->table = NULL;
+    $$->chain = $2;
+    $$->policy = $3;
+    $$->pkt_count = $4;
+    $$->option_list = NULL;
 }
 | TOK_COMMIT
 {
@@ -103,11 +113,21 @@ rule: TOK_TABLE TOK_IDENTIFIER
 }
 | pkt_count option_list
 {
-    $$ = NULL;
+    $$ = malloc(sizeof(struct rule_s));
+    $$->table = NULL;
+    $$->chain = NULL;
+    $$->policy = NULL;
+    $$->pkt_count = $1;
+    $$->option_list = $2;
 }
 | option_list
 {
-    $$ = NULL;
+    $$ = malloc(sizeof(struct rule_s));
+    $$->table = NULL;
+    $$->chain = NULL;
+    $$->policy = NULL;
+    $$->pkt_count = NULL;
+    $$->option_list = $1;
 }
 
 option_list: /* empty */
@@ -116,52 +136,70 @@ option_list: /* empty */
 }
 | option_list not_option
 {
-    $$ = NULL;
+    $$ = malloc(sizeof(struct option_list_s));
+    $$->option_list = $1;
+    $$->not_option = $2;
 }
 
 not_option: TOK_BANG option
 {
-    $$ = NULL;
+    $$ = malloc(sizeof(struct not_option_s));
+    $$->neg = 1;
+    $$->option = $2;
 }
 | option
 {
-    $$ = NULL;
+    $$ = malloc(sizeof(struct not_option_s));
+    $$->neg = 0;
+    $$->option = $1;
 }
 
 option: TOK_OPTION not_identifier
 {
-    $$ = NULL;
+    $$ = malloc(sizeof(struct option_s));
+    $$->option = $1;
+    $$->not_identifier = $2;
 }
 
 not_identifier: TOK_BANG identifier
 {
-    $$ = NULL;
+    $$ = malloc(sizeof(struct not_identifier_s));
+    $$->neg = 1;
+    $$->identifier = $2;
 }
 | identifier
 {
-    $$ = NULL;
+    $$ = malloc(sizeof(struct not_identifier_s));
+    $$->neg = 0;
+    $$->identifier = $1;
 }
 
 identifier: TOK_IDENTIFIER TOK_IDENTIFIER
 {
-    $$ = NULL;
+    $$ = malloc(sizeof(struct identifier_s));
+    $$->id = $1;
 }
 | TOK_IDENTIFIER TOK_COLON TOK_IDENTIFIER
 {
-    $$ = NULL;
+    $$ = malloc(sizeof(struct identifier_s));
+    asprintf(&($$->id), "%s:%s", $1, $3);
 }
 | TOK_QUOTE TOK_IDENTIFIER TOK_QUOTE
 {
-    $$ = NULL;
+    $$ = malloc(sizeof(struct identifier_s));
+    $$->id = $2;
 }
 | TOK_IDENTIFIER
 {
-    $$ = NULL;
+    $$ = malloc(sizeof(struct identifier_s));
+    $$->id = $1;
 }
 
 pkt_count: TOK_LSQUARE TOK_IDENTIFIER TOK_COLON TOK_IDENTIFIER TOK_RSQUARE
 {
-    $$ = NULL;
+    $$ = malloc(sizeof(struct pkt_count_s));
+    $$->in = $2;
+    $$->out = $4;
 }
 
 %%

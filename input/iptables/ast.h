@@ -25,6 +25,10 @@ struct pkt_count_s {
     char * out;
 };
 
+struct identifier_s {
+    char * id;
+};
+
 struct not_identifier_s {
     int neg;
     struct identifier_s * identifier;
@@ -46,8 +50,9 @@ struct option_list_s {
 };
 
 struct rule_s {
-    int type;
-    char * identifier;
+    char * table;
+    char * chain;
+    char * policy;
     struct pkt_count_s * pkt_count;
     struct option_list_s * option_list;
 };

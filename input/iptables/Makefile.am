@@ -1,8 +1,10 @@
-bin_PROGRAMS = scan parse
+bin_PROGRAMS = scan parse emit
 
-scan_SOURCES = scan.c parser.y scanner.l
+scan_SOURCES = parser.y scanner.l scan.c
 
-parse_SOURCES = parse.c parser.y scanner.l
+parse_SOURCES = parser.y scanner.l parse.c
+
+emit_SOURCES = parser.y scanner.l emit.c
 
 AM_CFLAGS = -D_GNU_SOURCE
 AM_LDFLAGS = -g
