@@ -1,0 +1,10 @@
+# test negations
+# $Id: tneg.filter,v 1.1 2001/09/25 17:22:39 matthew Exp $
+
+input eth0 source foo dest bar reject;
+input eth0 { source foo dest bar } reject;
+input eth0 ! source foo dest bar reject;
+input eth0 ! source foo ! dest bar reject;
+input eth0 source foo ! dest bar reject;
+input eth0 ! { source foo dest bar } reject;
+input eth0 ! { source foo ! dest bar } reject;
