@@ -1,0 +1,5 @@
+*filter
+:RH-Lokkit-0-50-INPUT - [0:0]
+-A RH-Lokkit-0-50-INPUT -p tcp -m tcp --dport 8088 --syn -j ACCEPT
+COMMIT
+

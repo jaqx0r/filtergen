@@ -224,6 +224,12 @@ EMIT(helper_option) {
     }
 }
 
+EMIT(syn_option) {
+    if (n) {
+	printf("--syn");
+    }
+}
+
 EMIT(option) {
     if (n->in_interface_option) {
       emit_in_interface_option(n->in_interface_option);
@@ -256,6 +262,7 @@ EMIT(option) {
     else EMITOPTION(fragment)
     else EMITOPTION(clamp_mss_to_pmtu)
     else EMITOPTION(helper)
+    else EMITOPTION(syn)
     else {
 	eprint("WARNING: no option\n");
     }
