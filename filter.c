@@ -1,4 +1,4 @@
-/* $Id: filter.c,v 1.15 2002/09/13 09:00:16 matthew Exp $ */
+/* $Id: filter.c,v 1.16 2002/11/08 01:18:30 matthew Exp $ */
 
 #include "filter.h"
 
@@ -127,7 +127,7 @@ struct filter *new_filter_host(enum filtertype type, const char *matchstr)
 		*mask++ = 0;
 		if(!str_to_int(mask, &i)) {
 			/* Netmask like foo/24 */
-			uint32_t l = ~(0UL);
+			uint32_t l = 0xffffffff;
 			if(i < 0 || i > 32) {
 				fprintf(stderr, "can't parse netmask \"%s\"\n",
 						mask);
