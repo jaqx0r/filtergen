@@ -1,8 +1,8 @@
-.\" filter command-line reference
-.TH PFC 8
+.\" -*- nroff -*-
+.TH PFC 8 "January 7, 2004"
 
 .SH NAME
-pfc \- A packet filter compiler
+pfc \- packet filter compiler
 
 .SH SYNOPSIS
 \fBpfc\fR [ \fB-c\fR | \fB--compile\fR ] [ \fB-t \fItarget\fB\fR | \fB--target=\fItarget\fB\fR ] [ \fB-o \fIoutfile\fB\fR | \fB--output=\fIoutfile\fB\fR ] \fIinfile\fR
@@ -10,15 +10,13 @@ pfc \- A packet filter compiler
 \fBpfc\fR [ \fB-c\fR | \fB--compile\fR ] [ \fB-t \fItarget\fB\fR | \fB--target=\fItarget\fB\fR ] [ \fB-o \fIoutfile\fB\fR | \fB--output=\fIoutfile\fB\fR ] [ \fB-F \fIpolicy\fB\fR | \fB--flush=\fIpolicy\fB\fR ]
 
 .SH DESCRIPTION
-.B pfc
-compiles packet filtering rules into a variety of formats from a
-high-level description language.
+\fBpfc\fR compiles a high-level filtering description language into a
+variety of target formats.
 
 .SH USAGE
-.B pfc
-reads the ruleset from the \fIinfile\fR specified on the command-line (or
-standard input if \fIinfile\fR is "\-") and outputs to standard
-output (or \fIoutfile\fR) via an optionally specified backend.
+\fBpfc\fR reads the ruleset from the \fIinfile\fR specified on the
+command line (or standard input if \fIinfile\fR is "\-") and outputs to
+standard output (or \fIoutfile\fR) via an optionally specified backend.
 
 .PP
 Both short and GNU-style long option options are accepted:
@@ -51,7 +49,14 @@ having no filter loaded at all.  It is not necessary to specify an
 Write output to \fIoutfile\fR instead of standard output.
 
 .SH BUGS
-Not all backends implement all features.  
+Not all backends implement all features.
+
+The packet filter doesn't optimise the generated filter.
 
 .SH SEE ALSO
 \fBfilter_syntax\fR(5), \fBfilter_backends\fR(7)
+
+.SH AUTHOR
+\fBpfc\fR began its life as \fBfiltergen\fR, written by Matthew Kirkwood.
+Jamie Wilkinson <jaq@spacepants.org> then rewrote a lot of the internals,
+added some features, and rereleased it under the new name.
