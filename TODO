@@ -9,6 +9,7 @@ Easy:
  * Option to output a skeleton around the filter (set policies, drop
    invalid packets, etc)
  * Translate icmp names (at least for ipfilter and cisco)
+ * masq and transproxy for ipfilter backend
 
 Harder:
  * Testing and auditing of generated rulesets.
@@ -39,4 +40,4 @@ Hard:
    This is possible, but tiresome, and will require an optimiser
    if the generated rulesets are not to Suck.
 
-$Id: TODO,v 1.6 2001/10/06 20:24:34 matthew Exp $
+$Id: TODO,v 1.7 2001/10/07 10:43:07 matthew Exp $
