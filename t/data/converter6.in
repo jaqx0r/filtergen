@@ -1,0 +1,10 @@
+# convert ports
+input eth0 dest foo proto tcp dport http accept;
+input eth0 dest foo proto tcp sport http accept;
+input eth0 dest foo proto tcp sport 53 accept;
+input eth0 dest foo proto tcp dport 53 accept;
+# ranges
+input eth0 dest foo proto tcp dport 53:54 accept;
+input eth0 dest foo proto tcp sport http:https accept;
+# compound
+input eth0 dest foo proto tcp dport { 53 http smtp 3128 } accept;
