@@ -95,6 +95,10 @@ struct uid_owner_option_s {
     struct identifier_s * identifier;
 };
 
+struct tcp_flags_option_s {
+    struct identifier_s * identifier;
+};
+
 struct option_s {
     struct in_interface_option_s * in_interface_option;
     struct jump_option_s * jump_option;
@@ -111,6 +115,7 @@ struct option_s {
     struct log_prefix_option_s * log_prefix_option;
     struct sport_option_s * sport_option;
     struct uid_owner_option_s * uid_owner_option;
+    struct tcp_flags_option_s * tcp_flags_option;
 };
 
 struct not_option_s {

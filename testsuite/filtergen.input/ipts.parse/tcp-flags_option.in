@@ -1,0 +1,4 @@
+*filter
+:INPUT DROP [0:0]
+[0:0] -A INPUT -p tcp -m tcp ! --tcp-flags SYN,RST,ACK SYN -j ACCEPT
+COMMIT
