@@ -18,7 +18,7 @@ pfc_SOURCES = \
 
 pfc_LDADD = @GETOPT_LIBS@
 
-headers = filter.h util.h ast.h
+headers = filter.h util.h ast.h resolver.h
 
 mans = filter_backends.7 filter_syntax.5 pfc.8
 
