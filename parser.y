@@ -51,9 +51,8 @@ extern int yylex(void);
 	struct compound_icmptype_argument_s * u_compound_icmptype_argument;
 	struct icmptype_argument_list_s * u_icmptype_argument_list;
 	struct simple_icmptype_argument_s * u_simple_icmptype_argument;
-	struct routing_specifier_s * u_routing_specifier;
+	struct option_specifier_s * u_option_specifier;
 	struct compound_specifier_s * u_compound_specifier;
-	struct log_text_argument_s * u_log_text_argument;
 	struct chaingroup_specifier_s * u_chaingroup_specifier;
 	struct subrule_list_s * u_subrule_list;
 	char * u_str;
@@ -89,7 +88,7 @@ extern int yylex(void);
 %type <u_compound_icmptype_argument> compound_icmptype_argument
 %type <u_icmptype_argument_list> icmptype_argument_list
 %type <u_simple_icmptype_argument> simple_icmptype_argument
-%type <u_routing_specifier> routing_specifier
+%type <u_option_specifier> option_specifier
 %type <u_compound_specifier> compound_specifier
 %type <u_chaingroup_specifier> chaingroup_specifier
 %type <u_subrule_list> subrule_list
@@ -223,11 +222,11 @@ specifier: compound_specifier
 		memset($$, 0, sizeof(struct specifier_s));
 		$$->icmptype = $1;
 	}
-	| routing_specifier
+	| option_specifier
 	{
 		$$ = malloc(sizeof(struct specifier_s));
 		memset($$, 0, sizeof(struct specifier_s));
-		$$->routing = $1;
+		$$->option = $1;
 	}
 	| chaingroup_specifier
 	{
@@ -295,49 +294,31 @@ target_specifier: TOK_ACCEPT
 	{
 		$$ = malloc(sizeof(struct target_specifier_s));
 		$$->type = TOK_ACCEPT;
-		$$->logtext = NULL;
 	}
 	| TOK_REJECT
 	{
 		$$ = malloc(sizeof(struct target_specifier_s));
 		$$->type = TOK_REJECT;
-		$$->logtext = NULL;
 	}
 	| TOK_DROP
 	{
 		$$ = malloc(sizeof(struct target_specifier_s));
 		$$->type = TOK_DROP;
-		$$->logtext = NULL;
 	}
 	| TOK_MASQ
 	{
 		$$ = malloc(sizeof(struct target_specifier_s));
 		$$->type = TOK_MASQ;
-		$$->logtext = NULL;
 	}
 	| TOK_PROXY
 	{
 		$$ = malloc(sizeof(struct target_specifier_s));
 		$$->type = TOK_PROXY;
-		$$->logtext = NULL;
 	}
 	| TOK_REDIRECT
 	{
 		$$ = malloc(sizeof(struct target_specifier_s));
 		$$->type = TOK_REDIRECT;
-		$$->logtext = NULL;
-	}
-	| TOK_LOG
-	{
-		$$ = malloc(sizeof(struct target_specifier_s));
-		$$->type = TOK_LOG;
-		$$->logtext = NULL;
-	}
-	| TOK_LOG TOK_TEXT TOK_IDENTIFIER
-	{
-		$$ = malloc(sizeof(struct target_specifier_s));
-		$$->type = TOK_LOG;
-		$$->logtext = $3;
 	}
 	;
 
@@ -559,15 +540,29 @@ simple_icmptype_argument: TOK_IDENTIFIER
 	}
 	;
 
-routing_specifier: TOK_LOCAL
+option_specifier: TOK_LOCAL
 	{
-		$$ = malloc(sizeof(struct routing_specifier_s));
+		$$ = malloc(sizeof(struct option_specifier_s));
 		$$->type = TOK_LOCAL;
+		$$->logmsg = 0;
 	}
 	| TOK_FORWARD
 	{
-		$$ = malloc(sizeof(struct routing_specifier_s));
+		$$ = malloc(sizeof(struct option_specifier_s));
 		$$->type = TOK_FORWARD;
+		$$->logmsg = 0;
+	}
+        | TOK_LOG TOK_TEXT TOK_IDENTIFIER
+        {
+                $$ = malloc(sizeof(struct option_specifier_s));
+		$$->type = TOK_LOG;
+		$$->logmsg = $3;
+	}
+	| TOK_LOG
+	{
+                $$ = malloc(sizeof(struct option_specifier_s));	
+		$$->type = TOK_LOG;
+		$$->logmsg = 0;
 	}
 	;
 

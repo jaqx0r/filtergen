@@ -20,8 +20,9 @@ struct compound_specifier_s {
     struct subrule_list_s * list;
 };
 
-struct routing_specifier_s {
+struct option_specifier_s {
     int type;
+  char * logmsg;
 };
 
 struct simple_icmptype_argument_s {
@@ -118,7 +119,6 @@ struct host_specifier_s {
 
 struct target_specifier_s {
     int type;
-    char * logtext;
 };
 
 struct simple_direction_argument_s {
@@ -152,7 +152,7 @@ struct specifier_s {
     struct port_specifier_s * port;
     struct protocol_specifier_s * protocol;
     struct icmptype_specifier_s * icmptype;
-    struct routing_specifier_s * routing;
+    struct option_specifier_s * option;
     struct chaingroup_specifier_s * chaingroup;
 };
 
