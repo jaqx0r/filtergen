@@ -1,7 +1,7 @@
 /*
  * Filter generator, Cisco IOS driver
  *
- * $Id: fg-cisco.c,v 1.11 2002/08/20 22:54:38 matthew Exp $
+ * $Id: fg-cisco.c,v 1.12 2002/08/26 22:10:37 matthew Exp $
  */
 
 /* XXX - does this need skeleton rules? */
@@ -47,16 +47,16 @@ static int cb_cisco_rule(const struct filterent *ent, struct fg_misc *misc)
 		APP2(rule_r, ent->iface, "-");
 	}
 	switch(ent->direction) {
-	case F_INPUT:	APP(rule, "IN"); APP(rule_r, "OUT"); break;
-	case F_OUTPUT:	APP(rule, "OUT"); APP(rule_r, "IN"); break;
+	case INPUT:	APP(rule, "IN"); APP(rule_r, "OUT"); break;
+	case OUTPUT:	APP(rule, "OUT"); APP(rule_r, "IN"); break;
 	default: fprintf(stderr, "unknown direction\n"); abort();
 	}
 
 	/* target */
 	switch(ent->target) {
-	case F_ACCEPT: APPS(rule, "permit"); APPS(rule_r, "permit"); break;
-	case F_DROP: APPS(rule, "deny"); APPS(rule_r, "deny"); break;
-	case F_REJECT: fprintf(stderr, "Cisco IOS does not support REJECT\n"); return -1;
+	case T_ACCEPT:	APPS(rule, "permit"); APPS(rule_r, "permit"); break;
+	case DROP: 	APPS(rule, "deny"); APPS(rule_r, "deny"); break;
+	case T_REJECT:	fprintf(stderr, "Cisco IOS does not support REJECT\n"); return -1;
 	default: abort();
 	}
 
@@ -88,7 +88,7 @@ static int cb_cisco_rule(const struct filterent *ent, struct fg_misc *misc)
 	}
 
 	if(ent->proto.num == IPPROTO_TCP) APPS(rule_r, "established");
-	if(ent->log) APPS(rule, "log");
+	if(ESET(ent,LOG)) APPS(rule, "log");
 
 	oputs(rule);
 	if(needret) oputs(rule_r);
