@@ -21,6 +21,8 @@
 
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 #include <netdb.h>
 #include <stdlib.h>
 #include <string.h>
@@ -159,7 +161,7 @@ void resolve_host_argument(struct host_argument_s * n __attribute__((unused))) {
 void resolve_host_argument_list(struct host_argument_list_s * n) {
     struct addrinfo * a = NULL, * i;
     struct addrinfo hints;
-    int r, addr;
+    int r;
     struct host_argument_list_s * list = NULL;
     struct host_argument_s * host = NULL;
 
@@ -183,22 +185,12 @@ void resolve_host_argument_list(struct host_argument_list_s * n) {
                 /* replace the hostname with the IP */
                 free(n->arg->host);
                 /* ugh */
-                addr = ntohl(*(int *)&((struct sockaddr_in *) a->ai_addr)->sin_addr);
-                asprintf(&n->arg->host, "%d.%d.%d.%d", addr >> 24 & 255, addr >> 16 & 255, addr >> 8 & 255, addr & 255);
-
+		n->arg->host = strdup(inet_ntoa(((struct sockaddr_in *) a->ai_addr)->sin_addr));
                 /* if there's more, create some more hosts */
                 for (i = a->ai_next; i; i = i->ai_next) {
-                    /*
-		      printf("addrinfo:\n\tai_canonname: %s\n\tai_family: %d\n\tai_socktype: %d\n", i->ai_canonname, i->ai_family, i->ai_socktype);
-                    */
-                    addr = ntohl(*(int *)&((struct sockaddr_in *) i->ai_addr)->sin_addr);
-                    /*
-		      printf("\taddr: %d.%d.%d.%d\n", addr >> 24 & 255, addr >> 16 & 255, addr >> 8 & 255, addr & 255);
-                    */
                     list = malloc(sizeof(struct host_argument_list_s));
                     host = malloc(sizeof(struct host_argument_s));
-
-                    asprintf(&host->host, "%d.%d.%d.%d", addr >> 24 & 255, addr >> 16 & 255, addr >> 8 & 255, addr & 255);
+                    host->host = strdup(inet_ntoa(((struct sockaddr_in *) i->ai_addr)->sin_addr));
                     if (n->arg->mask) {
                         host->mask = strdup(n->arg->mask);
                     }
