@@ -23,7 +23,7 @@ filtergen_LDADD = @GETOPT_LIBS@
 
 headers = filter.h util.h ast.h resolver.h icmpent.h factoriser.h
 
-mans = filter_backends.7 filter_syntax.5 filtergen.8
+mans = filter_backends.7 filter_syntax.5 filtergen.8 fgadm.8
 
 man_MANS = $(mans)
 
