@@ -5,3 +5,5 @@ kind = 20 [<rsquare>], spelling = "]", file = "(standard input)", line = 4
 kind = 21 [<semicolon>], spelling = ";", file = "(standard input)", line = 5
 kind = 29 [<dot>], spelling = ".", file = "(standard input)", line = 6
 kind = 30 [<slash>], spelling = "/", file = "(standard input)", line = 7
+kind = 33 [<colon>], spelling = ":", file = "(standard input)", line = 8
+kind = 32 [<bang>], spelling = "!", file = "(standard input)", line = 9

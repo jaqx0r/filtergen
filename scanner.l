@@ -29,7 +29,7 @@ static void scan_err(const char * fmt, ...);
 
 string  \"[^\n]+\"
 space   [ \t]+
-id      [[:alpha:]_][[:alnum:]_]*
+id      [[:alpha:]_][[:alnum:]_-]*
 number  [[:digit:]]+
 
 %%
@@ -84,9 +84,11 @@ text         return TOK_TEXT;
 
 "{"          return TOK_LCURLY;
 "}"          return TOK_RCURLY;
-";"          return TOK_SEMICOLON;
 "["          return TOK_LSQUARE;
 "]"          return TOK_RSQUARE;
+";"          return TOK_SEMICOLON;
+":"          return TOK_COLON;
+"!"          return TOK_BANG;
 
 {id}         return TOK_IDENTIFIER;
 {number}     return TOK_NUMBER;

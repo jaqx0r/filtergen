@@ -29,3 +29,5 @@
 #define TOK_DOT 29
 #define TOK_SLASH 30
 #define TOK_ERR 31
+#define TOK_BANG 32
+#define TOK_COLON 33
