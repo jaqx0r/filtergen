@@ -92,8 +92,10 @@ extern int ipts_lex(void);
 %type <u_destination_option> destination_option
 %type <u_jump_option> jump_option
 %type <u_in_interface_option> in_interface_option
+
 %type <u_not_identifier> not_identifier
 %type <u_identifier> identifier
+%type <u_pkt_count> opt_pkt_count
 %type <u_pkt_count> pkt_count
 
 %defines
@@ -198,7 +200,7 @@ rule: TOK_IPTS_CHAIN TOK_IDENTIFIER TOK_IDENTIFIER pkt_count
     $$->pkt_count = $4;
     $$->option_list = NULL;
 }
-| pkt_count chain_command TOK_IDENTIFIER rule_specification
+| opt_pkt_count chain_command TOK_IDENTIFIER rule_specification
 {
     $$ = malloc(sizeof(struct rule_s));
     $$->chain = $3;
@@ -441,6 +443,15 @@ identifier: TOK_IDENTIFIER TOK_IDENTIFIER
     $$ = malloc(sizeof(struct identifier_s));
     $$->id1 = $1;
     $$->id2 = NULL;
+}
+
+opt_pkt_count: /* empty */
+{
+    $$ = NULL;
+}
+| pkt_count
+{
+    $$ = $1;
 }
 
 pkt_count: TOK_LSQUARE TOK_IDENTIFIER TOK_COLON TOK_IDENTIFIER TOK_RSQUARE
