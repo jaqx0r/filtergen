@@ -31,7 +31,7 @@ char * ipts_filename(void);
 
 string	\"[^\n]+\"
 space	[ \t]+
-id	[[:alnum:]_+-\.\/]+
+id	[[:alnum:]_+-\.\/~]+
 
 %%
 
