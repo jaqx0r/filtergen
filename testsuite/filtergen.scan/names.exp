@@ -11,7 +11,7 @@ spawn input/filtergen/t/scan
 set timeout 3
 
 foreach name $names {
-	set test "$name identifier"
+	set test "identifier $name"
 
 	send "$name\r"
 
