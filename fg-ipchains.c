@@ -13,6 +13,9 @@
 #include "filter.h"
 #include "util.h"
 
+/* full path to ipchains executable */
+#define IPCHAINS "/sbin/ipchains"
+
 
 static char *appip(char *r, const struct addr_spec *h)
 {
@@ -173,11 +176,11 @@ static int cb_ipchains_rule(const struct filterent *ent, struct fg_misc *misc)
 	default: abort();
 	}
 
-	orules++, oprintf("ipchains -A %s%s %s %s%s\n", subchain, rulechain, rule+1, subtarget, ruletarget);
-	if(needret) orules++, oprintf("ipchains -I %s%s %s %s%s\n", subchain, revchain, rule_r+1, subtarget, revtarget);
+	orules++, oprintf(IPCHAINS" -A %s%s %s %s%s\n", subchain, rulechain, rule+1, subtarget, ruletarget);
+	if(needret) orules++, oprintf(IPCHAINS" -I %s%s %s %s%s\n", subchain, revchain, rule_r+1, subtarget, revtarget);
 	if(isforward) {
-		orules++, oprintf("ipchains -A %s%s %s %s%s\n", subchain, forchain, rule+1, subtarget, fortarget);
-		if(needret) orules++, oprintf("ipchains -I %s%s %s %s%s\n", subchain, forrevchain, rule_r+1, subtarget, forrevtarget);
+		orules++, oprintf(IPCHAINS" -A %s%s %s %s%s\n", subchain, forchain, rule+1, subtarget, fortarget);
+		if(needret) orules++, oprintf(IPCHAINS" -I %s%s %s %s%s\n", subchain, forrevchain, rule_r+1, subtarget, forrevtarget);
 	}
 
 	free(rule); free(rule_r);
@@ -187,7 +190,7 @@ static int cb_ipchains_rule(const struct filterent *ent, struct fg_misc *misc)
 
 static int cb_ipchains_group(const char *name)
 {
-	oprintf("for f in input output forward forw_out; do ipchains -N %s-${f}; done\n", name);
+	oprintf("for f in input output forward forw_out; do "IPCHAINS" -N %s-${f}; done\n", name);
 	return 1;
 }
 
@@ -203,14 +206,14 @@ int fg_ipchains(struct filter *filter, int flags)
 	filter_unroll(&filter);
 	filter_apply_flags(filter, flags);
 	if(!(flags & FF_NOSKEL)) {
-		oputs("for f in INPUT OUTPUT FORWARD; do ipchains -P $f DENY; done");
-		oputs("ipchains -F; ipchains -X");
-		oputs("ipchains -N forw_out");
+		oputs("for f in INPUT OUTPUT FORWARD; do "IPCHAINS" -P $f DENY; done");
+		oputs(IPCHAINS" -F; "IPCHAINS" -X");
+		oputs(IPCHAINS" -N forw_out");
 	}
 	if((r = filtergen_cprod(filter, &cb_ipchains, &misc)) < 0)
 		return r;
 	if(!(flags & FF_NOSKEL)) {
-		oputs("for f in INPUT OUTPUT FORWARD forw_out; do ipchains -A $f -l -j DENY; done");
+		oputs("for f in INPUT OUTPUT FORWARD forw_out; do "IPCHAINS" -A $f -l -j DENY; done");
 		r += 3;
 	}
 	return r;
@@ -232,8 +235,8 @@ int flush_ipchains(enum filtertype policy, int flags)
 		fprintf(stderr, "invalid filtertype %d\n", policy);
 		abort();
 	}
-	oprintf("for f in $CHAINS; do ipchains -P $f %s; done\n", ostr);
-	oputs("ipchains -F; ipchains -X");
+	oprintf("for f in $CHAINS; do "IPCHAINS" -P $f %s; done\n", ostr);
+	oputs(IPCHAINS" -F; "IPCHAINS" -X");
 
 	return 0;
 }
