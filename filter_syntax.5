@@ -1,5 +1,5 @@
 .\" filter syntax reference
-.\" $Id: filter_syntax.5,v 1.6 2002/10/24 09:05:45 matthew Exp $
+.\" $Id: filter_syntax.5,v 1.7 2003/04/02 11:07:32 matthew Exp $
 .TH "FILTER SYNTAX" 8
 
 .SH NAME
@@ -80,11 +80,13 @@ Matches can be negated by prefixing them with a "!":
 
 .SS OPTIONS
 \fIOptions\fR affect the behaviour of the matcher or the target.
-Currently implemented are \fIlog\fR, which logs packets, and
-\fIlocal\fR, which means only to check packets to or from this
-interface, and \fIforward\fR which means the opposite of \fIlocal\fR.
+Currently implemented are \fIlog\fR, which logs packets, \fIlocal\fR,
+which means only to check packets to or from this interface,
+\fIforward\fR which means the opposite of \fIlocal\fR, and
+\fIoneway\fR which causes the backend to omit rules which permit
+return packets.
 
-The \fIlog\R option can optionally specify a message to log matching
+The \fIlog\fR option can optionally specify a message to log matching
 packets with, where the backend supports it:
 
 .nf

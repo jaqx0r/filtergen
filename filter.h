@@ -1,4 +1,4 @@
-/* $Id: filter.h,v 1.19 2002/11/11 20:51:38 matthew Exp $ */
+/* $Id: filter.h,v 1.20 2003/04/02 11:07:32 matthew Exp $ */
 #ifndef _FK_FILTER_H
 #define _FK_FILTER_H
 
@@ -27,6 +27,7 @@ enum filtertype {
 	F_NEG, F_SIBLIST, F_SUBGROUP,
 	F_LOG,
 	F_RTYPE,
+	F_ONEWAY,
 	/* this must be the last real filter type */
 	F_FILTER_MAX,
 	/* parser use only */
@@ -89,12 +90,13 @@ struct filter {
 
 /* from filter.c */
 typedef struct filter *filter_tctor(enum filtertype);
-filter_tctor __new_filter, new_filter_target, new_filter_rtype;
+filter_tctor new_filter_target, new_filter_rtype;
 struct filter *new_filter_neg(struct filter *sub);
 struct filter *new_filter_sibs(struct filter *list);
 struct filter *new_filter_subgroup(char *name, struct filter *list);
 typedef struct filter *filter_ctor(enum filtertype, const char*);
 filter_ctor new_filter_device, new_filter_host, new_filter_ports, new_filter_icmp, new_filter_proto, new_filter_log;
+struct filter *new_filter_oneway(void);
 
 /* filter manipulations */
 void filter_unroll(struct filter **f);
@@ -127,7 +129,7 @@ struct filterent {
 	enum filtertype rtype;
 	struct proto_spec proto;
 	char *logmsg;
-
+	int oneway;
 
 	/* We need this not to be a union, for error-checking reasons */
 	struct {

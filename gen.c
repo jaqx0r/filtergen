@@ -1,7 +1,7 @@
 /*
  * filter compilation routines
  *
- * $Id: gen.c,v 1.14 2002/08/26 22:10:37 matthew Exp $
+ * $Id: gen.c,v 1.15 2003/04/02 11:07:32 matthew Exp $
  */
 
 #include <stdio.h>
@@ -137,6 +137,10 @@ int __fg_applyone(struct filterent *e, const struct filter *f,
 	_DV(DPORT, "destination port", u.ports.src.maxstr, u.ports.dst, ports);
 	DV(ICMPTYPE, u.icmp, icmp);
 	DV(RTYPE, rtype, rtype);
+
+	case F_ONEWAY:
+		e->oneway = 1;
+		break;
 
 	case F_SIBLIST:
 		return __fg_applylist(e, f->u.sib, cb, misc);
