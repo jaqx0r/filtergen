@@ -122,7 +122,7 @@ text         return TOK_TEXT;
 .            return TOK_ERR;
 
 <include>[ \t]*       /* eat whitespace after include */
-<include>[^ \t\n]+    { /* include file name */
+<include>[^ \t\n;]+    { /* include file name */
                           if (inc_stackptr >= MAXINCLUDES) {
                               scan_err("warning: too many nested includes");
     			      scan_err("warning: skipping include of file %s", yytext);
