@@ -3,8 +3,8 @@
 WHAT'S THIS?
 
 Here, I explain the status of the package in non-salesman mode.
-It might help you to decide whether this package is useful to
-you (though shouldn't put you off contributing).
+It might help you to decide whether this package is currently
+useful to you (though shouldn't put you off contributing).
 
 
 STATUS
@@ -27,4 +27,4 @@ firewalls, though I intend to change that once I've added logging
 and transparent proxying support.
 
 
-$Id: HONESTY,v 1.2 2001/10/04 14:02:43 matthew Exp $
+$Id: HONESTY,v 1.3 2001/10/05 23:04:17 matthew Exp $
