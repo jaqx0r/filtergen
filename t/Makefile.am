@@ -23,7 +23,8 @@ TESTS = t_01_ccomment \
 	t_23_ports \
 	t_24_log \
 	t_25_target \
-	t_26_negation
+	t_26_negation \
+	t_28_routing
 
 check_PROGRAMS = scan parse
 
