@@ -1,4 +1,4 @@
-# comment
+# test a bunch of keywords
 *filter
 :INPUT DROP [0:1]
 -A INPUT -i lo ! -f --dport ntp:"

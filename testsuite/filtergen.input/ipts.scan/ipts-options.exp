@@ -1,0 +1,31 @@
+spawn input/iptables-save/t/scan
+
+set timeout 3
+
+set options [list \
+		 { "A" "CHAIN_APPEND" } \
+		 { "p" "PROTOCOL" } \
+		 { "s" "SOURCE" } \
+		 { "d" "DESTINATION" } \
+		 { "j" "JUMP" } \
+		 { "i" "IN_INTERFACE" } \
+		 { "o" "OUT_INTERFACE" } \
+		 { "f" "FRAGMENT" } \
+		 { "c" "SET_COUNTERS" } \
+		 { "m" "MATCH" } \
+		]
+
+foreach option_pair $options {
+    set option [lindex $option_pair 0]
+    set name [lindex $option_pair 1]
+
+    set test "option -$option"
+
+    send -- "-$option\r"
+
+    expect {
+	"kind = $name" { pass $test }
+	timeout { fail $test }
+	eof { fail "$test (eof)" }
+    }
+}
