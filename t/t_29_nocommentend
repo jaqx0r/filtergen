@@ -1,0 +1,16 @@
+#!/bin/sh
+
+TEST="that open ended comments are handled"
+DATA=scanner16
+
+testdir=`dirname $0`
+. $testdir/testlib
+
+./scan < $testdir/data/${DATA}.in > $work/out 2>&1
+if test $? -ne 0 ; then no_result ; fi
+
+compare $testdir/data/${DATA}.out $work/out
+
+# got this far?
+pass
+
