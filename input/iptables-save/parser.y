@@ -76,6 +76,8 @@ extern int ipts_lex(void);
 %token TOK_IPTS_SPORT
 %token TOK_IPTS_SYN
 
+%token TOK_IPTS_STATE
+
 %token <u_str> TOK_IDENTIFIER
 %token <u_str> TOK_OPTION
 

@@ -18,6 +18,7 @@ set options [list \
 		 { "destination-port" "DPORT" } \
 		 { "source-port" "SPORT" } \
 		 "syn" \
+		 "state" \
 		]
 
 foreach option_pair $options {

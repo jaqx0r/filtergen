@@ -29,6 +29,7 @@ char * tok_map(int c) {
 	tok(DPORT);
 	tok(SPORT);
 	tok(SYN);
+	tok(STATE);
       case TOK_IDENTIFIER:
 	r = strdup("identifier"); break;
       case TOK_LSQUARE:

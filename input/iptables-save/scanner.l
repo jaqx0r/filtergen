@@ -95,6 +95,8 @@ id	[[:alnum:]_+-\.\/]+
 
 --syn		return TOK_IPTS_SYN;
 
+--state		return TOK_IPTS_STATE;
+
 {id}	{
 		ipts_lval.u_str = strndup(ipts_text, ipts_leng);
 		return TOK_IDENTIFIER;
