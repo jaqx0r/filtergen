@@ -1,0 +1,34 @@
+INSTALLING filtergen
+==============
+
+Installing filtergen is easy.
+
+If you're on a Red Hat-like RPM-based system, you should be
+able just to run "rpm -ta" on the tarball.
+
+Otherwise, just ensure that you have gcc and flex installed,
+type "make", then "make install".
+
+AT-BOOT
+-------
+
+There are two files in the extras/ directory which make life
+easier in Red Hat-like systems.  My usual installation makes
+an /etc/filter/ directory and puts the ruleset and a Makefile
+in there.  The latter knows how to turn the filter script
+into an appropriate output file ("make" does this), and how
+to load the ruleset ("make install").
+
+filter.init is a SysV init script which invokes make at boot
+to do these things.  Run "/etc/init.d/filter help" to see what
+it can do.  It supports chkconfig.
+
+Note that if you intend to load filters at boot, you should
+install filtergen in /sbin/, in case not all filesystems are
+mounted at that point.
+
+The RPM does all of these things.  It does _not_ configure the
+init script to run at boot, though.  You can do that with
+"chkconfig filter on".
+
+$Id: INSTALL,v 1.1 2002/09/12 09:56:25 matthew Exp $

@@ -1,0 +1,6 @@
+# filter targets
+accept;
+reject;
+drop;
+redirect;
+masq;

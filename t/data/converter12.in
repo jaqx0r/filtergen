@@ -1,0 +1,10 @@
+# big ugly filter
+            input eth0 source foo dest bar [
+                 proto tcp {
+                      dport {echo https nntp};
+                      sport 1:1023 dport ssh;
+                 } accept;
+            ];
+            input eth0 source baz dest quux [
+                 proto tcp { dport {1264 1521 1984 8008 8080 26000}; } accept;
+            ];

@@ -1,0 +1,70 @@
+.\" -*- nroff -*-
+.TH FILTERGEN 8 "January 7, 2004"
+
+.SH NAME
+filtergen \- packet filter compiler
+
+.SH SYNOPSIS
+\fBfiltergen\fR [ \fB-h\fR | \fB--help\fR ] [ \fB-V\fR | \fB--version\fR ] [ \fB-c\fR | \fB--compile\fR ] [ \fB-t \fItarget\fB\fR | \fB--target=\fItarget\fB\fR ] [ \fB-o \fIoutfile\fB\fR | \fB--output=\fIoutfile\fB\fR ] \fIinfile\fR
+
+\fBfiltergen\fR [ \fB-h\fR | \fB--help\fR ] [ \fB-V\fR | \fB--version\fR ] [ \fB-c\fR | \fB--compile\fR ] [ \fB-t \fItarget\fB\fR | \fB--target=\fItarget\fB\fR ] [ \fB-o \fIoutfile\fB\fR | \fB--output=\fIoutfile\fB\fR ] [ \fB-F \fIpolicy\fB\fR | \fB--flush=\fIpolicy\fB\fR ]
+
+.SH DESCRIPTION
+\fBfiltergen\fR compiles a high-level filtering description language into a
+variety of target formats.
+
+.SH USAGE
+\fBfiltergen\fR reads the ruleset from the \fIinfile\fR specified on the
+command line (or standard input if \fIinfile\fR is "\-") and outputs to
+standard output (or \fIoutfile\fR) via an optionally specified backend.
+
+.PP
+Both short and GNU-style long option options are accepted:
+
+.TP
+\fB-c, --compile\fR
+Only try to "compile" the input, and do not generate any output.  This may be
+useful to check that an input file has no syntax errors in it before one
+attempts to use the result on a live server.
+
+.TP
+\fB-t \fItarget-filter\fB, --target=\fItarget-filter\fB\fR
+If specified, \fItarget-filter\fR will be used to select an output filter type,
+otherwise the default of \fBiptables\fR will be used.  Supported backends
+are \fBiptables\fR, \fBipchains\fR, \fBipfilter\fR and \fBcisco\fR (for
+Cisco IOS access-lists).
+
+.TP
+\fB-F \fIpolicy\fB, --flush=\fIpolicy\fB\fR
+Flush mode.  Generate a set of rules for clearing all rules from the packet
+filter.  Useful for firewall scripts that need to `shutdown' the firewall.
+You can supply a \fIpolicy\fR argument in place of the usual filename, to
+specify whether the flushed filter should default to \fBaccept\fR,
+\fBreject\fR, or \fBdrop\fR.  It defaults to \fBaccept\fR, equivalent to
+having no filter loaded at all.  It is not necessary to specify an
+\fIinfile\fR when using flush mode.
+
+.TP
+\fB-o \fIoutfile\fB, --output=\fIoutfile\fB\fR
+Write output to \fIoutfile\fR instead of standard output.
+
+.TP
+\fB-h, --help\fR
+Show command help.
+
+.TP
+\fB-V, --version\fR
+Show program version.
+
+.SH BUGS
+Not all backends implement all features.
+
+The packet filter is not optimised.
+
+.SH SEE ALSO
+\fBfgadm\fR(8), \fBfilter_syntax\fR(5), \fBfilter_backends\fR(7)
+
+.SH AUTHOR
+\fBfiltergen\fR was originally written by Matthew Kirkwood.
+Jamie Wilkinson <jaq@spacepants.org> then rewrote a lot of the internals,
+added some features, and took on maintenance of the project.

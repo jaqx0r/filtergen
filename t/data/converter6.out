@@ -1,0 +1,169 @@
+( siblist
+  ( input eth0
+   )
+  child
+  ( siblist
+    ( dest foo
+     )
+    child
+    ( siblist
+      ( proto tcp
+       )
+      child
+      ( siblist
+        ( dport echo
+         )
+        child
+        ( accept
+         )
+       )
+     )
+   )
+  next
+  ( siblist
+    ( input eth0
+     )
+    child
+    ( siblist
+      ( dest foo
+       )
+      child
+      ( siblist
+        ( proto tcp
+         )
+        child
+        ( siblist
+          ( sport echo
+           )
+          child
+          ( accept
+           )
+         )
+       )
+     )
+    next
+    ( siblist
+      ( input eth0
+       )
+      child
+      ( siblist
+        ( dest foo
+         )
+        child
+        ( siblist
+          ( proto tcp
+           )
+          child
+          ( siblist
+            ( sport 53
+             )
+            child
+            ( accept
+             )
+           )
+         )
+       )
+      next
+      ( siblist
+        ( input eth0
+         )
+        child
+        ( siblist
+          ( dest foo
+           )
+          child
+          ( siblist
+            ( proto tcp
+             )
+            child
+            ( siblist
+              ( dport 53
+               )
+              child
+              ( accept
+               )
+             )
+           )
+         )
+        next
+        ( siblist
+          ( input eth0
+           )
+          child
+          ( siblist
+            ( dest foo
+             )
+            child
+            ( siblist
+              ( proto tcp
+               )
+              child
+              ( siblist
+                ( dport 53:54
+                 )
+                child
+                ( accept
+                 )
+               )
+             )
+           )
+          next
+          ( siblist
+            ( input eth0
+             )
+            child
+            ( siblist
+              ( dest foo
+               )
+              child
+              ( siblist
+                ( proto tcp
+                 )
+                child
+                ( siblist
+                  ( sport echo:https
+                   )
+                  child
+                  ( accept
+                   )
+                 )
+               )
+             )
+            next
+            ( siblist
+              ( input eth0
+               )
+              child
+              ( siblist
+                ( dest foo
+                 )
+                child
+                ( siblist
+                  ( proto tcp
+                   )
+                  child
+                  ( siblist
+                    ( dport 53
+                      next
+                      ( dport echo
+                        next
+                        ( dport smtp
+                          next
+                          ( dport 3128
+                           )
+                         )
+                       )
+                     )
+                    child
+                    ( accept
+                     )
+                   )
+                 )
+               )
+             )
+           )
+         )
+       )
+     )
+   )
+ )

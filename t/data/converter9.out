@@ -1,0 +1,53 @@
+( siblist
+  ( input eth0
+   )
+  child
+  ( siblist
+    ( source foo
+     )
+    child
+    ( siblist
+      ( dest bar
+       )
+      child
+      ( subgroup "chain_0"
+        ( siblist
+          ( proto tcp
+           )
+          child
+          ( siblist
+            ( dport echo
+              next
+              ( dport https
+                next
+                ( dport nntp
+                 )
+               )
+             )
+            child
+            ( accept
+             )
+           )
+          next
+          ( siblist
+            ( proto tcp
+             )
+            child
+            ( siblist
+              ( sport 1:1023
+               )
+              child
+              ( siblist
+                ( dport ssh
+                 )
+                child
+                ( accept
+                 )
+               )
+             )
+           )
+         )
+       )
+     )
+   )
+ )

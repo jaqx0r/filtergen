@@ -1,0 +1,13 @@
+( siblist
+  ( input eth0
+   )
+  child
+  ( local
+    child
+    ( log "foo"
+      child
+      ( drop
+       )
+     )
+   )
+ )

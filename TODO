@@ -1,0 +1,78 @@
+TODO for filtergen
+==================
+
+* Better documentation.
+
+o [jaq] Support scripts, documentation
+
+* Better logging options.
+
+* Translate icmp names (at least for ipfilter and cisco) 
+
+o [jaq] ICMP codes (--icmp-type x/y syntax for iptables)
+
+* "Loose" option to allow not-quite-correct rulesets to run, eg.,
+    using forward-only with ipchains
+
+* New backend: FreeBSD ipfw
+
+o [jaq] {iptables,ipchains}-restore target format
+
+o [jaq] handle resolver errors in resolve.c
+
+o [jaq] extra iptables-like commands: user, related state have them
+    carry through to the generator and then have the generator discard
+    rulesets it doesn't like (but be aware of them)
+
+* Fixup and maintain the cisco and ipfilter backends
+  - Cisco needs testing, negation fixes and options for reflexive
+    ACLs
+  - ipfilter needs testing and masq, transproxy and grouping support
+
+* support sysctl tuning in iptables/ipchains (i.e. linux) targets
+
+o [jaq] "limit" rate limiting support
+
+* iproute2 "ip rule" backend
+
+* Testing and auditing of generated rulesets.
+
+o [jaq] Optimiser (de-pessimiser :-) for intermediate step, and also
+    generated rulesets (the latter could be done with a peephole
+    optimiser, I think).
+
+  - equation factoriser should be simpler and quite good.  factorising
+    should be trivial, boolean factorisation never involves
+    polynomials.   must watch out for rules with side effects though.
+    order matters.
+
+  - optimise orthogonal rules by branch counts
+
+  - future optimise orthogonal rules based on hit frequency
+
+* state ESTABLISHED on iptables rules for all rules
+
+* no conntrack (i.e. designed for large fast filters) option for iptables
+
+o [jaq] Implement a negation unroller for filters which can't negate
+    a match.  (For example, Ciscos can't say "match all but this
+    host".)  This gives us negation of {}-groups, too.
+
+* reject-with for reject target in iptables
+
+* ipac-friendly filters
+
+* New backend: iptables-save format
+
+* New frontend: iptables-save format
+
+* unit tests for recursive include
+
+* unit tests for all code paths in include directive
+
+* " characters in identifiers, do they need to exist?
+
+* forward/local specifiers in filtergen language removed.  add them
+    back?
+
+* generate icmp filters completely

@@ -1,0 +1,10 @@
+# @sysconfdir@/rules.filter
+
+# Please read @pkgexdir@/*.filter for
+# more comprehensive filter examples.
+
+# allow all traffic on the loopback interface
+{input lo; output lo } accept;
+
+# allow all traffic on eth0
+{input eth0; output eth0 } accept;

@@ -1,0 +1,28 @@
+dport 1;
+dport foo;
+dport 1:1024;
+dport foo:bar;
+dport 1:bar;
+dport foo:1024;
+sport 1;
+sport foo;
+sport 1:1024;
+sport foo:bar;
+sport 1:bar;
+sport foo:1024;
+dport {
+	1
+	foo
+	1:1024
+	foo:bar
+	1:bar
+	foo:1024
+};
+sport {
+	1
+	foo
+	1:1024
+	foo:bar
+	1:bar
+	foo:1024
+};

@@ -1,0 +1,33 @@
+	FULL-DISCLOSURE (or HONESTY)
+
+WHAT'S THIS?
+
+Here, I explain the status of the package in non-salesman mode.
+It might help you to decide whether this package is currently
+useful to you (though shouldn't put you off contributing).
+
+
+STATUS
+
+The language is likely to evolve as more features are implemented.
+Specifically, I'd like it to express fundamental networking and
+filtering concepts, rather than being an iptables macro language.
+
+The transparent proxying, masquerading and logging support is not
+as flexible as I'd like it to be.
+
+"Grouping" (sub-chain) support is a fairly recent addition and,
+even in backends which support it (iptables, ipchains), isn't
+quite right yet.
+
+I have been using it on my home gateway for around a year now, and
+have a dozen or so production servers, and a production router
+using it too (all via the iptables backend).  It has all worked
+very well.  But "working well" does not imply security, and I have
+not expended a great deal of effort in auditing.
+
+See the filter_backends(7) man page for more details on backend-
+specific issues.
+
+
+$Id: HONESTY,v 1.9 2002/07/21 13:32:23 matthew Exp $

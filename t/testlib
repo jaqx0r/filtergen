@@ -1,0 +1,66 @@
+# -*- sh -*-
+# source this file for a few useful functions that get repeated at the top
+# of every test
+
+here=`pwd`
+if test $? -ne 0 ; then exit 77 ; fi
+
+work=${TMP_DIR-/tmp}/filtergen-test-$$
+
+pass () {
+    set +x
+    cd $here
+    rm -rf $work
+    exit 0
+}
+
+fail () {
+    set +x
+    cd $here
+    rm -rf $work
+    echo "FAILED testing $TEST"
+    exit 1
+}
+
+no_result () {
+    set +x
+    cd $here
+    rm -rf $work
+    echo "NO RESULT when testing $TEST"
+    #exit 77
+    exit 1
+}
+
+trap no_result 1 2 3 15
+
+# function for comparing files
+compare () {
+    cmp "$1" "$2" >/dev/null 2>&1
+    case "$?" in
+	0)
+	    ;;
+	1)
+	    # only print diff if not run by automake test suite
+	    test "x$srcdir" = "x" && diff -u "$1" "$2"
+	    fail
+	    ;;
+	*)
+	    no_result
+	    ;;
+    esac
+}
+
+mkdir $work
+if test $? -ne 0 ; then no_result ; fi
+
+# srcdir gets defined by the automake test caller, assume it's not defined
+# by the user's environment, so set debug trace on when run manually
+test "x$srcdir" = "x" && set -x
+
+# fix testdir
+testdir=`pwd`/$testdir
+
+if test -d $testdir/t/data ; then
+	echo "testlib error: testdir not in $testdir"
+	fail
+fi

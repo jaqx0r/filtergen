@@ -1,0 +1,114 @@
+#!/bin/sh
+
+FILTER=@SYSCONFDIR@/rules.filter
+CONF=@SYSCONFDIR@/filtergen.conf
+
+FILTERGEN=@SBINDIR@/filtergen
+
+# move to the config directory so relative includes work
+if ! test -d @SYSCONFDIR@ ; then
+	echo @SYSCONFDIR@ not found
+	exit 1
+fi
+cd @SYSCONFDIR@
+
+# load config options
+if [ -f $CONF ]; then
+    . $CONF
+fi
+# sanity check config values
+case "$BACKEND" in
+    iptables|ipchains|ipfilter|cisco) ;;
+    *) BACKEND="iptables" ;;
+esac
+
+# check validity of input file
+check () {
+    $FILTERGEN $FGOPTS -t $BACKEND $FILTER
+}
+
+reload () {
+    if [ -f $FILTER ]; then
+	echo "Generating $BACKEND packet filter."
+	case "$BACKEND" in
+	    iptables|ipchains)
+		if [ -x /sbin/$BACKEND ]; then
+		    if $FILTERGEN $FGOPTS -t $BACKEND $FILTER > /dev/null ; then
+			$FILTERGEN $FGOPTS -t $BACKEND $FILTER | /bin/sh
+		    else
+			echo "Errors found in $FILTER.  Not reloading."
+			RETVAL=1
+		    fi
+		else
+		    echo "/sbin/$BACKEND not found.  Not reloading."
+		    RETVAL=1
+		fi
+		;;
+	    *)
+		echo "Operation not supported for $BACKEND backend."
+		;;
+	esac
+    else
+	echo "$RULES not found.  Not reloading."
+	RETVAL=1
+    fi
+}
+
+stop () {
+    echo "Stopping current packet filter."
+    case "$BACKEND" in
+	iptables|ipchains)
+	    if [ -x /sbin/$BACKEND ]; then
+		$FILTERGEN -t $BACKEND -F ACCEPT | /bin/sh
+	    else
+		echo "/sbin/$BACKEND not found"
+		RETVAL=1
+	    fi
+	    ;;
+	*)
+	    echo "Operation not supported for $BACKEND backend."
+	    ;;
+    esac
+}
+ 
+save () {
+    case "$BACKEND" in
+	iptables)
+	    if [ -f /etc/redhat-release ]; then
+		/sbin/service iptables save
+	    fi
+	    ;;
+	ipchains)
+	    if [ -f /etc/redhat-release ]; then
+		/sbin/service ipchains save
+	    fi
+	    ;;
+	*)
+	    echo "Operation not supported for $BACKEND backend."
+	    ;;
+    esac
+}
+
+usage () {
+    echo <<EOF
+usage: $0 [check|reload|stop|save]
+EOF
+}
+
+case "$1" in
+    check)
+	check
+	;;
+    reload)
+	reload
+	;;
+    stop)
+	stop
+	;;
+    save)
+	save
+	;;
+    *)
+	usage
+	;;
+esac

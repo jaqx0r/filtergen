@@ -1,0 +1,25 @@
+#!/bin/sh
+
+TEST="that directory inclusion works"
+
+testdir=`dirname $0`
+. $testdir/testlib
+
+mkdir $work/include.d
+if test $? -ne 0 ; then no_result; fi
+
+cat >$work/in <<EOF
+include $work/include.d
+EOF
+if test $? -ne 0 ; then no_result; fi
+
+$here/scan < $work/in > $work/out 2>&1
+if test $? -ne 0 ; then fail ; fi
+
+cat >$work/good <<EOF
+EOF
+
+compare $work/good $work/out
+
+# got this far?
+pass

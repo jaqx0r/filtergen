@@ -1,0 +1,90 @@
+# The following information courtesy of Glen Turner:
+
+# David Fisher wrote:
+# > Would some kind person please try pinging the addresses xx.xx.xx.xx or 
+# > xx.xx.xx.xx and let me know the results, please?
+# > 
+# > I need to test the ICMP block on my router from external ping traffic.
+# 
+# Great, another path MTU discovery black hole, another
+# undiagnosable network.
+# 
+# Fellas, how about using rate limiting.  Linux has marvellous
+# QoS features, enough to allow a few ICMP ECHOs for fault
+# diagnosis but to deny a ping flood.
+# 
+#  > Note that its probably not a good idea to block ICMP source quench
+#  > packets.
+# 
+# Nah, block those suckers. Source Quench is deprecated.
+# 
+# The list is
+# 
+#    Block
+#      Obsolete
+#        Source Quench
+#        Information Request/Reply
+#        Datagram Conversion
+#      Shouldn't cross network boundary
+#        Address Mask Request/Reply
+#        Redirect
+#        Domain Name
+#        Router Advertisment/Selection
+#    Required for operation (rate limit these to, say, 10% of bandwidth)
+#      Destination Unreachable
+#      Time Exceeded
+#      Security Failure
+#      Parameter Problem
+#    Required for diagnosis (rate limit these to, say, 1% of bandwidth)
+#      Echo Request/Reply
+#      Timestamp Request/Reply
+# 
+# Regards,
+# Glen
+# 
+# -- 
+#   Glen Turner         Tel: (08) 8303 3936 or +61 8 8303 3936
+#   Network Engineer          Email: glen.turner@aarnet.edu.au
+#   Australian Academic & Research Network   www.aarnet.edu.au
+# -- 
+#   linux.conf.au 2004, Adelaide          lca2004.linux.org.au
+#   Main conference 14-17 January 2004   Miniconfs from 12 Jan
+# 
+# -- 
+# SLUG - Sydney Linux User's Group - http://slug.org.au/
+# More Info: http://lists.slug.org.au/listinfo/slug
+
+proto icmp { 
+	# these are obsolete
+	drop icmptype {
+		source-quench
+		information-request
+		information-reply
+		datagram-conversion
+	};
+	# these shouldn't cross network boundary
+	drop icmptype {
+		address-mask-request
+		address-mask-reply
+		redirect
+		domain-name
+		router-advertisement
+		router-selection
+	};
+	# required for operation
+	accept icmptype {
+		destination-unreachable
+		time-exceeded
+		security-failure
+		parameter-problem
+	} limit rate 20/s burst 10;
+	# required for diagnosis
+	accept icmptype {
+		echo-request
+		echo-reply
+		timestamp-request
+		timestamp-reply
+	} limit rate 10/s burst 5;
+	# drop anything we missed
+	drop;
+}

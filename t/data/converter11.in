@@ -1,0 +1,5 @@
+# nested sibs
+input eth0 proto tcp {
+	dport { echo https smtp };
+	sport 53;
+} accept;

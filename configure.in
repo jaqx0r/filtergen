@@ -1,0 +1,125 @@
+AC_PREREQ(2.50)
+
+AC_INIT(filtergen, 0.12.4, jaq@spacepants.org)
+AM_INIT_AUTOMAKE([foreign dist-bzip2])
+
+AC_CONFIG_AUX_DIR(.)
+AC_CONFIG_SRCDIR(filtergen.c)
+AM_CONFIG_HEADER(config.h)
+
+AM_MAINTAINER_MODE
+
+AC_SUBST(PROGRAM)
+AC_SUBST(VERSION)
+
+dnl --------------------------
+dnl configuration success flag
+dnl --------------------------
+
+filtergen_config_ok=yes
+
+dnl -------------------
+dnl checks for programs
+dnl -------------------
+
+AC_PROG_CC
+AC_PROG_LEX
+AC_PROG_YACC
+
+dnl -------------------
+dnl check for libraries
+dnl -------------------
+
+AC_CHECK_HEADERS([getopt.h])
+
+HAVE_GETOPT=no
+AC_CHECK_LIB(getopt, getopt,
+	HAVE_GETOPT=yes
+	HAVE_GETOPT=no
+)
+if test "x$HAVE_GETOPT" = xyes ; then
+	GETOPT_LIBS="-lgetopt"
+	AC_SUBST(GETOPT_LIBS)
+fi
+
+dnl -----------------
+dnl set warning level
+dnl -----------------
+
+if test "x$ac_cv_c_compiler_gnu" = xyes ; then
+	CFLAGS="$CFLAGS -W -Wall -Werror -Waggregate-return"
+	CFLAGS="$CFLAGS -Wcast-align -Wcast-qual -Wnested-externs"
+	CFLAGS="$CFLAGS -Wshadow -Wbad-function-cast -Wwrite-strings"
+fi
+
+dnl ---------------
+dnl set debug level
+dnl ---------------
+
+AC_MSG_CHECKING([whether to enable debugging compiler options])
+AC_ARG_ENABLE(debug,
+	[  --enable-debug            enable debugging compiler options],
+	AC_MSG_RESULT(yes)
+	tmp_CFLAGS=`echo $CFLAGS | sed 's/O2/O0/g'`
+	CFLAGS="$tmp_CFLAGS",
+	AC_MSG_RESULT(no)
+)
+
+dnl ------------------------------
+dnl fill in path variable expandos
+dnl ------------------------------
+
+dnl $libdir usually gets set to ${exec_prefix}/lib,
+dnl $prefix and $exec_prefix is likely to be "NONE"
+dnl Autoconf usually sets pkglibdir correctly in the Makefile, but not in
+dnl the configure script :(
+
+test "$prefix" = "NONE" && prefix=/usr/local
+test "$exec_prefix" = "NONE" && exec_prefix=$prefix
+
+dnl Executable files
+eval BINDIR="$bindir"
+AC_SUBST(BINDIR)
+eval SBINDIR="$sbindir"
+AC_SUBST(SBINDIR)
+
+dnl Configuration files
+eval SYSCONFDIR="$sysconfdir"
+AC_SUBST(SYSCONFDIR)
+
+dnl Documentation
+eval pkgdocdir="$datadir/doc/$PACKAGE"
+AC_SUBST(pkgdocdir)
+
+dnl Example scripts
+eval pkgexdir="$pkgdocdir/examples"
+AC_SUBST(pkgexdir)
+
+dnl ----------------------------------------------------------
+dnl configuration tests complete, provide a summary of results
+dnl ----------------------------------------------------------
+
+if test "x$filtergen_config_ok" = xno ; then
+	echo "nothing yet"
+else
+
+dnl Dump it out
+AC_CONFIG_FILES([
+	Makefile
+	t/Makefile
+	filtergen.spec
+	fgadm
+	fgadm.conf
+	rules.filter
+])
+AC_OUTPUT
+
+AC_MSG_RESULT([
+filtergen $VERSION: automatic configuration OK.
+
+Type 'make' to compile filtergen.
+
+Type 'make install' to install filtergen.
+])
+
+fi

@@ -1,0 +1,111 @@
+0.12.4:
+	Added directory include support.
+	Fixed relative-path include error in fgadm.
+	Improved tests for include file parsing.
+
+0.12.3:
+	Fix critical resolver bug.
+
+0.12.2:
+	New resolver code removes need for struct casting
+	Altered test suite to be more robust
+	minor cosmetic bugs
+
+0.12.1:
+	fixed some dumb bugs
+	fixed some compile bugs on 64 bit platforms
+
+0.12:
+	converted build system to automake
+	rewrote parser
+	added test suite
+	add "oneway" option
+	fix iptables log message format (append a space)
+	add "fgadm" command
+	multi-homed host support
+
+0.11:
+	fixed non-working example in filter_syntax man page
+	fix 64-bit warning in filter.c netmask calculation
+	add "-F [policy]" flush option
+	better feedback on parse errors
+
+0.10:
+	some cleanups, slight memory usage reduction
+	add log messages: 'log text "foo etc"'
+	fixed iptables and ipchains brace-grouping
+	fix filter_unroll loop-making bug
+	add RPM spec file from Wil Cooley <wcooley@nakedape.cc>
+	rename package to "filtergen"
+	add init scripts and makefile
+	add samples for router, host and proxy firewall
+
+0.9:
+	fix install target to install section 7 manpages too
+	do protocol lookups properly, support protocol numbers
+	lookup/normalise service names
+	force normalisation of netmasks
+	add "-m" to force service and host names and to be
+		turned into port numbers and IP addresses
+
+0.8:
+	cleanup for iptables and ipchains to save reallocs
+	fix input vs output thing in forwarding support for iptables
+		and ipchains
+
+0.7:
+	add "local" and "forward" syntax to state that packets are only
+		for local or remote consumption (and "-h" option to
+		default rules to the former)
+	begin manpages
+	add "-o" option to specify output file
+	fix "make install"
+	getopt()ify filtergen.c
+	add "-l" option to minimise the number of rules for established
+		connections, implemented for iptables backend
+	add more stuff to the iptables skeleton
+	warning fixups
+	implement "local" and "forward" for iptables backend
+	add "-r" option to mirror "-h"
+	cleanup ipchains driver somewhat
+	implement "local" for ipchains backend ("forward" is not possible)
+	fix bug where accept would get lost from:
+		input eth0 { ! dest bar drop; accept; };
+	iptables and ipchains add "established packet" rules to head of chain
+	add "proxy" as an alias for "redirect"
+
+0.6:
+	disable negation of conjunctions ("or"s, aka brace-grouping) for now
+	add "no skeleton" option
+	fix a couple of segfaults/aborts where input filter is invalid
+	allow literal +, ", and _ signs in input
+	add sub-groups -- where supported, large sub-sections can be moved
+		out-of-line to improve performance
+
+0.5: that's better
+	much fixing of iptables driver.  Now shouldn't leak
+	like the proverbial sieve
+
+0.4: testing begins
+	add transproxy and masquerading support
+	fix syntax problems with iptables and ipchains output
+	simple logging support (logs only initiating packets)
+	rule checking -- ports only allowed with tcp or udp
+	initial icmp support
+
+0.3:
+	add ipfilter backend
+	fix yet another silly bug in main()
+	add warning notice to cisco driver
+	cisco driver supports port ranges now
+
+0.2: Various improvements
+	rewrote iptables driver
+	added ipchains driver
+	added beginnings of Cisco IOS ACL driver
+		(see TODO for why this doesn't work yet)
+	added TODO and HONESTY files
+
+0.1: Initial release
+	iptables driver
+	a few bugs

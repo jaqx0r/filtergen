@@ -1,0 +1,15 @@
+#!/bin/sh
+
+TEST="that network addresses and services are scanned correctly"
+
+testdir=`dirname $0`
+. $testdir/testlib
+
+./scan < $testdir/data/scanner8.in > $work/out
+if test $? -ne 0 ; then no_result ; fi
+
+compare $testdir/data/scanner8.out $work/out
+
+# got this far?
+pass
+

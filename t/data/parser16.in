@@ -1,0 +1,2 @@
+# parse a file, see how well includes cope with nested sections
+input eth0 dest { include include.conf } accept;

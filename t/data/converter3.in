@@ -1,0 +1,5 @@
+# check directions
+input eth0 reject;
+output eth0 reject;
+# compound directions
+input { eth0 eth1 } reject;

@@ -1,0 +1,15 @@
+#!/bin/sh
+
+TEST="that including a non-existent file is handled correctly"
+
+testdir=`dirname $0`
+. $testdir/testlib
+
+$here/scan < $testdir/data/scanner15.in > $work/out 2>&1
+if test $? -ne 0 ; then no_result ; fi
+
+compare $testdir/data/scanner15.out $work/out
+
+# got this far?
+pass
+

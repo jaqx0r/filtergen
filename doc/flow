@@ -1,0 +1,19 @@
+[parser]
+ |
+ v
+(AST)
+ |
+ v
+[translator]
+ |
+ v
+(IR) <-> [factoriser]
+ |
+ v
+[generator]
+ |
+ v
+(TR) <-> [optimiser]
+ |
+ v
+[emitter]

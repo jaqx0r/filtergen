@@ -1,0 +1,23 @@
+( siblist
+  ( input eth0
+   )
+  child
+  ( reject
+   )
+  next
+  ( siblist
+    ( input eth1
+     )
+    child
+    ( accept
+     )
+    next
+    ( siblist
+      ( input eth2
+       )
+      child
+      ( drop
+       )
+     )
+   )
+ )

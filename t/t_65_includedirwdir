@@ -1,0 +1,44 @@
+#!/bin/sh
+
+TEST="that directory inclusion works with files"
+
+testdir=`dirname $0`
+. $testdir/testlib
+
+cat >$work/in <<EOF
+include $work/include.d
+EOF
+if test $? -ne 0 ; then no_result; fi
+
+mkdir $work/include.d
+if test $? -ne 0 ; then no_result; fi
+
+cat > $work/include.d/foo <<EOF
+dport pants
+EOF
+if test $? -ne 0 ; then no_result; fi
+
+mkdir $work/include.d/quux.d
+if test $? -ne 0 ; then no_result; fi
+
+cat > $work/include.d/quux.d/bar <<EOF
+dest unknown
+EOF
+if test $? -ne 0 ; then no_result; fi
+
+$here/scan < $work/in > $work/out 2>&1
+if test $? -ne 0 ; then fail ; fi
+
+test "x$srcdir" = "x" && cat $work/out
+
+# can't compare this against a known good output because ordering
+# on the disk, and the way opendir()/readdir() iterates over dirents
+# isn't guaranteed
+# so grep for each file and make sure they got included
+grep -q 'include.d/foo' $work/out && \
+    grep -q 'include.d/quux.d/bar' $work/out && \
+	pass
+
+# didn't match?
+fail
+

@@ -1,0 +1,26 @@
+[
+];
+[
+proto { tcp }];
+[
+accept;
+reject;
+];
+[ "foo"
+];
+[ "foo"
+proto { tcp };
+];
+[ "foo"
+accept;
+reject;
+];
+[ "foo"
+];
+[ "foo"
+proto { tcp };
+];
+[ "foo"
+accept;
+reject;
+];

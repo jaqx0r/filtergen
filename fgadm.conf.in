@@ -1,0 +1,9 @@
+# @SYSCONFDIR@/fgadm.conf
+
+# Set BACKEND to one of `iptables', `ipchains', `ipfilter', or `cisco', for
+# your particular packet filter target.  The default is `iptables'.
+BACKEND=iptables
+
+# Set any other options you want to give to filtergen when it runs from the
+# initscript here.  See filtergen(8) for more details.
+FGOPTS=""

@@ -1,0 +1,12 @@
+accept;
+drop;
+reject;
+masq;
+redirect;
+log drop;
+log text "invalid - " drop;
+log text "accept" accept;
+log text "blurble" reject;
+log text "foo";
+log text "bar";
+log;

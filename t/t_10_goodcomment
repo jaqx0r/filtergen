@@ -1,0 +1,15 @@
+#!/bin/sh
+
+TEST="that c style comments with nested /* are scanned correctly"
+
+testdir=`dirname $0`
+. $testdir/testlib
+
+./scan < $testdir/data/scanner10.in > $work/out
+if test $? -ne 0 ; then no_result ; fi
+
+compare $testdir/data/scanner10.out $work/out
+
+# got this far?
+pass
+

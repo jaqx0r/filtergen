@@ -1,0 +1,67 @@
+##
+## Sample filtergen ruleset for a proxy gateway host
+##
+## $Id: proxy-fw-sample.filter,v 1.1 2002/09/12 09:28:53 matthew Exp $
+##
+
+# process with this the "-h" option
+
+# everything on lo, ugh
+input lo accept;
+output lo accept;
+
+#
+# eth0 is the public interface
+#
+# It lives on our class C as 111.222.333.28 (aka gw-ext)
+#
+input eth0 {
+	# ignore broadbcast / bootp noise
+	dest {111.222.333.0 111.222.333.255 255.255.255.255} drop;
+
+	proto icmp icmptype {ping pong destination-unreachable} accept;
+	proto tcp dport ssh accept;
+
+	# FTP data connections (from PORT sent to server)
+	proto tcp dest gw-ext dport 40000:40400 accept;
+
+	log drop;
+};
+
+output eth0 {
+	proto icmp icmptype {ping pong destination-unreachable} accept;
+	proto {udp tcp} dport domain accept;
+
+	proto tcp dport {ssh smtp http https pop-3 ftp} accept;
+};
+
+#
+# eth1 is the internal interface
+#
+# It lives on 10.1.2.1/24 (aka gw-int)
+#
+output eth1 {
+	proto icmp icmptype {ping pong destination-unreachable} accept;
+
+	# management connections
+	proto tcp dport ssh accept;
+	log reject;
+};
+
+input eth1 {
+	proto icmp icmptype {ping pong destination-unreachable} accept;
+
+	# ignore broadbcast / bootp noise
+	dest {10.1.2.0 10.1.2.255 255.255.255.255} drop;
+
+	# dns
+	proto {udp tcp} dport domain accept;
+
+	# transproxy stuff
+	proto tcp dport {ssh smtp http https pop-3 nntp ftp} proxy;
+
+	# FTP data connections (from PASV sent by client)
+	proto tcp dport 30000:30400 accept;
+
+	log reject;
+};

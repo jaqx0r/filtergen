@@ -1,0 +1,6 @@
+{};
+{proto { tcp }};
+{proto { tcp };
+accept;
+icmptype { echo-request };
+};

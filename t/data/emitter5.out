@@ -1,0 +1,15 @@
+input { eth0 };
+output { ppp0 };
+dest { foo };
+source { bar };
+dport { 0 };
+sport { 1 };
+icmptype { echo-request };
+accept;
+reject;
+drop;
+redirect;
+masq;
+local;
+forward;
+log text "pants";

@@ -1,0 +1,64 @@
+( siblist
+  ( siblist
+    ( input lo
+     )
+    next
+    ( siblist
+      ( output lo
+       )
+     )
+   )
+  child
+  ( accept
+   )
+  next
+  ( siblist
+    ( input eth0
+     )
+    child
+    ( siblist
+      ( source foo
+       )
+      child
+      ( siblist
+        ( dest bar
+         )
+        child
+        ( siblist
+          ( proto tcp
+           )
+          child
+          ( siblist
+            ( siblist
+              ( dport echo
+               )
+              next
+              ( siblist
+                ( dport https
+                 )
+                next
+                ( siblist
+                  ( dport nntp
+                   )
+                  next
+                  ( siblist
+                    ( sport 1:1023
+                     )
+                    child
+                    ( siblist
+                      ( dport ssh
+                       )
+                     )
+                   )
+                 )
+               )
+             )
+            child
+            ( accept
+             )
+           )
+         )
+       )
+     )
+   )
+ )

@@ -1,0 +1,5 @@
+# convert chain groups
+input eth0 source foo dest bar [
+	proto tcp dport {echo https nntp} accept;
+	proto tcp sport 1:1023 dport ssh accept;
+];

@@ -1,0 +1,4 @@
+input { eth0 };
+output { ppp0 };
+input { ppp0 eth0 };
+output {  };

@@ -1,0 +1,10 @@
+# test port ranges
+# $Id: tnat.filter,v 1.1 2001/10/06 17:44:04 matthew Exp $
+
+input eth0 {
+	proto tcp {
+		dport 80 redirect;
+		dport 22 masq;
+	};
+	reject;
+};

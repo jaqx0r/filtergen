@@ -1,0 +1,221 @@
+.\" -*- nroff -*-
+.TH "FILTER SYNTAX" 5 "January 7, 2004"
+
+.SH NAME
+rules.filter \- Input format for filtergen packet filter compiler
+
+.SH INTRO
+This file describes the input syntax accepted by \fBfiltergen\fR(8).
+
+.SH BASICS
+In general form, a filter rule is described by a \fIdirection\fR,
+an \fIinterface\fR, a \fItarget\fR and (possibly empty) sets of
+\fImatches\fR and \fIoptions\fR.
+
+.PP
+Simple rules will look like:
+
+.I direction interface match0 .. matchN target;
+
+for example:
+
+\"XXX
+.I input eth0 source host1 dest host2 proto tcp dport http accept;
+
+Note that the elements of the rule can be placed in any order, with
+the exception that the \fIinterface\fR must \fIimmediately\fR follow
+the direction.  Thus, this rule is equivalent to the above (though
+perhaps less readable):
+
+.I proto tcp source host1 dport http accept dest host2 input eth0;
+
+The semicolon separates rules.  It is optional before a closing brace
+or the end of a file.  Whitespace is not significant.  Anything after
+a hash ("\fI#\fR") on a line is ignored.
+
+.SS DIRECTION
+A direction merely specifies whether to match packets being sent or
+received.  The only two directions available are "input" and "output".
+Forwarded packets will pass through both, 
+
+.SS INTERFACE
+This specifies which real or virtual network device to filter.  As
+far as filtergen is concerned, this is just a text string.  It must
+be the same as the device name on the target system.  Common names on
+Linux are "eth0", "eth1", ..., "ppp0", etc.  Other systems will have
+different naming rules.
+
+.SS TARGET
+A \fItarget\fR notes what we do with a matching packet.  Universal
+options are \fIaccept\fR and \fIdrop\fR which, respectively, state
+that the packet should be allowed as normal, or thrown away.  Some
+backends support \fIreject\fR to throw away a packet, but send
+notification to the sender that it was denied, \fImasq\fR (on \fIoutput\fR
+rules only) to "masquerade" a packet - alter it so that it appears
+to come from the address of the sending interface - and \fIproxy\fR
+(and its deprecated alias \fIredirect\fR) to divert a connection via
+the local system.
+
+.SS MATCHES
+The \fImatches\fR are the meat of the rule.  They apply a set of
+tests to a packet and decide if this rule will be used to process
+it.  Available matches are:
+
+.I source addr-range
+.I dest addr-range
+
+.I proto {tcp|udp|icmp|...}
+.I sport port-range
+.I dport port-range
+.I icmptype icmp-type
+
+Matches can be negated by prefixing them with a "!":
+
+.nf
+	input eth0 ! dest 10.0.0.3 reject;
+.fi
+
+(note than not all backends can support this).
+
+.SS OPTIONS
+\fIOptions\fR affect the behaviour of the matcher or the target.
+Currently implemented are \fIlog\fR, which logs packets, \fIlocal\fR,
+which means only to check packets to or from this interface,
+\fIforward\fR which means the opposite of \fIlocal\fR, and
+\fIoneway\fR which causes the backend to omit rules which permit
+return packets.
+
+The \fIlog\fR option can optionally specify a message to log matching
+packets with, where the backend supports it:
+
+.nf
+	input eth0 source {
+		10.0.0.0/8 192.168.0.0/16
+	} log text "private addresses" drop;
+.fi
+
+Note that the \fIoneway\fR option make have no effect when used with
+the \fB-l\fR command-line flag on backends which support it.
+
+.SH GROUPING
+Because it can get tedious to type:
+
+.nf
+	input eth0 source foo dest bar proto tcp dport http accept;
+	input eth0 source foo dest bar proto tcp dport https accept;
+	input eth0 source foo dest bar proto tcp dport nntp accept;
+	input eth0 source foo dest bar proto tcp sport 1:1023 dport ssh accept;
+	\...
+.fi
+
+filter allows you to group rules with a set syntax:
+
+.nf
+	input eth0 source foo dest bar proto tcp {
+		dport http;
+		dport https;
+		dport nntp;
+		sport 1:1023 dport ssh;
+	} accept;
+.fi
+
+Matches which accept arguments can also be grouped:
+
+.nf
+	input eth0 source foo dest bar proto tcp {
+		dport {http https nntp};
+		sport 1:1023 dport ssh;
+	} accept;
+.fi
+
+.SH "OUT-OF-LINE GROUPS"
+It is commonly the case that both hosts and routers have long
+lists of similar looking rules to allow traffic between groups
+of hosts, as above.  What if we had another pair of hosts which
+needed a variety of services?  We could simply put the rule groups
+one after the other:
+
+.nf
+	input eth0 source foo dest bar proto tcp {
+		dport {http https nntp};
+		sport 1:1023 dport ssh;
+	} accept;
+	input eth0 source baz dest quux proto tcp {
+		dport {1264 1521 1984 8008 8080 26000};
+	} accept;
+.fi
+
+The above generates 11 rules, and every additional port adds
+another rule through which packets will pass (well, ones which
+don't match any of the above).  The first four output rules
+have the same source and destination hosts and protocol, and we
+know that if it doesn't match those on the first rule, it won't
+on the next three, either.  Out-of-line groups  use this fact to
+streamline things somewhat:
+
+.nf
+	input eth0 source foo dest bar [
+		proto tcp {
+			dport {http https nntp};
+			sport 1:1023 dport ssh;
+		} accept;
+	];
+	input eth0 source baz dest quux [
+		proto tcp { dport {1264 1521 1984 8008 8080 26000}; } accept;
+	];
+.fi
+
+Where the underlying system supports it, everything inside the
+square brackets is moved into a separate "chain" (in ipchains and
+iptables-speak) or "group" (in ipfilter-speak).  Thus, any packet
+not matching "source foo dest bar" or "source baz dest quux" above
+will be checked against only two rules, not eleven.
+
+Note that matches which must appear together, like "proto tcp"
+and "sport 12345" need to be either both in the group, or both
+out of it.
+
+.SH EXAMPLE
+Here's a fairly complete example, for a single-interface machine:
+
+.nf
+	#
+	# Example filter for (for example) a mail server
+	#
+
+	# Unfortunately, we don't have time to audit the
+	# communications which go on locally
+	{input lo; output lo} accept;
+
+	# But we want to be a bit more careful when speaking
+	# to the outside world
+	input eth0 {
+		# Sadly, we share a DMZ with Windows machines.
+		# Don't log their netbios noise
+		proto {tcp udp} source ournet/24 dport 137:139 drop;
+
+		proto tcp {
+			dport { smtp pop-3 } accept;
+			dport ssh source ournet/24 accept;
+			# We don't answer this, but don't want to
+			# cause timeouts by blocking it
+			dport auth reject;
+			log drop;
+		};
+		# We don't run any UDP (or other non-TCP)
+		# services
+		log drop;
+	};
+	output eth0 {
+		proto tcp {
+			dport { smtp auth } accept;
+			log drop;
+		};
+		# Outbound DNS is OK
+		proto udp dport domain dest { ns0 ns1 } accept;
+		log drop;
+	};
+.fi
+
+.SH SEE ALSO
+\fBfiltergen\fR(8), \fBfilter_backends\fR(7)

@@ -1,0 +1,17 @@
+precious ^aclocal\.m4$
+precious ^autom4te\.cache$
+precious ^config\.(h(\.in)?|log|status|sub)$
+precious ^configure(\.lineno)?$
+precious ^depcomp$
+precious ^install-sh$
+precious ^missing$
+precious ^parser\.(c|h)$
+precious ^filtergen$
+precious ^fgadm(.conf)?$
+precious ^scanner\.c$
+precious ^stamp-h(1|\.in)?$
+precious ^filtergen.spec$
+precious ^.*\.(tar\.(gz|bz2)|zip)$
+precious ^rules.filter$
+precious ^ylwrap$
+precious ^mkinstalldirs$

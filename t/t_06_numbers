@@ -1,0 +1,19 @@
+#!/bin/sh
+
+TEST="that numbers are scanned correctly"
+
+testdir=`dirname $0`
+. $testdir/testlib
+
+./scan < $testdir/data/scanner6.in > $work/out
+if test $? -ne 0 ; then no_result ; fi
+
+cmp $testdir/data/scanner6.out $work/out
+if test $? -ne 0 ; then
+    diff -u $testdir/data/scanner6.out $work/out
+    fail
+fi
+
+# got this far?
+pass
+

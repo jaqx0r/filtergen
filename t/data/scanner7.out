@@ -1,0 +1,5 @@
+kind = identifier, spelling = "foo", file = "(standard input)", line = 2
+kind = identifier, spelling = "bar", file = "(standard input)", line = 3
+kind = identifier, spelling = "baz", file = "(standard input)", line = 4
+kind = identifier, spelling = "quux", file = "(standard input)", line = 5
+kind = identifier, spelling = "mail.example.com", file = "(standard input)", line = 6

@@ -1,0 +1,5 @@
+precious ^parse$
+precious ^parser\.(c|h)$
+precious ^scan$
+precious ^scanner\.c$
+precious ^emit$

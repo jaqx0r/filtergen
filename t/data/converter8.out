@@ -1,0 +1,47 @@
+( siblist
+  ( input eth0
+   )
+  child
+  ( siblist
+    ( dest foo
+     )
+    child
+    ( local
+      child
+      ( accept
+       )
+     )
+   )
+  next
+  ( siblist
+    ( input eth0
+     )
+    child
+    ( siblist
+      ( dest foo
+       )
+      child
+      ( forward
+        child
+        ( accept
+         )
+       )
+     )
+    next
+    ( siblist
+      ( input eth0
+       )
+      child
+      ( siblist
+        ( dest foo
+         )
+        child
+        ( oneway
+          child
+          ( accept
+           )
+         )
+       )
+     )
+   )
+ )

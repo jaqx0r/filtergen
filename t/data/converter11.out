@@ -1,0 +1,30 @@
+( siblist
+  ( input eth0
+   )
+  child
+  ( siblist
+    ( proto tcp
+     )
+    child
+    ( siblist
+      ( siblist
+        ( dport echo
+          next
+          ( dport https
+            next
+            ( dport smtp
+             )
+           )
+         )
+        next
+        ( siblist
+          ( sport 53
+           )
+         )
+       )
+      child
+      ( accept
+       )
+     )
+   )
+ )
