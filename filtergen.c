@@ -141,9 +141,9 @@ int main(int argc, char **argv)
 		/* Compile from a file */
 		if(filepol && !strcmp(filepol, "-")) filepol = NULL;
 
-#ifdef OLD_FILTERGEN
 		if(filter_fopen(filepol)) return 1;
 
+#ifdef OLD_FILTERGEN
 		f = filter_parse_list();
 
 		if (!f) {
@@ -153,10 +153,6 @@ int main(int argc, char **argv)
 #else
 		{
 		    struct ast_s ast;
-		    FILE * in;
-
-		    in = fopen(filepol, "r");
-		    yyrestart(in);
 
 		    if (yyparse((void *) &ast) == 0) {
 			f = convert(&ast);
