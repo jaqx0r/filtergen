@@ -19,6 +19,9 @@ warnings = ['',
 for w in warnings:
 	e.Append(CPPFLAGS='-W%s ' % (w,))
 
+# compile as GNU SOURCE to get strndup
+e.Append(CPPFLAGS = '-D_GNU_SOURCE ')
+
 Help(opts.GenerateHelpText(e))
 
 conf = Configure(e)
