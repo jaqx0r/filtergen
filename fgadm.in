@@ -5,6 +5,13 @@ CONF=@SYSCONFDIR@/filtergen.conf
 
 FILTERGEN=@SBINDIR@/filtergen
 
+# move to the config directory so relative includes work
+if ! test -d @SYSCONFDIR@ ; then
+	echo @SYSCONFDIR@ not found
+	exit 1
+fi
+cd @SYSCONFDIR@
+
 # load config options
 if [ -f $CONF ]; then
     . $CONF
