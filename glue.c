@@ -218,8 +218,18 @@ struct filter * convert_port_argument(struct simple_port_argument_s * n, int typ
     struct filter * res = NULL;
 
     eprint("converting simple_port_argument\n");
+    /*
 
-    if (n->port) {
+    if (n->single) {
+        if (n->single->name) {
+            res = new_filter_port(type, n->single->name);
+        } else if (n->single->num) {
+            res = new_filter_port(type, n->single->num);
+        } else {
+            printf("error: no content to single port argument\n");
+        }
+    } else if (n->range) {
+        if (n->range
         if (n->port->port) {
             res = new_filter_port(type, n->port->port);
         } else {
@@ -228,7 +238,7 @@ struct filter * convert_port_argument(struct simple_port_argument_s * n, int typ
     } else {
         printf("error: no port part\n");
     }
-
+    */
     return res;
 }
 

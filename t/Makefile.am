@@ -49,7 +49,8 @@ TESTS = t_01_ccomment \
 	t_49_convertspeclist \
 	t_50_convertrulelist \
 	t_51_convertdirection \
-	t_52_converthost
+	t_52_converthost \
+	t_53_convertproto
 
 check_PROGRAMS = scan parse emit filter_emit convert
 
