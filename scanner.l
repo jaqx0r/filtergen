@@ -51,7 +51,7 @@ number  [[:digit:]]+
 #[^\n]*      /* strip shell style comments */
 
 {string}     {
-                 /* spelling = strdup(yytext); */
+                 yylval.u_str = strndup(yytext, yyleng);
                  return TOK_STRINGLITERAL;
              }
 
@@ -88,8 +88,14 @@ text         return TOK_TEXT;
 ":"          return TOK_COLON;
 "!"          return TOK_BANG;
 
-{id}(\.{id})*	return TOK_IDENTIFIER;
-{number}     return TOK_NUMBER;
+{id}(\.{id})*	{
+			yylval.u_str = strndup(yytext, yyleng);
+			return TOK_IDENTIFIER;
+		}
+{number}     	{
+			yylval.u_int = atoi(yytext);
+			return TOK_NUMBER;
+		}
 "."          return TOK_DOT;
 "/"          return TOK_SLASH;
 

@@ -33,12 +33,13 @@ TESTS = t_01_ccomment \
 	t_33_nestedparse \
 	t_34_ast \
 	t_35_rule_list \
-	t_36_rule
+	t_36_rule \
+	t_37_specifier_list
 
 check_PROGRAMS = scan parse emit
 
 scan_SOURCES = scan.c
-scan_LDADD = ../scanner.o
+scan_LDADD = ../scanner.o ../parser.o
 
 parse_SOURCES = parse.c
 parse_LDADD = ../scanner.o ../parser.o

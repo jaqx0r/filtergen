@@ -1,0 +1,3 @@
+# test specifier_list
+input eth0 accept;
+drop;
