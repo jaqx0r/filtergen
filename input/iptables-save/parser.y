@@ -54,6 +54,7 @@ extern int ipts_lex(void);
     struct dport_option_s * u_dport_option;
     struct to_ports_option_s * u_to_ports_option;
     struct source_option_s * u_source_option;
+    struct out_interface_option_s * u_out_interface_option;
     struct not_identifier_s * u_not_identifier;
     struct identifier_s * u_identifier;
     struct pkt_count_s * u_pkt_count;
@@ -67,6 +68,7 @@ extern int ipts_lex(void);
 %type <u_option_list> option_list
 %type <u_not_option> not_option
 %type <u_option> option
+%type <u_out_interface_option> out_interface_option
 %type <u_source_option> source_option
 %type <u_to_ports_option> to_ports_option
 %type <u_dport_option> dport_option
@@ -253,6 +255,17 @@ option: in_interface_option
 {
     $$ = malloc(sizeof(struct option_s));
     $$->source_option = $1;
+}
+| out_interface_option
+{
+    $$ = malloc(sizeof(struct option_s));
+    $$->out_interface_option = $1;
+}
+
+out_interface_option: TOK_IPTS_OUT_INTERFACE not_identifier
+{
+    $$ = malloc(sizeof(struct out_interface_option_s));
+    $$->not_identifier = $2;
 }
 
 source_option: TOK_IPTS_SOURCE not_identifier

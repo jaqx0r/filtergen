@@ -67,15 +67,20 @@ struct source_option_s {
     struct not_identifier_s * not_identifier;
 };
 
+struct out_interface_option_s {
+    struct not_identifier_s * not_identifier;
+};
+
 struct option_s {
-  struct in_interface_option_s * in_interface_option;
-  struct jump_option_s * jump_option;
+    struct in_interface_option_s * in_interface_option;
+    struct jump_option_s * jump_option;
     struct destination_option_s * destination_option;
     struct protocol_option_s * protocol_option;
     struct match_option_s * match_option;
     struct dport_option_s * dport_option;
     struct to_ports_option_s * to_ports_option;
     struct source_option_s * source_option;
+    struct out_interface_option_s * out_interface_option;
 };
 
 struct not_option_s {
