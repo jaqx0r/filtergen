@@ -1,7 +1,21 @@
-/*
- * filter compilation front-end
+/* packet filter compiler
  *
- * $Id: filtergen.c,v 1.17 2002/11/11 20:51:38 matthew Exp $
+ * Copyright (c) 2002 Matthew Kirkwood
+ * Copyright (c) 2003,2004 Jamie Wilkinson
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 #include <stdio.h>
@@ -12,16 +26,11 @@
 #include <stdarg.h>
 
 #include "filter.h"
-
-#ifndef OLD_FILTERGEN
 #include "ast.h"
+
 int yyparse(void *);
 void yyrestart(FILE *);
 extern struct filter * convert(struct ast_s * n);
-#else
-
-struct filter * yyparse(void);
-#endif
 
 static FILE *outfile;
 
@@ -45,7 +54,6 @@ int oprintf(const char *fmt, ...)
 	return vfprintf(outfile, fmt, args);
 }
 
-
 struct filtyp {
 	char *name;
 	filtergen *compiler;
@@ -58,129 +66,118 @@ struct filtyp {
 	{ NULL, },
 };
 
+int main(int argc, char **argv) {
+    struct filter *f;
+    int l;
+    time_t t;
+    char buf[100];
+    char *filepol = NULL, *ftn = NULL, *ofn = NULL;
+    struct filtyp *ft;
+    int flags = 0;
+    char *progname;
+    int arg;
 
-int main(int argc, char **argv)
-{
-	struct filter *f;
-	int l;
-	time_t t;
-	char buf[100];
-	char *filepol = NULL, *ftn = NULL, *ofn = NULL;
-	struct filtyp *ft;
-	int flags = 0;
-	char *progname;
-	int arg;
+    progname = argv[0];
 
-	progname = argv[0];
+    while((arg = getopt(argc, argv, "nlmrho:t:F")) > 0) {
+	switch(arg) {
+	  case 'n': flags |= FF_NOSKEL; break;
+	  case 'l': flags |= FF_LSTATE; break;
+	  case 'm': flags |= FF_LOOKUP; break;
+	  case 'h': flags |= FF_LOCAL; break;
+	  case 'r': flags |= FF_ROUTE; break;
+	  case 'o': ofn = strdup(optarg); break;
+	  case 't': ftn = strdup(optarg); break;
+	  case 'F': flags |= FF_FLUSH; break;
+	  default: return 1;
+	}
+    }
 
-	while((arg = getopt(argc, argv, "nlmrho:t:F")) > 0) {
-		switch(arg) {
-		case 'n': flags |= FF_NOSKEL; break;
-		case 'l': flags |= FF_LSTATE; break;
-		case 'm': flags |= FF_LOOKUP; break;
-		case 'h': flags |= FF_LOCAL; break;
-		case 'r': flags |= FF_ROUTE; break;
-		case 'o': ofn = strdup(optarg); break;
-		case 't': ftn = strdup(optarg); break;
-		case 'F': flags |= FF_FLUSH; break;
-		default: return 1;
-		}
+    if((flags & FF_LOCAL) && (flags & FF_ROUTE)) {
+	fprintf(stderr, "the -h and -r options are mutually exclusive\n");
+	return 1;
+    }
+
+    if (ofn) {
+	/* XXX - open a different tempfile, and rename on success */
+	outfile = fopen(ofn, "w");
+	if(!outfile) {
+	    fprintf(stderr, "can't open output file \"%s\"\n", ofn);
+	    return 1;
+	}
+    } else
+	outfile = stdout;
+
+    if(!ftn || !*ftn) ftn = "iptables";
+    for(ft = filter_types; ft->name; ft++)
+	if(!strcmp(ftn, ft->name))
+	    break;
+    if(!ft->name) {
+	fprintf(stderr, "%s: unknown filter type \"%s\"\n", progname, ftn);
+	return 1;
+    }
+
+    /* Extra arg (either filename or flush policy) */
+    if((filepol = argv[optind])) {
+	/* Extra args? */
+	while(argv[++optind])
+	    fprintf(stderr, "%s: extra argument \"%s\" ignored\n",
+		    progname, argv[optind]);
+    }
+
+    /* What to do, then? */
+    if(flags & FF_FLUSH) {
+	/* Just flush it */
+	enum filtertype flushpol;
+
+	if(!filepol || !strcasecmp(filepol, "accept"))
+	    flushpol = T_ACCEPT;
+	else if(!strcasecmp(filepol, "drop"))
+	    flushpol = DROP;
+	else if(!strcasecmp(filepol, "reject"))
+	    flushpol = T_REJECT;
+	else {
+	    fprintf(stderr, "invalid flush policy \"%s\"\n", filepol);
+	    return 1;
 	}
 
-	if((flags & FF_LOCAL) && (flags & FF_ROUTE)) {
-		fprintf(stderr, "the -h and -r options are mutually exclusive\n");
-		return 1;
-	}
+	l = ft->flusher(flushpol, flags);
 
-	if (ofn) {
-		/* XXX - open a different tempfile, and rename on success */
-		outfile = fopen(ofn, "w");
-		if(!outfile) {
-			fprintf(stderr, "can't open output file \"%s\"\n", ofn);
-			return 1;
-		}
-	} else
-		outfile = stdout;
+    } else {
+	/* Compile from a file */
+	if(filepol && !strcmp(filepol, "-")) filepol = NULL;
 
-	if(!ftn || !*ftn) ftn = "iptables";
-	for(ft = filter_types; ft->name; ft++)
-		if(!strcmp(ftn, ft->name))
-			break;
-	if(!ft->name) {
-		fprintf(stderr, "%s: unknown filter type \"%s\"\n", progname, ftn);
-		return 1;
-	}
+	if(filter_fopen(filepol)) return 1;
 
-	/* Extra arg (either filename or flush policy) */
-	if((filepol = argv[optind])) {
-		/* Extra args? */
-		while(argv[++optind])
-			fprintf(stderr, "%s: extra argument \"%s\" ignored\n",
-					progname, argv[optind]);
-	}
+	{
+	    struct ast_s ast;
 
-	/* What to do, then? */
-	if(flags & FF_FLUSH) {
-		/* Just flush it */
-		enum filtertype flushpol;
-
-		if(!filepol || !strcasecmp(filepol, "accept"))
-			flushpol = T_ACCEPT;
-		else if(!strcasecmp(filepol, "drop"))
-			flushpol = DROP;
-		else if(!strcasecmp(filepol, "reject"))
-			flushpol = T_REJECT;
-		else {
-			fprintf(stderr, "invalid flush policy \"%s\"\n", filepol);
-			return 1;
-		}
-
-		l = ft->flusher(flushpol, flags);
-
-	} else {
-		/* Compile from a file */
-		if(filepol && !strcmp(filepol, "-")) filepol = NULL;
-
-		if(filter_fopen(filepol)) return 1;
-
-#ifdef OLD_FILTERGEN
-		f = filter_parse_list();
-
+	    if (yyparse((void *) &ast) == 0) {
+		f = convert(&ast);
 		if (!f) {
-			fprintf(stderr, "couldn't parse file\n");
-			return 1;
+		    fprintf(stderr, "couldn't convert file\n");
+		    return 1;
 		}
-#else
-		{
-		    struct ast_s ast;
-
-		    if (yyparse((void *) &ast) == 0) {
-			f = convert(&ast);
-			if (!f) {
-			    fprintf(stderr, "couldn't convert file\n");
-			    return 1;
-			}
-		    } else {
-			fprintf(stderr, "couldn't parse file\n");
-			return 1;
-		    }
-		}
-#endif
-
-		strftime(buf, sizeof(buf)-1, "%a %b %e %H:%M:%S %Z %Y",
-				localtime((time(&t),&t)));
-		oprintf("# filter generated from %s via %s backend at %s\n",
-			filepol ?: "standard input", ft->name, buf);
-		l = ft->compiler(f, flags);
-	}
-
-	if(ofn) fclose(outfile);
-
-	if(l < 0) {
-		fprintf(stderr, "an error occurred: most likely the filters defined make no sense\n");
-		if(ofn) unlink(ofn);
+	    } else {
+		fprintf(stderr, "couldn't parse file\n");
 		return 1;
+	    }
 	}
-	fprintf(stderr, "generated %d rules\n", l);
-	return 0;
+
+	strftime(buf, sizeof(buf)-1, "%a %b %e %H:%M:%S %Z %Y",
+		 localtime((time(&t),&t)));
+	oprintf("# filter generated from %s via %s backend at %s\n",
+		filepol ?: "standard input", ft->name, buf);
+	l = ft->compiler(f, flags);
+    }
+
+    if(ofn) fclose(outfile);
+
+    if(l < 0) {
+	fprintf(stderr, "an error occurred: most likely the filters defined make no sense\n");
+	if(ofn) unlink(ofn);
+	return 1;
+    }
+    fprintf(stderr, "generated %d rules\n", l);
+    return 0;
 }
