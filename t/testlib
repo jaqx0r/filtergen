@@ -2,7 +2,7 @@
 # of every test
 
 here=`pwd`
-if test $? -ne 0 ; then exit 2 ; fi
+if test $? -ne 0 ; then exit 77 ; fi
 
 work=${TMP_DIR-/tmp}/filtergen-test-$$
 
@@ -23,7 +23,7 @@ no_result () {
     cd $here
     rm -rf $work
     echo "NO RESULT when testing $TEST"
-    exit 2
+    exit 77
 }
 
 trap no_result 1 2 3 15
