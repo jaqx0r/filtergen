@@ -73,9 +73,9 @@ def sed(target, source, env):
 
 fgadm = e.Command('fgadm', 'fgadm.in', [sed, Chmod('fgadm', 0755)])
 
-fgadmconf = e.Command('fgadm.conf', 'fgadm.conf.in', sed)
-
-rulesfilter = e.Command('rules.filter', 'rules.filter.in', sed)
+e.Command(['fgadm.conf', 'rules.filter'],
+	['fgadm.conf.in', 'rules.filter.in'],
+	sed)
 
 e.Install(DESTDIR + sbindir, [filtergen, fgadm])
 bin = e.Alias('install-bin', DESTDIR + sbindir)
