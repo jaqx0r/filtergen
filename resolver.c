@@ -26,6 +26,7 @@
 #include <netdb.h>
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 #include "resolver.h"
 #include "ast.h"
 #include "icmpent.h"
@@ -184,21 +185,30 @@ void resolve_host_argument_list(struct host_argument_list_s * n) {
               case 0:
                 /* replace the hostname with the IP */
                 free(n->arg->host);
-		n->arg->host = strdup(inet_ntoa(((struct sockaddr_in *) a->ai_addr)->sin_addr));
-                /* if there's more, create some more hosts */
-                for (i = a->ai_next; i; i = i->ai_next) {
-                    list = malloc(sizeof(struct host_argument_list_s));
-                    host = malloc(sizeof(struct host_argument_s));
-                    host->host = strdup(inet_ntoa(((struct sockaddr_in *) i->ai_addr)->sin_addr));
-                    if (n->arg->mask) {
-                        host->mask = strdup(n->arg->mask);
-                    }
+		/* getnameinfo does no allocation. */
+		n->arg->host = malloc(NI_MAXHOST + 1);
+		if (getnameinfo(a->ai_addr, a->ai_addrlen, n->arg->host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST) == 0) {
+		    /* if there's more, create some more hosts */
+		    for (i = a->ai_next; i; i = i->ai_next) {
+			list = malloc(sizeof(struct host_argument_list_s));
+			host = malloc(sizeof(struct host_argument_s));
+			host->host = malloc(NI_MAXHOST + 1);
+			if (getnameinfo(i->ai_addr, i->ai_addrlen, host->host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST) == 0) {
+			    if (n->arg->mask) {
+				host->mask = strdup(n->arg->mask);
+			    }
 
-                    /* insert the new node */
-                    list->arg = host;
-                    list->list = n->list;
-                    n->list = list;
-                }
+			    /* insert the new node */
+			    list->arg = host;
+			    list->list = n->list;
+			    n->list = list;
+			} else {
+			    fprintf(stderr, "warning: %s\n", strerror(errno));
+			}
+		    }
+		} else {
+		    fprintf(stderr, "warning: %s\n", strerror(errno));
+		}
                 freeaddrinfo(a);
                 break;
               default:
