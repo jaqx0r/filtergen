@@ -1,3 +1,7 @@
+0.12.1:
+	fixed some dumb bugs
+	fixed some compile bugs on 64 bit platforms
+
 0.12:
 	converted build system to automake
 	rewrote parser
