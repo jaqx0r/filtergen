@@ -30,6 +30,62 @@ int ipts_convtrace = 1;
 
 #define eprint(x) if (ipts_convtrace) fprintf(stderr, x)
 
+void ipts_convert_identifier(struct identifier_s * n) {
+
+  eprint("converting identifier\n");
+
+  if (n->id1) {
+    /* do soemthing with first arg */
+  }
+  if (n->id2) {
+    /* do something with second arg */
+  }
+}
+
+void ipts_convert_not_identifier(struct not_identifier_s * n) {
+  eprint("converting not_identifier\n");
+
+  if (n->neg) {
+    /* neg is a boolean */
+  }
+  if (n->identifier) {
+    ipts_convert_identifier(n->identifier);
+  }
+}
+
+void ipts_convert_option(struct option_s * n) {
+  eprint("converting option\n");
+
+  if (n->option) {
+    /* option is a string representing the option */
+  }
+  if (n->not_identifier) {
+    ipts_convert_not_identifier(n->not_identifier);
+  }
+}
+
+void ipts_convert_not_option(struct not_option_s * n) {
+  eprint("converting not_option\n");
+
+  if (n->neg) {
+    /* neg is a boolean */
+  }
+  if (n->option) {
+    ipts_convert_option(n->option);
+  }
+}
+
+void ipts_convert_option_list(struct option_list_s * n) {
+  eprint("converting option_list\n");
+
+  if (n->option_list) {
+    ipts_convert_option_list(n->option_list);
+  }
+  if (n->not_option) {
+    ipts_convert_not_option(n->not_option);
+  }
+}
+
 struct filter * ipts_convert_rule(struct rule_s * n) {
   struct filter * res = NULL;
 
@@ -44,6 +100,7 @@ struct filter * ipts_convert_rule(struct rule_s * n) {
   } else if (n->option_list) {
     /* do something with the option list */
     /* option list, and optionally pkt_count, are set */
+    ipts_convert_option_list(n->option_list);
   }
 
   return res;
