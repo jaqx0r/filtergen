@@ -23,6 +23,10 @@
 
 #include <string.h>
 #include <stdarg.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <dirent.h>
 #include "parser.h"
 
 /* include file stack */
@@ -39,6 +43,7 @@ int inc_stackptr = 0;
 long int lineno();
 char * filename();
 static void scan_err(const char * fmt, ...);
+void step_into_include_file(const char *);
 %}
 
 string  \"[^\n]+\"
@@ -124,16 +129,37 @@ text         return TOK_TEXT;
 
 			  } else {
                               if (yytext) {
-                                  FILE * f;
-                                  if (!(f = fopen(yytext, "r"))) {
-                                      scan_err("error: can't open file \"%s\"", yytext);
-                                  } else {
-                                      inc_stack[inc_stackptr++].state = YY_CURRENT_BUFFER;
-                                      inc_stack[inc_stackptr].lineno = 1;
-                                      inc_stack[inc_stackptr].filename = strdup(yytext);
-                                      yyin = f;
-                                      yy_switch_to_buffer(yy_create_buffer(yyin, YY_BUF_SIZE));
-                                  }
+				struct stat st;
+
+				if (stat(yytext, &st)) {
+				    scan_err("warning: %s: %s", yytext, strerror(errno));
+				} else {
+					if (S_ISDIR(st.st_mode)) {
+						DIR * d;
+
+						if ((d = opendir(yytext)) == NULL) {
+							scan_err("warning: %s: %s", yytext, strerror(errno));
+						} else {
+							struct dirent * r;
+							while ((r = readdir(d)) != NULL) {
+								char * fn;
+
+								asprintf(&fn, "%s/%s", yytext, r->d_name);
+								if (stat(fn, &st)) {
+									scan_err("warning: %s: %s", fn, strerror(errno));
+								} else {
+									if (S_ISREG(st.st_mode)) {
+										/*fprintf(stderr, "%s\n", fn);*/
+										step_into_include_file(fn);
+									}
+								}
+							}
+							closedir(d);
+						}
+        	                        } else {
+						step_into_include_file(yytext);
+					}
+				}
                               } else {
                                   scan_err("error: file is null");
                               }    
@@ -173,4 +199,18 @@ static void scan_err(const char * fmt, ...) {
 	fprintf(stderr, "%s:%ld: ", filename(), lineno());
     vfprintf(stderr, fmt, args);
     fprintf(stderr, "\n");
+}
+
+void step_into_include_file(const char * fn) {
+	FILE * f;
+
+        if (!(f = fopen(fn, "r"))) {
+                scan_err("warning: can't open file \"%s\"", fn);
+        } else {
+                inc_stack[inc_stackptr++].state = YY_CURRENT_BUFFER;
+                inc_stack[inc_stackptr].lineno = 1;
+                inc_stack[inc_stackptr].filename = strdup(fn);
+                yyin = f;
+                yy_switch_to_buffer(yy_create_buffer(yyin, YY_BUF_SIZE));
+	}
 }
