@@ -11,7 +11,7 @@
        )
       child
       ( siblist
-        ( dport www
+        ( dport echo
          )
         child
         ( accept
@@ -33,7 +33,7 @@
          )
         child
         ( siblist
-          ( sport www
+          ( sport echo
            )
           child
           ( accept
@@ -121,7 +121,7 @@
                  )
                 child
                 ( siblist
-                  ( sport www:https
+                  ( sport echo:https
                    )
                   child
                   ( accept
@@ -145,7 +145,7 @@
                   ( siblist
                     ( dport 53
                       next
-                      ( dport www
+                      ( dport echo
                         next
                         ( dport smtp
                           next

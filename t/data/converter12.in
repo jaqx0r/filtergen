@@ -1,7 +1,7 @@
 # big ugly filter
             input eth0 source foo dest bar [
                  proto tcp {
-                      dport {http https nntp};
+                      dport {echo https nntp};
                       sport 1:1023 dport ssh;
                  } accept;
             ];

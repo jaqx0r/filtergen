@@ -30,7 +30,7 @@
           child
           ( siblist
             ( siblist
-              ( dport www
+              ( dport echo
                )
               next
               ( siblist
