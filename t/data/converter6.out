@@ -1,10 +1,18 @@
-( input eth0
+( siblist
+  ( input eth0
+   )
   child
-  ( dest foo
+  ( siblist
+    ( dest foo
+     )
     child
-    ( proto tcp
+    ( siblist
+      ( proto tcp
+       )
       child
-      ( dport www
+      ( siblist
+        ( dport www
+         )
         child
         ( accept
          )
@@ -12,13 +20,21 @@
      )
    )
   next
-  ( input eth0
+  ( siblist
+    ( input eth0
+     )
     child
-    ( dest foo
+    ( siblist
+      ( dest foo
+       )
       child
-      ( proto tcp
+      ( siblist
+        ( proto tcp
+         )
         child
-        ( sport www
+        ( siblist
+          ( sport www
+           )
           child
           ( accept
            )
@@ -26,13 +42,21 @@
        )
      )
     next
-    ( input eth0
+    ( siblist
+      ( input eth0
+       )
       child
-      ( dest foo
+      ( siblist
+        ( dest foo
+         )
         child
-        ( proto tcp
+        ( siblist
+          ( proto tcp
+           )
           child
-          ( sport 53
+          ( siblist
+            ( sport 53
+             )
             child
             ( accept
              )
@@ -40,13 +64,21 @@
          )
        )
       next
-      ( input eth0
+      ( siblist
+        ( input eth0
+         )
         child
-        ( dest foo
+        ( siblist
+          ( dest foo
+           )
           child
-          ( proto tcp
+          ( siblist
+            ( proto tcp
+             )
             child
-            ( dport 53
+            ( siblist
+              ( dport 53
+               )
               child
               ( accept
                )
@@ -54,13 +86,21 @@
            )
          )
         next
-        ( input eth0
+        ( siblist
+          ( input eth0
+           )
           child
-          ( dest foo
+          ( siblist
+            ( dest foo
+             )
             child
-            ( proto tcp
+            ( siblist
+              ( proto tcp
+               )
               child
-              ( dport 53:54
+              ( siblist
+                ( dport 53:54
+                 )
                 child
                 ( accept
                  )
@@ -68,13 +108,21 @@
              )
            )
           next
-          ( input eth0
+          ( siblist
+            ( input eth0
+             )
             child
-            ( dest foo
+            ( siblist
+              ( dest foo
+               )
               child
-              ( proto tcp
+              ( siblist
+                ( proto tcp
+                 )
                 child
-                ( sport www:https
+                ( siblist
+                  ( sport www:https
+                   )
                   child
                   ( accept
                    )
@@ -82,11 +130,17 @@
                )
              )
             next
-            ( input eth0
+            ( siblist
+              ( input eth0
+               )
               child
-              ( dest foo
+              ( siblist
+                ( dest foo
+                 )
                 child
-                ( proto tcp
+                ( siblist
+                  ( proto tcp
+                   )
                   child
                   ( siblist
                     ( dport 53

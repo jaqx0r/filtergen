@@ -1,11 +1,19 @@
-( input eth0
+( siblist
+  ( input eth0
+   )
   child
-  ( source foo
+  ( siblist
+    ( source foo
+     )
     child
-    ( dest bar
+    ( siblist
+      ( dest bar
+       )
       child
       ( subgroup "chain_0"
-        ( proto tcp
+        ( siblist
+          ( proto tcp
+           )
           child
           ( siblist
             ( dport www
@@ -21,11 +29,17 @@
              )
            )
           next
-          ( proto tcp
+          ( siblist
+            ( proto tcp
+             )
             child
-            ( sport 1:1023
+            ( siblist
+              ( sport 1:1023
+               )
               child
-              ( dport ssh
+              ( siblist
+                ( dport ssh
+                 )
                 child
                 ( accept
                  )

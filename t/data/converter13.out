@@ -1,4 +1,6 @@
-( input eth0
+( siblist
+  ( input eth0
+   )
   child
   ( log ""
     child
@@ -6,7 +8,9 @@
      )
    )
   next
-  ( input eth0
+  ( siblist
+    ( input eth0
+     )
     child
     ( log "foo"
       child

@@ -1,6 +1,10 @@
-( input eth0
+( siblist
+  ( input eth0
+   )
   child
-  ( proto tcp
+  ( siblist
+    ( proto tcp
+     )
     child
     ( siblist
       ( siblist
@@ -13,7 +17,9 @@
            )
          )
         next
-        ( sport 53
+        ( siblist
+          ( sport 53
+           )
          )
        )
       child

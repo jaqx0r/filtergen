@@ -1,6 +1,10 @@
-( input eth0
+( siblist
+  ( input eth0
+   )
   child
-  ( dest foo
+  ( siblist
+    ( dest foo
+     )
     child
     ( local
       child
@@ -9,9 +13,13 @@
      )
    )
   next
-  ( input eth0
+  ( siblist
+    ( input eth0
+     )
     child
-    ( dest foo
+    ( siblist
+      ( dest foo
+       )
       child
       ( forward
         child

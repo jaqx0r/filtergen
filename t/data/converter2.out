@@ -1,14 +1,20 @@
-( input eth0
+( siblist
+  ( input eth0
+   )
   child
   ( reject
    )
   next
-  ( input eth1
+  ( siblist
+    ( input eth1
+     )
     child
     ( accept
      )
     next
-    ( input eth2
+    ( siblist
+      ( input eth2
+       )
       child
       ( drop
        )

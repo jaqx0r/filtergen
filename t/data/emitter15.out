@@ -1,7 +1,7 @@
 [
 ];
 [
-proto tcp];
+proto { tcp }];
 [
 accept;
 reject;
@@ -9,7 +9,7 @@ reject;
 [ "foo"
 ];
 [ "foo"
-proto tcp;
+proto { tcp };
 ];
 [ "foo"
 accept;
@@ -18,7 +18,7 @@ reject;
 [ "foo"
 ];
 [ "foo"
-proto tcp;
+proto { tcp };
 ];
 [ "foo"
 accept;

@@ -66,7 +66,7 @@ EMIT(option_specifier) {
     }
 }
 
-EMIT(simple_icmptype_argument) {
+EMIT(icmptype_argument) {
     printf("%s", n->icmptype);
 }
 
@@ -75,30 +75,17 @@ EMIT(icmptype_argument_list) {
 	emit_icmptype_argument_list(n->list);
 	printf(" ");
     }
-    emit_simple_icmptype_argument(n->arg);
-}
-
-EMIT(compound_icmptype_argument) {
-    printf("{ ");
-    if (n->list) {
-	emit_icmptype_argument_list(n->list);
-    }
-    printf(" }");
-};
-
-EMIT(icmptype_argument) {
-    if (n->compound)
-	emit_compound_icmptype_argument(n->compound);
-    else
-	emit_simple_icmptype_argument(n->simple);
-}
-
-EMIT(icmptype_specifier) {
-    printf("icmptype ");
     emit_icmptype_argument(n->arg);
 }
 
-EMIT(simple_protocol_argument) {
+EMIT(icmptype_specifier) {
+    printf("icmptype { ");
+    if (n->list) 
+      emit_icmptype_argument_list(n->list);
+    printf(" }");
+}
+
+EMIT(protocol_argument) {
     printf("%s", n->proto);
 }
 
@@ -108,36 +95,20 @@ EMIT(protocol_argument_list) {
 	emit_protocol_argument_list(n->list);
 	printf(" ");
     }
-    eprint("emitting simple_protocol_argument\n");
-    emit_simple_protocol_argument(n->arg);
-}
-
-EMIT(compound_protocol_argument) {
-    printf("{ ");
-    if (n->list) {
-	eprint("emitting protocol_argument_list\n");
-	emit_protocol_argument_list(n->list);
-    }
-    printf(" }");
-}
-
-EMIT(protocol_argument) {
-    if (n->compound) {
-	eprint("emitting compound_protocol_argument\n");
-	emit_compound_protocol_argument(n->compound);
-    } else {
-	eprint("emitting simple_protocol_argument\n");
-	emit_simple_protocol_argument(n->simple);
-    }
-}
-
-EMIT(protocol_specifier) {
-    printf("proto ");
     eprint("emitting protocol_argument\n");
     emit_protocol_argument(n->arg);
 }
 
-EMIT(simple_port_argument) {
+EMIT(protocol_specifier) {
+    printf("proto { ");
+    if (n->list) {
+      eprint("emitting protocol_argument\n");
+      emit_protocol_argument_list(n->list);
+    }
+    printf(" }");
+}
+
+EMIT(port_argument) {
     if (n->port_min) {
 	printf("%s", n->port_min);
     }
@@ -152,21 +123,8 @@ EMIT(port_argument_list) {
 	emit_port_argument_list(n->list);
 	printf(" ");
     }
-    eprint("emitting simple_port_argument\n");
-    emit_simple_port_argument(n->arg);
-}
-
-EMIT(compound_port_argument) {
-    printf("{ ");
-    emit_port_argument_list(n->list);
-    printf(" }");
-}
-
-EMIT(port_argument) {
-    if (n->compound)
-	emit_compound_port_argument(n->compound);
-    else
-	emit_simple_port_argument(n->simple);
+    eprint("emitting port_argument\n");
+    emit_port_argument(n->arg);
 }
 
 EMIT(port_specifier) {
@@ -175,10 +133,13 @@ EMIT(port_specifier) {
     } else if (n->type == TOK_SPORT) {
 	printf("sport ");
     }
-    emit_port_argument(n->arg);
+    printf("{ ");
+    if (n->list)
+      emit_port_argument_list(n->list);
+    printf(" }");
 }
 
-EMIT(simple_host_argument) {
+EMIT(host_argument) {
     if (n->host) {
 	printf("%s", n->host);
     }
@@ -192,20 +153,7 @@ EMIT(host_argument_list) {
 	emit_host_argument_list(n->list);
 	printf(" ");
     }
-    emit_simple_host_argument(n->arg);
-}
-
-EMIT(compound_host_argument) {
-    printf("{ ");
-    emit_host_argument_list(n->list);
-    printf(" }");
-}
-
-EMIT(host_argument) {
-    if (n->compound)
-	emit_compound_host_argument(n->compound);
-    else
-	emit_simple_host_argument(n->simple);
+    emit_host_argument(n->arg);
 }
 
 EMIT(host_specifier) {
@@ -214,7 +162,10 @@ EMIT(host_specifier) {
     } else if (n->type == TOK_DEST) {
 	printf("dest ");
     }
-    emit_host_argument(n->arg);
+    printf("{ ");
+    if (n->list)
+      emit_host_argument_list(n->list);
+    printf(" }");
 }
 
 EMIT(target_specifier) {
@@ -235,9 +186,12 @@ EMIT(target_specifier) {
     }
 }
 
-EMIT(simple_direction_argument) {
-    eprint("emitting identifier\n");
-    printf("%s", n->identifier);
+EMIT(direction_argument) {
+    eprint("emitting direction\n");
+    if (n->direction)
+      printf("%s", n->direction);
+    else
+      printf("error: n->direction is NULL\n");
 }
 
 EMIT(direction_argument_list) {
@@ -246,26 +200,9 @@ EMIT(direction_argument_list) {
 	emit_direction_argument_list(n->list);
 	printf(" ");
     }
-    eprint("emitting simple_direction_argument\n");
-    emit_simple_direction_argument(n->arg);
-}
-
-EMIT(compound_direction_argument) {
-    printf("{ ");
-    if (n->list) {
-	eprint("emitting direction_argument_list\n");
-	emit_direction_argument_list(n->list);
-    }
-    printf(" }");
-}
-
-EMIT(direction_argument) {
-    if (n->compound) {
-	eprint("emitting compound_direction_argument\n");
-	emit_compound_direction_argument(n->compound);
-    } else {
-	eprint("emitting simple_direction_argument\n");
-	emit_simple_direction_argument(n->simple);
+    if (n->arg) {
+      eprint("emitting direction_argument\n");
+      emit_direction_argument(n->arg);
     }
 }
 
@@ -275,8 +212,12 @@ EMIT(direction_specifier) {
     } else {
 	printf("output ");
     }
-    eprint("emitting direction_argument\n");
-    emit_direction_argument(n->arg);
+      printf("{ ");
+    if (n->list) {
+      eprint("emitting direction_argument\n");
+      emit_direction_argument_list(n->list);
+    }
+      printf(" }");
 }
 
 EMIT(specifier) {

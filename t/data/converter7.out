@@ -1,10 +1,18 @@
-( input eth0
+( siblist
+  ( input eth0
+   )
   child
-  ( dest foo
+  ( siblist
+    ( dest foo
+     )
     child
-    ( proto icmp
+    ( siblist
+      ( proto icmp
+       )
       child
-      ( icmptype echo-request
+      ( siblist
+        ( icmptype echo-request
+         )
         child
         ( accept
          )
@@ -12,11 +20,17 @@
      )
    )
   next
-  ( input eth0
+  ( siblist
+    ( input eth0
+     )
     child
-    ( dest foo
+    ( siblist
+      ( dest foo
+       )
       child
-      ( proto icmp
+      ( siblist
+        ( proto icmp
+         )
         child
         ( siblist
           ( icmptype echo-request

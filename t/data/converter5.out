@@ -1,17 +1,27 @@
-( input eth0
+( siblist
+  ( input eth0
+   )
   child
-  ( dest foo
+  ( siblist
+    ( dest foo
+     )
     child
-    ( proto tcp
+    ( siblist
+      ( proto tcp
+       )
       child
       ( accept
        )
      )
    )
   next
-  ( input eth0
+  ( siblist
+    ( input eth0
+     )
     child
-    ( dest foo
+    ( siblist
+      ( dest foo
+       )
       child
       ( siblist
         ( proto tcp

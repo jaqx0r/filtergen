@@ -1,20 +1,30 @@
-( input eth0
+( siblist
+  ( input eth0
+   )
   child
-  ( dest foo
+  ( siblist
+    ( dest foo
+     )
     child
     ( accept
      )
    )
   next
-  ( input eth0
+  ( siblist
+    ( input eth0
+     )
     child
-    ( source foo
+    ( siblist
+      ( source foo
+       )
       child
       ( reject
        )
      )
     next
-    ( input eth0
+    ( siblist
+      ( input eth0
+       )
       child
       ( siblist
         ( dest foo
@@ -27,17 +37,25 @@
          )
        )
       next
-      ( input eth0
+      ( siblist
+        ( input eth0
+         )
         child
-        ( dest foo/255.255.255.0
+        ( siblist
+          ( dest foo/255.255.255.0
+           )
           child
           ( accept
            )
          )
         next
-        ( input eth0
+        ( siblist
+          ( input eth0
+           )
           child
-          ( dest foo/255.255.255.255
+          ( siblist
+            ( dest foo/255.255.255.255
+             )
             child
             ( accept
              )

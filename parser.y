@@ -39,32 +39,22 @@ extern int yylex(void);
 	struct negated_specifier_s * u_negated_specifier;
 	struct specifier_s * u_specifier;
 	struct direction_specifier_s * u_direction_specifier;
-	struct direction_argument_s * u_direction_argument;
-	struct compound_direction_argument_s * u_compound_direction_argument;
 	struct direction_argument_list_s * u_direction_argument_list;
-	struct simple_direction_argument_s * u_simple_direction_argument;
+	struct direction_argument_s * u_direction_argument;
 	struct target_specifier_s * u_target_specifier;
 	struct log_target_specifier_s * u_log_target_specifier;
 	struct host_specifier_s * u_host_specifier;
-	struct host_argument_s * u_host_argument;
-	struct compound_host_argument_s * u_compound_host_argument;
 	struct host_argument_list_s * u_host_argument_list;
-	struct simple_host_argument_s * u_simple_host_argument;
+	struct host_argument_s * u_host_argument;
 	struct port_specifier_s * u_port_specifier;
-	struct port_argument_s * u_port_argument;
-	struct compound_port_argument_s * u_compound_port_argument;
 	struct port_argument_list_s * u_port_argument_list;
-	struct simple_port_argument_s * u_simple_port_argument;
+	struct port_argument_s * u_port_argument;
 	struct protocol_specifier_s * u_protocol_specifier;
-	struct protocol_argument_s * u_protocol_argument;
-	struct compound_protocol_argument_s * u_compound_protocol_argument;
 	struct protocol_argument_list_s * u_protocol_argument_list;
-	struct simple_protocol_argument_s * u_simple_protocol_argument;
+	struct protocol_argument_s * u_protocol_argument;
 	struct icmptype_specifier_s * u_icmptype_specifier;
-	struct icmptype_argument_s * u_icmptype_argument;
-	struct compound_icmptype_argument_s * u_compound_icmptype_argument;
 	struct icmptype_argument_list_s * u_icmptype_argument_list;
-	struct simple_icmptype_argument_s * u_simple_icmptype_argument;
+	struct icmptype_argument_s * u_icmptype_argument;
 	struct option_specifier_s * u_option_specifier;
 	struct compound_specifier_s * u_compound_specifier;
 	struct chaingroup_specifier_s * u_chaingroup_specifier;
@@ -77,31 +67,26 @@ extern int yylex(void);
 %type <u_negated_specifier> negated_specifier
 %type <u_specifier> specifier
 %type <u_direction_specifier> direction_specifier
-%type <u_direction_argument> direction_argument
-%type <u_compound_direction_argument> compound_direction_argument
 %type <u_direction_argument_list> direction_argument_list
-%type <u_simple_direction_argument> simple_direction_argument
+%type <u_direction_argument_list> direction_argument_list_
+%type <u_direction_argument> direction_argument
 %type <u_target_specifier> target_specifier
 %type <u_host_specifier> host_specifier
-%type <u_host_argument> host_argument
-%type <u_compound_host_argument> compound_host_argument
 %type <u_host_argument_list> host_argument_list
-%type <u_simple_host_argument> simple_host_argument
+%type <u_host_argument_list> host_argument_list_
+%type <u_host_argument> host_argument
 %type <u_port_specifier> port_specifier
-%type <u_port_argument> port_argument
-%type <u_compound_port_argument> compound_port_argument
 %type <u_port_argument_list> port_argument_list
-%type <u_simple_port_argument> simple_port_argument
+%type <u_port_argument_list> port_argument_list_
+%type <u_port_argument> port_argument
 %type <u_protocol_specifier> protocol_specifier
-%type <u_protocol_argument> protocol_argument
-%type <u_compound_protocol_argument> compound_protocol_argument
 %type <u_protocol_argument_list> protocol_argument_list
-%type <u_simple_protocol_argument> simple_protocol_argument
+%type <u_protocol_argument_list> protocol_argument_list_
+%type <u_protocol_argument> protocol_argument
 %type <u_icmptype_specifier> icmptype_specifier
-%type <u_icmptype_argument> icmptype_argument
-%type <u_compound_icmptype_argument> compound_icmptype_argument
 %type <u_icmptype_argument_list> icmptype_argument_list
-%type <u_simple_icmptype_argument> simple_icmptype_argument
+%type <u_icmptype_argument_list> icmptype_argument_list_
+%type <u_icmptype_argument> icmptype_argument
 %type <u_option_specifier> option_specifier
 %type <u_compound_specifier> compound_specifier
 %type <u_chaingroup_specifier> chaingroup_specifier
@@ -250,46 +235,35 @@ specifier: compound_specifier
 	}
 	;
 
-direction_specifier: TOK_INPUT direction_argument
+direction_specifier: TOK_INPUT direction_argument_list
 	{
 		$$ = malloc(sizeof(struct direction_specifier_s));
 		$$->type = TOK_INPUT;
-		$$->arg = $2;
+		$$->list = $2;
 	}
-	| TOK_OUTPUT direction_argument
+	| TOK_OUTPUT direction_argument_list
 	{
 		$$ = malloc(sizeof(struct direction_specifier_s));
 		$$->type = TOK_OUTPUT;
-		$$->arg = $2;
-	}
-	;
-
-direction_argument: compound_direction_argument
-	{
-		$$ = malloc(sizeof(struct direction_argument_s));
-		$$->compound = $1;
-		$$->simple = NULL;
-	}
-	| simple_direction_argument
-	{
-		$$ = malloc(sizeof(struct direction_argument_s));
-		$$->compound = NULL;
-		$$->simple = $1;
-	}
-	;
-
-compound_direction_argument: TOK_LCURLY direction_argument_list TOK_RCURLY
-	{
-		$$ = malloc(sizeof(struct compound_direction_argument_s));
 		$$->list = $2;
 	}
 	;
 
-direction_argument_list: /* empty */
+direction_argument_list: direction_argument_list_
+	{
+		$$ = $1;
+	}
+	| TOK_LCURLY direction_argument_list_ TOK_RCURLY
+	{
+		$$ = $2;
+	}
+	;
+
+direction_argument_list_: /* empty */
 	{
 		$$ = NULL;
 	}
-	| direction_argument_list simple_direction_argument
+	| direction_argument_list_ direction_argument
 	{
 		$$ = malloc(sizeof(struct direction_argument_list_s));
 		$$->list = $1;
@@ -297,10 +271,10 @@ direction_argument_list: /* empty */
 	}
 	;
 
-simple_direction_argument: TOK_IDENTIFIER
+direction_argument: TOK_IDENTIFIER
 	{
-		$$ = malloc(sizeof(struct simple_direction_argument_s));
-		$$->identifier = $1;
+		$$ = malloc(sizeof(struct direction_argument_s));
+		$$->direction = $1;
 	}
 	;
 
@@ -336,46 +310,35 @@ target_specifier: TOK_ACCEPT
 	}
 	;
 
-host_specifier: TOK_SOURCE host_argument
+host_specifier: TOK_SOURCE host_argument_list
 	{
 		$$ = malloc(sizeof(struct host_specifier_s));
 		$$->type = TOK_SOURCE;
-		$$->arg = $2;
+		$$->list = $2;
 	}
-	| TOK_DEST host_argument
+	| TOK_DEST host_argument_list
 	{
 		$$ = malloc(sizeof(struct host_specifier_s));
 		$$->type = TOK_DEST;
-		$$->arg = $2;
-	}
-	;
-
-host_argument: compound_host_argument
-	{
-		$$ = malloc(sizeof(struct host_argument_s));
-		$$->compound = $1;
-		$$->simple = NULL;
-	}
-	| simple_host_argument
-	{
-		$$ = malloc(sizeof(struct host_argument_s));
-		$$->compound = NULL;
-		$$->simple = $1;
-	}
-	;
-
-compound_host_argument: TOK_LCURLY host_argument_list TOK_RCURLY
-	{
-		$$ = malloc(sizeof(struct compound_host_argument_s));
 		$$->list = $2;
 	}
 	;
 
-host_argument_list: /* empty */
+host_argument_list: host_argument_list_
+	{
+		$$ = $1;
+	}
+	| TOK_LCURLY host_argument_list_ TOK_RCURLY
+	{
+		$$ = $2;
+	}
+	;
+
+host_argument_list_: /* empty */
 	{
 		$$ = NULL;
 	}
-	| host_argument_list simple_host_argument
+	| host_argument_list_ host_argument
 	{
 		$$ = malloc(sizeof(struct host_argument_list_s));
 		$$->list = $1;
@@ -383,62 +346,50 @@ host_argument_list: /* empty */
 	}
 	;
 
-simple_host_argument: TOK_IDENTIFIER TOK_SLASH TOK_IDENTIFIER
+host_argument: TOK_IDENTIFIER TOK_SLASH TOK_IDENTIFIER
 	{
-		$$ = malloc(sizeof(struct simple_host_argument_s));
+		$$ = malloc(sizeof(struct host_argument_s));
 		$$->host = $1;
 		$$->mask = $3;
 	}
         | TOK_IDENTIFIER
         {
-		$$ = malloc(sizeof(struct simple_host_argument_s));
+		$$ = malloc(sizeof(struct host_argument_s));
 		$$->host = $1;
                 $$->mask = 0;
 	}
 	;
 
-port_specifier: TOK_SPORT port_argument
+port_specifier: TOK_SPORT port_argument_list
 	{
 		$$ = malloc(sizeof(struct port_specifier_s));
 		$$->type = TOK_SPORT;
-		$$->arg = $2;
+		$$->list = $2;
 	}
-	| TOK_DPORT port_argument
+	| TOK_DPORT port_argument_list
 	{
 		$$ = malloc(sizeof(struct port_specifier_s));
 		$$->type = TOK_DPORT;
-		$$->arg = $2;
-	}
-	;
-
-port_argument: compound_port_argument
-	{
-		$$ = malloc(sizeof(struct port_argument_s));
-		$$->compound = $1;
-		$$->simple = NULL;
-	}
-	| simple_port_argument
-	{
-		$$ = malloc(sizeof(struct port_argument_s));
-		$$->compound = NULL;
-		$$->simple = $1;
-	}
-	;
-
-compound_port_argument: TOK_LCURLY port_argument_list TOK_RCURLY
-	{
-		$$ = malloc(sizeof(struct compound_port_argument_s));
 		$$->list = $2;
 	}
 	;
 
-port_argument_list: simple_port_argument
+port_argument_list: port_argument_list_
+	{
+		$$ = $1;
+	}
+	| TOK_LCURLY port_argument_list TOK_RCURLY
+	{
+		$$ = $2;
+	}
+
+port_argument_list_: port_argument
 	{
 		$$ = malloc(sizeof(struct port_argument_list_s));
 		$$->list = NULL;
 		$$->arg = $1;
 	}
-	| port_argument_list simple_port_argument
+	| port_argument_list_ port_argument
 	{
 		$$ = malloc(sizeof(struct port_argument_list_s));
 		$$->list = $1;
@@ -446,53 +397,42 @@ port_argument_list: simple_port_argument
 	}
 	;
 
-simple_port_argument: TOK_IDENTIFIER TOK_COLON TOK_IDENTIFIER
+port_argument: TOK_IDENTIFIER TOK_COLON TOK_IDENTIFIER
 	{
-		$$ = malloc(sizeof(struct simple_port_argument_s));
+		$$ = malloc(sizeof(struct port_argument_s));
 		$$->port_min = $1;
 		$$->port_max = $3;
 	}
 	| TOK_IDENTIFIER
 	{
-		$$ = malloc(sizeof(struct simple_port_argument_s));
+		$$ = malloc(sizeof(struct port_argument_s));
 		$$->port_min = $1;
 		$$->port_max = NULL;
 	}
 	;
 
-protocol_specifier: TOK_PROTO protocol_argument
+protocol_specifier: TOK_PROTO protocol_argument_list
 	{
 		$$ = malloc(sizeof(struct protocol_specifier_s));
-		$$->arg = $2;
-	}
-	;
-
-protocol_argument: compound_protocol_argument
-	{
-		$$ = malloc(sizeof(struct protocol_argument_s));
-		$$->compound = $1;
-		$$->simple = NULL;
-	}
-	| simple_protocol_argument
-	{
-		$$ = malloc(sizeof(struct protocol_argument_s));
-		$$->compound = NULL;
-		$$->simple = $1;
-	}
-	;
-
-compound_protocol_argument: TOK_LCURLY protocol_argument_list TOK_RCURLY
-	{
-		$$ = malloc(sizeof(struct compound_protocol_argument_s));
 		$$->list = $2;
 	}
 	;
 
-protocol_argument_list: /* empty */
+protocol_argument_list: protocol_argument_list_
+	{
+		$$ = $1;
+	}
+	| TOK_LCURLY protocol_argument_list_ TOK_RCURLY
+	{
+		$$ = $2;
+	}
+	;
+
+protocol_argument_list_: /* empty */
 	{
 		$$ = NULL;
 	}
-	| protocol_argument_list simple_protocol_argument
+	| protocol_argument_list_ protocol_argument
 	{
 		$$ = malloc(sizeof(struct protocol_argument_list_s));
 		$$->list = $1;
@@ -500,46 +440,35 @@ protocol_argument_list: /* empty */
 	}
 	;
 
-simple_protocol_argument: TOK_IDENTIFIER
+protocol_argument: TOK_IDENTIFIER
 	{
-		$$ = malloc(sizeof(struct simple_protocol_argument_s));
+		$$ = malloc(sizeof(struct protocol_argument_s));
 		$$->proto = strdup($1);
 	}
 	;
 
-icmptype_specifier: TOK_ICMPTYPE icmptype_argument
+icmptype_specifier: TOK_ICMPTYPE icmptype_argument_list
 	{
 		$$ = malloc(sizeof(struct icmptype_specifier_s));
-		$$->arg = $2;
-	}
-	;
-
-icmptype_argument: compound_icmptype_argument
-	{
-		$$ = malloc(sizeof(struct icmptype_argument_s));
-		$$->compound = $1;
-		$$->simple = NULL;
-	}
-	| simple_icmptype_argument
-	{
-		$$ = malloc(sizeof(struct icmptype_argument_s));
-		$$->compound = NULL;
-		$$->simple = $1;
-	}
-	;
-
-compound_icmptype_argument: TOK_LCURLY icmptype_argument_list TOK_RCURLY
-	{
-		$$ = malloc(sizeof(struct compound_icmptype_argument_s));
 		$$->list = $2;
 	}
 	;
 
-icmptype_argument_list: /* empty */
+icmptype_argument_list: icmptype_argument_list_
+	{
+		$$ = $1;
+	}
+	| TOK_LCURLY icmptype_argument_list_ TOK_RCURLY
+	{
+		$$ = $2;
+	}
+	;
+
+icmptype_argument_list_: /* empty */
 	{
 		$$ = NULL;
 	}
-	| icmptype_argument_list simple_icmptype_argument
+	| icmptype_argument_list_ icmptype_argument
 	{
 		$$ = malloc(sizeof(struct icmptype_argument_list_s));
 		$$->list = $1;
@@ -547,9 +476,9 @@ icmptype_argument_list: /* empty */
 	}
 	;
 
-simple_icmptype_argument: TOK_IDENTIFIER
+icmptype_argument: TOK_IDENTIFIER
 	{
-		$$ = malloc(sizeof(struct simple_icmptype_argument_s));
+		$$ = malloc(sizeof(struct icmptype_argument_s));
 		$$->icmptype = $1;
 	}
 	;
