@@ -315,7 +315,9 @@ EMIT(specifier) {
 }
 
 EMIT(negated_specifier) {
-    /* print type */
+    if (n->negated) {
+	printf("! ");
+    }
     eprint("emitting specifier\n");
     emit_specifier(n->spec);
 }

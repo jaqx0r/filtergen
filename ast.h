@@ -174,7 +174,7 @@ struct specifier_s {
 };
 
 struct negated_specifier_s {
-    int type;
+    int negated;
     struct specifier_s * spec;
 };
 

@@ -35,7 +35,8 @@ TESTS = t_01_ccomment \
 	t_35_rule_list \
 	t_36_rule \
 	t_37_specifier_list \
-	t_38_specifer
+	t_38_specifer \
+	t_39_negated_specifier
 
 check_PROGRAMS = scan parse emit
 
