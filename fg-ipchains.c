@@ -3,7 +3,7 @@
  *
  * XXX - maybe some of this could be shared with the iptables one?
  *
- * $Id: fg-ipchains.c,v 1.16 2002/07/19 16:30:58 matthew Exp $
+ * $Id: fg-ipchains.c,v 1.17 2002/07/21 14:18:06 matthew Exp $
  */
 
 #include <stdio.h>
@@ -127,8 +127,8 @@ static int cb_ipchains_rule(const struct filterent *ent, struct fg_misc *misc)
 	orules++, oprintf("ipchains -A %s %s\n", rulechain, rule+1);
 	if(needret) orules++, oprintf("ipchains -I %s %s\n", revchain, rule_r+1);
 	if(isforward) {
-		orules++, oprintf("ipchains -A FORWARD %s\n", rule+1);
-		if(needret) orules++, oprintf("ipchains -I FORWARD %s\n", rule_r+1);
+		orules++, oprintf("ipchains -A forward %s\n", rule+1);
+		if(needret) orules++, oprintf("ipchains -I forward %s\n", rule_r+1);
 	}
 
 	free(rule); free(rule_r);
