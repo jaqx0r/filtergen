@@ -1,3 +1,6 @@
+0.13:
+	Changed build system to SCons.
+
 0.12.4:
 	Added directory include support.
 	Fixed relative-path include error in fgadm.
