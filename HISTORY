@@ -4,6 +4,8 @@
 	added test suite
 	add "oneway" option
 	fix iptables log message format (append a space)
+	add "fgadm" command
+	multi-homed host support
 
 0.11:
 	fixed non-working example in filter_syntax man page

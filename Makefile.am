@@ -1,6 +1,6 @@
 SUBDIRS = . t
 
-bin_PROGRAMS = filtergen
+sbin_PROGRAMS = filtergen
 sbin_SCRIPTS = fgadm
 
 filtergen_SOURCES = \

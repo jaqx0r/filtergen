@@ -438,7 +438,7 @@ void filter_apply_flags(struct filter *f, long flags)
 		    fprintf(stderr, "warning: can't lookup name \"%s\"\n", a->addrstr);
 		} else {
 		    free(a->addrstr);
-		    a->addrstr = strdup(inet_ntoa(*(struct in_addr*)h->h_addr_list[0]));
+		    a->addrstr = strdup(h->h_addr_list[0]);
 		}
 	    }
 	}
