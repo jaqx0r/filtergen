@@ -1,16 +1,16 @@
 #!/bin/sh
 
-FILTER=@SYSCONFDIR@/rules.filter
-CONF=@SYSCONFDIR@/filtergen.conf
+FILTER=%(SYSCONFDIR)s/rules.filter
+CONF=%(SYSCONFDIR)s/filtergen.conf
 
-FILTERGEN=@SBINDIR@/filtergen
+FILTERGEN=%(SBINDIR)s/filtergen
 
 # move to the config directory so relative includes work
-if ! test -d @SYSCONFDIR@ ; then
-	echo @SYSCONFDIR@ not found
+if ! test -d %(SYSCONFDIR)s ; then
+	echo %(SYSCONFDIR)s not found
 	exit 1
 fi
-cd @SYSCONFDIR@
+cd %(SYSCONFDIR)s
 
 # load config options
 if [ -f $CONF ]; then
