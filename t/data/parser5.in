@@ -1,2 +1,2 @@
-# a full rule with all specifiers
-input eth0 source foo dest bar proto udp sport 37000 dport 80 drop;
+# a full rule with all specifiers - doesn't need to make sense
+input eth0 source foo dest bar proto udp sport 37000 dport 80 icmptype echo-request drop;
