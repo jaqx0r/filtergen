@@ -15,3 +15,10 @@ input eth0 {
 };
 # empty subrules
 input eth0 {};
+# nested empty
+output eth0 {
+	{ proto tcp; proto udp } dport domain;
+} accept;
+# with and without final semicolon
+{ proto foo; proto bar; };
+{ proto foo; proto bar };
