@@ -1,7 +1,7 @@
 /*
  * Filter generator, iptables driver
  *
- * $Id: fg-iptables.c,v 1.12 2001/10/23 20:13:04 matthew Exp $
+ * $Id: fg-iptables.c,v 1.13 2001/11/04 22:43:55 matthew Exp $
  */
 
 /*
@@ -206,16 +206,21 @@ static int cb_iptables(const struct filterent *ent, void *misc)
 }
 
 
-int fg_iptables(struct filter *filter)
+int fg_iptables(struct filter *filter, int skel)
 {
 	long feat;
 	int r;
 
 	filter_unroll(&filter);
-	puts("for f in INPUT OUTPUT FORWARD; do iptables -P $f DROP; done");
-	puts("iptables -F; iptables -X");
-	puts("iptables -t nat -F; iptables -t nat -X");
+	if(skel) {
+		puts("for f in INPUT OUTPUT FORWARD; do iptables -P $f DROP; done");
+		puts("iptables -F; iptables -X");
+		puts("iptables -t nat -F; iptables -t nat -X");
+	}
 	r = filtergen_cprod(filter, cb_iptables, (void*)&feat);
-	puts("for f in INPUT OUTPUT FORWARD; do iptables -A $f -j LOG; done");
-	return r + 3;
+	if(skel) {
+		puts("for f in INPUT OUTPUT FORWARD; do iptables -A $f -j LOG; done");
+		r += 3;
+	}
+	return r;
 }

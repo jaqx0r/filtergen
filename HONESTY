@@ -9,17 +9,18 @@ useful to you (though shouldn't put you off contributing).
 
 STATUS
 
-Hard to tell.  I believe that the iptables and ipchains drivers
-support all the features of the parser and seem to generate sane-
-looking rules.  I believe that the ipchains driver doesn't leak,
-though I have a couple of issues with the iptables one.
+Hard to tell.  The iptables and ipchains drivers support all the
+features of the parser and seem to generate sane-looking rules.
+I believe that the ipchains driver doesn't leak, though I have a
+couple of issues with the iptables one.
 
 The ipfilter backend seems to generate OK-looking rules, but it
 doesn't support NAT and I don't even have a BSD box to test it on.
 
 The language is likely to evolve as more features are implemented.
-Specifically, I'd like it to express fundamental filtering and
-networking concepts, rather than being an iptables macro language.
+Specifically, I'd like it to express fundamental networking and,
+specifically, filtering concepts, rather than being an iptables
+macro language.
 
 The Cisco ACL generator will silently drop negations, which makes
 is essentially useless for a lot of things.  This will be fixed,
@@ -33,4 +34,4 @@ working well.  But "working well" does not imply security, and I
 have not expended a great deal of effort in auditing.
 
 
-$Id: HONESTY,v 1.6 2001/10/23 20:13:04 matthew Exp $
+$Id: HONESTY,v 1.7 2001/11/04 22:43:55 matthew Exp $

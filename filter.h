@@ -1,4 +1,4 @@
-/* $Id: filter.h,v 1.7 2001/10/06 20:24:35 matthew Exp $ */
+/* $Id: filter.h,v 1.8 2001/11/04 22:43:55 matthew Exp $ */
 #ifndef _FK_FILTER_H
 #define _FK_FILTER_H
 
@@ -97,7 +97,7 @@ char *strapp(char *s, const char *n);
 #define strapp2(s,n1,n2) strapp(strapp(s,n1),n2)
 
 /* various drivers */
-typedef int filtergen(struct filter *filter);
+typedef int filtergen(struct filter *filter, int skel);
 filtergen fg_iptables, fg_ipchains, fg_ipfilter, fg_cisco;
 
 #endif /* _FK_FILTER_H */

@@ -1,7 +1,7 @@
 /*
  * filter compilation front-end
  *
- * $Id: filtergen.c,v 1.7 2001/10/06 17:22:09 matthew Exp $
+ * $Id: filtergen.c,v 1.8 2001/11/04 22:43:55 matthew Exp $
  */
 
 #include <stdio.h>
@@ -33,11 +33,20 @@ int main(int argc, char **argv)
 	char buf[100];
 	char *ftn;
 	struct filtyp *ft;
+	int skel = 1;
+	char *progname;
+
+	progname = argv[0];
+
+	if((argc > 1) && !strcmp(argv[1], "-n")) {
+		argc--; argv++;
+		skel = 0;
+	}
 
 	if((argc > 1) && strcmp(argv[1], "-")) {
 		if(!(yyin = fopen(argv[1], "r"))) {
 			fprintf(stderr, "%s: can't open file \"%s\"\n",
-					argv[0], argv[1]);
+					progname, argv[1]);
 			return 1;
 		}
 	} else {
@@ -63,7 +72,7 @@ int main(int argc, char **argv)
 			localtime((time(&t),&t)));
 	printf("# filter generated from %s via %s backend at %s\n",
 		argv[1] ?: "standard input", ft->name, buf);
-	l = ft->compiler(f);
+	l = ft->compiler(f, skel);
 
 	if(l < 0) {
 		fprintf(stderr, "an error occurred: most likely the filters defined make no sense\n");
