@@ -142,6 +142,7 @@ EMIT(port_argument_list) {
     if (n->list) {
 	eprint("emitting port_argument_list\n");
 	emit_port_argument_list(n->list);
+	printf(" ");
     }
     eprint("emitting simple_port_argument\n");
     emit_simple_port_argument(n->arg);
