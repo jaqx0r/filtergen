@@ -1,0 +1,10 @@
+# test hostname variations
+source foo;
+source bar/24;
+source baz/255.255.255.248;
+source meep/0;
+source sod/255.0
+source 127.0.0.1/32;
+source 127.0.0.1/255.255.255.255;
+source mail.example.com;
+source mail.example.com/24;

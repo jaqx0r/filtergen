@@ -18,7 +18,8 @@ TESTS = t_01_ccomment \
 	t_18_manyemptyrules \
 	t_19_simplerule \
 	t_20_fullrule \
-	t_21_compoundarg
+	t_21_compoundarg \
+	t_22_hostnames
 
 check_PROGRAMS = scan parse
 
