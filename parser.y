@@ -187,9 +187,8 @@ routing_specifier: TOK_LOCAL
 compound_specifier: TOK_LCURLY subrule_list TOK_RCURLY
 	;
 
-subrule_list: specifier
-	| specifier TOK_SEMICOLON
-	| subrule_list specifier
+subrule_list: specifier_list
+	| subrule_list TOK_SEMICOLON specifier_list
 	;
 
 log_text_argument: TOK_STRINGLITERAL
