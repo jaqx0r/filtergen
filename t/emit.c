@@ -29,9 +29,10 @@ EMIT(subrule_list) {
 }
 
 EMIT(chaingroup_specifier) {
-    printf("[ ");
-    if (n->name)
-	printf("\"%s\" ", n->name);
+    printf("[");
+    if (n->name) {
+	printf(" \"%s\"", n->name);
+    }
     printf("\n");
     eprint("emitting subrule_list\n");
     emit_subrule_list(n->list);

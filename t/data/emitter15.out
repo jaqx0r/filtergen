@@ -1,26 +1,26 @@
-[ 
+[
 ];
-[ 
+[
 proto tcp];
-[ 
+[
 accept;
 reject;
 ];
-[ "foo" 
+[ "foo"
 ];
-[ "foo" 
+[ "foo"
 proto tcp;
 ];
-[ "foo" 
+[ "foo"
 accept;
 reject;
 ];
-[ "foo" 
+[ "foo"
 ];
-[ "foo" 
+[ "foo"
 proto tcp;
 ];
-[ "foo" 
+[ "foo"
 accept;
 reject;
 ];
