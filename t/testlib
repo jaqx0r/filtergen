@@ -60,6 +60,6 @@ test "x$srcdir" = "x" && set -x
 testdir=`pwd`/$testdir
 
 if test -d $testdir/t/data ; then
-	echo "fucken, testdir not in $testdir"
+	echo "testlib error: testdir not in $testdir"
 	fail
 fi
