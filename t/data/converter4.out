@@ -26,6 +26,24 @@
         ( accept
          )
        )
+      next
+      ( input eth0
+        child
+        ( dest foo/255.255.255.0
+          child
+          ( accept
+           )
+         )
+        next
+        ( input eth0
+          child
+          ( dest foo/255.255.255.255
+            child
+            ( accept
+             )
+           )
+         )
+       )
      )
    )
  )

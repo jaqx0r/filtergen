@@ -136,14 +136,17 @@ struct filter * convert_direction(struct direction_specifier_s * n) {
 
 struct filter * convert_host_argument(struct simple_host_argument_s * n, int type) {
     struct filter * res = NULL;
+    char * h;
 
     eprint("converting simple_host_argument\n");
 
     if (n->host) {
-        res = new_filter_host(type, n->host);
         if (n->mask) {
-            printf("error: mask not handled\n");
-        }
+	  asprintf(&h, "%s/%s", n->host, n->mask);
+	  res = new_filter_host(type, h);
+	} else {
+	  res = new_filter_host(type, n->host);
+	}
     } else {
         printf("error: no host part\n");
     }
