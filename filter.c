@@ -52,10 +52,10 @@ struct filter *new_filter_target(enum filtertype target)
 }
 
 
-struct filter *new_filter_log(enum filtertype ltype, const char *text)
+struct filter *new_filter_log(enum filtertype type, const char *text)
 {
 	struct filter *f;
-	if ((f = __new_filter(F_LOG))) {
+	if ((f = __new_filter(type))) {
 		f->u.logmsg = text ? strdup(text) : NULL;
 	}
 	return f;
@@ -118,7 +118,7 @@ struct filter *new_filter_proto(enum filtertype type, const char *name)
 		return NULL;
 	}
 
-	if ((f = __new_filter(F_PROTO))) {
+	if ((f = __new_filter(type))) {
 		f->u.proto.num = e->p_proto;
 		f->u.proto.name = strdup(e->p_name);
 	}
@@ -223,7 +223,7 @@ struct filter *new_filter_ports(enum filtertype type, const char *matchstr)
 struct filter *new_filter_icmp(enum filtertype type, const char *matchstr)
 {
 	struct filter *f;
-	if ((f = __new_filter(F_ICMPTYPE))) {
+	if ((f = __new_filter(type))) {
 		f->u.icmp = strdup(matchstr);
 	}
 	return f;
@@ -384,6 +384,8 @@ void filter_nogroup(struct filter *f)
  */
 void filter_noneg(struct filter **f)
 {
+    if (f) {};
+    return;
 	
 }
 

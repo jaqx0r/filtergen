@@ -44,11 +44,11 @@ void emit_compound_specifier(struct compound_specifier_s * n) {
 	}
 	for (s = n->list; s; s = s->subrule_list) {
 	    if (s->specifier_list) {
-		int count = 0;
+		int count0 = 0;
 
 		for (t = s->specifier_list; t; t = t->list)
-		    count++;
-		if (count > 1) {
+		    count0++;
+		if (count0 > 1) {
 		    nest();
 		    printf("and\n");
 		}
@@ -56,7 +56,7 @@ void emit_compound_specifier(struct compound_specifier_s * n) {
 		    if (t->spec)
 			emit_negated_specifier(t->spec);
 		}
-		if (count > 1)
+		if (count0 > 1)
 		    unnest();
 	    }
 	}
@@ -196,7 +196,7 @@ void emit_ast(struct ast_s * n) {
     }
 }
 
-int main(int argc, char ** argv) {
+int main(int argc __attribute__((unused)), char ** argv __attribute__((unused))) {
     char * FACTTRACE;
     struct ast_s ast;
     int r;

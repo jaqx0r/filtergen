@@ -1,6 +1,8 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
+
 #include "../parser.h"
 
 extern char * yytext;
@@ -12,70 +14,70 @@ char * tok_map(int c) {
     char * r;
     switch (c) {
       case TOK_ACCEPT:
-	r = "accept"; break;
+	r = strdup("accept"); break;
       case TOK_DEST:
-	r = "dest"; break;
+	r = strdup("dest"); break;
       case TOK_DPORT:
-	r = "dport"; break;
+	r = strdup("dport"); break;
       case TOK_DROP:
-	r = "drop"; break;
+	r = strdup("drop"); break;
       case TOK_FORWARD:
-	r = "forward"; break;
+	r = strdup("forward"); break;
       case TOK_ICMPTYPE:
-	r = "icmptype"; break;
+	r = strdup("icmptype"); break;
       case TOK_INPUT:
-	r = "input"; break;
+	r = strdup("input"); break;
       case TOK_LCURLY:
-	r = "lcurly"; break;
+	r = strdup("lcurly"); break;
       case TOK_LOCAL:
-	r = "local"; break;
+	r = strdup("local"); break;
       case TOK_LOG:
-	r = "log"; break;
+	r = strdup("log"); break;
       case TOK_LSQUARE:
-	r = "lsquare"; break;
+	r = strdup("lsquare"); break;
       case TOK_MASQ: 
-	r = "masq"; break;
+	r = strdup("masq"); break;
       case TOK_ONEWAY:
-	r = "oneway"; break;
+	r = strdup("oneway"); break;
       case TOK_OUTPUT:
-	r = "output"; break;
+	r = strdup("output"); break;
       case TOK_PROTO:
-	r = "proto"; break;
+	r = strdup("proto"); break;
       case TOK_PROXY:
-	r = "proxy"; break;
+	r = strdup("proxy"); break;
       case TOK_RCURLY:
-	r = "rcurly"; break;
+	r = strdup("rcurly"); break;
       case TOK_REDIRECT:
-	r = "redirect"; break;
+	r = strdup("redirect"); break;
       case TOK_REJECT:
-	r = "reject"; break;
+	r = strdup("reject"); break;
       case TOK_RSQUARE:
-	r = "rsquare"; break;
+	r = strdup("rsquare"); break;
       case TOK_SEMICOLON:
-	r = "semicolon"; break;
+	r = strdup("semicolon"); break;
       case TOK_SOURCE:
-	r = "source"; break;
+	r = strdup("source"); break;
       case TOK_SPORT:
-	r = "sport"; break;
+	r = strdup("sport"); break;
       case TOK_TEXT:
-	r = "text"; break;
+	r = strdup("text"); break;
       case TOK_IDENTIFIER:
-	r = "identifier"; break;
+	r = strdup("identifier"); break;
       case TOK_DOT:
-	r = "dot"; break;
+	r = strdup("dot"); break;
       case TOK_SLASH:
-	r = "slash"; break;
+	r = strdup("slash"); break;
       case TOK_BANG:
-	r = "bang"; break;
+	r = strdup("bang"); break;
       case TOK_COLON:
-	r = "colon"; break;
+	r = strdup("colon"); break;
       default:
-	r = "UNRECOGNISED"; break;
+	r = strdup("UNRECOGNISED"); break;
     }
     return r;
 }  
 
-int main(int argc, char ** argv) {
+int main(int argc __attribute__((unused)), char ** argv __attribute__((unused))) {
     int c;
 
     /* if running in make distcheck the cwd isn't the same as the srcdir */
