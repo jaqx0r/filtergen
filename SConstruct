@@ -58,14 +58,21 @@ filtergen  = env.Program('filtergen', ['filtergen.c',
 									 'gen.c',
 									 'filter.c',
 									 'fg-util.c',
-									 'fg-iptables.c',
-									 'fg-ipchains.c',
-									 'fg-ipfilter.c',
-									 'fg-cisco.c',
 									 'icmpent.c',
 									 'factoriser.c'],
-						 LIBS=['in_filtergen'],
-						 LIBPATH='input/filtergen')
+						 LIBS=['in_filtergen',
+							   'out_iptables',
+							   'out_ipchains',
+							   'out_ipfilter',
+							   'out_cisco'
+							   ],
+						 LIBPATH=['input/filtergen',
+								  'output/iptables',
+								  'output/ipchains',
+								  'output/ipfilter',
+								  'output/cisco'
+								  ]
+						 )
 
 def sed(target, source, env):
 	expandos = {
@@ -91,6 +98,10 @@ env.Command(['fgadm.conf', 'rules.filter'],
 SConscript([
 	'input/filtergen/SConscript',
 	'input/iptables/SConscript',
+	'output/iptables/SConscript',
+	'output/ipchains/SConscript',
+	'output/ipfilter/SConscript',
+	'output/cisco/SConscript',
 	], 'env')
 
 env.Install(DESTDIR + sbindir, [filtergen, fgadm])
