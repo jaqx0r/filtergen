@@ -7,10 +7,10 @@ level description language.  It doesn't support all of the whizz-bang
 features of the latest and greatest packet filters, but supports a
 decent subset which is sufficient for me.
 
-It currently supports only Linux iptables, but ipchains, Cisco IOS and
-perhaps others are planned.  It doesn't generate optimal rulesets, and
-has a few limitations which need to be removed, but is still a useful
-tool.
+It currently supports only Linux iptables and ipchains.  Cisco IOS has
+been begun, but is incomplete.  Darren Reed's ipfilter may be supported
+at some stage.  It doesn't generate optimal rulesets, and has a few
+limitations which need to be removed, but is still a useful tool.
 
 There's a basic webpage at http://hairy.beasts.org/filter/
 
@@ -32,11 +32,21 @@ or as a filter itself:
 
 $ cat source.file | filtergen > output.rules
 
+The default output mode is for iptables, but you can override this
+by giving an extra argument on the command-line:
+
+$ filtergen oldbox.filter ipchains > oldbox.rules
+
+and using "-" to imply standard input:
+
+$ cat oldbox.filter | filtergen - ipchains > oldbox.rules
+
 
 SYNTAX
 
-The syntax looks not entirely unlike that of "fk"s ACL facility, and
-it might be worth familiarising yourself with that first (not least
+The syntax looks not entirely unlike that of "fk"s ACL facility ("fk"
+is another project of mine, and lives at http://hairy.beasts.org/fk/),
+and it might be worth familiarising yourself with that first (not least
 because it is a lot less experimental).
 
 An example will probably show most of the basics.  Here's a simple one
@@ -85,20 +95,20 @@ So a simple rule like:
 
 might generate ipchains rules like:
 
-	ipchains -A output -i eth0 -p tcp --dport http -j ACCEPT
-	ipchains -A input -i eth0 -p tcp --sport http ! --syn -j ACCEPT
+	ipchains -A output -i eth0 -p tcp --dport=http -j ACCEPT
+	ipchains -A input -i eth0 -p tcp ! --syn --sport=http -j ACCEPT
 
 to give simple "state" matching -- the second rule will block any
 packets which could initiate a connection.  Otherwise, an attacker
 could connect to any port on your machine merely by binding the
 attack program to port 80 on his machine.
 
-The same rule might generate these iptable rules as below:
+The same rule might generate iptables rule resembling:
 
-	iptables -A output -o eth0 -p tcp --dport=http 		\
-		-m state --state=NEW,ESTABLISHED -j ACCEPT
-	iptables -A input -i eth0 -p tcp --sport=http ! --syn	\
-		-m state --state=ESTABLISHED -j ACCEPT
+	iptables -A OUTPUT -o eth0 -p tcp -m state --state=NEW,ESTABLISHED \
+		--dport=http -j ACCEPT
+	iptables -A INPUT -i eth0 -p tcp -m state --state=ESTABLISHED ! --syn \
+		--sport=http -j ACCEPT
 
 Note the explicit state checking here (which, in theory, makes the
 "! --syn" bit unnecessary, but a bit of defence in depth never hurt).
@@ -122,4 +132,4 @@ to permit or refuse a connection -- it acts only on single packets,
 and is not really able to reason about connections (whatever the blurb
 claims).  It also matches the terminology used by Linux's iptables.
 
-$Id: README,v 1.2 2001/09/25 17:37:10 matthew Exp $
+$Id: README,v 1.3 2001/10/03 20:23:36 matthew Exp $
