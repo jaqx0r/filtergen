@@ -1,4 +1,6 @@
-/* $Id: filter.c,v 1.14 2002/09/02 11:10:42 matthew Exp $ */
+/* $Id: filter.c,v 1.15 2002/09/13 09:00:16 matthew Exp $ */
+
+#include "filter.h"
 
 #include <arpa/inet.h>
 
@@ -6,8 +8,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <netdb.h>
-
-#include "filter.h"
 
 
 struct filter *__new_filter(enum filtertype type)
