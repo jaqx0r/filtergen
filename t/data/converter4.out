@@ -1,0 +1,31 @@
+( input eth0
+  child
+  ( dest foo
+    child
+    ( accept
+     )
+   )
+  next
+  ( input eth0
+    child
+    ( source foo
+      child
+      ( reject
+       )
+     )
+    next
+    ( input eth0
+      child
+      ( siblist
+        ( dest foo
+          next
+          ( dest bar
+           )
+         )
+        child
+        ( accept
+         )
+       )
+     )
+   )
+ )

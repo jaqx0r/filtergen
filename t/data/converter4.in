@@ -1,0 +1,5 @@
+# check hosts
+input eth0 dest foo accept;
+input eth0 source foo reject;
+# compound
+input eth0 dest { foo bar } accept;

@@ -24,13 +24,11 @@ int filter_fopen(const char * filename) {
     return 0;
 }
 
-#define CONVERT(x) struct filter * convert_##x(struct x##_s * n)
-
 #define eprint(x) if (convtrace) fprintf(stderr, x)
 
-CONVERT(specifier_list);
+struct filter * convert_specifier_list(struct specifier_list_s * n);
 
-CONVERT(subrule_list) {
+struct filter * convert_subrule_list(struct subrule_list_s * n) {
     struct filter * res = NULL; /*, * end = NULL; */
 
     eprint("converting subrule_list\n");
@@ -136,6 +134,86 @@ struct filter * convert_direction(struct direction_specifier_s * n) {
     return res;
 }
 
+struct filter * convert_host_argument(struct simple_host_argument_s * n, int type) {
+    struct filter * res = NULL;
+
+    eprint("converting simple_host_argument\n");
+
+    if (n->host) {
+        if (n->host->host) {
+            res = new_filter_host(type, n->host->host);
+        } else {
+            printf("error: no host identifier\n");
+        }
+    } else {
+        printf("error: no host part\n");
+    }
+
+    return res;
+}
+
+struct filter * convert_host_argument_list(struct host_argument_list_s * n, int type) {
+    struct filter * res = NULL, * end = NULL;
+
+    eprint("converting host argument list\n");
+
+    if (n->list) {
+        res = convert_host_argument_list(n->list, type);
+        if (res) {
+            end = res;
+            while (end->next) {
+                end = end->next;
+            }
+            if (n->arg) {
+                end->next = convert_host_argument(n->arg, type);
+            }
+        } else {
+            printf("warning: convert_host_argument_list returned NULL\n");
+        }
+    } else {
+        res = convert_host_argument(n->arg, type);
+    }
+
+    return res;
+}
+
+struct filter * convert_host_specifier(struct host_specifier_s * n) {
+    struct filter * res = NULL;
+    enum filtertype type;
+	
+    eprint("converting host specifier\n");
+
+    switch (n->type) {
+    case TOK_SOURCE:
+        type = F_SOURCE;
+        break;
+    case TOK_DEST:
+        type = F_DEST;
+        break;
+    default:
+        printf("error: incorrect host type encountered\n");
+        type = YYEOF;
+        break;
+    }
+    if (n->arg) {
+        if (n->arg->simple) {
+            res = convert_host_argument(n->arg->simple, type);
+        } else if (n->arg->compound) {
+            if (n->arg->compound->list) {
+                res = new_filter_sibs(convert_host_argument_list(n->arg->compound->list, type));
+            } else {
+                printf("error: no host argument (compound) list\n");
+            }
+        } else {
+            printf("error: neither simple nor compound argument\n");
+        }
+    } else {
+        printf("error: no host argument\n");
+    }
+
+    return res;        
+}
+
 struct filter * convert_specifier(struct specifier_s * r) {
     struct filter * res = NULL;
     eprint("converting specifier\n");
@@ -176,43 +254,7 @@ struct filter * convert_specifier(struct specifier_s * r) {
       }
       res = new_filter_target(type);
     } else if (r->host) {
-	enum filtertype type;
-	
-	eprint("converting host specifier\n");
-
-	switch (r->host->type) {
-	  case TOK_SOURCE:
-	    type = F_SOURCE;
-	    break;
-	  case TOK_DEST:
-	    type = F_DEST;
-	    break;
-	  default:
-	    printf("error: incorrect host type encountered\n");
-	    type = YYEOF;
-	    break;
-	}
-	if (r->host->arg) {
-	    if (r->host->arg->simple) {
-		if (r->host->arg->simple->host) {
-		  eprint("creating new filter host: ");
-		  eprint(r->host->arg->simple->host->host);
-		  eprint("\n");
-		  if (r->host->arg->simple->host->host) {
-		    
-		    res = new_filter_host(type, r->host->arg->simple->host->host);
-		  } else {
-		    printf("error: no actual contents to the host argument (simple) identifier\n");
-		  }
-		} else {
-		    printf("error: no host argument (simple) identifier\n");
-		}
-	    } else {
-		printf("error: no host argument (simple)\n");
-	    }
-	} else {
-	    printf("error: no host argument\n");
-	}
+        res = convert_host_specifier(r->host);
     } else if (r->port) {
       eprint("converting port specifier\n");
 	res = new_filter_ports(F_SPORT, "bar");
