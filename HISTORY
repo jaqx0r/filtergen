@@ -1,3 +1,7 @@
+0.5: that's better
+	much fixing of iptables driver.  Now shouldn't leak
+	like the proverbial sieve
+
 0.4: testing begins
 	add transproxy and masquerading support
 	fix syntax problems with iptables and ipchains output
@@ -22,4 +26,4 @@
 	iptables driver
 	a few bugs
 
-$Id: HISTORY,v 1.9 2001/10/06 20:24:34 matthew Exp $
+$Id: HISTORY,v 1.10 2001/10/23 20:13:04 matthew Exp $
