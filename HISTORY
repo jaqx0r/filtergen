@@ -1,4 +1,4 @@
-recent:
+0.6:
 	disable negation of conjunctions ("or"s, aka brace-grouping) for now
 	add "no skeleton" option
 	fix a couple of segfaults/aborts where input filter is invalid
@@ -34,4 +34,4 @@ recent:
 	iptables driver
 	a few bugs
 
-$Id: HISTORY,v 1.15 2002/04/08 21:54:44 matthew Exp $
+$Id: HISTORY,v 1.16 2002/04/08 21:55:00 matthew Exp $
