@@ -1,5 +1,4 @@
 #include <stdlib.h>
-#include "../tokens.h"
 
 extern char * yytext;
 int yyparse();

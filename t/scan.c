@@ -1,3 +1,5 @@
+#include <unistd.h>
+#include <stdlib.h>
 #include "../parser.h"
 
 extern char * yytext;
@@ -76,6 +78,11 @@ char * tok_map(int c) {
 
 int main(int argc, char ** argv) {
     int c;
+
+    /* if running in make distcheck the cwd isn't the same as the srcdir */
+    if (getenv("srcdir")) {
+	chdir(getenv("srcdir"));
+    }
 
     while (c = yylex()) {
 	printf("kind = %s, spelling = \"%s\", file = \"%s\", line = %ld\n", tok_map(c), yytext, filename(), lineno());

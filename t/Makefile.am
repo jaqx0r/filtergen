@@ -30,4 +30,4 @@ scan_LDADD = ../scanner.o
 parse_SOURCES = parse.c
 parse_LDADD = ../scanner.o ../parser.o
 
-EXTRA_DIST = data/* testlib $(TESTS)
+EXTRA_DIST = $(top_srcdir)/t/data/* testlib $(TESTS)
