@@ -140,10 +140,9 @@ struct filter * convert_host_argument(struct simple_host_argument_s * n, int typ
     eprint("converting simple_host_argument\n");
 
     if (n->host) {
-        if (n->host->host) {
-            res = new_filter_host(type, n->host->host);
-        } else {
-            printf("error: no host identifier\n");
+        res = new_filter_host(type, n->host);
+        if (n->mask) {
+            printf("error: mask not handled\n");
         }
     } else {
         printf("error: no host part\n");
@@ -281,27 +280,7 @@ struct filter * convert_port_argument(struct simple_port_argument_s * n, int typ
     struct filter * res = NULL;
 
     eprint("converting simple_port_argument\n");
-    /*
 
-    if (n->single) {
-        if (n->single->name) {
-            res = new_filter_port(type, n->single->name);
-        } else if (n->single->num) {
-            res = new_filter_port(type, n->single->num);
-        } else {
-            printf("error: no content to single port argument\n");
-        }
-    } else if (n->range) {
-        if (n->range
-        if (n->port->port) {
-            res = new_filter_port(type, n->port->port);
-        } else {
-            printf("error: no port identifier\n");
-        }
-    } else {
-        printf("error: no port part\n");
-    }
-    */
     return res;
 }
 
