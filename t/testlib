@@ -1,0 +1,43 @@
+# source this file for a few useful functions that get repeated at the top
+# of every test
+
+here=`pwd`
+if test $? -ne 0 ; then exit 2 ; fi
+
+work=${TMP_DIR-/tmp}/filtergen-test-$$
+
+pass () {
+    cd $here
+    rm -rf $work
+    exit 0
+}
+
+fail () {
+    cd $here
+    rm -rf $work
+    echo "FAILED testing $TEST"
+    exit 1
+}
+
+no_result () {
+    cd $here
+    rm -rf $work
+    echo "NO RESULT when testing $TEST"
+    exit 2
+}
+
+trap no_result 1 2 3 15
+
+# check for the source dir
+if test -f ../filtergen.c ; then
+    testdir=.
+elif test -f filtergen.c ; then
+    testdir=t
+fi
+
+# srcdir gets defined by the automake test caller, assume it's not defined
+# by the user's environment, so set debug trace on when run manually
+test "x$srcdir" = "x" && set -x
+
+mkdir $work
+if test $? -ne 0 ; then no_result ; fi
