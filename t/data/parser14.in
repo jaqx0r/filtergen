@@ -27,3 +27,5 @@ input eth0 source wwwserv dest dbserv
 	proto tcp dport { 1521 appserv1 appserv2 appserv3 } accept;
 	drop;
 ];
+# now try with a keyword as the chain label
+[ "input" accept; ];

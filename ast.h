@@ -4,6 +4,23 @@
 #ifndef __AST_H__
 #define __AST_H__
 
+struct port_single_s {
+    char * name;
+    int num;
+};
+
+struct port_range_s {
+    struct port_single_s * min;
+    struct port_single_s * max;
+};
+
+struct host_part_s {
+    char * host;
+};
+
+struct netmask_part_s {
+};
+    
 struct specifier_list_s;
 
 struct subrule_list_s {
@@ -21,7 +38,7 @@ struct compound_specifier_s {
 };
 
 struct routing_specifier_s {
-    /* type */
+    int type;
 };
 
 struct simple_icmptype_argument_s {
@@ -69,8 +86,8 @@ struct protocol_specifier_s {
 };
 
 struct simple_port_argument_s {
-    int port_min;
-    int port_max;
+    struct port_range_s * range;
+    struct port_single_s * single;
 };
 
 struct port_argument_list_s {
@@ -88,12 +105,13 @@ struct port_argument_s {
 };
 
 struct port_specifier_s {
-    /* type */
+    int type;
     struct port_argument_s * arg;
 };
 
 struct simple_host_argument_s {
-    char * host;
+    struct host_part_s * host;
+    struct netmask_part_s * netmask;
 };
 
 struct host_argument_list_s {
@@ -111,21 +129,13 @@ struct host_argument_s {
 };
 
 struct host_specifier_s {
-    /* type */
+    int type;
     struct host_argument_s * arg;
-};
-
-struct log_text_argument_s {
-    char * text;
-};
-
-struct log_target_specifier_s {
-    struct log_text_argument_s * arg;
 };
 
 struct target_specifier_s {
     int type;
-    struct log_target_specifier_s * log;
+    char * logtext;
 };
 
 struct simple_direction_argument_s {
@@ -164,7 +174,7 @@ struct specifier_s {
 };
 
 struct negated_specifier_s {
-    /* type */
+    int type;
     struct specifier_s * spec;
 };
 

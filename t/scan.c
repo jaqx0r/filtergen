@@ -55,8 +55,6 @@ char * tok_map(int c) {
 	r = "source"; break;
       case TOK_SPORT:
 	r = "sport"; break;
-      case TOK_STRINGLITERAL:
-	r = "stringliteral"; break;
       case TOK_TEXT:
 	r = "text"; break;
       case TOK_IDENTIFIER:

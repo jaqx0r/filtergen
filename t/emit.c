@@ -40,7 +40,14 @@ EMIT(compound_specifier) {
 }
 
 EMIT(routing_specifier) {
-    /* print type */
+    switch (n->type) {
+      case TOK_LOCAL:
+	printf("local"); break;
+      case TOK_FORWARD:
+	printf("forward"); break;
+      default:
+	printf("error"); break;
+    }
 }
 
 EMIT(simple_icmptype_argument) {
@@ -103,15 +110,40 @@ EMIT(protocol_specifier) {
     emit_protocol_argument(n->arg);
 }
 
+EMIT(port_single) {
+    if (n->name) {
+	eprint("emitting port name\n");
+	printf("%s", n->name);
+    } else {
+	eprint("emitting port number\n");
+	printf("%d", n->num);
+    }
+}
+
+EMIT(port_range) {
+    eprint("emitting port_single\n");
+    emit_port_single(n->min);
+    printf(":");
+    eprint("emitting port_single\n");
+    emit_port_single(n->max);
+}
+
 EMIT(simple_port_argument) {
-    printf("%d", n->port_min);
-    /* FIX this */
-    printf(":%d", n->port_max);
+    if (n->range) {
+	eprint("emitting port_range\n");
+	emit_port_range(n->range);
+    } else if (n->single) {
+	eprint("emitting port_single\n");
+	emit_port_single(n->single);
+    }
 }
 
 EMIT(port_argument_list) {
-    if (n->list)
+    if (n->list) {
+	eprint("emitting port_argument_list\n");
 	emit_port_argument_list(n->list);
+    }
+    eprint("emitting simple_port_argument\n");
     emit_simple_port_argument(n->arg);
 }
 
@@ -129,12 +161,31 @@ EMIT(port_argument) {
 }
 
 EMIT(port_specifier) {
-    /* print type */
+    if (n->type == TOK_DPORT) {
+	printf("dport ");
+    } else if (n->type == TOK_SPORT) {
+	printf("sport ");
+    }
     emit_port_argument(n->arg);
 }
 
-EMIT(simple_host_argument) {
+EMIT(host_part) {
     printf("%s", n->host);
+}
+
+EMIT(netmask_part) {
+}
+
+EMIT(simple_host_argument) {
+    if (n->host) {
+	eprint("emitting host_part\n");
+	emit_host_part(n->host);
+    }
+    if (n->netmask) {
+	printf("/");
+	eprint("emitting netmask_part\n");
+	emit_netmask_part(n->netmask);
+    }
 }
 
 EMIT(host_argument_list) {
@@ -159,29 +210,34 @@ EMIT(host_argument) {
 }
 
 EMIT(host_specifier) {
-    /* print type */
+    if (n->type == TOK_SOURCE) {
+	printf("source ");
+    } else if (n->type == TOK_DEST) {
+	printf("dest ");
+    }
     emit_host_argument(n->arg);
 }
 
-EMIT(log_text_argument) {
-    printf("text \"%s\" ", n->text);
-}
-
-EMIT(log_target_specifier) {
-    printf("log ");
-    if (n->arg)
-	emit_log_text_argument(n->arg);
-}
-
 EMIT(target_specifier) {
-    if (n->type == TOK_ACCEPT) {
-	printf("accept ");
-    } else if (n->type == TOK_REJECT) {
-	printf("reject ");
-    } else if (n->type == TOK_DROP) {
-	printf("drop ");
-    } else {
-	printf("error ");
+    switch (n->type) {
+      case TOK_ACCEPT:
+	printf("accept"); break;
+      case TOK_REJECT:
+	printf("reject"); break;
+      case TOK_DROP:
+	printf("drop"); break;
+      case TOK_REDIRECT:
+	printf("redirect"); break;
+      case TOK_MASQ:
+	printf("masq"); break;
+      case TOK_LOG:
+	printf("log");
+	if (n->logtext) {
+	    printf(" text \"%s\"", n->logtext);
+	}
+	break;
+      default:
+	printf("error"); break;
     }
 }
 
