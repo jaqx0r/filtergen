@@ -1,0 +1,3 @@
+set tool filtergen
+set srcdir ${srcdir}/testsuite
+set objdir `pwd`
