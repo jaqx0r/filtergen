@@ -65,3 +65,14 @@ o [jaq] Implement a negation unroller for filters which can't negate   a
 * New backend: iptables-save format
 
 * New frontend: iptables-save format
+
+* unit tests for recursive include
+
+* unit tests for all code paths in include directive
+
+* " characters in identifiers, do they need to exist?
+
+* forward/local specifiers in filtergen language removed.  add them
+    back?
+
+* generate icmp filters completely
