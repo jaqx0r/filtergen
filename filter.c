@@ -1,4 +1,4 @@
-/* $Id: filter.c,v 1.6 2002/01/25 17:04:55 matthew Exp $ */
+/* $Id: filter.c,v 1.7 2002/04/08 21:54:45 matthew Exp $ */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -49,9 +49,18 @@ struct filter *new_filter_neg(struct filter *sub)
 struct filter *new_filter_sibs(struct filter *list)
 {
 	struct filter *f;
-//	if(!list || !list->next) return list;
 	if ((f = __new_filter(F_SIBLIST))) {
 		f->u.sib = list;
+	}
+	return f;
+}
+
+struct filter *new_filter_subgroup(char *name, struct filter *list)
+{
+	struct filter *f;
+	if ((f = __new_filter(F_SUBGROUP))) {
+		f->u.sub.name = name;
+		f->u.sub.list = list;
 	}
 	return f;
 }
@@ -154,6 +163,9 @@ void __filter_unroll(struct filter *f)
 		}
 		f->child = NULL;
 		break;
+	case F_SUBGROUP:
+		__filter_unroll(f->u.sub.list);
+		break;
 	case F_NEG: abort();
 	default: break;
 	}
@@ -176,6 +188,13 @@ void __filter_neg_expand(struct filter **f, int neg)
 			exit(1);
 		}
 		__filter_neg_expand(&(*f)->u.sib, neg);
+		break;
+	case F_SUBGROUP:
+		if(neg) {
+			fprintf(stderr, "error: can't negate subgroups\n");
+			exit(1);
+		}
+		__filter_neg_expand(&(*f)->u.sub.list, neg);
 		break;
 	case F_NEG: {
 		struct filter *c = (*f)->child;
@@ -217,6 +236,24 @@ void filter_unroll(struct filter **f)
 	__filter_neg_expand(f, 0);
 	__filter_targets_to_end(f);
 	__filter_unroll(*f);
+}
+
+
+void filter_nogroup(struct filter *f)
+{
+	if(!f) return;
+	switch(f->type) {
+	case F_SUBGROUP:
+		f->u.sib = f->u.sub.list;
+		f->type = F_SIBLIST;
+		/* fall through */
+	case F_SIBLIST:
+		filter_nogroup(f->u.sib);
+		break;
+	default:
+	}
+	filter_nogroup(f->child);
+	filter_nogroup(f->next);
 }
 
 

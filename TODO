@@ -7,25 +7,18 @@ Easy:
  * Better Makefiles.
  * Option to do all name lookups (hosts, services, ICMP)
  * Translate icmp names (at least for ipfilter and cisco)
- * masq and transproxy for ipfilter backend
+
+Medium:
+ * Fixup and maintain the cisco and ipfilter backends
+   + Cisco needs testing, negation fixes and options for
+     reflexive ACLs
+   + ipfilter needs testing and masq, transproxy and
+     grouping support
 
 Harder:
  * Testing and auditing of generated rulesets.
  * Option to have just a single "state OK -> accept" rule, instead
    of one per bit of allowed traffic.
- * Support for sub-groups where supported by the underlying filter.
-   For example:
-
-   input eth0 source wwwserv dest dbserv
-   [
-      proto tcp dport { 1521 appserv1 appserv2 appserv3 } accept;
-      proto udp dport { ... } accept;
-      reject;
-   ];
-
-   would have the rules inside "[]" put into a separate iptables
-   or ipchains "chain" (or ipfilter "group") so that the average
-   packet has to be tested against fewer rules.
 
 Hard:
  * Optimiser (de-pessimiser :-) for intermediate step, and also
@@ -38,4 +31,4 @@ Hard:
    This is possible, but tiresome, and will require an optimiser
    if the generated rulesets are not to Suck.
 
-$Id: TODO,v 1.8 2001/11/05 10:40:34 matthew Exp $
+$Id: TODO,v 1.9 2002/04/08 21:54:45 matthew Exp $
