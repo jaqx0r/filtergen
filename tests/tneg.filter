@@ -1,10 +1,18 @@
 # test negations
-# $Id: tneg.filter,v 1.1 2001/09/25 17:22:39 matthew Exp $
+# $Id: tneg.filter,v 1.2 2001/10/03 19:01:54 matthew Exp $
 
-input eth0 source foo dest bar reject;
-input eth0 { source foo dest bar } reject;
-input eth0 ! source foo dest bar reject;
-input eth0 ! source foo ! dest bar reject;
-input eth0 source foo ! dest bar reject;
-input eth0 ! { source foo dest bar } reject;
-input eth0 ! { source foo ! dest bar } reject;
+#input eth0 source foo dest bar reject;
+#input eth0 { source foo dest bar } reject;
+#input eth0 ! source foo dest bar reject;
+#input eth0 ! source foo ! dest bar reject;
+#input eth0 source foo ! dest bar reject;
+#input eth0 ! { source foo dest bar } reject;
+#input eth0 ! { source foo ! dest bar } reject;
+
+input eth0 source foo dest bar drop;
+input eth0 { source foo dest bar } drop;
+input eth0 ! source foo dest bar drop;
+input eth0 ! source foo ! dest bar drop;
+input eth0 source foo ! dest bar drop;
+input eth0 ! { source foo dest bar } drop;
+input eth0 ! { source foo ! dest bar } drop;

@@ -1,4 +1,4 @@
-/* $Id: filter.h,v 1.1 2001/09/25 17:22:39 matthew Exp $ */
+/* $Id: filter.h,v 1.2 2001/10/03 19:01:54 matthew Exp $ */
 #ifndef _FK_FILTER_H
 #define _FK_FILTER_H
 
@@ -22,6 +22,7 @@ enum filtertype {
 	F_SOURCE, F_DEST, F_SPORT, F_DPORT,
 	F_PROTO, 
 	F_NEG, F_SIBLIST,
+	F_TARGET,
 	/* this must be last */
 	F_FILTER_MAX,
 };
@@ -30,6 +31,7 @@ enum filtertype {
 struct filter {
 	enum filtertype type;
 	union {
+		enum filtertype target;
 		char *iface;
 		char *addrs;
 		char *ports;
@@ -47,18 +49,22 @@ struct filter {
 /* from filter.c */
 typedef struct filter *filter_tctor(enum filtertype);
 filter_tctor __new_filter;
-#define new_filter_sense(x) __new_filter((x))
+struct filter *new_filter_target(enum filtertype);
 struct filter *new_filter_neg(struct filter *sub);
 struct filter *new_filter_sibs(struct filter *list);
 typedef struct filter *filter_ctor(enum filtertype, const char*);
 filter_ctor new_filter_device, new_filter_host, new_filter_ports;
 filter_tctor new_filter_proto;
+
+/* filter manipulations */
 void filter_unroll(struct filter **f);
+void filter_noneg(struct filter **f);
+
 
 /* from generated lexer and parer in filterlex.l */
 struct filter *filter_parse_list(void);
 
-/* from filtergen.c */
+/* from gen.c */
 struct filterent {
 	/* All these must be set */
 	enum filtertype direction;
@@ -77,11 +83,15 @@ struct filterent {
 		/* XXX - icmp types here */
 	} u;
 };
-typedef int filtergen(const struct filterent *ent, void *misc);
-int filtergen_cprod(struct filter *filter, filtergen cb, void *misc);
+typedef int fg_callback(const struct filterent *ent, void *misc);
+int filtergen_cprod(struct filter *filter, fg_callback cb, void *misc);
+
+/* fg-util.c */
+char *strapp(char *s, const char *n);
+#define strapp2(s,n1,n2) strapp(strapp(s,n1),n2)
 
 /* various drivers */
-int fg_iptables(const struct filterent *ent, void *misc);
-int fg_ios(const struct filterent *ent, void *misc);
+typedef int filtergen(struct filter *filter);
+filtergen fg_iptables, fg_cisco;
 
 #endif /* _FK_FILTER_H */

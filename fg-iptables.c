@@ -1,7 +1,7 @@
 /*
  * Filter generator, iptables driver
  *
- * $Id: fg-iptables.c,v 1.1 2001/09/25 17:22:39 matthew Exp $
+ * $Id: fg-iptables.c,v 1.2 2001/10/03 19:01:54 matthew Exp $
  */
 
 #include <stdio.h>
@@ -9,7 +9,8 @@
 
 #include "filter.h"
 
-int fg_iptables(const struct filterent *ent, void *misc)
+
+int cb_iptables(const struct filterent *ent, void *misc)
 {
 	const char *chain, *chain_r, *target;
 	const char *proto, *state, *state_r;
@@ -85,4 +86,11 @@ int fg_iptables(const struct filterent *ent, void *misc)
 	}
 
 	return 1 + !!needret;
+}
+
+
+int fg_iptables(struct filter *filter)
+{
+	filter_unroll(&filter);
+	return filtergen_cprod(filter, cb_iptables, NULL);
 }

@@ -1,7 +1,7 @@
-# $Id: Makefile,v 1.2 2001/09/25 17:39:19 matthew Exp $
+# $Id: Makefile,v 1.3 2001/10/03 19:01:54 matthew Exp $
 
 CC=gcc
-CFLAGS=-g
+CFLAGS=-g -Wall -Werror
 LDFLAGS=-g
 
 PROGS=filtergen
@@ -13,8 +13,10 @@ all: $(PROGS)
 %.yy.c: %.l
 	flex -o$@ $<
 
-filtergen: filtergen.o filter.o filterlex.yy.o fg-iptables.o
-	$(CC) -o $@ filtergen.o filter.o filterlex.yy.o fg-iptables.o $(LDFLAGS)
+OBJS=filtergen.o gen.o filter.o filterlex.yy.o fg-util.o fg-iptables.o fg-cisco.o
+
+filtergen: $(OBJS)
+	$(CC) -o $@ $(OBJS) $(LDFLAGS)
 
 clean:
 	rm -f *.o *~ core $(PROGS) *.yy.c
