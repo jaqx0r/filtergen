@@ -41,6 +41,11 @@ if not e.GetOption("clean"):
 		conf.env.append(LIBS = 'getopt')
 	e = conf.Finish()
 
+if ARGUMENTS.get('debug') == 'yes':
+	e.Append(CPPFLAGS = '-g -O0 ')
+else:
+	e.Append(CPPFLAGS = '-O2 ')
+
 DESTDIR = ARGUMENTS.get('DESTDIR', '')
 
 sbindir = '/usr/sbin'

@@ -1,20 +1,9 @@
 AC_INIT(filtergen, 0.13, jaq@spacepants.org)
 AM_INIT_AUTOMAKE([foreign dist-bzip2])
 
-AC_SUBST(PROGRAM)
-AC_SUBST(VERSION)
-
 dnl --------------------------
 dnl configuration success flag
 dnl --------------------------
 
 filtergen_config_ok=yes
 
-AC_MSG_CHECKING([whether to enable debugging compiler options])
-AC_ARG_ENABLE(debug,
-	[  --enable-debug            enable debugging compiler options],
-	AC_MSG_RESULT(yes)
-	tmp_CFLAGS=`echo $CFLAGS | sed 's/O2/O0/g'`
-	CFLAGS="$tmp_CFLAGS",
-	AC_MSG_RESULT(no)
-)
