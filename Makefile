@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.7 2002/04/28 22:18:10 matthew Exp $
+# $Id: Makefile,v 1.8 2002/05/06 13:06:03 matthew Exp $
 
 CC=gcc
 CFLAGS=-g -Wall -Werror
@@ -27,5 +27,5 @@ clean:
 install:
 	install -d $(BINDIR) $(MANDIR)/man{5,8}
 	install -m755 $(PROGS) $(BINDIR)
-	install -m755 *.5 $(MANDIR)/man5
-	install -m755 *.8 $(MANDIR)/man8
+	install -m644 *.5 $(MANDIR)/man5
+	install -m644 *.8 $(MANDIR)/man8

@@ -1,5 +1,5 @@
 .\" filter syntax reference
-.\" $Id: filter_syntax.5,v 1.1 2002/04/28 22:15:39 matthew Exp $
+.\" $Id: filter_syntax.5,v 1.2 2002/05/06 13:06:03 matthew Exp $
 .TH "FILTER SYNTAX" 8
 
 .SH NAME
@@ -52,7 +52,7 @@ options are \fIaccept\fR and \fIdrop\fR which, respectively, state
 that the packet should be allowed as normal, or thrown away.  Some
 backends support \fIreject\fR to throw away a packet, but send
 notification to the sender that it was denied, \fImasq\fR (on \fIoutput\fR
-rules only) to "masquerade" a packet - alter is so that it appears
+rules only) to "masquerade" a packet - alter it so that it appears
 to come from the address of the sending interface - and \fIredirect\fR
 to divert a connection via the local system.
 
