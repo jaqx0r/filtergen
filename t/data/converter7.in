@@ -1,0 +1,3 @@
+# convert icmptype
+input eth0 dest foo proto icmp icmptype echo-request accept;
+input eth0 dest foo proto icmp icmptype { echo-request echo-reply } accept;

@@ -25,7 +25,7 @@ struct routing_specifier_s {
 };
 
 struct simple_icmptype_argument_s {
-    char * identifier;
+    char * icmptype;
 };
 
 struct icmptype_argument_list_s {
