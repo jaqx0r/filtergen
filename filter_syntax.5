@@ -1,5 +1,5 @@
 .\" filter syntax reference
-.\" $Id: filter_syntax.5,v 1.5 2002/08/26 22:10:37 matthew Exp $
+.\" $Id: filter_syntax.5,v 1.6 2002/10/24 09:05:45 matthew Exp $
 .TH "FILTER SYNTAX" 8
 
 .SH NAME
@@ -150,20 +150,26 @@ on the next three, either.  Out-of-line groups  use this fact to
 streamline things somewhat:
 
 .nf
-	input eth0 source foo dest bar proto tcp [
-		{ dport {http https nntp}; sport 1:1023 dport ssh; } accept;
+	input eth0 source foo dest bar [
+		proto tcp {
+			dport {http https nntp};
+			sport 1:1023 dport ssh;
+		} accept;
 	];
-	input eth0 source baz dest quux proto tcp [
-		{ dport {1264 1521 1984 8008 8080 26000}; } accept;
+	input eth0 source baz dest quux [
+		proto tcp { dport {1264 1521 1984 8008 8080 26000}; } accept;
 	];
 .fi
 
 Where the underlying system supports it, everything inside the
 square brackets is moved into a separate "chain" (in ipchains and
 iptables-speak) or "group" (in ipfilter-speak).  Thus, any packet
-not matching "source foo dest bar proto tcp" or "source baz dest
-quux proto tcp" above will be checked against only two rules, not
-eleven.
+not matching "source foo dest bar" or "source baz dest quux" above
+will be checked against only two rules, not eleven.
+
+Note that matches which must appear together, like "proto tcp"
+and "sport 12345" need to be either both in the group, or both
+out of it.
 
 .SH EXAMPLE
 Here's a fairly complete example, for a single-interface machine:
