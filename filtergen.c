@@ -1,7 +1,7 @@
 /*
  * filter compilation front-end
  *
- * $Id: filtergen.c,v 1.14 2002/08/20 22:54:38 matthew Exp $
+ * $Id: filtergen.c,v 1.15 2002/08/21 17:54:27 matthew Exp $
  */
 
 #include <stdio.h>
@@ -117,16 +117,16 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
-	strftime(buf, sizeof(buf)-1, "%a %b %e %H:%M:%S %Z %Y",
-			localtime((time(&t),&t)));
-	oprintf("# filter generated from %s via %s backend at %s\n",
-		fn ?: "standard input", ft->name, buf);
-
 	f = filter_parse_list();
 	if (!f) {
 		fprintf(stderr, "couldn't parse file\n");
 		return 1;
 	}
+
+	strftime(buf, sizeof(buf)-1, "%a %b %e %H:%M:%S %Z %Y",
+			localtime((time(&t),&t)));
+	oprintf("# filter generated from %s via %s backend at %s\n",
+		fn ?: "standard input", ft->name, buf);
 	l = ft->compiler(f, flags);
 
 	if(ofn) fclose(outfile);
