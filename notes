@@ -79,3 +79,63 @@ input eth0 ! source { a b } accept;
 # where 3,4's target is explicitly after [2] target inthe initial input
 #
 # TODO: prove that reordering targets has congruence
+
+
+
+# expression reduction:
+# fold duplicates, e.g.:  (list reduction)
+#   (and x x) = x
+#   (or x x) = x
+# pull out common factors, e.g.:
+#   (or (and x y) (and y z)) = (and y (or x z))
+# special case optimisations:
+#   (or (host a) (host b)) = (host a+b) iff a and b are the sole elements of
+#                                       a CIDR set
+#   (or (port a) (port b)) = (port a:b) iff a and b are consecutive ports
+
+
+
+# common factor puller outerer
+# at each binary operator node (i.e. "and" or "or")
+#   if both children are binary operators of the opposite kind (i.e. "or" or "and" respectively
+#     for each item in the first list:
+#       if item in second list
+#         pull out item from both lists
+#	  reverse operators
+#	  place item in top list
+#	  place sublists in new 
+
+
+#two list reductions
+# common factor extraction
+# (or (and x y) (and y z))
+# y (or (and x) (and z))
+# (and y (or (and x) (and z)))
+# (and y (or x z))
+
+#  (or (and x y z) (and a y z))
+# ^^        ^           ^
+# x in (a y z)?  no
+#  (or (and x y z) (and a y z))
+# ^^          ^         ^
+# y in (a y z)?  yes
+# (and y (or (and x z) (and a z)))
+# ^      ^          ^       ^
+# z in (a z)? yes
+# (and y (or (and x z) (and a z)))
+# ^      ^          ^       ^
+# (and y z (or (and x) (and z)
+# (and y z (or x z))   # singles reduction
+
+
+#one list reductions
+# duplicate reduction
+# (and x x)
+# (and x)
+#
+# (or x y x)
+# (or x y)
+#
+# singles reduction
+# (and x)
+# x
