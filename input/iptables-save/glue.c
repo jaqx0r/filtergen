@@ -18,13 +18,13 @@
  */
 
 #include <stdio.h>
-
 #include "filter.h"
+#include "input/input.h"
 #include "ast.h"
 #include "parser.h"
 
-int yyparse(void *);
-int yyrestart(FILE *);
+int ipts_parse(void *);
+int ipts_restart(FILE *);
 
 int ipts_convtrace = 0;
 
@@ -49,21 +49,18 @@ struct filter * ipts_convert(struct ast_s * ast) {
     return res;
 }
 
-struct filter * ipts_filter_parse_list(void) {
-    struct filter * f = NULL;
+struct filter * ipts_source_parser(FILE * file, int resolve_names __attribute__((unused))) {
     struct ast_s ast;
-    int r;
+    struct filter * f = NULL;
 
-    /* parse the input */
-    r = yyparse((void *) &ast);
-    if (r != 0) {
-	printf("iptables-save parser failed: %d\n", r);
+    ipts_restart(file);
+    if (ipts_parse((void *) &ast) != 0) {
+	fprintf(stderr, "iptables-save parse failed\n");
+	f = NULL;
+    } else {
+	if ((f = ipts_convert(&ast)) == NULL) {
+	    fprintf(stderr, "iptables-save conversion failed\n");
+	}
     }
-
-    /* convert iptables-save AST into filtergen IR */
-    if (!(f = ipts_convert(&ast))) {
-	printf("iptables-save conversion failed!\n");
-    }
-
     return f;
 }

@@ -5,10 +5,10 @@
 
 #include "../parser.h"
 
-extern char * yytext;
-int yylex();
-long int lineno();
-char * filename();
+extern char * ipts_text;
+extern int ipts_lineno;
+int ipts_lex();
+char * ipts_filename();
 
 char * tok_map(int c) {
     char * r;
@@ -49,8 +49,8 @@ int main(int argc __attribute__((unused)), char ** argv __attribute__((unused)))
 	chdir(getenv("srcdir"));
     }
 
-    while ((c = yylex())) {
-	printf("kind = %s, spelling = \"%s\", file = \"%s\", line = %ld\n", tok_map(c), yytext, filename(), lineno());
+    while ((c = ipts_lex())) {
+	printf("kind = %s, spelling = \"%s\", file = \"%s\", line = %d\n", tok_map(c), ipts_text, ipts_filename(), ipts_lineno);
     }
     return 0;
 }

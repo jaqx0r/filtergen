@@ -21,21 +21,20 @@ warnings = ['',
 			'shadow',
 			'bad-function-cast',
 			'write-strings']
-for w in warnings:
-	env.Append(CPPFLAGS='-W%s ' % (w,))
+env.AppendUnique(CCFLAGS=['-W%s' % (w,) for w in warnings])
 
 # set the version
-env.Append(CPPFLAGS = '-DVERSION=\\\"%s\\\" ' % (VERSION,))
+env.AppendUnique(CPPFLAGS=['-DVERSION=\\\"%s\\\"' % (VERSION,)])
 
 # compile as GNU SOURCE to get strndup
-env.Append(CPPFLAGS = '-D_GNU_SOURCE ')
+env.AppendUnique(CPPFLAGS=['-D_GNU_SOURCE'])
 
 Help(opts.GenerateHelpText(env))
 
 if not env.GetOption("clean"):
 	conf = Configure(env)
 	if conf.CheckCHeader('getopt.h'):
-		conf.env.Append(CPPFLAGS = '-DHAVE_GETOPT_H ')
+		conf.env.AppendUnique(CPPFLAGS=['-DHAVE_GETOPT_H'])
 	conf.CheckLib('getopt', 'getopt')
 	env = conf.Finish()
 
@@ -52,14 +51,15 @@ sysconfdir = '/etc/filtergen'
 pkgdocdir = '/usr/share/doc/filtergen'
 pkgexdir = pkgdocdir + '/examples'
 
-env.AppendUnique(CPPPATH=['.'])
+# Add the top level directory to the include path
+env.AppendUnique(CPPPATH=['#'])
 
 filtergen  = env.Program('filtergen', ['filtergen.c',
-									 'gen.c',
-									 'filter.c',
-									 'fg-util.c',
-									 'icmpent.c',
-									 'factoriser.c'],
+									   'gen.c',
+									   'filter.c',
+									   'fg-util.c',
+									   'icmpent.c',
+									   'factoriser.c'],
 						 LIBS=['in_filtergen',
 							   'in_iptables_save',
 							   'out_iptables',

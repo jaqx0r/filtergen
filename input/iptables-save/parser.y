@@ -17,6 +17,10 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+/* prepend all functions with ipts_ to keep the namespace separate
+ * from other parsers */
+%name-prefix="ipts_"
+
 %{
 #include <stdio.h>
 #include <stdlib.h>
@@ -24,10 +28,11 @@
 
 #define YYPARSE_PARAM parm
 
-void yyerror(const char *);
-extern int yylex(void);
+void ipts_error(const char *);
+extern int ipts_lineno;
+extern int ipts_lex(void);
 
-#define YYPRINT(f, t, v) yyprint(f, t, v)
+#define YYPRINT(f, t, v) ipts_print(f, t, v)
 %}
 %debug
 
@@ -65,7 +70,7 @@ extern int yylex(void);
 %token TOK_NEWLINE
 
 %{
-int yyprint(FILE * f, int t, YYSTYPE v);
+int ipts_print(FILE * f, int t, YYSTYPE v);
 %}
 
 %start ast
@@ -214,15 +219,14 @@ pkt_count: TOK_LSQUARE TOK_IDENTIFIER TOK_COLON TOK_IDENTIFIER TOK_RSQUARE
 }
 
 %%
-char * filename();
-long int lineno();
-extern char * yytext;
+char * ipts_filename();
+extern char * ipts_text;
 
-void yyerror(const char * s) {
-    fprintf(stderr, "%s:%ld: %s\n", filename(), lineno(), s);
+void ipts_error(const char * s) {
+    fprintf(stderr, "%s:%d: %s\n", ipts_filename(), ipts_lineno, s);
 }
 
-int yyprint(FILE * f, int type, YYSTYPE v) {
-    fprintf(f, "type=%d,spelling=\"%s\",loc=%p", type, yytext, &v);
+int ipts_print(FILE * f, int type, YYSTYPE v) {
+    fprintf(f, "type=%d,spelling=\"%s\",loc=%p", type, ipts_text, &v);
     return 0;
 }
