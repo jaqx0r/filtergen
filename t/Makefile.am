@@ -61,7 +61,7 @@ TESTS = t_01_ccomment \
 	t_61_convertlog \
 	t_62_convertoptions
 
-check_PROGRAMS = scan parse emit convert
+check_PROGRAMS = scan parse emit convert factorise
 
 scan_SOURCES = scan.c
 scan_LDADD = ../scanner.o ../parser.o
@@ -74,6 +74,9 @@ emit_LDADD = ../scanner.o ../parser.o
 
 convert_SOURCES = convert.c
 convert_LDADD = ../scanner.o ../parser.o ../glue.o ../filter.o ../fg-util.o
+
+factorise_SOURCES = factorise.c
+factorise_LDADD = ../scanner.o ../parser.o
 
 EXTRA_DIST = $(top_srcdir)/t/data/*.in $(top_srcdir)/t/data/*.out \
 	testlib $(TESTS)
