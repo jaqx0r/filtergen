@@ -51,7 +51,12 @@ int main(int argc, char ** argv) {
     }
 
     while ((c = ipts_lex())) {
-      fprintf(stderr, "%s:%d: kind = %s, spelling = \"%s\"\n", ipts_filename(), ipts_lineno, tok_map(c), ipts_text);
+      fprintf(stderr, "%s:%d: kind = %s", ipts_filename(), ipts_lineno, tok_map(c));
+      if (c == TOK_NEWLINE) {
+	fprintf(stderr, "\n");
+      } else {
+	fprintf(stderr, ", spelling = \"%s\"\n", ipts_text);
+      }
     }
     return 0;
 }
