@@ -1,7 +1,7 @@
 /*
  * Filter generator, iptables driver
  *
- * $Id: fg-iptables.c,v 1.29 2002/08/20 17:29:08 matthew Exp $
+ * $Id: fg-iptables.c,v 1.30 2002/08/20 22:54:38 matthew Exp $
  */
 
 /*
@@ -36,6 +36,27 @@
 #define	REJECT	0x01
 #define	A_TCP	0x10
 #define	A_UDP	0x20
+
+
+static char *appip(char *r, const struct addr_spec *h)
+{
+	APPS(r, h->addrstr);
+	if(h->maskstr) APP2(r, "/", h->maskstr);
+	return r;
+}
+#define	APPIP(r, h)		(r = appip(r, h))
+#define	APPIP2(f, r, h)		(APPS(r, f), APPIP(r, h))
+
+
+static char *appport(char *r, const struct port_spec *h)
+{
+	APPS(r, h->minstr);
+	if(h->maxstr) APP2(r, ":", h->maxstr);
+	return r;
+}
+#define	APPPORT(r, h)		(r = appport(r, h))
+#define	APPPORT2(f, r, h)	(APPS(r, f), APPPORT(r, h))
+
 
 static int cb_iptables_rule(const struct filterent *ent, struct fg_misc *misc)
 {
@@ -128,37 +149,37 @@ static int cb_iptables_rule(const struct filterent *ent, struct fg_misc *misc)
 		}
 	}
 
-	if(ent->srcaddr) {
+	if(ent->srcaddr.addrstr) {
 		NEGA(natrule, SOURCE); NEGA(rule, SOURCE); NEGA(rule_r, SOURCE);
-		APPSS2(natrule, "-s", ent->srcaddr);
-		APPSS2(rule, "-s", ent->srcaddr);
-		APPSS2(rule_r, "-d", ent->srcaddr);
+		APPIP2("-s", natrule, &ent->srcaddr);
+		APPIP2("-s", rule, &ent->srcaddr);
+		APPIP2("-d", rule_r, &ent->srcaddr);
 	}
-	if(ent->dstaddr) {
+	if(ent->dstaddr.addrstr) {
 		NEGA(natrule, DEST); NEGA(rule, DEST); NEGA(rule_r, DEST);
-		APPSS2(natrule, "-d", ent->dstaddr);
-		APPSS2(rule, "-d", ent->dstaddr);
-		APPSS2(rule_r, "-s", ent->dstaddr);
+		APPIP2("-d", natrule, &ent->dstaddr);
+		APPIP2("-d", rule, &ent->dstaddr);
+		APPIP2("-s", rule_r, &ent->dstaddr);
 	}
 
 	switch(ent->proto.num) {
 	case 0: break;
 	case IPPROTO_UDP: case IPPROTO_TCP:
-		if(ent->u.ports.src) {
+		if(ent->u.ports.src.minstr) {
 			NEGA(natrule, SPORT);
-			APPSS2(natrule, "--sport", ent->u.ports.src);
 			NEGA(rule, SPORT);
-			APPSS2(rule, "--sport", ent->u.ports.src);
 			NEGA(rule_r, SPORT);
-			APPSS2(rule_r, "--dport", ent->u.ports.src);
+			APPPORT2("--sport", natrule, &ent->u.ports.src);
+			APPPORT2("--sport", rule, &ent->u.ports.src);
+			APPPORT2("--dport", rule_r, &ent->u.ports.src);
 		}
-		if(ent->u.ports.dst) {
+		if(ent->u.ports.dst.minstr) {
 			NEGA(natrule, DPORT);
-			APPSS2(natrule, "--dport", ent->u.ports.dst);
 			NEGA(rule, DPORT);
-			APPSS2(rule, "--dport", ent->u.ports.dst);
 			NEGA(rule_r, DPORT);
-			APPSS2(rule_r, "--sport", ent->u.ports.dst);
+			APPPORT2("--dport", natrule, &ent->u.ports.dst);
+			APPPORT2("--dport", rule, &ent->u.ports.dst);
+			APPPORT2("--sport", rule_r, &ent->u.ports.dst);
 		}
 		break;
 	case IPPROTO_ICMP:
@@ -246,6 +267,7 @@ int fg_iptables(struct filter *filter, int flags)
 	const int nchains = 3;
 
 	filter_unroll(&filter);
+	filter_apply_flags(filter, flags);
 
 	if(!(flags & FF_NOSKEL)) {
 		oputs("CHAINS=\"INPUT OUTPUT FORWARD\"");

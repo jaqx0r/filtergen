@@ -1,7 +1,7 @@
 /*
  * filter compilation front-end
  *
- * $Id: filtergen.c,v 1.13 2002/07/18 21:20:02 matthew Exp $
+ * $Id: filtergen.c,v 1.14 2002/08/20 22:54:38 matthew Exp $
  */
 
 #include <stdio.h>
@@ -64,10 +64,11 @@ int main(int argc, char **argv)
 
 	progname = argv[0];
 
-	while((arg = getopt(argc, argv, "nlrho:t:")) > 0) {
+	while((arg = getopt(argc, argv, "nlmrho:t:")) > 0) {
 		switch(arg) {
 		case 'n': flags |= FF_NOSKEL; break;
 		case 'l': flags |= FF_LSTATE; break;
+		case 'm': flags |= FF_LOOKUP; break;
 		case 'h': flags |= FF_LOCAL; break;
 		case 'r': flags |= FF_ROUTE; break;
 		case 'o': ofn = strdup(optarg); break;

@@ -1,4 +1,4 @@
-/* $Id: filter.h,v 1.15 2002/08/20 17:29:08 matthew Exp $ */
+/* $Id: filter.h,v 1.16 2002/08/20 22:54:38 matthew Exp $ */
 #ifndef _FK_FILTER_H
 #define _FK_FILTER_H
 
@@ -32,6 +32,22 @@ enum filtertype {
 	F_FILTER_MAX,
 };
 
+/* Structures which appear in both the parse tree and the output rule */
+struct proto_spec {
+	int num;
+	char *name;
+};
+
+struct addr_spec {
+	struct in_addr addr, mask;
+	char *addrstr, *maskstr;
+};
+
+struct port_spec {
+	int min, max;
+	char *minstr, *maxstr;
+};
+
 /* This is basically just a parse tree */
 struct filter {
 	enum filtertype type;
@@ -40,13 +56,10 @@ struct filter {
 		enum filtertype log;
 		enum filtertype rtype;
 		char *iface;
-		char *addrs;
-		char *ports;
+		struct addr_spec addrs;
+		struct port_spec ports;
 		char *icmp;
-		struct {
-			int num;
-			char *name;
-		} proto;
+		struct proto_spec proto;
 		struct filter *neg;
 		struct filter *sib;
 		struct {
@@ -74,6 +87,7 @@ filter_ctor new_filter_device, new_filter_host, new_filter_ports, new_filter_icm
 void filter_unroll(struct filter **f);
 void filter_nogroup(struct filter *f);
 void filter_noneg(struct filter **f);
+void filter_apply_flags(struct filter *f, long flags);
 
 
 /* from generated lexer and parer in filterlex.l */
@@ -93,20 +107,17 @@ struct filterent {
 	/* These may or may not be set */
 	int whats_set:F_FILTER_MAX;
 	int whats_negated:F_FILTER_MAX;
-	char *srcaddr, *dstaddr;
+	struct addr_spec srcaddr, dstaddr;
 
 	enum filtertype rtype;
-	struct {
-		int num;
-		char *name;
-	} proto;
+	struct proto_spec proto;
 	enum filtertype log;
 
 
 	/* We need this not to be a union, for error-checking reasons */
 	struct {
 		struct {
-			char *src, *dst;
+			struct port_spec src, dst;
 		} ports;
 		char *icmp;
 	} u;
@@ -127,6 +138,8 @@ int filtergen_cprod(struct filter *filter, fg_callback *cb, struct fg_misc *misc
 /* fg-util.c */
 char *strapp(char *s, const char *n);
 #define strapp2(s,n1,n2) strapp(strapp(s,n1),n2)
+int str_to_int(const char *s, int *i);
+char *int_to_str_dup(int i);
 
 /* various drivers */
 typedef int filtergen(struct filter *filter, int flags);
@@ -136,6 +149,8 @@ filtergen fg_iptables, fg_ipchains, fg_ipfilter, fg_cisco;
 #define	FF_LSTATE	(1 << 1)	/* lightweight state matching */
 #define	FF_LOCAL	(1 << 2)	/* assume packets are local only */
 #define	FF_ROUTE	(1 << 3)	/* assume packets are forwarded */
+#define	FF_LOOKUP	(1 << 4)	/* translate host and service names into
+					 * IP addresses and port numbers */
 
 /* filtergen.c */
 int oputs(const char *s);

@@ -1,4 +1,6 @@
-/* $Id: filter.c,v 1.11 2002/08/20 17:29:08 matthew Exp $ */
+/* $Id: filter.c,v 1.12 2002/08/20 22:54:38 matthew Exp $ */
+
+#include <arpa/inet.h>
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -82,8 +84,14 @@ struct filter *new_filter_proto(enum filtertype type, const char *name)
 {
 	struct filter *f;
 	struct protoent *e;
+	int pn;
 
-	if(!(e = getprotobyname(name))) {
+	if(!str_to_int(name, &pn))
+		e = getprotobynumber(pn);
+	else
+		e = getprotobyname(name);
+
+	if(!e) {
 		fprintf(stderr, "don't know protocol \"%s\"\n", name);
 		return NULL;
 	}
@@ -108,9 +116,40 @@ struct filter *new_filter_device(enum filtertype type, const char *iface)
 struct filter *new_filter_host(enum filtertype type, const char *matchstr)
 {
 	struct filter *f;
-	if ((f = __new_filter(type))) {
-		f->u.addrs = strdup(matchstr);
+	char *mask;
+	int i;
+
+	if (!(f = __new_filter(type))) return f;
+
+	f->u.addrs.addrstr = strdup(matchstr);
+	if((mask = strchr(f->u.addrs.addrstr, '/'))) {
+		*mask++ = 0;
+		if(!str_to_int(mask, &i)) {
+			/* Netmask like foo/24 */
+			uint32_t l = ~(0UL);
+			if(i < 0 || i > 32) {
+				fprintf(stderr, "can't parse netmask \"%s\"\n",
+						mask);
+				return NULL;
+			}
+			if(!i)
+				l = 0;
+			else {
+				i = 32 - i;
+				l >>= i; l <<= i;
+			}
+			f->u.addrs.mask.s_addr = htonl(l);
+		} else {
+			/* Better be a /255.255.255.0 mask */
+			if(!inet_aton(mask, &f->u.addrs.mask)) {
+				fprintf(stderr, "can't parse netmask \"%s\"\n",
+						mask);
+				return NULL;
+			}
+		}
+		f->u.addrs.maskstr = strdup(inet_ntoa(f->u.addrs.mask));
 	}
+
 	return f;
 }
 
@@ -118,8 +157,41 @@ struct filter *new_filter_host(enum filtertype type, const char *matchstr)
 struct filter *new_filter_ports(enum filtertype type, const char *matchstr)
 {
 	struct filter *f;
+	struct servent *s;
+	char *min, *max;
+	int imin, imax;
+
+	min = strdup(matchstr);
+	if((max = strchr(min, ':'))) {
+		*max++ = 0;
+		max = strdup(max);
+	}
+	
+	if(str_to_int(min, &imin)) {
+		if(!(s = getservbyname(min, NULL))) {
+			fprintf(stderr, "unknown service \"%s\"\n", min);
+			return NULL;
+		}
+		free(min); min = strdup(s->s_name);
+		imin = ntohs(s->s_port);
+	}
+	if(max) {
+		if(str_to_int(max, &imax)) {
+			if(!(s = getservbyname(max, NULL))) {
+				fprintf(stderr, "unknown service \"%s\"\n", max);
+				return NULL;
+			}
+			free(max); max = strdup(s->s_name);
+			imax = ntohs(s->s_port);
+		}
+	} else
+		imax = imin;
+
 	if ((f = __new_filter(type))) {
-		f->u.ports = strdup(matchstr);
+		f->u.ports.min = imin;
+		f->u.ports.max = imax;
+		f->u.ports.minstr = min;
+		f->u.ports.maxstr = max;
 	}
 	return f;
 }
@@ -285,4 +357,56 @@ void filter_nogroup(struct filter *f)
 void filter_noneg(struct filter **f)
 {
 	
+}
+
+/*
+ * Apply flags to the tree
+ */
+void filter_apply_flags(struct filter *f, long flags)
+{
+	struct filter *s;
+	if(!f) return;
+	switch(f->type) {
+	/* Structural things */
+	case F_SIBLIST:
+		for(s = f->u.sib; s; s = s->next)
+			filter_apply_flags(s, flags);
+		break;
+	case F_SUBGROUP:
+		filter_apply_flags(f->u.sub.list, flags);
+		break;
+	case F_NEG:
+		filter_apply_flags(f->u.neg, flags);
+		break;
+	/* Real things */
+	case F_SPORT: case F_DPORT:
+		if(flags & FF_LOOKUP) {
+			struct port_spec *p = &f->u.ports;
+			free(p->minstr);
+			p->minstr = int_to_str_dup(p->min);
+			if(p->maxstr) {
+				free(p->maxstr);
+				p->maxstr = int_to_str_dup(p->max);
+			}
+		}
+		break;
+	case F_SOURCE: case F_DEST:
+		if(flags & FF_LOOKUP) {
+			struct addr_spec *a = &f->u.addrs;
+			struct hostent *h;
+			if(!(inet_aton(a->addrstr, &f->u.addrs.addr))) {
+				/* Not already in IP format */
+				if(!(h = gethostbyname(a->addrstr))) {
+					fprintf(stderr, "warning: can't lookup name \"%s\"\n", a->addrstr);
+				} else {
+					free(a->addrstr);
+					a->addrstr = strdup(inet_ntoa(*(struct in_addr*)h->h_addr_list[0]));
+				}
+			}
+		}
+		break;
+	default: break;
+	}
+	filter_apply_flags(f->child, flags);
+	filter_apply_flags(f->next, flags);
 }
