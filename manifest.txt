@@ -1,8 +1,6 @@
-input/*: source readers
 expr.h: factoriser
 factoriser.c: factoriser
 factoriser.h: factoriser
-fg-*.c: output generators
 fg-util.c: output utility
 filter.c: internal representation
 filter.h: internal representation
