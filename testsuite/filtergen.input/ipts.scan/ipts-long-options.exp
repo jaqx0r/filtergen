@@ -28,6 +28,8 @@ set options [list \
 		 "ports" \
 		 { "sports" "SOURCE_PORTS" } \
 		 { "dports" "DESTINATION_PORTS" } \
+		 "to-ports" \
+		 "to-source"
 		]
 
 foreach option_pair $options {

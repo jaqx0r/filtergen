@@ -114,6 +114,7 @@ extern int ipts_lex(void);
 %token TOK_IPTS_ICMP_TYPE
 
 %token TOK_IPTS_TO_PORTS
+%token TOK_IPTS_TO_SOURCE
 
 %token <u_str> TOK_IDENTIFIER
 %token <u_str> TOK_OPTION

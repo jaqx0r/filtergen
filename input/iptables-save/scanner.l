@@ -110,6 +110,7 @@ id	[[:alnum:]_+-\.\/]+
 --icmp-type	return TOK_IPTS_ICMP_TYPE;
 
 --to-ports	return TOK_IPTS_TO_PORTS;
+--to-source	return TOK_IPTS_TO_SOURCE;
 
 	/* everything else */
 {id}	{

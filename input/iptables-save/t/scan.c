@@ -37,6 +37,8 @@ char * tok_map(int c) {
 	tok(SOURCE_PORTS);
 	tok(DESTINATION_PORTS);
 	tok(PORTS);
+	tok(TO_PORTS);
+	tok(TO_SOURCE);
       case TOK_IDENTIFIER:
 	r = strdup("identifier"); break;
       case TOK_LSQUARE:
