@@ -47,7 +47,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root)
 %{_sbindir}/filtergen
 %{_mandir}/*
-%doc HISTORY HONESTY README TODO tests/ extras/router.filter extras/masq.filter extras/proxy.filter extras/host.filter
+%doc HISTORY HONESTY README TODO INSTALL tests/host-sample.filter tests/router-sample.filter tests/proxy-fw-sample.filter
 
 %changelog
 * Mon Sep  2 2002 Matthew Kirkwood <matthew@hairy.beasts.org> 0.10-1
