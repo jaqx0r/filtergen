@@ -22,7 +22,8 @@ TESTS = t_01_ccomment \
 	t_22_hostnames \
 	t_23_ports \
 	t_24_log \
-	t_25_target
+	t_25_target \
+	t_26_negation
 
 check_PROGRAMS = scan parse
 
