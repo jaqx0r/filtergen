@@ -1,4 +1,4 @@
-/* $Id: filter.c,v 1.16 2002/11/08 01:18:30 matthew Exp $ */
+/* $Id: filter.c,v 1.17 2003/04/02 11:07:32 matthew Exp $ */
 
 #include "filter.h"
 
@@ -10,7 +10,7 @@
 #include <netdb.h>
 
 
-struct filter *__new_filter(enum filtertype type)
+static struct filter *__new_filter(enum filtertype type)
 {
 	struct filter *f;
 	if ((f = calloc(1, sizeof(*f)))) {
@@ -19,6 +19,11 @@ struct filter *__new_filter(enum filtertype type)
 	return f;
 }
 
+
+struct filter *new_filter_oneway(void)
+{
+	return __new_filter(F_ONEWAY);
+}
 
 struct filter *new_filter_target(enum filtertype target)
 {

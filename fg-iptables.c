@@ -1,7 +1,7 @@
 /*
  * Filter generator, iptables driver
  *
- * $Id: fg-iptables.c,v 1.33 2003/04/02 11:06:49 matthew Exp $
+ * $Id: fg-iptables.c,v 1.34 2003/04/02 11:07:32 matthew Exp $
  */
 
 /*
@@ -266,6 +266,8 @@ static int cb_iptables_rule(const struct filterent *ent, struct fg_misc *misc)
 	}
 
 	if((misc->flags & FF_LSTATE) && (target != T_REJECT)) needret = 0;
+
+	if(ent->oneway) needret = 0;
 
 	if(neednat) orules++,oprintf("iptables -t nat -A %s%s %s %s%s\n", subchain, natchain, natrule+1, subtarget, nattarget);
 	if(islocal) orules++,oprintf("iptables -A %s%s %s %s%s\n", subchain, rulechain, rule+1, subtarget, ruletarget);

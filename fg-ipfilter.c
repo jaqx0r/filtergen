@@ -1,7 +1,7 @@
 /*
  * Filter generator, ipfilter driver
  *
- * $Id: fg-ipfilter.c,v 1.11 2002/08/26 22:10:37 matthew Exp $
+ * $Id: fg-ipfilter.c,v 1.12 2003/04/02 11:07:32 matthew Exp $
  */
 
 /* TODO:
@@ -94,7 +94,7 @@ static int cb_ipfilter_rule(const struct filterent *ent, struct fg_misc *misc)
 
 	rule = appicmp(rule, ent->u.icmp, NEG(ICMPTYPE));
 
-	if(ent->proto.name && (ent->target == T_ACCEPT))
+	if(ent->proto.name && (ent->target == T_ACCEPT) && !ent->oneway)
 		APPS(rule, "keep state");
 
 	oputs(rule);

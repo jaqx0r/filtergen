@@ -1,0 +1,5 @@
+# test "oneway" option
+# $Id: oneway.filter,v 1.1 2003/04/02 11:07:35 matthew Exp $
+
+input eth0 proto tcp accept;
+input eth0 proto tcp oneway accept;
