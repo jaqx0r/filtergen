@@ -64,7 +64,9 @@ void ipts_convert_option(struct option_s * n) {
   }
 }
 
-void ipts_convert_not_option(struct not_option_s * n) {
+struct filter * ipts_convert_not_option(struct not_option_s * n) {
+  struct filter * res = NULL;
+
   eprint("converting not_option\n");
 
   if (n->neg) {
@@ -73,17 +75,33 @@ void ipts_convert_not_option(struct not_option_s * n) {
   if (n->option) {
     ipts_convert_option(n->option);
   }
+
+  return res;
 }
 
-void ipts_convert_option_list(struct option_list_s * n) {
+struct filter * ipts_convert_option_list(struct option_list_s * n) {
+  struct filter * res = NULL, * end = NULL;
+
   eprint("converting option_list\n");
 
   if (n->option_list) {
-    ipts_convert_option_list(n->option_list);
+    res = ipts_convert_option_list(n->option_list);
+    if (res) {
+      end = res;
+      while (end->child) {
+	end = end->child;
+      }
+      if (n->not_option) {
+	end->child = ipts_convert_not_option(n->not_option);
+      }
+    } else {
+      fprintf(stderr, "warning: ipts_convert_option_list returned NULL\n");
+    }
+  } else {
+    res = ipts_convert_not_option(n->not_option);
   }
-  if (n->not_option) {
-    ipts_convert_not_option(n->not_option);
-  }
+
+  return res;
 }
 
 struct filter * ipts_convert_rule(struct rule_s * n) {
@@ -97,26 +115,37 @@ struct filter * ipts_convert_rule(struct rule_s * n) {
   } else if (n->chain) {
     /* do something with the chain declaration */
     /* chain, policy, pkt_count are set */
+    /* FIXME: somehow append the chain default policy to the end of the
+     * rule list */
   } else if (n->option_list) {
     /* do something with the option list */
     /* option list, and optionally pkt_count, are set */
-    ipts_convert_option_list(n->option_list);
+    res = ipts_convert_option_list(n->option_list);
   }
 
   return res;
 }
 
 struct filter * ipts_convert_rule_list(struct rule_list_s * n) {
-    struct filter * res = NULL;
-    struct filter * r = NULL;
+  struct filter * res = NULL, * end = NULL;
 
     eprint("converting rule list\n");
 
     if (n->list) {
 	res = ipts_convert_rule_list(n->list);
-    }
-    if (n->rule) {
-      r = ipts_convert_rule(n->rule);
+	if (res) {
+	  end = res;
+	  while (end->next) {
+	    end = end->next;
+	  }
+	  if (n->rule) {
+	    end->next = ipts_convert_rule(n->rule);
+	  }
+	} else {
+	  fprintf(stderr, "warning: ipts_convert_rule_list returned NULL\n");
+	}
+    } else {
+      res = ipts_convert_rule(n->rule);
     }
       
     return res;
