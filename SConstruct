@@ -59,10 +59,10 @@ if not env.GetOption("clean"):
 
 	env = conf.Finish()
 
-if ARGUMENTS.get('debug', 0):
-	env.Append(CPPFLAGS = '-g -O0 ')
+if ARGUMENTS.get('debug', 1) != 'no':
+	env.AppendUnique(CCFLAGS=['-g', '-O0'])
 else:
-	env.Append(CPPFLAGS = '-O2 ')
+	env.AppendUnique(CCFLAGS=['-O2'])
 
 DESTDIR = ARGUMENTS.get('DESTDIR', '')
 
