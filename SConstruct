@@ -1,4 +1,8 @@
+import glob
+
 EnsureSConsVersion(0, 96)
+
+VERSION = "0.13"
 
 opts = Options()
 opts.AddOptions(
@@ -20,6 +24,9 @@ warnings = ['',
 	'write-strings']
 for w in warnings:
 	e.Append(CPPFLAGS='-W%s ' % (w,))
+
+# set the version
+e.Append(CPPFLAGS = '-DVERSION=\\\"%s\\\" ' % (VERSION,))
 
 # compile as GNU SOURCE to get strndup
 e.Append(CPPFLAGS = '-D_GNU_SOURCE ')
@@ -61,7 +68,8 @@ def sed(target, source, env):
 	expandos = {
 		'SYSCONFDIR': sysconfdir,
 		'PKGEXDIR': pkgexdir,
-		'SBINDIR': sbindir
+		'SBINDIR': sbindir,
+		'VERSION': VERSION
 		}
 	for (t, s) in zip(target, source):
 		o = file(str(t), "w")
@@ -91,4 +99,10 @@ man = e.Alias('install-man', [man5, man7, man8])
 e.Install(DESTDIR + sysconfdir, ['fgadm.conf', 'rules.filter'])
 sysconf = e.Alias('install-sysconf', DESTDIR + sysconfdir)
 
-e.Alias('install', [bin, man, sysconf])
+e.Install(DESTDIR + pkgexdir, glob.glob('examples/*.filter'))
+pkgex = e.Alias('install-examples', DESTDIR + pkgexdir)
+
+e.Install(DESTDIR + pkgdocdir, glob.glob('doc/*'))
+pkgdoc = e.Alias('install-doc', DESTDIR + pkgdocdir)
+
+e.Alias('install', [bin, man, sysconf, pkgdoc, pkgex])
