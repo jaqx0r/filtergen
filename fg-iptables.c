@@ -1,7 +1,7 @@
 /*
  * Filter generator, iptables driver
  *
- * $Id: fg-iptables.c,v 1.16 2002/04/14 11:38:40 matthew Exp $
+ * $Id: fg-iptables.c,v 1.17 2002/04/14 14:24:03 matthew Exp $
  */
 
 /*
@@ -37,12 +37,12 @@
 /* bitfields for features used */
 #define	REJECT	0x01
 
-static int cb_iptables_rule(const struct filterent *ent, void *misc)
+static int cb_iptables_rule(const struct filterent *ent, struct fg_misc *misc)
 {
 	char *natchain = NULL, *rulechain = NULL, *revchain = NULL;
 	char *natrule = NULL, *rule = NULL, *rule_r = NULL;
 	int neednat = 0, needret = 0;
-	long *feat = (long*)misc;
+	long *feat = (long*)misc->misc;
 	enum filtertype target = ent->target;
 
 	/* nat rule? */
@@ -220,6 +220,7 @@ int fg_iptables(struct filter *filter, int flags)
 {
 	long feat;
 	int r;
+	struct fg_misc misc = { flags, &feat };
 	fg_callback cb_iptables = {
 	rule:	cb_iptables_rule,
 	group:	cb_iptables_group,
@@ -231,7 +232,7 @@ int fg_iptables(struct filter *filter, int flags)
 		puts("iptables -F; iptables -X");
 		puts("iptables -t nat -F; iptables -t nat -X");
 	}
-	if((r = filtergen_cprod(filter, &cb_iptables, (void*)&feat)) < 0)
+	if((r = filtergen_cprod(filter, &cb_iptables, &misc)) < 0)
 		return r;
 	if(!(flags & FF_NOSKEL)) {
 		puts("for f in INPUT OUTPUT FORWARD; do iptables -A $f -j LOG; done");

@@ -1,7 +1,7 @@
 /*
  * Filter generator, ipfilter driver
  *
- * $Id: fg-ipfilter.c,v 1.6 2002/04/14 11:38:40 matthew Exp $
+ * $Id: fg-ipfilter.c,v 1.7 2002/04/14 14:24:03 matthew Exp $
  */
 
 /* TODO:
@@ -47,7 +47,7 @@ static char *appicmp(char *r, const char *h, int neg)
 	return APPSS2(r, "icmp-type", h);
 }
 
-static int cb_ipfilter_rule(const struct filterent *ent, void *misc)
+static int cb_ipfilter_rule(const struct filterent *ent, struct fg_misc *misc)
 {
 	char *rule = NULL;
 
@@ -112,11 +112,12 @@ static int cb_ipfilter_rule(const struct filterent *ent, void *misc)
 
 int fg_ipfilter(struct filter *filter, int flags)
 {
+	struct fg_misc misc = { flags, NULL };
 	fg_callback cb_ipfilter = {
 	rule:	cb_ipfilter_rule,
 	};
 
 	filter_nogroup(filter);
 	filter_unroll(&filter);
-	return filtergen_cprod(filter, &cb_ipfilter, NULL);
+	return filtergen_cprod(filter, &cb_ipfilter, &misc);
 }

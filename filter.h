@@ -1,4 +1,4 @@
-/* $Id: filter.h,v 1.10 2002/04/14 11:38:40 matthew Exp $ */
+/* $Id: filter.h,v 1.11 2002/04/14 14:24:03 matthew Exp $ */
 #ifndef _FK_FILTER_H
 #define _FK_FILTER_H
 
@@ -103,13 +103,18 @@ struct filterent {
 		char *icmp;
 	} u;
 };
-typedef int fg_cb_rule(const struct filterent *ent, void *misc);
+
+struct fg_misc {
+		int flags;
+		void *misc;
+};
+typedef int fg_cb_rule(const struct filterent *ent, struct fg_misc *misc);
 typedef int fg_cb_group(const char *name);
 typedef struct {
 	fg_cb_rule	*rule;
 	fg_cb_group	*group;
 } fg_callback;
-int filtergen_cprod(struct filter *filter, fg_callback *cb, void *misc);
+int filtergen_cprod(struct filter *filter, fg_callback *cb, struct fg_misc *misc);
 
 /* fg-util.c */
 char *strapp(char *s, const char *n);
