@@ -9,7 +9,8 @@ TESTS = t_01_ccomment \
 	t_09_badcomment \
 	t_10_goodcomment \
 	t_11_includeone \
-	t_12_includeloop
+	t_12_includeloop \
+	t_13_includetwo
 
 check_PROGRAMS = scan
 
