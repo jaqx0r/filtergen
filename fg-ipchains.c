@@ -3,7 +3,7 @@
  *
  * XXX - maybe some of this could be shared with the iptables one?
  *
- * $Id: fg-ipchains.c,v 1.15 2002/07/18 21:28:04 matthew Exp $
+ * $Id: fg-ipchains.c,v 1.16 2002/07/19 16:30:58 matthew Exp $
  */
 
 #include <stdio.h>
@@ -19,6 +19,7 @@ static int cb_ipchains_rule(const struct filterent *ent, struct fg_misc *misc)
 	char *rulechain = NULL, *revchain = NULL;
 	int needret = 0;
 	int isforward = (ent->rtype != LOCALONLY);
+	int orules = 0;
 
 	/* nat rule */
 	if((ent->target == F_MASQ) || (ent->target == F_REDIRECT)) {
@@ -123,15 +124,15 @@ static int cb_ipchains_rule(const struct filterent *ent, struct fg_misc *misc)
 	default: abort();
 	}
 
-	oprintf("ipchains -A %s %s\n", rulechain, rule+1);
-	if(needret) oprintf("ipchains -A %s %s\n", revchain, rule_r+1);
+	orules++, oprintf("ipchains -A %s %s\n", rulechain, rule+1);
+	if(needret) orules++, oprintf("ipchains -I %s %s\n", revchain, rule_r+1);
 	if(isforward) {
-		oprintf("ipchains -A FORWARD %s\n", rule+1);
-		if(needret) oprintf("ipchains -A FORWARD %s\n", rule_r+1);
+		orules++, oprintf("ipchains -A FORWARD %s\n", rule+1);
+		if(needret) orules++, oprintf("ipchains -I FORWARD %s\n", rule_r+1);
 	}
 
 	free(rule); free(rule_r);
-	return 1 + !!needret;
+	return orules;
 }
 
 static int cb_ipchains_group(const char *name)
