@@ -1,7 +1,7 @@
 /*
  * Filter generator, iptables driver
  *
- * $Id: fg-iptables.c,v 1.22 2002/07/18 14:04:13 matthew Exp $
+ * $Id: fg-iptables.c,v 1.23 2002/07/18 21:00:00 matthew Exp $
  */
 
 /*
@@ -42,6 +42,8 @@ static int cb_iptables_rule(const struct filterent *ent, struct fg_misc *misc)
 	char *natchain = NULL, *rulechain = NULL, *revchain = NULL;
 	char *natrule = NULL, *rule = NULL, *rule_r = NULL;
 	int neednat = 0, needret = 0;
+	int islocal = (ent->rtype != ROUTEDONLY);
+	int isforward = (ent->rtype != LOCALONLY);
 	long *feat = (long*)misc->misc;
 	enum filtertype target = ent->target;
 
@@ -207,8 +209,12 @@ static int cb_iptables_rule(const struct filterent *ent, struct fg_misc *misc)
 	if((misc->flags & FF_LSTATE) && (target != F_REJECT)) needret = 0;
 
 	if(neednat) oprintf("iptables -t nat -A %s %s\n", natchain, natrule+1);
-	oprintf("iptables -A %s %s\n", rulechain, rule+1);
+	if(islocal) oprintf("iptables -A %s %s\n", rulechain, rule+1);
 	if(needret) oprintf("iptables -A %s %s\n", revchain, rule_r+1);
+	if(isforward) {
+		 oprintf("iptables -A FORWARD %s\n", rule+1);
+		 if(needret) oprintf("iptables -A FORWARD %s\n", rule_r+1);
+	}
 
 	free(natrule); free(rule); free(rule_r);
 	return 1 + !!needret + !!neednat;
