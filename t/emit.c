@@ -35,7 +35,7 @@ EMIT(chaingroup_specifier) {
     printf("\n");
     eprint("emitting subrule_list\n");
     emit_subrule_list(n->list);
-    printf("]\n");
+    printf("]");
 }
 
 EMIT(compound_specifier) {

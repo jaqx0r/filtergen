@@ -44,7 +44,8 @@ TESTS = t_01_ccomment \
 	t_44_protocol \
 	t_45_icmptype \
 	t_46_routing \
-	t_47_subrule_list
+	t_47_subrule_list \
+	t_48_chaingroup
 
 check_PROGRAMS = scan parse emit
 
