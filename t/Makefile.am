@@ -31,7 +31,8 @@ TESTS = t_01_ccomment \
 	t_31_chaingroupbad \
 	t_32_syntaxexamples \
 	t_33_nestedparse \
-	t_34_ast
+	t_34_ast \
+	t_35_rule_list
 
 check_PROGRAMS = scan parse emit
 

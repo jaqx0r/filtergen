@@ -84,7 +84,7 @@ rule_list: /* empty */
 
 rule:	  specifier_list TOK_SEMICOLON
 	{
-		$$ = NULL;
+		$$ = malloc(sizeof(struct rule_s));
 	}
 	;
 
