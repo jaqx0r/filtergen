@@ -38,6 +38,8 @@ char * tok_map[] = {
     "dot",
     "slash",
     "error",
+    "bang",
+    "colon",
 };  
 
 int main(int argc, char ** argv) {
