@@ -7,4 +7,36 @@
   child
   ( accept
    )
+  next
+  ( input eth0
+    child
+    ( source foo
+      child
+      ( dest bar
+        child
+        ( proto tcp
+          child
+          ( siblist
+            ( dport www
+              next
+              ( dport https
+                next
+                ( dport nntp
+                  next
+                  ( sport 1:1023
+                    child
+                    ( dport ssh
+                     )
+                   )
+                 )
+               )
+             )
+            child
+            ( accept
+             )
+           )
+         )
+       )
+     )
+   )
  )
