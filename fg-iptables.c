@@ -1,7 +1,7 @@
 /*
  * Filter generator, iptables driver
  *
- * $Id: fg-iptables.c,v 1.27 2002/07/19 16:30:58 matthew Exp $
+ * $Id: fg-iptables.c,v 1.28 2002/07/31 22:00:01 matthew Exp $
  */
 
 /*
@@ -39,8 +39,11 @@
 
 static int cb_iptables_rule(const struct filterent *ent, struct fg_misc *misc)
 {
-	char *natchain = NULL, *rulechain = NULL, *revchain = NULL;
+	char *rulechain = NULL, *revchain = NULL, *natchain = NULL;
+	char *ruletarget = NULL, *revtarget = NULL, *nattarget = NULL;
 	char *natrule = NULL, *rule = NULL, *rule_r = NULL;
+	char *forchain = NULL, *forrevchain = NULL;
+	char *fortarget = NULL, *forrevtarget = NULL;
 	int neednat = 0, needret = 0;
 	int islocal = (ent->rtype != ROUTEDONLY);
 	int isforward = (ent->rtype != LOCALONLY);
@@ -67,6 +70,8 @@ static int cb_iptables_rule(const struct filterent *ent, struct fg_misc *misc)
 	case F_INPUT:	natchain = "PREROUTING";
 			rulechain = "INPUT";
 			revchain = "OUTPUT";
+			forchain = "FORWARD";
+			forrevchain = "FORW_OUT";
 			if(ent->iface) {
 				if(NEG(INPUT)) {
 					APPS(natrule, "!");
@@ -81,6 +86,8 @@ static int cb_iptables_rule(const struct filterent *ent, struct fg_misc *misc)
 	case F_OUTPUT:	natchain = "POSTROUTING";
 			rulechain = "OUTPUT";
 			revchain = "INPUT";
+			forchain = "FORW_OUT";
+			forrevchain = "FORWARD";
 			if(ent->iface) {
 				if(NEG(OUTPUT)) {
 					APPS(natrule, "!");
@@ -181,38 +188,42 @@ static int cb_iptables_rule(const struct filterent *ent, struct fg_misc *misc)
 	 */
 	if(ent->log) {
 		if(islocal) orules++,oprintf("iptables -A %s %s LOG\n", rulechain, rule+1);
-		if(isforward) orules++,oprintf("iptables -A FORWARD %s LOG\n", rule+1);
+		if(isforward) orules++,oprintf("iptables -A %s %s LOG\n", forchain, rule+1);
 	}
 
 	/* Do this twice, once for NAT, once for filter */
 	if(neednat) {
 		switch(target) {
-		case F_MASQ:	APPS(natrule, "MASQUERADE"); break;
-		case F_REDIRECT:APPS(natrule, "REDIRECT"); break;
+		case F_MASQ:	nattarget = "MASQUERADE"; break;
+		case F_REDIRECT:nattarget = "REDIRECT"; break;
 		default: abort();
 		}
 	}
 
 	switch(target) {
 	case F_MASQ: case F_REDIRECT:
-	case F_ACCEPT:	APPS(rule, "ACCEPT");
-			APPS(rule_r, "ACCEPT"); break;
-	case F_DROP:	APPS(rule, "DROP"); needret = 0; break;
-	case F_REJECT:	APPS(rule, "REJECT"); needret = 0;
+	case F_ACCEPT:	ruletarget = revtarget = fortarget = forrevtarget = "ACCEPT";
+			switch(ent->direction) {
+			case F_INPUT: fortarget = "FORW_OUT"; break;
+			case F_OUTPUT: forrevtarget = "FORW_OUT"; break;
+			default: abort();
+			}
+			break;
+	case F_DROP:	ruletarget = fortarget = "DROP"; needret = 0; break;
+	case F_REJECT:	ruletarget = fortarget = "REJECT"; needret = 0;
 			*feat |= F_REJECT; break;
-	case F_SUBGROUP:APPS(rule, ent->subgroup);
-			APPS(rule_r, ent->subgroup); break;
+	case F_SUBGROUP:ruletarget = revtarget = ent->subgroup; break;
 	default: abort();
 	}
 
 	if((misc->flags & FF_LSTATE) && (target != F_REJECT)) needret = 0;
 
-	if(neednat) orules++,oprintf("iptables -t nat -A %s %s\n", natchain, natrule+1);
-	if(islocal) orules++,oprintf("iptables -A %s %s\n", rulechain, rule+1);
-	if(needret) orules++,oprintf("iptables -I %s %s\n", revchain, rule_r+1);
+	if(neednat) orules++,oprintf("iptables -t nat -A %s %s %s\n", natchain, natrule+1, nattarget);
+	if(islocal) orules++,oprintf("iptables -A %s %s %s\n", rulechain, rule+1, ruletarget);
+	if(needret) orules++,oprintf("iptables -I %s %s %s\n", revchain, rule_r+1, revtarget);
 	if(isforward) {
-		 orules++,oprintf("iptables -A FORWARD %s\n", rule+1);
-		 if(needret) orules++,oprintf("iptables -I FORWARD %s\n", rule_r+1);
+		 orules++,oprintf("iptables -A %s %s %s\n", forchain, rule+1, fortarget);
+		 if(needret) orules++,oprintf("iptables -I %s %s %s\n", forrevchain, rule_r+1, forrevtarget);
 	}
 
 	free(natrule); free(rule); free(rule_r);
@@ -246,6 +257,10 @@ int fg_iptables(struct filter *filter, int flags)
 		oputs("for f in $CHAINS; do iptables -P $f DROP; done");
 		oputs("iptables -F; iptables -X");
 		oputs("iptables -t nat -F; iptables -t nat -X");
+		oputs("");
+
+		oputs("# Create FORW_OUT chain");
+		oputs("iptables -N FORW_OUT");
 		oputs("");
 
 		oputs("# Setup INVALID chain");

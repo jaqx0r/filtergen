@@ -1,3 +1,6 @@
+recent:
+	fix input vs output thing in forwarding support for iptables
+
 0.7:
 	add "local" and "forward" syntax to state that packets are only
 		for local or remote consumption (and "-h" option to
@@ -55,4 +58,4 @@
 	iptables driver
 	a few bugs
 
-$Id: HISTORY,v 1.28 2002/07/21 13:33:48 matthew Exp $
+$Id: HISTORY,v 1.29 2002/07/31 22:00:01 matthew Exp $
