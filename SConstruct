@@ -12,15 +12,15 @@ opts.AddOptions(
 e = Environment(options = opts)
 
 warnings = ['',
-	'all',
-	'error',
-	'aggregate-return',
-	'cast-align',
-	'cast-qual',
-	'nested-externs',
-	'shadow',
-	'bad-function-cast',
-	'write-strings']
+			'all',
+			'error',
+			'aggregate-return',
+			'cast-align',
+			'cast-qual',
+			'nested-externs',
+			'shadow',
+			'bad-function-cast',
+			'write-strings']
 for w in warnings:
 	e.Append(CPPFLAGS='-W%s ' % (w,))
 
@@ -54,19 +54,19 @@ pkgdocdir = '/usr/share/doc/filtergen'
 pkgexdir = pkgdocdir + '/examples'
 
 filtergen  = e.Program('filtergen', ['filtergen.c',
-					  'gen.c',
-					  'filter.c',
-					  'fg-util.c',
-					  'fg-iptables.c',
-					  'fg-ipchains.c',
-					  'fg-ipfilter.c',
-					  'fg-cisco.c',
-					  'parser.y',
-					  'scanner.l',
-					  'glue.c',
-					  'resolver.c',
-					  'icmpent.c',
-					  'factoriser.c'])
+									 'gen.c',
+									 'filter.c',
+									 'fg-util.c',
+									 'fg-iptables.c',
+									 'fg-ipchains.c',
+									 'fg-ipfilter.c',
+									 'fg-cisco.c',
+									 'parser.y',
+									 'scanner.l',
+									 'glue.c',
+									 'resolver.c',
+									 'icmpent.c',
+									 'factoriser.c'])
 
 def sed(target, source, env):
 	expandos = {
@@ -86,8 +86,8 @@ def sed(target, source, env):
 fgadm = e.Command('fgadm', 'fgadm.in', [sed, Chmod('fgadm', 0755)])
 
 e.Command(['fgadm.conf', 'rules.filter'],
-	['fgadm.conf.in', 'rules.filter.in'],
-	sed)
+		  ['fgadm.conf.in', 'rules.filter.in'],
+		  sed)
 
 e.Install(DESTDIR + sbindir, [filtergen, fgadm])
 bin = e.Alias('install-bin', DESTDIR + sbindir)
