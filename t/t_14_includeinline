@@ -1,0 +1,19 @@
+#!/bin/sh
+
+TEST="that including more than one file works"
+
+# source the usual stuff
+. ./testlib
+
+$testdir/scan < $testdir/data/scanner14.in > $work/out 2>&1
+if test $? -ne 0 ; then no_result ; fi
+
+cmp $testdir/data/scanner14.out $work/out
+if test $? -ne 0 ; then
+    diff -u $testdir/data/scanner14.out $work/out
+    fail
+fi
+
+# got this far?
+pass
+

@@ -1,5 +1,5 @@
 /* test double includes with other directives */
-inpu
+input
 include data/scanner7.in
 accept
 ;
