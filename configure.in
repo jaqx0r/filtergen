@@ -78,7 +78,7 @@ AC_CONFIG_FILES([
 	Makefile
 	t/Makefile
 	filtergen.spec
-	filtergentl
+	fgadm
 ])
 AC_OUTPUT
 
