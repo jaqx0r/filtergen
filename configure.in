@@ -1,10 +1,10 @@
 AC_PREREQ(2.50)
 
-AC_INIT(pfc, 0.12, jaq@spacepants.org)
+AC_INIT(filtergen, 0.12, jaq@spacepants.org)
 AM_INIT_AUTOMAKE([foreign dist-bzip2 dist-zip])
 
 AC_CONFIG_AUX_DIR(.)
-AC_CONFIG_SRCDIR(pfc.c)
+AC_CONFIG_SRCDIR(filtergen.c)
 AM_CONFIG_HEADER(config.h)
 
 AM_MAINTAINER_MODE
@@ -16,7 +16,7 @@ dnl --------------------------
 dnl configuration success flag
 dnl --------------------------
 
-pfc_config_ok=yes
+filtergen_config_ok=yes
 
 dnl -------------------
 dnl checks for programs
@@ -69,7 +69,7 @@ dnl ----------------------------------------------------------
 dnl configuration tests complete, provide a summary of results
 dnl ----------------------------------------------------------
 
-if test "x$pfc_config_ok" = xno ; then
+if test "x$filtergen_config_ok" = xno ; then
 	echo "nothing yet"
 else
 
@@ -77,17 +77,17 @@ dnl Dump it out
 AC_CONFIG_FILES([
 	Makefile
 	t/Makefile
-	pfc.spec
-	pfctl
+	filtergen.spec
+	filtergentl
 ])
 AC_OUTPUT
 
 AC_MSG_RESULT([
-pfc $VERSION: automatic configuration OK.
+filtergen $VERSION: automatic configuration OK.
 
-Type 'make' to compile pfc.
+Type 'make' to compile filtergen.
 
-Type 'make install' to install pfc.
+Type 'make install' to install filtergen.
 ])
 
 fi

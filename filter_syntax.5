@@ -2,10 +2,10 @@
 .TH "FILTER SYNTAX" 8 "January 7, 2004"
 
 .SH NAME
-rules.filter \- Input format for pfc packet filter compiler
+rules.filter \- Input format for filtergen packet filter compiler
 
 .SH INTRO
-This file describes the input syntax accepted by \fBpfc\fR(8).
+This file describes the input syntax accepted by \fBfiltergen\fR(8).
 
 .SH BASICS
 In general form, a filter rule is described by a \fIdirection\fR,
@@ -40,7 +40,7 @@ Forwarded packets will pass through both,
 
 .SS INTERFACE
 This specifies which real or virtual network device to filter.  As
-far as pfc is concerned, this is just a text string.  It must
+far as filtergen is concerned, this is just a text string.  It must
 be the same as the device name on the target system.  Common names on
 Linux are "eth0", "eth1", ..., "ppp0", etc.  Other systems will have
 different naming rules.
@@ -218,4 +218,4 @@ Here's a fairly complete example, for a single-interface machine:
 .fi
 
 .SH SEE ALSO
-\fBpfc\fR(8), \fBfilter_backends\fR(7)
+\fBfiltergen\fR(8), \fBfilter_backends\fR(7)

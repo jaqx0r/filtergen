@@ -1,4 +1,4 @@
-/* types and functions used throughout pfc
+/* types and functions used throughout filtergen
  *
  * Copyright (c) 2002 Matthew Kirkwood
  *

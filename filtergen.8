@@ -1,20 +1,20 @@
 .\" -*- nroff -*-
-.TH PFC 8 "January 7, 2004"
+.TH FILTERGEN 8 "January 7, 2004"
 
 .SH NAME
-pfc \- packet filter compiler
+filtergen \- packet filter compiler
 
 .SH SYNOPSIS
-\fBpfc\fR [ \fB-h\fR | \fB--help\fR ] [ \fB-c\fR | \fB--compile\fR ] [ \fB-t \fItarget\fB\fR | \fB--target=\fItarget\fB\fR ] [ \fB-o \fIoutfile\fB\fR | \fB--output=\fIoutfile\fB\fR ] \fIinfile\fR
+\fBfiltergen\fR [ \fB-h\fR | \fB--help\fR ] [ \fB-c\fR | \fB--compile\fR ] [ \fB-t \fItarget\fB\fR | \fB--target=\fItarget\fB\fR ] [ \fB-o \fIoutfile\fB\fR | \fB--output=\fIoutfile\fB\fR ] \fIinfile\fR
 
-\fBpfc\fR [ \fB-h\fR | \fB--help\fR ] [ \fB-c\fR | \fB--compile\fR ] [ \fB-t \fItarget\fB\fR | \fB--target=\fItarget\fB\fR ] [ \fB-o \fIoutfile\fB\fR | \fB--output=\fIoutfile\fB\fR ] [ \fB-F \fIpolicy\fB\fR | \fB--flush=\fIpolicy\fB\fR ]
+\fBfiltergen\fR [ \fB-h\fR | \fB--help\fR ] [ \fB-c\fR | \fB--compile\fR ] [ \fB-t \fItarget\fB\fR | \fB--target=\fItarget\fB\fR ] [ \fB-o \fIoutfile\fB\fR | \fB--output=\fIoutfile\fB\fR ] [ \fB-F \fIpolicy\fB\fR | \fB--flush=\fIpolicy\fB\fR ]
 
 .SH DESCRIPTION
-\fBpfc\fR compiles a high-level filtering description language into a
+\fBfiltergen\fR compiles a high-level filtering description language into a
 variety of target formats.
 
 .SH USAGE
-\fBpfc\fR reads the ruleset from the \fIinfile\fR specified on the
+\fBfiltergen\fR reads the ruleset from the \fIinfile\fR specified on the
 command line (or standard input if \fIinfile\fR is "\-") and outputs to
 standard output (or \fIoutfile\fR) via an optionally specified backend.
 
@@ -61,6 +61,6 @@ The packet filter doesn't optimise the generated filter.
 \fBfilter_syntax\fR(5), \fBfilter_backends\fR(7)
 
 .SH AUTHOR
-\fBpfc\fR began its life as \fBfiltergen\fR, written by Matthew Kirkwood.
+\fBfiltergen\fR was originally written by Matthew Kirkwood.
 Jamie Wilkinson <jaq@spacepants.org> then rewrote a lot of the internals,
-added some features, and rereleased it under the new name.
+added some features, and took on maintenance of the project.
