@@ -180,11 +180,13 @@ specifier_list: /* empty */
 negated_specifier: specifier
 	{
 		$$ = malloc(sizeof(struct negated_specifier_s));
+		$$->negated = 0;
 		$$->spec = $1;
 	}
 	| TOK_BANG specifier
 	{
 		$$ = malloc(sizeof(struct negated_specifier_s));
+		$$->negated = 1;
 		$$->spec = $2;
 	}
 	;
