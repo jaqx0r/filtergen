@@ -113,11 +113,12 @@ icmptype_specifier: TOK_ICMPTYPE icmptype_argument;
 	;
 */
 
-compound_specifier: TOK_LCURLY compound_specifier_list TOK_RCURLY
+compound_specifier: TOK_LCURLY subrule_list TOK_RCURLY
 	;
 
-compound_specifier_list: specifier
-	| compound_specifier_list TOK_SEMICOLON specifier
+subrule_list: specifier
+	| specifier TOK_SEMICOLON
+	| subrule_list specifier
 	;
 
 direction_argument: TOK_IDENTIFIER

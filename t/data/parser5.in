@@ -1,0 +1,2 @@
+# a full rule with all specifiers
+input eth0 source foo dest bar proto udp sport 37000 dport 80 drop;
