@@ -62,7 +62,7 @@ id      [[:alnum:]_][[:alnum:]_+-]*
                     while (c == '*')
                         c = input();
                     if (c == EOF)
-                        scan_err("comment reached end of file");
+                        scan_err("warning: comment reached end of file");
                     if (c == '\n')
                         inc_stack[inc_stackptr].lineno++;
                 } while (c != '/' && c != EOF);
