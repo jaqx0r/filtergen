@@ -3,7 +3,7 @@
  *
  * XXX - maybe some of this could be shared with the iptables one?
  *
- * $Id: fg-ipchains.c,v 1.17 2002/07/21 14:18:06 matthew Exp $
+ * $Id: fg-ipchains.c,v 1.18 2002/07/31 22:09:21 matthew Exp $
  */
 
 #include <stdio.h>
@@ -17,6 +17,7 @@ static int cb_ipchains_rule(const struct filterent *ent, struct fg_misc *misc)
 {
 	char *rule = NULL, *rule_r = NULL;
 	char *rulechain = NULL, *revchain = NULL;
+	char *ruletarget = NULL, *revtarget = NULL;
 	int needret = 0;
 	int isforward = (ent->rtype != LOCALONLY);
 	int orules = 0;
@@ -115,20 +116,20 @@ static int cb_ipchains_rule(const struct filterent *ent, struct fg_misc *misc)
 	APPS(rule, "-j"); APPS(rule_r, "-j");
 
 	switch(ent->target) {
-	case F_ACCEPT:	APPS(rule, "ACCEPT"); APPS(rule_r, "ACCEPT"); break;
-	case F_DROP:	APPS(rule, "DENY"); needret = 0; break;
-	case F_REJECT:	APPS(rule, "REJECT"); needret = 0; break;
-	case F_MASQ:	APPS(rule, "MASQ"); APPS(rule_r, "ACCEPT"); break;
-	case F_REDIRECT:APPS(rule, "REDIRECT"); APPS(rule_r, "ACCEPT"); break;
-	case F_SUBGROUP:APPS(rule, ent->subgroup); APPS(rule_r, ent->subgroup); break;
+	case F_ACCEPT:	ruletarget = revtarget = "ACCEPT"; break;
+	case F_DROP:	ruletarget = "DENY"; needret = 0; break;
+	case F_REJECT:	ruletarget = "REJECT"; needret = 0; break;
+	case F_MASQ:	ruletarget = "MASQ"; revtarget = "ACCEPT"; break;
+	case F_REDIRECT:ruletarget = "REDIRECT"; revtarget = "ACCEPT"; break;
+	case F_SUBGROUP:ruletarget = revtarget = ent->subgroup; break;
 	default: abort();
 	}
 
-	orules++, oprintf("ipchains -A %s %s\n", rulechain, rule+1);
-	if(needret) orules++, oprintf("ipchains -I %s %s\n", revchain, rule_r+1);
+	orules++, oprintf("ipchains -A %s %s %s\n", rulechain, rule+1, ruletarget);
+	if(needret) orules++, oprintf("ipchains -I %s %s %s\n", revchain, rule_r+1, revtarget);
 	if(isforward) {
-		orules++, oprintf("ipchains -A forward %s\n", rule+1);
-		if(needret) orules++, oprintf("ipchains -I forward %s\n", rule_r+1);
+		orules++, oprintf("ipchains -A forward %s %s\n", rule+1, ruletarget);
+		if(needret) orules++, oprintf("ipchains -I forward %s %s\n", rule_r+1, revtarget);
 	}
 
 	free(rule); free(rule_r);

@@ -1,4 +1,5 @@
 recent:
+	cleanup for iptables and ipchains to save reallocs
 	fix input vs output thing in forwarding support for iptables
 
 0.7:
@@ -58,4 +59,4 @@ recent:
 	iptables driver
 	a few bugs
 
-$Id: HISTORY,v 1.29 2002/07/31 22:00:01 matthew Exp $
+$Id: HISTORY,v 1.30 2002/07/31 22:09:21 matthew Exp $
