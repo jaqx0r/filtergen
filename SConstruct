@@ -1,5 +1,12 @@
-e = Environment()
+opts = Options()
+opts.AddOptions(
+	EnumOption('debug', 'debugging compiler options', 'no',
+			   allowed_values = ('yes', 'no'))
+	)
 
+e = Environment(options = opts)
+
+Help(opts.GenerateHelpText(e))
 
 conf = Configure(e)
 if conf.CheckCHeader('getopt.h'):
