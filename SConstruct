@@ -52,6 +52,8 @@ sysconfdir = '/etc/filtergen'
 pkgdocdir = '/usr/share/doc/filtergen'
 pkgexdir = pkgdocdir + '/examples'
 
+env.Append(CPPPATH = 'input/filtergen')
+
 filtergen  = env.Program('filtergen', ['filtergen.c',
 									 'gen.c',
 									 'filter.c',
@@ -60,13 +62,10 @@ filtergen  = env.Program('filtergen', ['filtergen.c',
 									 'fg-ipchains.c',
 									 'fg-ipfilter.c',
 									 'fg-cisco.c',
-									 'parser.y',
-									 'scanner.l',
-									 'glue.c',
-									 'resolver.c',
 									 'icmpent.c',
-									 'factoriser.c'])
-env.SideEffect('parser.h', 'parser.c')
+									 'factoriser.c'],
+						 LIBS=['in_filtergen'],
+						 LIBPATH='input/filtergen')
 
 def sed(target, source, env):
 	expandos = {
@@ -89,9 +88,10 @@ env.Command(['fgadm.conf', 'rules.filter'],
 		  ['fgadm.conf.in', 'rules.filter.in'],
 		  sed)
 
-SConscript(['input/iptables/SConscript',
-			't/SConscript'
-			], 'env')
+SConscript([
+	'input/filtergen/SConscript',
+	'input/iptables/SConscript',
+	], 'env')
 
 env.Install(DESTDIR + sbindir, [filtergen, fgadm])
 bin = env.Alias('install-bin', DESTDIR + sbindir)
