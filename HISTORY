@@ -1,3 +1,6 @@
+recent:
+	fix install target to install section 7 manpages too
+
 0.8:
 	cleanup for iptables and ipchains to save reallocs
 	fix input vs output thing in forwarding support for iptables
@@ -60,4 +63,4 @@
 	iptables driver
 	a few bugs
 
-$Id: HISTORY,v 1.32 2002/08/18 10:05:15 matthew Exp $
+$Id: HISTORY,v 1.33 2002/08/20 13:46:16 matthew Exp $
