@@ -28,16 +28,35 @@ int filter_fopen(const char * filename) {
 
 #define eprint(x) if (convtrace) fprintf(stderr, x)
 
+CONVERT(specifier_list);
+
 CONVERT(subrule_list) {
-    struct filter * res = NULL;
-    /*    struct filter * list = NULL; */
+    struct filter * res = NULL; /*, * end = NULL; */
 
     eprint("converting subrule_list\n");
-    /*
+
     if (n->subrule_list) {
-	list = new_filter_sibs(NULL);
+	res = convert_subrule_list(n->subrule_list);
+        if (res && n->specifier_list) {
+            res->next = convert_specifier_list(n->specifier_list);
+        }
+    } else if (n->specifier_list) {
+        res = convert_specifier_list(n->specifier_list);
+    } else {
+        printf("error: no content in subrule_list\n");
     }
-    */
+
+    return res;
+}
+
+struct filter * convert_compound_specifier(struct compound_specifier_s * r) {
+    struct filter * res = NULL;
+
+    eprint("converting compound_specifier\n");
+
+    if (r->list) {
+	res = convert_subrule_list(r->list);
+    }
     return res;
 }
 
@@ -114,17 +133,6 @@ struct filter * convert_direction(struct direction_specifier_s * n) {
         printf("error: no direction argument\n");
     }
 
-    return res;
-}
-
-struct filter * convert_compound_specifier(struct compound_specifier_s * r) {
-    struct filter * res = NULL;
-
-    eprint("converting compound_specifier\n");
-
-    if (r->list) {
-	res = convert_subrule_list(r->list);
-    }
     return res;
 }
 
