@@ -55,6 +55,12 @@ void usage(char * prog) {
 #endif
 
 #ifdef HAVE_GETOPT_H
+    fprintf(stderr, "--no-resolve/-r            don't resolve names\n");
+#else
+    fprintf(stderr, "\t-r\t\tdon't resolve names\n");
+#endif
+
+#ifdef HAVE_GETOPT_H
     fprintf(stderr, " --target/-t target        generate for target (default: iptables)\n");
 #else
     fprintf(stderr, "\t-t target\tgenerate for target (default: iptables)\n");
@@ -126,6 +132,7 @@ static struct option long_options[] = {
     {"output", required_argument, 0, 'o'},
     {"flush", required_argument, 0, 'F'},
     {"version", no_argument, 0, 'V'},
+    {"no-resolve", no_argument, 0, 'r'},
     {0, 0, 0, 0}
 };
 # define GETOPT(x, y, z) getopt_long(x, y, z, long_options, NULL)
@@ -144,10 +151,11 @@ int main(int argc, char **argv) {
     char *progname;
     int arg;
     enum filtertype flushpol = T_ACCEPT;
+    int resolve_names = 1;
 
     progname = argv[0];
 
-    while ((arg = GETOPT(argc, argv, "hco:t:F:V")) > 0) {
+    while ((arg = GETOPT(argc, argv, "hco:t:F:Vr")) > 0) {
 	switch (arg) {
 	  case ':':
 	    usage(progname);
@@ -183,6 +191,9 @@ int main(int argc, char **argv) {
 	  case 'V':
 	    printf("filtergen " VERSION "\n");
 	    exit(0);
+	    break;
+	  case 'r':
+	    resolve_names = 0;
 	    break;
 	  default:
 	    break;
@@ -230,7 +241,8 @@ int main(int argc, char **argv) {
 	    struct ast_s ast;
 
 	    if (yyparse((void *) &ast) == 0) {
-		resolve(&ast);
+		if (resolve_names)
+		    resolve(&ast);
 		f = convert(&ast);
 		if (!f) {
 		    fprintf(stderr, "couldn't convert file\n");
