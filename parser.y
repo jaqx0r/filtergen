@@ -20,11 +20,13 @@ extern int yylex(void);
 %union {
 	struct rule_list_s * u_rule_list;
 	struct rule_s * u_rule;
+	struct specifier_list_s * u_specifier_list;
 	char * u_str;
 	int u_int;
 }
 %type <u_rule_list> rule_list
 %type <u_rule> rule
+%type <u_specifier_list> specifier_list
 
 %defines
 %token TOK_ACCEPT
@@ -85,11 +87,18 @@ rule_list: /* empty */
 rule:	  specifier_list TOK_SEMICOLON
 	{
 		$$ = malloc(sizeof(struct rule_s));
+		$$->specifier_list = $1;
 	}
 	;
 
 specifier_list: /* empty */
+	{
+		$$ = NULL;
+	}
 	| specifier_list negated_specifier
+	{
+		$$ = malloc(sizeof(struct specifier_list_s));
+	}
 	;
 
 specifier: compound_specifier

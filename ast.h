@@ -4,7 +4,11 @@
 #ifndef __AST_H__
 #define __AST_H__
 
+struct specifier_list_s {
+};
+
 struct rule_s {
+    struct specifier_list_s * specifier_list;
 };
 
 struct rule_list_s {
