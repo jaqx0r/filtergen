@@ -7,6 +7,8 @@ Easy:
  * Better Makefiles.
  * Option to do all name lookups (hosts, services, ICMP)
  * Translate icmp names (at least for ipfilter and cisco)
+ * "Loose" option to allow not-quite-correct rulesets to run, eg.,
+   using forward-only with ipchains
 
 Medium:
  * Fixup and maintain the cisco and ipfilter backends
@@ -32,4 +34,4 @@ Hard:
    This is possible, but tiresome, and will require an optimiser
    if the generated rulesets are not to Suck.
 
-$Id: TODO,v 1.11 2002/04/14 15:17:44 matthew Exp $
+$Id: TODO,v 1.12 2002/07/18 21:26:58 matthew Exp $
