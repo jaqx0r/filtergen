@@ -22,6 +22,21 @@ and made available you you under the terms of the GNU General Public
 Licence.
 
 
+WHY?
+
+Not many large softare projects are written entirely in assembly
+language these days.  It's not difficult to be, and the results can
+often be more efficient, but it does take longer to implement and
+bugfix, and is not portable to other systems.  It is also harder for
+others to understand, update and audit.
+
+Similarly, it seems odd that people continue to write packet filters
+in the equivalent of assembler, or in inflexible macro languages.
+
+Hence this package -- my intent is that "filter" will be to iptables
+and shell what a C compiler is to assembly.
+
+
 USAGE
 
 The filter generator is called "filtergen".  It can be invoked as:
@@ -47,7 +62,7 @@ SYNTAX
 The syntax looks not entirely unlike that of "fk"s ACL facility ("fk"
 is another project of mine, and lives at http://hairy.beasts.org/fk/),
 and it might be worth familiarising yourself with that first (not least
-because it is a lot less experimental).
+because it is rather less experimental).
 
 An example will probably show most of the basics.  Here's a simple one
 for a single-interface host (perhaps a mail server):
@@ -132,4 +147,4 @@ to permit or refuse a connection -- it acts only on single packets,
 and is not really able to reason about connections (whatever the blurb
 claims).  It also matches the terminology used by Linux's iptables.
 
-$Id: README,v 1.3 2001/10/03 20:23:36 matthew Exp $
+$Id: README,v 1.4 2001/10/06 17:44:04 matthew Exp $
