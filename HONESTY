@@ -9,17 +9,6 @@ useful to you (though shouldn't put you off contributing).
 
 STATUS
 
-Hard to tell.  The iptables and ipchains drivers support all the
-features of the parser and seem to generate sane-looking rules.
-I believe that the ipchains driver doesn't leak, though I have a
-couple of issues with the iptables one.
-
-The ipfilter backend seems to generate OK-looking rules, but it
-doesn't support NAT and I don't even have a BSD box to test it on.
-
-The Cisco IOS driver is incomplete and can ignore negations.  I'd
-love for someone who can test it to take it over.
-
 The language is likely to evolve as more features are implemented.
 Specifically, I'd like it to express fundamental networking and
 filtering concepts, rather than being an iptables macro language.
@@ -27,16 +16,18 @@ filtering concepts, rather than being an iptables macro language.
 The transparent proxying, masquerading and logging support is not
 as flexible as I'd like it to be.
 
-"Grouping" (sub-chain) support is a recent addition, and I can't
-be 100% sure it's working properly, as it was written to support
-configs more complication that I need.
+"Grouping" (sub-chain) support is a fairly recent addition and,
+even in backends which support it (iptables, ipchains), isn't
+quite right yet.
 
-And the documentation could use some attention.
+I have been using it on my home gateway for around a year now, and
+have a dozen or so production servers, and a production router
+using it too (all via the iptables backend).  It has all worked
+very well.  But "working well" does not imply security, and I have
+not expended a great deal of effort in auditing.
 
-I have been using it on my personal gateway for around six months
-now, and have two production webservers using it too.  It has all
-worked very well.  But "working well" does not imply security, and
-I have not expended a great deal of effort in auditing.
+See the filter_backends(7) man page for more details on backend-
+specific issues.
 
 
-$Id: HONESTY,v 1.8 2002/04/08 21:54:45 matthew Exp $
+$Id: HONESTY,v 1.9 2002/07/21 13:32:23 matthew Exp $
