@@ -43,6 +43,12 @@ test $RPM_BUILD_ROOT != "/" && rm -rf $RPM_BUILD_ROOT
 %doc /usr/share/doc/%{name}/*
 
 %changelog
+* Wed Aug 18 2004 Jamie Wilkinsin <jamie@anchor.net.au> - 0.12.4-1
+- New upstream release.
+
+* Tue Jun 22 2004 Jamie Wilkinson <jamie@anchor.net.au> - 0.12.3-1
+- New upstream release.
+
 * Thu Jun 10 2004 Jamie Wilkinson <jamie@anchor.net.au> - 0.12.2-1
 - New upstream release.
 
