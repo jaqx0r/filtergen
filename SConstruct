@@ -66,6 +66,7 @@ filtergen  = env.Program('filtergen', ['filtergen.c',
 									 'resolver.c',
 									 'icmpent.c',
 									 'factoriser.c'])
+env.SideEffect('parser.h', 'parser.c')
 
 def sed(target, source, env):
 	expandos = {

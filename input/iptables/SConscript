@@ -1,5 +1,6 @@
 Import('env')
 
 env.Library('in_iptables', ['parser.y', 'scanner.l'])
+env.SideEffect('parser.h', 'parser.c')
 
 SConscript('t/SConscript', 'env')
