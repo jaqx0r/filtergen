@@ -1,7 +1,7 @@
 /*
  * Filter generator, iptables driver
  *
- * $Id: fg-iptables.c,v 1.18 2002/04/14 15:18:47 matthew Exp $
+ * $Id: fg-iptables.c,v 1.19 2002/04/14 15:39:22 matthew Exp $
  */
 
 /*
@@ -231,30 +231,47 @@ int fg_iptables(struct filter *filter, int flags)
 	rule:	cb_iptables_rule,
 	group:	cb_iptables_group,
 	};
+	const int nchains = 3;
 
 	filter_unroll(&filter);
+
 	if(!(flags & FF_NOSKEL)) {
-		puts("for f in INPUT OUTPUT FORWARD; do iptables -P $f DROP; done");
+		puts("CHAINS=\"INPUT OUTPUT FORWARD\"");
+		puts("");
+
+		puts("# Flush/remove rules, set policy");
+		puts("for f in $CHAINS; do iptables -P $f DROP; done");
 		puts("iptables -F; iptables -X");
 		puts("iptables -t nat -F; iptables -t nat -X");
+		puts("");
+
+		puts("# Setup INVALID chain");
+		puts("iptables -N INVALID");
+		puts("iptables -A INVALID -j LOG --log-prefix \"invalid \"");
+		puts("iptables -A INVALID -j DROP");
+		puts("for f in $CHAINS; do\n"
+		     "\tiptables -I $f -m state --state INVALID -j INVALID;\n"
+		     "done");
+		puts("");
+		r += nchains;
 	}
 	if((r = filtergen_cprod(filter, &cb_iptables, &misc)) < 0)
 		return r;
 	if(!(flags & FF_NOSKEL)) {
 		if((flags & FF_LSTATE) && (feat & (A_TCP|A_UDP))) {
-			puts("for f in INPUT OUTPUT FORWARD; do");
+			puts("for f in $CHAINS; do");
 			if(feat & A_TCP) {
-				r++;
+				r += nchains;
 				puts("\tiptables -I $f -p tcp ! --syn -m state --state ESTABLISHED -j ACCEPT;");
 			}
 			if(feat & A_UDP) {
-				r++;
+				r += nchains;
 				puts("\tiptables -I $f -p udp -m state --state ESTABLISHED -j ACCEPT;");
 			}
 			puts("done");
 		}
-		puts("for f in INPUT OUTPUT FORWARD; do iptables -A $f -j LOG; done");
-		r += 3;
+		puts("for f in $CHAINS; do iptables -A $f -j LOG; done");
+		r += nchains;
 	}
 	return r;
 }
