@@ -1,3 +1,9 @@
+recent:
+	getopt()ify filtergen.c
+	add "-l" option to minimise the number of rules for established
+		connections, implemented for iptables backend
+	add more stuff to the iptables skeleton
+
 0.6:
 	disable negation of conjunctions ("or"s, aka brace-grouping) for now
 	add "no skeleton" option
@@ -34,4 +40,4 @@
 	iptables driver
 	a few bugs
 
-$Id: HISTORY,v 1.16 2002/04/08 21:55:00 matthew Exp $
+$Id: HISTORY,v 1.17 2002/04/14 15:46:45 matthew Exp $
