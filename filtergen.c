@@ -1,7 +1,7 @@
 /*
  * filter compilation front-end
  *
- * $Id: filtergen.c,v 1.2 2001/10/03 19:01:54 matthew Exp $
+ * $Id: filtergen.c,v 1.3 2001/10/03 19:47:17 matthew Exp $
  */
 
 #include <stdio.h>
@@ -17,6 +17,7 @@ struct filtyp {
 	filtergen *compiler;
 } filter_types[] = {
 	{ "iptables", fg_iptables, },
+	{ "ipchains", fg_ipchains, },
 	{ "cisco", fg_cisco, },
 	{ NULL, },
 };
@@ -32,7 +33,12 @@ int main(int argc, char **argv)
 	char *ftn;
 	struct filtyp *ft;
 
-	if(argc > 1) yyin = fopen(argv[1], "r");
+	if((argc > 1) && strcmp(argv[1], "-")) {
+		if((yyin = fopen(argv[1], "r"))) {
+			fprintf(stderr, "%s: can't open file \"%s\"\n",
+					argv[0], argv[1]);
+		}
+	}
 
 	ftn = (argc > 2) ? argv[2] : "iptables";
 	for(ft = filter_types; ft->name; ft++)
