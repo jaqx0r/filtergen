@@ -31,7 +31,6 @@ int ipts_convtrace = 1;
 
 #define eprint(x) if (ipts_convtrace) fprintf(stderr, x)
 
-#undef CONVERT
 #define CONVERT(x) struct filter * ipts_convert_##x(struct x##_s * n)
 
 CONVERT(identifier) {
@@ -55,6 +54,32 @@ CONVERT(not_identifier) {
   }
 
   return NULL;
+}
+
+CONVERT(range) {
+    eprint("converting range\n");
+
+    if (n->start) {
+	ipts_convert_identifier(n->start);
+    }
+    if (n->end) {
+	ipts_convert_identifier(n->end);
+    }
+
+    return NULL;
+}
+
+CONVERT(not_range) {
+    eprint("converting not_range\n");
+
+    if (n->neg) {
+	/* neg is boolean */
+    }
+    if (n->range) {
+	ipts_convert_range(n->range);
+    }
+
+    return NULL;
 }
 
 CONVERT(in_interface_option) {
