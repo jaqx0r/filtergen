@@ -80,6 +80,20 @@ direction_specifier: TOK_INPUT direction_argument
 	| TOK_OUTPUT direction_argument
 	;
 
+direction_argument: compound_direction_argument
+	| simple_direction_argument
+	;
+
+compound_direction_argument: TOK_LCURLY direction_argument_list TOK_RCURLY
+	;
+
+direction_argument_list: simple_direction_argument
+	| direction_argument_list simple_direction_argument
+	;
+
+simple_direction_argument: TOK_IDENTIFIER
+	;
+
 target_specifier: TOK_ACCEPT
 	| TOK_REJECT
 	| TOK_DROP
@@ -96,6 +110,21 @@ log_target_specifier: TOK_LOG
 
 host_specifier: TOK_SOURCE host_argument
 	| TOK_DEST host_argument
+	;
+
+host_argument: compound_host_argument
+	| simple_host_argument
+	;
+
+compound_host_argument: TOK_LCURLY host_argument_list TOK_RCURLY
+	;
+
+host_argument_list: simple_host_argument
+	| host_argument_list simple_host_argument
+	;
+
+simple_host_argument: TOK_IDENTIFIER
+	| TOK_IDENTIFIER TOK_SLASH TOK_NUMBER
 	;
 
 port_specifier: TOK_SPORT port_argument
@@ -120,7 +149,35 @@ simple_port_argument: TOK_IDENTIFIER
 protocol_specifier: TOK_PROTO protocol_argument
 	;
 
+protocol_argument: compound_protocol_argument
+	| simple_protocol_argument
+	;
+
+compound_protocol_argument: TOK_LCURLY protocol_argument_list TOK_RCURLY
+	;
+
+protocol_argument_list: simple_protocol_argument
+	| protocol_argument_list simple_protocol_argument
+	;
+
+simple_protocol_argument: TOK_IDENTIFIER
+	;
+
 icmptype_specifier: TOK_ICMPTYPE icmptype_argument;
+	;
+
+icmptype_argument: compound_icmptype_argument
+	| simple_icmptype_argument
+	;
+
+compound_icmptype_argument: TOK_LCURLY icmptype_argument_list TOK_RCURLY
+	;
+
+icmptype_argument_list: simple_icmptype_argument
+	| icmptype_argument_list simple_icmptype_argument
+	;
+
+simple_icmptype_argument: TOK_IDENTIFIER
 	;
 
 /* dunno what to do with this one
@@ -136,20 +193,7 @@ subrule_list: specifier
 	| subrule_list specifier
 	;
 
-direction_argument: TOK_IDENTIFIER
-	;
-
 log_text_argument: TOK_STRINGLITERAL
-	;
-
-host_argument: TOK_IDENTIFIER
-	| TOK_IDENTIFIER TOK_SLASH TOK_NUMBER
-	;
-
-protocol_argument: TOK_IDENTIFIER
-	;
-
-icmptype_argument: TOK_IDENTIFIER
 	;
 
 /*
