@@ -1,7 +1,7 @@
 SUBDIRS = . t
 
 bin_PROGRAMS = filtergen
-bin_SCRIPTS = fgadm
+sbin_SCRIPTS = fgadm
 
 filtergen_SOURCES = \
 	filtergen.c \
@@ -29,7 +29,7 @@ man_MANS = $(mans)
 
 dist_sysconf_DATA = fgadm.conf rules.filter
 
-dist_pkgdoc_DATA = $(top_srcdir)/examples/*.filter
+dist_pkgex_DATA = $(top_srcdir)/examples/*.filter
 
 EXTRA_DIST = HISTORY HONESTY README TODO $(headers) $(mans) filtergen.spec
 
