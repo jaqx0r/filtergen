@@ -3,7 +3,7 @@
 FILTER=@SYSCONFDIR@/rules.filter
 CONF=@SYSCONFDIR@/filtergen.conf
 
-FILTERGEN=@BINDIR@/filtergen
+FILTERGEN=@SBINDIR@/filtergen
 
 # load config options
 if [ -f $CONF ]; then
