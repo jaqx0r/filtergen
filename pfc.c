@@ -13,7 +13,15 @@
 
 #include "filter.h"
 
+#ifndef OLD_FILTERGEN
+#include "ast.h"
+int yyparse(void *);
+void yyrestart(FILE *);
+extern struct filter * convert(struct ast_s * n);
+#else
+
 struct filter * yyparse(void);
+#endif
 
 static FILE *outfile;
 
@@ -135,12 +143,29 @@ int main(int argc, char **argv)
 
 		if(filter_fopen(filepol)) return 1;
 
+#ifdef OLD_FILTERGEN
 		f = filter_parse_list();
 
 		if (!f) {
 			fprintf(stderr, "couldn't parse file\n");
 			return 1;
 		}
+#else
+		{
+		    struct ast_s ast;
+
+		    if (yyparse((void *) &ast) == 0) {
+			f = convert(&ast);
+			if (!f) {
+			    fprintf(stderr, "couldn't convert file\n");
+			    return 1;
+			}
+		    } else {
+			fprintf(stderr, "couldn't parse file\n");
+			return 1;
+		    }
+		}
+#endif
 
 		strftime(buf, sizeof(buf)-1, "%a %b %e %H:%M:%S %Z %Y",
 				localtime((time(&t),&t)));
