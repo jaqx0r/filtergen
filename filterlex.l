@@ -2,7 +2,7 @@
 /*
  * lexer/parser for packet filtering rules
  *
- * $Id: filterlex.l,v 1.6 2001/10/06 20:24:35 matthew Exp $
+ * $Id: filterlex.l,v 1.7 2002/01/02 14:49:33 matthew Exp $
  */
 
 #include <sys/types.h>
@@ -67,7 +67,7 @@ dport		{ return F_DPORT; }
 
 icmptype	{ return F_ICMPTYPE; }
 
-[-:[:alnum:]./]+ { return STRING; }
+[-:[:alnum:]./+]+ { return STRING; }
 
 %%
 
