@@ -4,32 +4,77 @@ set timeout 3
 
 set test "c-style comment"
 
-send "/* blah */\n\r"
+send "/* blah */word\r"
 
 expect { 
-	-re ".+" { fail $test }
-	-re "^$" { pass $test }
-	timeout { fail $test }
-	eof { fail $test }
+    "kind = slash" { fail $test }
+    "kind = identifier, spelling = \"word\"" { pass $test }
+    timeout { fail $test }
+    eof { fail "$test (eof)" }
 }
 
 set test "shell-style hash comment"
 
-send "# blah\n\r"
+send "\# blah\rword\r"
 
 expect {
-	-re ".+" { fail $test }
-	-re "^$" { pass $test }
-	timeout { fail $test }
-	eof { fail $test }
+    "kind = UNRECOGNISED" { fail $test }
+    "kind = identifier, spelling = \"word\"" { pass $test }
+    timeout { fail $test }
+    eof { fail $test }
 }
 
-set test "shell-style comments with no newline"
+set test "line ending with a hash comment"
 
-send "# blah\r"
+send "word\#blah\rword\r"
+expect {
+    "kind = identifier, spelling = \"word\#\"" { fail $test }
+    "kind = identifier, spelling = \"word\"" {
+	expect {
+	    "kind = UNRECOGNISED" { fail $test }
+	    "kind = identifier, spelling = \"word\"" { pass $test }
+	    timeout { fail $test }
+	    eof { fail "$test (eof)" }
+	}
+    }
+    timeout { fail $test }
+    eof { fail "$test (eof)" }
+}
 
-expect { 
-	-re "^$" { pass $test }
-	timeout { fail $test }
-	eof { fail $test }
+set test "nested end comment"
+
+send "/* c comments can't nest */ ***/\r"
+
+expect {
+    "kind = UNRECOGNISED, spelling = \"\*\"" {
+	expect {
+	    "kind = UNRECOGNISED, spelling = \"\*\"" {
+		expect {
+		    "kind = UNRECOGNISED, spelling = \"\*\"" {
+			expect {
+			    "kind = slash" { pass $test }
+			    timeout { fail $test }
+			    eof { fail "$test (eof)" }
+			}
+		    }
+		    timeout { fail $test }
+		    eof { fail "$test (eof)" }
+		}
+	    }
+	    timeout { fail $test }
+	    eof { fail "$test (eof)" }
+	}
+    }
+    timeout { fail $test }
+    eof { fail "$test (eof)" }
+}
+
+set test "nested start comment"
+
+send "/* this /* is okay */word\r"
+
+expect {
+    "kind = identifier, spelling = \"word\"" { pass $test }
+    timeout { fail $test }
+    eof { fail "$test (eof)" }
 }
