@@ -53,7 +53,7 @@ struct filter * convert_compound_specifier(struct compound_specifier_s * r) {
     eprint("converting compound_specifier\n");
 
     if (r->list) {
-	res = convert_subrule_list(r->list);
+      res = new_filter_sibs(convert_subrule_list(r->list));
     }
     return res;
 }

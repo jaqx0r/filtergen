@@ -1,0 +1,2 @@
+# convert compound specifiers
+{ input lo; output lo} accept;
