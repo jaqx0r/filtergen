@@ -20,9 +20,9 @@ o [jaq] {iptables,ipchains}-restore target format
 
 o [jaq] handle resolver errors in resolve.c
 
-o [jaq] extra iptables-like commands: user, related state have them carry
-  through to the generator and then have the generator discard
-  rulesets it doesn't like (but be aware of them)
+o [jaq] extra iptables-like commands: user, related state have them
+    carry through to the generator and then have the generator discard
+    rulesets it doesn't like (but be aware of them)
 
 * Fixup and maintain the cisco and ipfilter backends
   - Cisco needs testing, negation fixes and options for reflexive
@@ -54,9 +54,9 @@ o [jaq] Optimiser (de-pessimiser :-) for intermediate step, and also
 
 * no conntrack (i.e. designed for large fast filters) option for iptables
 
-o [jaq] Implement a negation unroller for filters which can't negate   a
-   match.  (For example, Ciscos can't say "match all but this
-   host".)  This gives us negation of {}-groups, too.
+o [jaq] Implement a negation unroller for filters which can't negate
+    a match.  (For example, Ciscos can't say "match all but this
+    host".)  This gives us negation of {}-groups, too.
 
 * reject-with for reject target in iptables
 
