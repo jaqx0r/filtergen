@@ -11,6 +11,10 @@ Easy:
  * New backend: FreeBSD ipfw
  * {iptables,ipchains}-restore target format
  * handle resolver errors in resolve.c
+ * fix up negations
+ * extra iptables-like commands: user, related state
+   have them carry through to the generator and then have the
+   generator discard rulesets it doesn't like (but be aware of them)
 
 Medium:
  * Fixup and maintain the cisco and ipfilter backends
