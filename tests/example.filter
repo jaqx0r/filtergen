@@ -1,6 +1,6 @@
 #
 # Example filter for (for example) a mail server
-# $Id: example.filter,v 1.1 2001/10/03 19:02:50 matthew Exp $
+# $Id: example.filter,v 1.2 2001/10/04 14:02:43 matthew Exp $
 #
 
 # Unfortunately, we don't have time to audit the
@@ -15,7 +15,7 @@ input eth0 {
 		dport ssh source ournet/24 accept;
 		# We don't answer this, but don't want to
 		# cause timeouts by blocking it
-#		dport auth reject;
+		dport auth reject;
 		drop;
 	};
 	# We don't run any UDP (or other non-TCP)

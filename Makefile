@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.4 2001/10/03 19:47:17 matthew Exp $
+# $Id: Makefile,v 1.5 2001/10/04 14:02:43 matthew Exp $
 
 CC=gcc
 CFLAGS=-g -Wall -Werror
@@ -13,7 +13,7 @@ all: $(PROGS)
 %.yy.c: %.l
 	flex -o$@ $<
 
-OBJS=filtergen.o gen.o filter.o filterlex.yy.o fg-util.o fg-iptables.o fg-ipchains.o fg-cisco.o
+OBJS=filtergen.o gen.o filter.o filterlex.yy.o fg-util.o fg-iptables.o fg-ipchains.o fg-ipfilter.o fg-cisco.o
 
 filtergen: $(OBJS)
 	$(CC) -o $@ $(OBJS) $(LDFLAGS)

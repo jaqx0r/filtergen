@@ -1,7 +1,7 @@
 /*
  * filter compilation front-end
  *
- * $Id: filtergen.c,v 1.5 2001/10/03 20:05:40 matthew Exp $
+ * $Id: filtergen.c,v 1.6 2001/10/04 14:02:43 matthew Exp $
  */
 
 #include <stdio.h>
@@ -18,6 +18,7 @@ struct filtyp {
 } filter_types[] = {
 	{ "iptables", fg_iptables, },
 	{ "ipchains", fg_ipchains, },
+	{ "ipfilter", fg_ipfilter, },
 	{ "cisco", fg_cisco, },
 	{ NULL, },
 };
@@ -47,7 +48,7 @@ int main(int argc, char **argv)
 	for(ft = filter_types; ft->name; ft++)
 		if(!strcmp(ftn, ft->name))
 			break;
-	if(!ft) {
+	if(!ft->name) {
 		fprintf(stderr, "%s: unknown filter type \"%s\"\n", *argv, ftn);
 		return 1;
 	}
@@ -60,8 +61,9 @@ int main(int argc, char **argv)
 
 	strftime(buf, sizeof(buf)-1, "%a %b %e %H:%M:%S %Z %Y",
 			localtime((time(&t),&t)));
-	fprintf(stderr, "# filter generated from %s at %s\n",
+	fprintf(stderr, "# filter generated from %s via %s backend at %s\n",
 			argv[1] ?: "standard input",
+			ft->name,
 			buf);
 	l = ft->compiler(f);
 
