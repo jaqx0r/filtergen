@@ -1,0 +1,48 @@
+( siblist
+  ( input eth0
+   )
+  child
+  ( siblist
+    ( dest foo
+     )
+    child
+    ( siblist
+      ( proto icmp
+       )
+      child
+      ( siblist
+        ( icmptype echo-request
+         )
+        child
+        ( accept
+         )
+       )
+     )
+   )
+  next
+  ( siblist
+    ( input eth0
+     )
+    child
+    ( siblist
+      ( dest foo
+       )
+      child
+      ( siblist
+        ( proto icmp
+         )
+        child
+        ( siblist
+          ( icmptype echo-request
+            next
+            ( icmptype echo-reply
+             )
+           )
+          child
+          ( accept
+           )
+         )
+       )
+     )
+   )
+ )

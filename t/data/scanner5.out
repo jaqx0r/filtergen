@@ -1,0 +1,8 @@
+kind = lcurly, spelling = "{", file = "(standard input)", line = 1
+kind = rcurly, spelling = "}", file = "(standard input)", line = 2
+kind = lsquare, spelling = "[", file = "(standard input)", line = 3
+kind = rsquare, spelling = "]", file = "(standard input)", line = 4
+kind = semicolon, spelling = ";", file = "(standard input)", line = 5
+kind = slash, spelling = "/", file = "(standard input)", line = 6
+kind = colon, spelling = ":", file = "(standard input)", line = 7
+kind = bang, spelling = "!", file = "(standard input)", line = 8

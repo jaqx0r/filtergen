@@ -1,0 +1,4 @@
+# different forms of the log command
+log drop;
+log text "foo" drop;
+log text foo drop;

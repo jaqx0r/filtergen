@@ -1,0 +1,8 @@
+# check hosts
+input eth0 dest foo accept;
+input eth0 source foo reject;
+# compound
+input eth0 dest { foo bar } accept;
+# with mask
+input eth0 dest foo/255.255.255.0 accept;
+input eth0 dest foo/32 accept;

@@ -1,0 +1,14 @@
+( siblist
+  ( input eth0
+   )
+  child
+  ( neg
+    ( siblist
+      ( dest foo
+       )
+     )
+    child
+    ( reject
+     )
+   )
+ )

@@ -1,0 +1,41 @@
+.\" -*- nroff -*-
+.TH "FILTER BACKENDS" 7 "January 7, 2004"
+
+.SH NAME
+filter backends \- output drivers for the filtergen packet filter compiler
+
+.SH INTRODUCTION
+This document describes the status and feature-set of the currently
+available \fBfiltergen\fR backends.
+
+.SH IPTABLES
+Most development is done first against the iptables driver.  It supports
+reject, masquerading, transparent proxying, logging (with text) and
+sub-groups, all of which should work fine (though the latter has only
+recently been fixed).
+
+.SH IPCHAINS
+The ipchains driver supports all of the above features, too.  Its state
+model is much weaker though, of course.  The forwarding support should
+work OK, though it is not possible to support "local"-only packets.
+
+.SH IPFILTER
+The ipfilter backend is incomplete.  It supports accept, drop, reject
+and logging, but not masq, transproxy or sub-groups.  It should be easy
+for someone with knowledge of ipfilter to add support for the other
+features.  Options for OpenBSD "pf" features and syntax would be nice,
+too.  It has received no testing; I don't even know if the generated
+filters are syntactically correct.
+
+.SH CISCO
+The cisco driver is in roughly the same sort of state as the ipfilter
+one.  Additionally, because of the limitations of IOS ACLs, it supports
+only a limited set of features.  It cannot support reject or transparent
+proxying, and may not be able to support masquerading either.  An option
+for reflexive (stateful) ACLs would be very useful.
+
+I understand that Cisco PIX firewalls use a variant of this syntax -- it
+would be very nice to support them too.
+
+.SH SEE ALSO
+\fBfiltergen\fR(8), \fBfilter_syntax\fR(5)

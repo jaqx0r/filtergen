@@ -1,0 +1,7 @@
+# test logging
+# $Id: tlog.filter,v 1.2 2002/08/26 22:10:38 matthew Exp $
+
+input eth0 log drop;
+output eth1 proto tcp log accept;
+input ppp2 proto tcp log text foo reject;
+output ppp4 proto tcp log text "foo bar baz" drop;

@@ -1,0 +1,24 @@
+#!/bin/sh
+
+TEST="that the converter can convert multiple options"
+DATA=converter14
+
+testdir=`dirname $0`
+. $testdir/testlib
+
+cd $work
+if test $? -ne 0 ; then no_result ; fi
+
+if ! test -x $here/convert ; then 
+    echo "convert program not found"
+    no_result
+fi
+
+$here/convert < $testdir/data/${DATA}.in > $work/out 2>&1
+if test $? -ne 0 ; then no_result ; fi
+
+compare $testdir/data/${DATA}.out $work/out
+
+# got this far?
+pass
+

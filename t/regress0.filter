@@ -1,0 +1,13 @@
+#
+# this used to break filter_unroll by making loops
+# in the tree
+#
+# $Id: regress0.filter,v 1.1 2002/09/02 11:10:42 matthew Exp $
+
+output eth0 {
+	{ proto tcp; proto udp } dport domain;
+} accept;
+
+output eth0 {
+	{ proto tcp; proto udp } dport domain;
+} accept source bar;

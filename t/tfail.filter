@@ -1,0 +1,11 @@
+# test negations of conjunctions -- some must fail
+# $Id: tfail.filter,v 1.1 2002/01/25 17:04:55 matthew Exp $
+
+# this is fine
+input eth0 source { a b } drop;
+
+## this fails
+#input eth0 ! source { a b } drop;
+
+# this is the same as the first one
+input eth0 ! { ! source { a b } } drop;

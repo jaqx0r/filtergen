@@ -1,0 +1,3 @@
+# convert log options
+input eth0 log drop;
+input eth0 log text foo drop;

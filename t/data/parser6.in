@@ -1,0 +1,18 @@
+# a rule with a compound direction argument
+input { eth0 eth1 };
+output { ppp0 wlan0 };
+input { lo };
+# a rule with a compound host argument
+dest { foo bar };
+source { baz quux };
+source { localhost };
+# a rule with a compound port argument
+dport { ssh http };
+sport { https ftp-data };
+sport { ntp };
+# a rule with a compound protocol argument
+proto { udp tcp icmp };
+proto { all };
+# a rule with a compound icmptype argument
+icmptype { echo-request echo-reply source-quench };
+icmptype { time-exceeded };

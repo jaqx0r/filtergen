@@ -1,0 +1,2 @@
+# check "child" chains
+input eth0 ! dest foo reject;

@@ -1,0 +1,4 @@
+input eth0 local {
+	dest localhost/8 accept;
+	dest tim/255.0.255.0 drop;
+};

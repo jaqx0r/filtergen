@@ -1,0 +1,16 @@
+#!/bin/sh
+
+TEST="that hash style comments with no newline are scanned and ignored"
+
+testdir=`dirname $0`
+. $testdir/testlib
+
+./scan < $testdir/data/scanner3.in > $work/out
+if test $? -ne 0 ; then no_result ; fi
+
+cmp $testdir/data/scanner3.out $work/out
+if test $? -ne 0 ; then fail ; fi
+
+# got this far?
+pass
+

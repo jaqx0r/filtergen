@@ -1,0 +1,3 @@
+# using an unquoted string as a chain label is okay as long as it's
+# not a keyword.
+[ snot accept; ];

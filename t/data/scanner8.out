@@ -1,0 +1,11 @@
+kind = identifier, spelling = "0.0.0.0", file = "(standard input)", line = 2
+kind = identifier, spelling = "127.0.0.1", file = "(standard input)", line = 3
+kind = slash, spelling = "/", file = "(standard input)", line = 3
+kind = identifier, spelling = "255.255.255.255", file = "(standard input)", line = 3
+kind = identifier, spelling = "http", file = "(standard input)", line = 4
+kind = identifier, spelling = "bar", file = "(standard input)", line = 5
+kind = slash, spelling = "/", file = "(standard input)", line = 5
+kind = identifier, spelling = "29", file = "(standard input)", line = 5
+kind = identifier, spelling = "bar", file = "(standard input)", line = 6
+kind = slash, spelling = "/", file = "(standard input)", line = 6
+kind = identifier, spelling = "255.255.255.248", file = "(standard input)", line = 6

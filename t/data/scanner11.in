@@ -1,0 +1,2 @@
+/* test include directive */
+include data/scanner7.in

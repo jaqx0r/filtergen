@@ -1,0 +1,9 @@
+# negation of some specifiers
+! source foo;
+! dest foo;
+! sport 80;
+! dport 80;
+! proto udp;
+! input eth0;
+! output eth0;
+! icmptype echo-request;

@@ -1,0 +1,8 @@
+input eth0 {
+	source foo accept;
+	source bar/24 accept;
+	source baz/255.255.255.248 accept;
+	dest quux/0 accept;
+	dest flirble/32 accept;
+	source meep/255.0 drop;
+};

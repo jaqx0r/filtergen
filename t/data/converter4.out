@@ -1,0 +1,67 @@
+( siblist
+  ( input eth0
+   )
+  child
+  ( siblist
+    ( dest foo
+     )
+    child
+    ( accept
+     )
+   )
+  next
+  ( siblist
+    ( input eth0
+     )
+    child
+    ( siblist
+      ( source foo
+       )
+      child
+      ( reject
+       )
+     )
+    next
+    ( siblist
+      ( input eth0
+       )
+      child
+      ( siblist
+        ( dest foo
+          next
+          ( dest bar
+           )
+         )
+        child
+        ( accept
+         )
+       )
+      next
+      ( siblist
+        ( input eth0
+         )
+        child
+        ( siblist
+          ( dest foo/255.255.255.0
+           )
+          child
+          ( accept
+           )
+         )
+        next
+        ( siblist
+          ( input eth0
+           )
+          child
+          ( siblist
+            ( dest foo/255.255.255.255
+             )
+            child
+            ( accept
+             )
+           )
+         )
+       )
+     )
+   )
+ )

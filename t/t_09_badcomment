@@ -1,0 +1,15 @@
+#!/bin/sh
+
+TEST="that bad comments are scanned and flag errors"
+
+testdir=`dirname $0`
+. $testdir/testlib
+
+./scan < $testdir/data/scanner9.in > $work/out
+if test $? -ne 0 ; then no_result ; fi
+
+compare $testdir/data/scanner9.out $work/out
+
+# got this far?
+pass
+

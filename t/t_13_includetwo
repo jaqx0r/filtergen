@@ -1,0 +1,15 @@
+#!/bin/sh
+
+TEST="that including more than one file works"
+
+testdir=`dirname $0`
+. $testdir/testlib
+
+./scan < $testdir/data/scanner13.in > $work/out 2>&1
+if test $? -ne 0 ; then no_result ; fi
+
+compare $testdir/data/scanner13.out $work/out
+
+# got this far?
+pass
+

@@ -1,0 +1,68 @@
+DAG for rule generation
+
+a { b c d } e { f g } x;
+h { f g } z;
+i { b c } y;
+
+precompute common subexpressions == separate into chains
+
+caution: actions are commutative with subexpressions:
+
+  { f g } x is not the same as { f g } z
+
+visit nodes in a dag: when the end of the path is reached, enter a rule into
+an assembler-like list of tuples
+
+
+chain | if | src ip | dst ip | proto | src port | dst port | options... | action
+
+ports ignored for non tcp/udp (i.e. they're NULL)
+
+NULL values are assumed to be any:  if they were assumed to be none, then
+all rules missing a value would be no-ops.  leaving a specifier out meaning
+less specifity seems more intuitive.
+
+options inclue icmp type, special flags, iptables modifiers
+
+apply peephole optimisations:
+
+* redundant rules that are more specific than later rules with the same action
+  potential for shadowing warning
+* rule reordering with other rules having the same action
+
+pattern: "if" expression "then" action;
+
+
+##factorisation
+
+common actions
+E1 A;  = ( E1 | E2 ) A
+E2 A;
+
+sib specifiers
+S { I1 I2 } = ( P(S I1) | P(S I2) )
+
+chains/braces
+{ E } = ( E )
+
+specifier lists
+S1 I1 S2 I2 = ( P(S1I1) & P(S2I2) )
+
+negations
+! {E} = ! ( E )
+
+negations
+! S = ! P(S)
+
+S { ! I } = ! P(SI)
+
+S { ! I1 I2 } = ( !P(SI1) & P(SI2) )
+
+
+associativity
+( E1 o E2 ) o E3 = E1 o ( E2 o E3 )
+
+comutativity
+
+E1 o E2 = E2 o E1
+

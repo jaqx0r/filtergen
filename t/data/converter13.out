@@ -1,0 +1,21 @@
+( siblist
+  ( input eth0
+   )
+  child
+  ( log ""
+    child
+    ( drop
+     )
+   )
+  next
+  ( siblist
+    ( input eth0
+     )
+    child
+    ( log "foo"
+      child
+      ( drop
+       )
+     )
+   )
+ )

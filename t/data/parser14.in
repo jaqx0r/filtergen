@@ -1,0 +1,31 @@
+# chained subgroup, named
+[ "thingy" accept; ];
+# unnamed
+[ accept; ];
+# empty
+[ ];
+# named empty
+[ "blarg" ];
+# a big one from tgroup.filter
+input eth0 source wwwserv dest dbserv
+[ "web_to_dbserv"
+	proto tcp sport 137:139 reject;
+	accept;
+];
+# from tgroup2.filter
+input eth0 source wwwserv dest dbserv
+[	"web_to_dbserv"
+	proto tcp dport 1521 accept;
+	proto tcp dport appserv1 accept;
+	proto tcp dport appserv2 accept;
+	proto tcp dport appserv3 accept;
+	drop;
+];
+# from tgroup3.filter
+input eth0 source wwwserv dest dbserv
+[	"web_to_dbserv"
+	proto tcp dport { 1521 appserv1 appserv2 appserv3 } accept;
+	drop;
+];
+# now try with a keyword as the chain label
+[ "input" accept; ];

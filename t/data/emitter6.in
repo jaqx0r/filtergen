@@ -1,0 +1,5 @@
+# parse and emit negated specifiers
+dest foo;
+! dest foo;
+sport bar;
+! sport bar;

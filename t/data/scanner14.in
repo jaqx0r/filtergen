@@ -1,0 +1,3 @@
+/* test includes that are inline with other directives */
+input include data/scanner7.in accept;
+output include data/scanner7.in accept;

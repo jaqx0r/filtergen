@@ -1,0 +1,15 @@
+#!/bin/sh
+
+TEST="that c style comments are scanned and ignored"
+
+testdir=`dirname $0`
+. $testdir/testlib
+
+./scan < $testdir/data/scanner11.in > $work/out
+if test $? -ne 0 ; then no_result ; fi
+
+compare $testdir/data/scanner11.out $work/out
+
+# got this far?
+pass
+

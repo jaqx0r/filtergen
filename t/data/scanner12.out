@@ -1,0 +1,2 @@
+data/scanner12.in:1: warning: too many nested includes
+data/scanner12.in:1: warning: skipping include of file data/scanner12.in

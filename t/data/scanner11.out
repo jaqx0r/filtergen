@@ -1,0 +1,5 @@
+kind = identifier, spelling = "foo", file = "data/scanner7.in", line = 2
+kind = identifier, spelling = "bar", file = "data/scanner7.in", line = 3
+kind = identifier, spelling = "baz", file = "data/scanner7.in", line = 4
+kind = identifier, spelling = "quux", file = "data/scanner7.in", line = 5
+kind = identifier, spelling = "mail.example.com", file = "data/scanner7.in", line = 6

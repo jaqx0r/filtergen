@@ -1,0 +1,3 @@
+icmptype { echo-request };
+icmptype { echo-request port-unreachable };
+icmptype {  };

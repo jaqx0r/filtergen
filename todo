@@ -1,0 +1,9 @@
+recursive include checker
+test for each code path through include directive
+multi ip hostnames
+"related" iptables, ftp
+extra iptables bits, user
+icmp filters
+forward and local specifiers
+does an identifier need to contain a " character?
+echo > proc/.../ip_forward if a masq target exists

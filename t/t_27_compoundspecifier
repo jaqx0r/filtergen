@@ -1,0 +1,16 @@
+#!/bin/sh
+
+TEST="that parsing compound specfiers works"
+DATA=parser12
+
+testdir=`dirname $0`
+. $testdir/testlib
+
+./parse < $testdir/data/${DATA}.in > $work/out 2>&1
+if test $? -ne 0 ; then no_result ; fi
+
+compare $testdir/data/${DATA}.out $work/out
+
+# got this far?
+pass
+
