@@ -65,6 +65,7 @@ extern int ipts_lex(void);
     struct tcp_flags_option_s * u_tcp_flags_option;
     struct reject_with_option_s * u_reject_with_option;
     struct icmp_type_option_s * u_icmp_type_option;
+    struct fragment_option_s * u_fragment_option;
 
     struct not_identifier_s * u_not_identifier;
     struct identifier_s * u_identifier;
@@ -80,6 +81,7 @@ extern int ipts_lex(void);
 %type <u_not_option> not_option
 %type <u_option> option
 
+%type <u_fragment_option> fragment_option
 %type <u_icmp_type_option> icmp_type_option
 %type <u_reject_with_option> reject_with_option
 %type <u_tcp_flags_option> tcp_flags_option
@@ -337,6 +339,17 @@ option: in_interface_option
 {
     $$ = malloc(sizeof(struct option_s));
     $$->icmp_type_option = $1;
+}
+| fragment_option
+{
+    $$ = malloc(sizeof(struct option_s));
+    $$->fragment_option = $1;
+}
+
+fragment_option: TOK_IPTS_FRAGMENT
+{
+    $$ = malloc(sizeof(struct fragment_option_s));
+    $$->i = 1;
 }
 
 icmp_type_option: TOK_IPTS_ICMP_TYPE identifier
