@@ -35,11 +35,8 @@ void ipts_convert_identifier(struct identifier_s * n) {
 
   eprint("converting identifier\n");
 
-  if (n->id1) {
-    /* do soemthing with first arg */
-  }
-  if (n->id2) {
-    /* do something with second arg */
+  if (n->string) {
+    /* do something with string value */
   }
 }
 

@@ -1,4 +1,6 @@
 *filter
 :INPUT DROP [0:0]
 [0:0] -A INPUT --dport 25 -j ACCEPT
+[0:0] -A INPUT --dport 1024: -j ACCEPT
+[0:0] -A INPUT --dport 30000:60000 -j ACCEPT
 COMMIT

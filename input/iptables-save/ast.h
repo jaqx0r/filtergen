@@ -26,8 +26,7 @@ struct pkt_count_s {
 };
 
 struct identifier_s {
-    char * id1;
-    char * id2;
+    char * string;
 };
 
 struct not_identifier_s {
@@ -35,12 +34,22 @@ struct not_identifier_s {
     struct identifier_s * identifier;
 };
 
+struct range_s {
+    struct identifier_s * start;
+    struct identifier_s * end;
+};
+
+struct not_range_s {
+    int neg;
+    struct range_s * range;
+};
+
 struct in_interface_option_s {
-  struct not_identifier_s * not_identifier;
+    struct not_identifier_s * not_identifier;
 };
 
 struct jump_option_s {
-  struct identifier_s * identifier;
+    struct identifier_s * identifier;
 };
 
 struct destination_option_s {
@@ -56,7 +65,8 @@ struct match_option_s {
 };
 
 struct dport_option_s {
-    struct identifier_s * identifier;
+    struct not_range_s * not_range;
+    struct not_identifier_s * not_identifier;
 };
 
 struct to_ports_option_s {
@@ -88,6 +98,7 @@ struct log_prefix_option_s {
 };
 
 struct sport_option_s {
+    struct not_range_s * not_range;
     struct not_identifier_s * not_identifier;
 };
 

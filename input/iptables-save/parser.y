@@ -67,6 +67,8 @@ extern int ipts_lex(void);
     struct icmp_type_option_s * u_icmp_type_option;
     struct fragment_option_s * u_fragment_option;
 
+    struct not_range_s * u_not_range;
+    struct range_s * u_range;
     struct not_identifier_s * u_not_identifier;
     struct identifier_s * u_identifier;
     struct pkt_count_s * u_pkt_count;
@@ -101,6 +103,8 @@ extern int ipts_lex(void);
 %type <u_jump_option> jump_option
 %type <u_in_interface_option> in_interface_option
 
+%type <u_not_range> not_range
+%type <u_range> range
 %type <u_not_identifier> not_identifier
 %type <u_identifier> identifier
 %type <u_pkt_count> opt_pkt_count
@@ -364,7 +368,7 @@ reject_with_option: TOK_IPTS_REJECT_WITH identifier
     $$->identifier = $2;
 }
 
-tcp_flags_option: TOK_IPTS_TCP_FLAGS identifier
+tcp_flags_option: TOK_IPTS_TCP_FLAGS identifier identifier
 {
     $$ = malloc(sizeof(struct tcp_flags_option_s));
     $$->identifier = $2;
@@ -376,9 +380,16 @@ uid_owner_option: TOK_IPTS_UID_OWNER identifier
     $$->identifier = $2;
 }
 
-sport_option: TOK_IPTS_SPORT not_identifier
+sport_option: TOK_IPTS_SPORT not_range
 {
     $$ = malloc(sizeof(struct sport_option_s));
+    $$->not_range = $2;
+    $$->not_identifier = NULL;
+}
+| TOK_IPTS_SPORT not_identifier
+{
+    $$ = malloc(sizeof(struct sport_option_s));
+    $$->not_range = NULL;
     $$->not_identifier = $2;
 }
 
@@ -424,10 +435,17 @@ to_ports_option: TOK_IPTS_TO_PORTS identifier
     $$->identifier = $2;
 }
 
-dport_option: TOK_IPTS_DPORT identifier
+dport_option: TOK_IPTS_DPORT not_range
 {
     $$ = malloc(sizeof(struct dport_option_s));
-    $$->identifier = $2;
+    $$->not_range = $2;
+    $$->not_identifier = NULL;
+}
+| TOK_IPTS_DPORT not_identifier
+{
+    $$ = malloc(sizeof(struct dport_option_s));
+    $$->not_range = NULL;
+    $$->not_identifier = $2;
 }
 
 match_option: TOK_IPTS_MATCH identifier
@@ -460,6 +478,38 @@ in_interface_option: TOK_IPTS_IN_INTERFACE not_identifier
   $$->not_identifier = $2;
 }
 
+not_range: TOK_BANG range
+{
+    $$ = malloc(sizeof(struct not_range_s));
+    $$->neg = 1;
+    $$->range = $2;
+}
+| range
+{
+    $$ = malloc(sizeof(struct not_range_s));
+    $$->neg = 0;
+    $$->range = $1;    
+}
+
+range: identifier TOK_COLON identifier
+{
+    $$ = malloc(sizeof(struct range_s));
+    $$->start = $1;
+    $$->end = $3;
+}
+| identifier TOK_COLON
+{
+    $$ = malloc(sizeof(struct range_s));
+    $$->start = $1;
+    $$->end = NULL;
+}
+| TOK_COLON identifier
+{
+    $$ = malloc(sizeof(struct range_s));
+    $$->start = NULL;
+    $$->end = $2;
+}
+
 not_identifier: TOK_BANG identifier
 {
     $$ = malloc(sizeof(struct not_identifier_s));
@@ -473,30 +523,15 @@ not_identifier: TOK_BANG identifier
     $$->identifier = $1;
 }
 
-identifier: TOK_IDENTIFIER TOK_IDENTIFIER
+identifier: TOK_IDENTIFIER
 {
     $$ = malloc(sizeof(struct identifier_s));
-    $$->id1 = $1;
-    $$->id2 = $2;
-}
-| TOK_IDENTIFIER TOK_COLON TOK_IDENTIFIER
-{
-    $$ = malloc(sizeof(struct identifier_s));
-    asprintf(&($$->id1), "%s:%s", $1, $3);
-    $$->id2 = NULL;
+    $$->string = $1;
 }
 | TOK_QUOTE TOK_IDENTIFIER TOK_QUOTE
 {
     $$ = malloc(sizeof(struct identifier_s));
-    $$->id1 = $2;
-    $$->id2 = NULL;
-
-}
-| TOK_IDENTIFIER
-{
-    $$ = malloc(sizeof(struct identifier_s));
-    $$->id1 = $1;
-    $$->id2 = NULL;
+    $$->string = $2;
 }
 
 opt_pkt_count: /* empty */

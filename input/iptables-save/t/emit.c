@@ -28,20 +28,11 @@ EMIT(pkt_count) {
 }
 
 EMIT(identifier) {
-    if (n->id1) {
-	char * spaces = strstr(n->id1, " ");
+    if (n->string) {
+	char * spaces = strstr(n->string, " ");
 	if (spaces)
 	    printf("\"");
-	printf("%s", n->id1);
-	if (spaces)
-	    printf("\"");
-    }
-    if (n->id2) {
-	printf(" ");
-	char * spaces = strstr(n->id2, " ");
-	if (spaces)
-	    printf("\"");
-	printf("%s", n->id2);
+	printf("%s", n->string);
 	if (spaces)
 	    printf("\"");
     }
