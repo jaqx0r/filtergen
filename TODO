@@ -1,45 +1,35 @@
 TODO for filtergen
 ==================
 
-* Better documentation.
-
-o [jaq] Support scripts, documentation
-
-* Better logging options.
-
-* Translate icmp names (at least for ipfilter and cisco) 
-
-o [jaq] ICMP codes (--icmp-type x/y syntax for iptables)
-
-* "Loose" option to allow not-quite-correct rulesets to run, eg.,
-    using forward-only with ipchains
-
-* New backend: FreeBSD ipfw
-
-o [jaq] {iptables,ipchains}-restore target format
-
-o [jaq] handle resolver errors in resolve.c
-
-o [jaq] extra iptables-like commands: user, related state have them
-    carry through to the generator and then have the generator discard
-    rulesets it doesn't like (but be aware of them)
+milestones for version 1.3
+--------------------------
 
 * Fixup and maintain the cisco and ipfilter backends
+
   - Cisco needs testing, negation fixes and options for reflexive
     ACLs
+
   - ipfilter needs testing and masq, transproxy and grouping support
 
-* support sysctl tuning in iptables/ipchains (i.e. linux) targets
+* New input/output engines:
 
-o [jaq] "limit" rate limiting support
+  - FreeBSD ipfw target
 
-* iproute2 "ip rule" backend
+  - iproute2 "ip rule" target
 
-* Testing and auditing of generated rulesets.
+  - iptables-save input and target format
 
-o [jaq] Optimiser (de-pessimiser :-) for intermediate step, and also
-    generated rulesets (the latter could be done with a peephole
-    optimiser, I think).
+  - ipchains-save input and target format
+
+
+milestones for version 1.4
+--------------------------
+
+Optimiser
+
+* Optimiser for intermediate step, and also
+  generated rulesets (the latter could be done with a peephole
+  optimiser, I think).
 
   - equation factoriser should be simpler and quite good.  factorising
     should be trivial, boolean factorisation never involves
@@ -50,29 +40,55 @@ o [jaq] Optimiser (de-pessimiser :-) for intermediate step, and also
 
   - future optimise orthogonal rules based on hit frequency
 
+* Implement a negation unroller for filters which can't negate
+  a match.  (For example, Ciscos can't say "match all but this
+  host".)  This gives us negation of {}-groups, too.
+
+other items
+-----------
+
+* Full documentation.
+  administrators guide/user manual in addition to man pages.
+  doxygen stuff in code?
+
+* ICMP support
+
+  - Translate icmp names for ipfilter and cisco targets
+
+  - generate ICMP codes in iptables (y part in --icmp-type x/y)
+
+* "Loose" option to allow not-quite-correct rulesets to run, eg.,
+  using forward-only with ipchains
+
+* handle resolver errors in resolve.c
+
+* extra iptables-like commands: user, related state have them
+  carry through to the generator and then have the generator discard
+  rulesets it doesn't like (but be aware of them)
+
+* support sysctl tuning in iptables/ipchains (i.e. linux) targets
+
+* rate limiting support
+
+  - "limit" keyword in iptables
+
+* Testing and auditing of generated rulesets.
+
+  - test rig for packet filters
+
+  - user tools for testing rulesets
+
+  - diffing/merging tool for filters, compare two and report differences
+    or merge in all rules from a second filter into a first and report extra
+    rules.
+
 * state ESTABLISHED on iptables rules for all rules
 
 * no conntrack (i.e. designed for large fast filters) option for iptables
 
-o [jaq] Implement a negation unroller for filters which can't negate
-    a match.  (For example, Ciscos can't say "match all but this
-    host".)  This gives us negation of {}-groups, too.
-
 * reject-with for reject target in iptables
-
-* ipac-friendly filters
-
-* New backend: iptables-save format
-
-* New frontend: iptables-save format
-
-* unit tests for recursive include
-
-* unit tests for all code paths in include directive
 
 * " characters in identifiers, do they need to exist?
 
 * forward/local specifiers in filtergen language removed.  add them
-    back?
-
-* generate icmp filters completely
+  back?
