@@ -3,7 +3,7 @@
  *
  * XXX - maybe some of this could be shared with the iptables one?
  *
- * $Id: fg-ipchains.c,v 1.18 2002/07/31 22:09:21 matthew Exp $
+ * $Id: fg-ipchains.c,v 1.19 2002/07/31 22:17:21 matthew Exp $
  */
 
 #include <stdio.h>
@@ -18,6 +18,8 @@ static int cb_ipchains_rule(const struct filterent *ent, struct fg_misc *misc)
 	char *rule = NULL, *rule_r = NULL;
 	char *rulechain = NULL, *revchain = NULL;
 	char *ruletarget = NULL, *revtarget = NULL;
+	char *forchain = NULL, *forrevchain = NULL;
+	char *fortarget = NULL, *forrevtarget = NULL;
 	int needret = 0;
 	int isforward = (ent->rtype != LOCALONLY);
 	int orules = 0;
@@ -41,10 +43,11 @@ static int cb_ipchains_rule(const struct filterent *ent, struct fg_misc *misc)
 	switch(ent->direction) {
 	case 0:		/* This is a rule in a subgroup */
 			rulechain = revchain = ent->groupname; break;
-	case F_INPUT:	rulechain = "input"; revchain = "output"; break;
-	case F_OUTPUT:	rulechain = (ent->target == F_MASQ)
-						? "forward" : "output";
-			revchain = "input"; break;
+	case F_INPUT:	rulechain = "input"; revchain = "output";
+			forchain = "forward"; forrevchain = "forw_out"; break;
+	case F_OUTPUT:	rulechain = (ent->target == F_MASQ) ? "forw_out" : "output";
+			revchain = "input";
+			forchain = "forw_out"; forrevchain = "forward"; break;
 	default: fprintf(stderr, "unknown direction\n"); abort();
 	}
 
@@ -116,9 +119,16 @@ static int cb_ipchains_rule(const struct filterent *ent, struct fg_misc *misc)
 	APPS(rule, "-j"); APPS(rule_r, "-j");
 
 	switch(ent->target) {
-	case F_ACCEPT:	ruletarget = revtarget = "ACCEPT"; break;
-	case F_DROP:	ruletarget = "DENY"; needret = 0; break;
-	case F_REJECT:	ruletarget = "REJECT"; needret = 0; break;
+	case F_ACCEPT:	ruletarget = revtarget =
+			fortarget = forrevtarget = "ACCEPT";
+			switch(ent->direction) {
+			case F_INPUT: fortarget = "forw_out"; break;
+			case F_OUTPUT: forrevtarget = "forw_out"; break;
+			default: abort();
+			}
+			break;
+	case F_DROP:	ruletarget = fortarget = "DENY"; needret = 0; break;
+	case F_REJECT:	ruletarget = fortarget = "REJECT"; needret = 0; break;
 	case F_MASQ:	ruletarget = "MASQ"; revtarget = "ACCEPT"; break;
 	case F_REDIRECT:ruletarget = "REDIRECT"; revtarget = "ACCEPT"; break;
 	case F_SUBGROUP:ruletarget = revtarget = ent->subgroup; break;
@@ -128,8 +138,8 @@ static int cb_ipchains_rule(const struct filterent *ent, struct fg_misc *misc)
 	orules++, oprintf("ipchains -A %s %s %s\n", rulechain, rule+1, ruletarget);
 	if(needret) orules++, oprintf("ipchains -I %s %s %s\n", revchain, rule_r+1, revtarget);
 	if(isforward) {
-		orules++, oprintf("ipchains -A forward %s %s\n", rule+1, ruletarget);
-		if(needret) orules++, oprintf("ipchains -I forward %s %s\n", rule_r+1, revtarget);
+		orules++, oprintf("ipchains -A %s %s %s\n", forchain, rule+1, fortarget);
+		if(needret) orules++, oprintf("ipchains -I %s %s %s\n", forrevchain, rule_r+1, forrevtarget);
 	}
 
 	free(rule); free(rule_r);
