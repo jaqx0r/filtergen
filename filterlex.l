@@ -2,7 +2,7 @@
 /*
  * lexer/parser for packet filtering rules
  *
- * $Id: filterlex.l,v 1.9 2002/04/28 22:30:41 matthew Exp $
+ * $Id: filterlex.l,v 1.10 2002/07/21 12:35:39 matthew Exp $
  */
 
 #include <sys/types.h>
@@ -54,6 +54,7 @@ log		{ return F_LOG; }
 
 masq		{ return F_MASQ; }
 redirect	{ return F_REDIRECT; }
+proxy		{ return F_REDIRECT; }
 
 input		{ return F_INPUT; }
 output		{ return F_OUTPUT; }
