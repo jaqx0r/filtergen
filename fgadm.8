@@ -1,0 +1,94 @@
+.\" -*- nroff -*-
+.TH FGADM 8 "June 7, 2004"
+
+.SH NAME
+fgadm \- filtergen command program
+
+.SH SYNOPSIS
+\fBfgadm\fR [ \fBcheck\fR | \fBreload\fR | \fBsave\fR | \fBstop\fR ]
+
+.SH DESCRIPTION
+\fBfgadm\fR is a simple command interface for managing \fBfiltergen\fR(8)
+based packet filters.
+
+.SH USAGE
+\fBfgadm\fR can be used to stop existing filters (thus turning them off),
+reload new packet filters, save currently running filters for longevity,
+and to check filter scripts for errors before reloading.
+
+.PP
+The following commands are accepted by \fBfgadm\fR:
+
+.TP
+\fBcheck\fR
+Check the filter script \fI/etc/filtergen/rules.filter\fR for errors.  The
+generated filter will be printed on standard output, and errors printed to
+standard error.
+
+.TP
+\fBreload\fR
+Replace the current live packet filter with the one in
+\fI/etc/filtergen/rules.filter\fR.  The script will be tested for errors
+before reloading.
+
+.TP
+\fBsave\fR
+The current live packet filter will be saved in a distribution-friendly way.
+On Red Hat systems, this will save the iptables or ipchains firewall that is
+currently loaded into the kernel to load at boot with the \fIiptables\fR or
+\fIipchains\fR initscript.
+
+.TP
+\fBstop\fR
+This command will flush the current live packet filter out and put it in a
+default accept mode, thus no firewalling will be in place.  This is useful to
+abort firewalls in an emergency.
+
+.SH EXAMPLES
+
+One may find the following sequence of commands useful for making firewall
+changes on live servers:
+
+.br
+# \fBat now + 2 min\fR
+.br
+warning: commands will be executed using (in order) a) $SHELL b) login shell c) /bin/sh
+.br
+at> \fBfgadm stop\fR
+.br
+at> \fB^D\fR<EOT>
+.br
+job 53 at 2004-06-07 17:25
+.br
+# \fBfgadm check\fR
+.br
+# \fBfgadm reload\fR
+.br
+# \fBatq\fR
+.br
+53
+.br
+# \fBatrm 53\fR
+.br
+# \fBfgadm save\fR
+
+.SH FILES
+
+.SS /etc/filtergen/rules.filter
+
+Packet filter descriptions are read from this file when \fBfgadm\fR is used.
+
+.SS /etc/filtergen/fgadm.conf
+
+This file alters the behaviour of \fBfiltergen\fR as called from \fBfgadm\fR.
+
+.SH BUGS
+\fBfgadm save\fR does not work on Debian systems with iptables due to a lack
+of common sense in the iptables package.
+
+.SH SEE ALSO
+\fBfiltergen\fR(8), \fBfilter_syntax\fR(5), \fBfilter_backends\fR(5)
+
+.SH AUTHOR
+\fBfgadm\fR was written by Jamie Wilkinson <jaq@spacepants.org> for the
+filtergen package, to ease maintenance of filtergen-based firewalls.

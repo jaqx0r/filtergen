@@ -5,9 +5,9 @@
 filtergen \- packet filter compiler
 
 .SH SYNOPSIS
-\fBfiltergen\fR [ \fB-h\fR | \fB--help\fR ] [ \fB-c\fR | \fB--compile\fR ] [ \fB-t \fItarget\fB\fR | \fB--target=\fItarget\fB\fR ] [ \fB-o \fIoutfile\fB\fR | \fB--output=\fIoutfile\fB\fR ] \fIinfile\fR
+\fBfiltergen\fR [ \fB-h\fR | \fB--help\fR ] [ \fB-V\fR | \fB--version\fR ] [ \fB-c\fR | \fB--compile\fR ] [ \fB-t \fItarget\fB\fR | \fB--target=\fItarget\fB\fR ] [ \fB-o \fIoutfile\fB\fR | \fB--output=\fIoutfile\fB\fR ] \fIinfile\fR
 
-\fBfiltergen\fR [ \fB-h\fR | \fB--help\fR ] [ \fB-c\fR | \fB--compile\fR ] [ \fB-t \fItarget\fB\fR | \fB--target=\fItarget\fB\fR ] [ \fB-o \fIoutfile\fB\fR | \fB--output=\fIoutfile\fB\fR ] [ \fB-F \fIpolicy\fB\fR | \fB--flush=\fIpolicy\fB\fR ]
+\fBfiltergen\fR [ \fB-h\fR | \fB--help\fR ] [ \fB-V\fR | \fB--version\fR ] [ \fB-c\fR | \fB--compile\fR ] [ \fB-t \fItarget\fB\fR | \fB--target=\fItarget\fB\fR ] [ \fB-o \fIoutfile\fB\fR | \fB--output=\fIoutfile\fB\fR ] [ \fB-F \fIpolicy\fB\fR | \fB--flush=\fIpolicy\fB\fR ]
 
 .SH DESCRIPTION
 \fBfiltergen\fR compiles a high-level filtering description language into a
@@ -51,6 +51,10 @@ Write output to \fIoutfile\fR instead of standard output.
 .TP
 \fB-h, --help\fR
 Show command help.
+
+.TP
+\fB-V, --version\fR
+Show program version.
 
 .SH BUGS
 Not all backends implement all features.
