@@ -99,10 +99,11 @@ text         return TOK_TEXT;
 
 <include>[ \t]*       /* eat whitespace after include */
 <include>[^ \t\n]+    { /* include file name */
-                          if (inc_stackptr >= MAXINCLUDES)
-                              fprintf(stderr, "warning: %s:%ld too many nested includes\n", filename(), lineno());
+                          if (inc_stackptr >= MAXINCLUDES) {
+                              fprintf(stderr, "%s:%ld: warning: too many nested includes\n", filename(), lineno());
+    			      fprintf(stderr, "%s:%ld: warning: skipping include of file %s\n", filename(), lineno(), yytext);
 
-			  else {
+			  } else {
                           inc_stack[inc_stackptr++].state = YY_CURRENT_BUFFER;
                           inc_stack[inc_stackptr].lineno = 1;
                           inc_stack[inc_stackptr].filename = strdup(yytext);
