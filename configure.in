@@ -80,6 +80,8 @@ test "$exec_prefix" = "NONE" && exec_prefix=$prefix
 dnl Executable files
 eval BINDIR="$bindir"
 AC_SUBST(BINDIR)
+eval SBINDIR="$sbindir"
+AC_SUBST(SBINDIR)
 
 dnl Configuration files
 eval SYSCONFDIR="$sysconfdir"
