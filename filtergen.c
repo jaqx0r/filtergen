@@ -1,7 +1,7 @@
 /*
  * filter compilation front-end
  *
- * $Id: filtergen.c,v 1.16 2002/11/11 19:48:38 matthew Exp $
+ * $Id: filtergen.c,v 1.17 2002/11/11 20:51:38 matthew Exp $
  */
 
 #include <stdio.h>
@@ -52,7 +52,6 @@ struct filtyp {
 
 int main(int argc, char **argv)
 {
-	extern FILE *yyin;
 	struct filter *f;
 	int l;
 	time_t t;
@@ -132,13 +131,8 @@ int main(int argc, char **argv)
 	} else {
 		/* Compile from a file */
 		if(filepol && !strcmp(filepol, "-")) filepol = NULL;
-		if(filepol) {
-			if(!(yyin = fopen(filepol, "r"))) {
-				fprintf(stderr, "%s: can't open file \"%s\"\n",
-						progname, filepol);
-				return 1;
-			}
-		}
+
+		if(filter_fopen(filepol)) return 1;
 
 		f = filter_parse_list();
 		if (!f) {
