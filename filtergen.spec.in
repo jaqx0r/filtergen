@@ -4,8 +4,8 @@ Version: @VERSION@
 Release: 1
 License: GPL
 Group: Applications/System
-Source: http://spacepants.org/src/pfc/download/%name-%version.tar.gz
-URL: http://spacepants.org/src/pfc
+Source: http://spacepants.org/src/filtergen/download/%name-%version.tar.gz
+URL: http://spacepants.org/src/filtergen
 Buildroot: %{_tmppath}/%{name}-root
 BuildPrereq: rpm-build gcc flex make
 Packager: Jamie Wilkinson <jaq@spacepants.org>

@@ -1,7 +1,7 @@
-INSTALLING PFC
+INSTALLING filtergen
 ==============
 
-Installing pfc is easy.
+Installing filtergen is easy.
 
 If you're on a Red Hat-like RPM-based system, you should be
 able just to run "rpm -ta" on the tarball.
@@ -24,7 +24,7 @@ to do these things.  Run "/etc/init.d/filter help" to see what
 it can do.  It supports chkconfig.
 
 Note that if you intend to load filters at boot, you should
-install pfc in /sbin/, in case not all filesystems are
+install filtergen in /sbin/, in case not all filesystems are
 mounted at that point.
 
 The RPM does all of these things.  It does _not_ configure the

@@ -1,10 +1,10 @@
 SUBDIRS = . t
 
-bin_PROGRAMS = pfc
-bin_SCRIPTS = pfctl
+bin_PROGRAMS = filtergen
+bin_SCRIPTS = fgadm
 
-pfc_SOURCES = \
-	pfc.c \
+filtergen_SOURCES = \
+	filtergen.c \
 	gen.c \
 	filter.c \
 	fg-util.c \
@@ -19,15 +19,15 @@ pfc_SOURCES = \
 	icmpent.c \
 	factoriser.c
 
-pfc_LDADD = @GETOPT_LIBS@
+filtergen_LDADD = @GETOPT_LIBS@
 
 headers = filter.h util.h ast.h resolver.h icmpent.h factoriser.h
 
-mans = filter_backends.7 filter_syntax.5 pfc.8
+mans = filter_backends.7 filter_syntax.5 filtergen.8
 
 man_MANS = $(mans)
 
-EXTRA_DIST = HISTORY HONESTY README TODO $(headers) $(mans) pfc.spec
+EXTRA_DIST = HISTORY HONESTY README TODO $(headers) $(mans) filtergen.spec
 
 AM_CFLAGS = -D_GNU_SOURCE
 AM_LDFLAGS = -g

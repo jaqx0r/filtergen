@@ -1,16 +1,16 @@
 #!/bin/sh
 
-FILTER=@SYSCONFDIR@/rules.pfc
+FILTER=@SYSCONFDIR@/rules.filter
 
 reload () {
-    if test @BINDIR@/pfc $FILTER > /dev/null ; then
-	@BINDIR@/pfc $FILTER | /bin/sh
+    if test @BINDIR@/filtergen $FILTER > /dev/null ; then
+	@BINDIR@/filtergen $FILTER | /bin/sh
     fi
     save
 }
 
 stop () {
-    @BINDIR@/pfc -F ACCEPT
+    @BINDIR@/filtergen -F ACCEPT
 }
 
 save () {
