@@ -1,4 +1,4 @@
-Recent: testing begins
+0.4: testing begins
 	add transproxy and masquerading support
 	fix syntax problems with iptables output
 	simple logging support (logs only initiating packets)
@@ -20,4 +20,4 @@ Recent: testing begins
 	iptables driver
 	a few bugs
 
-$Id: HISTORY,v 1.6 2001/10/06 18:25:16 matthew Exp $
+$Id: HISTORY,v 1.7 2001/10/06 18:55:36 matthew Exp $
