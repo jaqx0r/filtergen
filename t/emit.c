@@ -18,10 +18,14 @@ EMIT(specifier_list);
 
 EMIT(subrule_list) {
     if (n->subrule_list) {
+	eprint("emitting subrule_list\n");
 	emit_subrule_list(n->subrule_list);
 	printf(";\n");
     }
-    emit_specifier_list(n->specifier_list);
+    if (n->specifier_list) {
+	eprint("emitting specifier_list\n");
+	emit_specifier_list(n->specifier_list);
+    }
 }
 
 EMIT(chaingroup_specifier) {
@@ -29,14 +33,18 @@ EMIT(chaingroup_specifier) {
     if (n->name)
 	printf("\"%s\" ", n->name);
     printf("\n");
+    eprint("emitting subrule_list\n");
     emit_subrule_list(n->list);
     printf("]\n");
 }
 
 EMIT(compound_specifier) {
-    printf("{\n");
-    emit_subrule_list(n->list);
-    printf("}\n");
+    printf("{");
+    if (n->list) {
+	eprint("emitting subrule_list\n");
+	emit_subrule_list(n->list);
+    }
+    printf("}");
 }
 
 EMIT(routing_specifier) {
