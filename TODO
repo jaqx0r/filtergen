@@ -25,11 +25,11 @@ Hard:
  * Optimiser (de-pessimiser :-) for intermediate step, and also
    generated rulesets (the latter could be done with a peephole
    optimiser, I think).
- * Implement a negation unroller for filters which can't, for
-   example, negate a match.  (For example, Ciscos can't say
-   "match all but this host".)
+ * Implement a negation unroller for filters which can't negate
+   a match.  (For example, Ciscos can't say "match all but this
+   host".)  This gives us negation of {}-groups, too.
 
    This is possible, but tiresome, and will require an optimiser
    if the generated rulesets are not to Suck.
 
-$Id: TODO,v 1.10 2002/04/14 11:41:57 matthew Exp $
+$Id: TODO,v 1.11 2002/04/14 15:17:44 matthew Exp $
