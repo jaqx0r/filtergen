@@ -1,0 +1,52 @@
+#!/bin/sh
+
+TEST="that all tokens are recognised"
+
+testdir=`dirname $0`
+. $testdir/../../../t/testlib
+
+cat > $work/in <<EOF
+*filter
+:INPUT DROP [0:0]
+-A INPUT -i lo -f --dport ntp
+COMMIT
+EOF
+if test $? -ne 0 ; then no_result ; fi
+
+cat > $work/good <<EOF
+kind = table, spelling = "*", file = "(null)", line = 1
+kind = identifier, spelling = "filter", file = "(null)", line = 1
+kind = newline, spelling = "
+", file = "(null)", line = 2
+kind = chain, spelling = ":", file = "(null)", line = 2
+kind = identifier, spelling = "INPUT", file = "(null)", line = 2
+kind = identifier, spelling = "DROP", file = "(null)", line = 2
+kind = lsquare, spelling = "[", file = "(null)", line = 2
+kind = identifier, spelling = "0", file = "(null)", line = 2
+kind = colon, spelling = ":", file = "(null)", line = 2
+kind = identifier, spelling = "0", file = "(null)", line = 2
+kind = rsquare, spelling = "]", file = "(null)", line = 2
+kind = newline, spelling = "
+", file = "(null)", line = 3
+kind = option, spelling = "-A", file = "(null)", line = 3
+kind = identifier, spelling = "INPUT", file = "(null)", line = 3
+kind = option, spelling = "-i", file = "(null)", line = 3
+kind = identifier, spelling = "lo", file = "(null)", line = 3
+kind = option, spelling = "-f", file = "(null)", line = 3
+kind = option, spelling = "--dport", file = "(null)", line = 3
+kind = identifier, spelling = "ntp", file = "(null)", line = 3
+kind = newline, spelling = "
+", file = "(null)", line = 4
+kind = commit, spelling = "COMMIT", file = "(null)", line = 4
+kind = newline, spelling = "
+", file = "(null)", line = 5
+EOF
+if test $? -ne 0 ; then no_result ; fi
+
+$testdir/scan < $work/in > $work/out
+if test $? -ne 0 ; then fail ; fi
+
+compare $work/good $work/out
+
+# got this far?
+pass

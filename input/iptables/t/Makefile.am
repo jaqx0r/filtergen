@@ -1,4 +1,5 @@
-TESTS = comment
+TESTS = comment \
+	tokens
 
 check_PROGRAMS = scan parse emit
 
