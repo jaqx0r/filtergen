@@ -2,34 +2,34 @@ TODO for filtergen
 
 Easy:
  * Better documentation.
- * Support scripts, documentation and Makefiles for various
-   systems.
+ * Support scripts, documentation and Makefiles for various systems.
  * Better logging options.
  * ICMP support.
  * Better Makefiles.
+ * Option to
 
 Harder:
  * Testing and auditing of generated rulesets.
- * Optimiser (de-pessimiser :-) for intermediate step, and
-   also generated rulesets (the latter could be done with a
-   peephole optimiser, I think).
- * Option to have just a single "state OK -> accept" rule,
-   instead of one per bit of allowed traffic.
- * Support for sub-groups where supported by the underlying
-   filter.  For example:
+ * Option to have just a single "state OK -> accept" rule, instead
+   of one per bit of allowed traffic.
+ * Support for sub-groups where supported by the underlying filter.
+   For example:
 
    input eth0 source wwwserv dest dbserv
    [
-   	proto tcp dport { 1521 appserv1 appserv2 appserv3 } accept;
-	proto udp dport { ... } accept;
-	reject;
+      proto tcp dport { 1521 appserv1 appserv2 appserv3 } accept;
+      proto udp dport { ... } accept;
+      reject;
    ];
 
-   would have the rules inside "[]" put into a separate chain
-   (or "group" for ipfilter) so that the average packet has to
-   be tested against fewer rules.
+   would have the rules inside "[]" put into a separate iptables
+   or ipchains "chain" (or ipfilter "group") so that the average
+   packet has to be tested against fewer rules.
 
 Hard:
+ * Optimiser (de-pessimiser :-) for intermediate step, and also
+   generated rulesets (the latter could be done with a peephole
+   optimiser, I think).
  * Implement a negation unroller for filters which can't, for
    example, negate a match.  (For example, Ciscos can't say
    "match all but this host".)
@@ -37,4 +37,4 @@ Hard:
    This is possible, but tiresome, and will require an optimiser
    if the generated rulesets are not to Suck.
 
-$Id: TODO,v 1.4 2001/10/06 18:25:16 matthew Exp $
+$Id: TODO,v 1.5 2001/10/06 19:07:17 matthew Exp $

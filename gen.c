@@ -1,7 +1,7 @@
 /*
  * filter compilation routines
  *
- * $Id: gen.c,v 1.3 2001/10/06 18:25:16 matthew Exp $
+ * $Id: gen.c,v 1.4 2001/10/06 19:07:17 matthew Exp $
  */
 
 #include <stdio.h>
@@ -22,6 +22,12 @@ int checkmatch(const struct filterent *e)
 	MUST(target);
 	MUST(iface);
 #undef MUST
+
+	if((e->u.ports.src || e->u.ports.dst)
+	&& (e->proto != TCP) && (e->proto != UDP)) {
+		fprintf(stderr, "can only use ports with tcp or udp\n");
+		r++;
+	}
 	return r;
 }
 
