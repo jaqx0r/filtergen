@@ -194,6 +194,7 @@ subrule_list: specifier
 	;
 
 log_text_argument: TOK_STRINGLITERAL
+	| TOK_IDENTIFIER
 	;
 
 
