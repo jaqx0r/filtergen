@@ -25,7 +25,7 @@ mans = filter_backends.7 filter_syntax.5 pfc.8
 
 man_MANS = $(mans)
 
-EXTRA_DIST = HISTORY HONESTY README TODO $(headers) $(mans)
+EXTRA_DIST = HISTORY HONESTY README TODO $(headers) $(mans) pfc.spec
 
 AM_CFLAGS = -D_GNU_SOURCE -g -Wall -Werror
 AM_LDFLAGS = -g
