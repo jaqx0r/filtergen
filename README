@@ -1,9 +1,39 @@
-PACKET FILTER GENERATOR
+	PACKET FILTER GENERATOR
+
+GENERAL
 
 This tool is for generating packet filtering rules from a fairly high-
 level description language.  It doesn't support all of the whizz-bang
 features of the latest and greatest packet filters, but supports a
 decent subset which is sufficient for me.
+
+It currently supports only Linux iptables, but ipchains, Cisco IOS and
+perhaps others are planned.  It doesn't generate optimal rulesets, and
+has a few limitations which need to be removed, but is still a useful
+tool.
+
+There's a basic webpage at http://hairy.beasts.org/filter/
+
+
+LICENCE
+
+It was written, and is copyrighted by me <matthew@hairy.beasts.org>,
+and made available you you under the terms of the GNU General Public
+Licence.
+
+
+USAGE
+
+The filter generator is called "filtergen".  It can be invoked as:
+
+$ filtergen source.file > output.rules
+
+or as a filter itself:
+
+$ cat source.file | filtergen > output.rules
+
+
+SYNTAX
 
 The syntax looks not entirely unlike that of "fk"s ACL facility, and
 it might be worth familiarising yourself with that first (not least
@@ -92,4 +122,4 @@ to permit or refuse a connection -- it acts only on single packets,
 and is not really able to reason about connections (whatever the blurb
 claims).  It also matches the terminology used by Linux's iptables.
 
-$Id: README,v 1.1 2001/09/25 17:22:39 matthew Exp $
+$Id: README,v 1.2 2001/09/25 17:37:10 matthew Exp $
