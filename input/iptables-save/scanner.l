@@ -116,6 +116,8 @@ id	[[:alnum:]_+-\.\/]+
 
 --log-prefix	return TOK_IPTS_LOG_PREFIX;
 
+--uid-owner	return TOK_IPTS_UID_OWNER;
+
 	/* everything else */
 {id}	{
 		ipts_lval.u_str = strndup(ipts_text, ipts_leng);

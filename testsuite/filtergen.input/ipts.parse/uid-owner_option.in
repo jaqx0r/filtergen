@@ -1,0 +1,4 @@
+*filter
+:INPUT DROP [0:0]
+[0:0] -A INPUT -m owner --uid-owner root -j ACCEPT
+COMMIT

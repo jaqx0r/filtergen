@@ -31,7 +31,8 @@ set options [list \
 		 "to-ports" \
 		 "to-source" \
 		 "limit" \
-		 "log-prefix"
+		 "log-prefix" \
+		 "uid-owner"
 		]
 
 foreach option_pair $options {

@@ -61,6 +61,7 @@ extern int ipts_lex(void);
     struct limit_option_s * u_limit_option;
     struct log_prefix_option_s * u_log_prefix_option;
     struct sport_option_s * u_sport_option;
+    struct uid_owner_option_s * u_uid_owner_option;
 
     struct not_identifier_s * u_not_identifier;
     struct identifier_s * u_identifier;
@@ -76,6 +77,7 @@ extern int ipts_lex(void);
 %type <u_not_option> not_option
 %type <u_option> option
 
+%type <u_uid_owner_option> uid_owner_option
 %type <u_sport_option> sport_option
 %type <u_log_prefix_option> log_prefix_option
 %type <u_limit_option> limit_option
@@ -132,6 +134,8 @@ extern int ipts_lex(void);
 %token TOK_IPTS_LIMIT
 
 %token TOK_IPTS_LOG_PREFIX
+
+%token TOK_IPTS_UID_OWNER
 
 %token <u_str> TOK_IDENTIFIER
 %token <u_str> TOK_OPTION
@@ -304,10 +308,21 @@ option: in_interface_option
     $$ = malloc(sizeof(struct option_s));
     $$->sport_option = $1;
 }
+| uid_owner_option
+{
+    $$ = malloc(sizeof(struct option_s));
+    $$->uid_owner_option = $1;
+}
+
+uid_owner_option: TOK_IPTS_UID_OWNER identifier
+{
+    $$ = malloc(sizeof(struct uid_owner_option_s));
+    $$->identifier = $2;
+}
 
 sport_option: TOK_IPTS_SPORT not_identifier
 {
-    $$ = malloc(sizeof(struct option_s));
+    $$ = malloc(sizeof(struct sport_option_s));
     $$->not_identifier = $2;
 }
 
