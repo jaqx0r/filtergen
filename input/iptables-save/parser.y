@@ -46,6 +46,7 @@ extern int ipts_lex(void);
     struct option_list_s * u_option_list;
     struct not_option_s * u_not_option;
     struct option_s * u_option;
+
     struct in_interface_option_s * u_in_interface_option;
     struct jump_option_s * u_jump_option;
     struct destination_option_s * u_destination_option;
@@ -59,6 +60,7 @@ extern int ipts_lex(void);
     struct state_option_s * u_state_option;
     struct limit_option_s * u_limit_option;
     struct log_prefix_option_s * u_log_prefix_option;
+    struct sport_option_s * u_sport_option;
 
     struct not_identifier_s * u_not_identifier;
     struct identifier_s * u_identifier;
@@ -74,6 +76,7 @@ extern int ipts_lex(void);
 %type <u_not_option> not_option
 %type <u_option> option
 
+%type <u_sport_option> sport_option
 %type <u_log_prefix_option> log_prefix_option
 %type <u_limit_option> limit_option
 %type <u_state_option> state_option
@@ -295,6 +298,17 @@ option: in_interface_option
 {
     $$ = malloc(sizeof(struct option_s));
     $$->log_prefix_option = $1;
+}
+| sport_option
+{
+    $$ = malloc(sizeof(struct option_s));
+    $$->sport_option = $1;
+}
+
+sport_option: TOK_IPTS_SPORT not_identifier
+{
+    $$ = malloc(sizeof(struct option_s));
+    $$->not_identifier = $2;
 }
 
 log_prefix_option: TOK_IPTS_LOG_PREFIX identifier
