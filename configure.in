@@ -1,15 +1,63 @@
 AC_INIT
 AC_PREREQ(2.50)
 
-AM_INIT_AUTOMAKE(filtergen, 0.12, jaq@spacepants.org)
-AC_CONFIG_SRCDIR(filtergen.c)
+AM_INIT_AUTOMAKE(pfc, 0.12, jaq@spacepants.org)
+AC_CONFIG_SRCDIR(pfc.c)
 AM_CONFIG_HEADER(config.h)
 
 AM_MAINTAINER_MODE
+
+AC_SUBST(PROGRAM)
+AC_SUBST(VERSION)
+
+dnl --------------------------
+dnl configuration success flag
+dnl --------------------------
+
+pfc_config_ok=yes
+
+dnl -------------------
+dnl checks for programs
+dnl -------------------
 
 AC_PROG_CC
 AC_PROG_LEX
 AC_PROG_YACC
 
+dnl -------------------
+dnl check for libraries
+dnl -------------------
+
+AC_CHECK_HEADERS([getopt.h])
+
+HAVE_GETOPT=no
+AC_CHECK_LIB(getopt, getopt,
+	HAVE_GETOPT=yes
+	HAVE_GETOPT=no
+)
+if test "x$HAVE_GETOPT" = xyes ; then
+	GETOPT_LIBS="-lgetopt"
+	AC_SUBST(GETOPT_LIBS)
+fi
+
+dnl ----------------------------------------------------------
+dnl configuration tests complete, provide a summary of results
+dnl ----------------------------------------------------------
+
+if test "x$pfc_config_ok" = xno ; then
+	echo "nothing yet"
+else
+
+dnl Dump it out
 AC_CONFIG_FILES([Makefile t/Makefile])
 AC_OUTPUT
+
+AC_MSG_RESULT([
+pfc $VERSION: automatic configuration OK.
+
+Type 'make' to compile pfc.
+
+Type 'make install' to install pfc.
+])
+
+fi

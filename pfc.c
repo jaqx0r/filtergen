@@ -18,12 +18,19 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
 #include <stdarg.h>
+#ifdef HAVE_GETOPT_H
+#include <getopt.h>
+#endif
 
 #include "filter.h"
 #include "ast.h"
@@ -33,6 +40,23 @@ void yyrestart(FILE *);
 extern struct filter * convert(struct ast_s * n);
 
 static FILE *outfile;
+
+void usage(char * prog) {
+    fprintf(stderr, "Usage: %s [options] [-o output] input\n\n", prog);
+    fprintf(stderr, "Options:\n");
+
+#ifdef HAVE_GETOPT_H
+    fprintf(stderr, " --output/-o filename      write the generated packet filter to filename\n");
+#else
+    fprintf(stderr, "          -o filename      write the generated packet filter to filename\n");
+#endif
+
+#ifdef HAVE_GETOPT_H
+    fprintf(stderr, " --help/-h                 show this help\n");
+#else
+    fprintf(stderr, "        -h                 show this help\n");
+#endif
+}
 
 int oputs(const char *s)
 {
@@ -66,6 +90,14 @@ struct filtyp {
 	{ NULL, },
 };
 
+#ifdef HAVE_GETOPT_H
+static struct option long_options[] = {
+    {"help", no_argument, 0, 'h'},
+    {"output", required_argument, 0, 'o'},
+    {0, 0, 0, 0}
+};
+#endif
+
 int main(int argc, char **argv) {
     struct filter *f;
     int l;
@@ -79,24 +111,43 @@ int main(int argc, char **argv) {
 
     progname = argv[0];
 
-    while((arg = getopt(argc, argv, "nlmrho:t:F")) > 0) {
+#ifdef HAVE_GETOPT_H
+    while ((arg = getopt_long(argc, argv, "ho:", long_options, NULL)) > 0) {
+	switch (arg) {
+	  case ':':
+	    usage(progname);
+	    exit(1);
+	    break;
+	  case 'h':
+	    usage(progname);
+	    exit(0);
+	    break;
+	  case 'o':
+	    ofn = strdup(optarg);
+	    break;
+	  default:
+	    break;
+	}
+    }
+    if (optind >= argc) {
+	usage(progname);
+    } else {
+	filepol = argv[optind++];
+    }
+#else /* !HAVE_GETOPT_H */
+    while((arg = getopt(argc, argv, "ho:")) > 0) {
 	switch(arg) {
-	  case 'n': flags |= FF_NOSKEL; break;
-	  case 'l': flags |= FF_LSTATE; break;
-	  case 'm': flags |= FF_LOOKUP; break;
-	  case 'h': flags |= FF_LOCAL; break;
-	  case 'r': flags |= FF_ROUTE; break;
-	  case 'o': ofn = strdup(optarg); break;
-	  case 't': ftn = strdup(optarg); break;
-	  case 'F': flags |= FF_FLUSH; break;
+	  case 'o':
+	    ofn = strdup(optarg);
+	    break;
+	  case 'h':
+	    usage(progname);
+	    exit(0);
+	    break;
 	  default: return 1;
 	}
     }
-
-    if((flags & FF_LOCAL) && (flags & FF_ROUTE)) {
-	fprintf(stderr, "the -h and -r options are mutually exclusive\n");
-	return 1;
-    }
+#endif
 
     if (ofn) {
 	/* XXX - open a different tempfile, and rename on success */

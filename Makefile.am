@@ -26,10 +26,11 @@ pfc_SOURCES = \
 	parser.y \
 	scanner.l \
 	glue.c
+pfc_LIBS = @GETOPT_LIBS@
 
 headers = filter.h util.h ast.h
 
-mans = filtergen.8 filter_backends.7 filter_syntax.5
+mans = filtergen.8 filter_backends.7 filter_syntax.5 pfc.8
 
 man_MANS = $(mans)
 
