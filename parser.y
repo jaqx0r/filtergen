@@ -669,10 +669,12 @@ port_single: TOK_IDENTIFIER
 	{
 		$$ = malloc(sizeof(struct port_single_s));
 		$$->name = strdup($1);
+		$$->num = 0;
 	}
 	| TOK_NUMBER
 	{
 		$$ = malloc(sizeof(struct port_single_s));
+		$$->name = NULL;
 		$$->num = $1;
 	}
 	;
