@@ -1,3 +1,6 @@
+0.12.3:
+	Fix critical resolver bug.
+
 0.12.2:
 	New resolver code removes need for struct casting
 	Altered test suite to be more robust
