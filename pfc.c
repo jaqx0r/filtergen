@@ -81,34 +81,34 @@ void usage(char * prog) {
 
 int oputs(const char *s)
 {
-	int r = 0;
-	if(s) {
-		r = fputs(s, outfile);
-		if(r > 0) {
-			fputc('\n', outfile);
-			r++;
-		}
+    int r = 0;
+    if(s) {
+	r = fputs(s, outfile);
+	if(r > 0) {
+	    fputc('\n', outfile);
+	    r++;
 	}
-	return r;
+    }
+    return r;
 }
 
 int oprintf(const char *fmt, ...)
 {
-	va_list args;
-	va_start(args, fmt);
-	return vfprintf(outfile, fmt, args);
+    va_list args;
+    va_start(args, fmt);
+    return vfprintf(outfile, fmt, args);
 }
 
 struct filtyp {
-	const char * name;
-	filtergen * compiler;
-	filter_flush * flusher;
+    const char * name;
+    filtergen * compiler;
+    filter_flush * flusher;
 } filter_types[] = {
-	{ "iptables", fg_iptables, flush_iptables, },
-	{ "ipchains", fg_ipchains, flush_ipchains, },
-	{ "ipfilter", fg_ipfilter, NULL },
-	{ "cisco", fg_cisco, NULL },
-	{ NULL, NULL, NULL },
+    { "iptables", fg_iptables, flush_iptables, },
+    { "ipchains", fg_ipchains, flush_ipchains, },
+    { "ipfilter", fg_ipfilter, NULL },
+    { "cisco", fg_cisco, NULL },
+    { NULL, NULL, NULL },
 };
 
 #ifdef HAVE_GETOPT_H

@@ -189,11 +189,11 @@ void resolve_host_argument_list(struct host_argument_list_s * n) {
                 /* if there's more, create some more hosts */
                 for (i = a->ai_next; i; i = i->ai_next) {
                     /*
-                    printf("addrinfo:\n\tai_canonname: %s\n\tai_family: %d\n\tai_socktype: %d\n", i->ai_canonname, i->ai_family, i->ai_socktype);
+		      printf("addrinfo:\n\tai_canonname: %s\n\tai_family: %d\n\tai_socktype: %d\n", i->ai_canonname, i->ai_family, i->ai_socktype);
                     */
                     addr = ntohl(*(int *)&((struct sockaddr_in *) i->ai_addr)->sin_addr);
                     /*
-                    printf("\taddr: %d.%d.%d.%d\n", addr >> 24 & 255, addr >> 16 & 255, addr >> 8 & 255, addr & 255);
+		      printf("\taddr: %d.%d.%d.%d\n", addr >> 24 & 255, addr >> 16 & 255, addr >> 8 & 255, addr & 255);
                     */
                     list = malloc(sizeof(struct host_argument_list_s));
                     host = malloc(sizeof(struct host_argument_s));
