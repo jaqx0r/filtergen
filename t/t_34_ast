@@ -1,6 +1,6 @@
 #!/bin/sh
 
-TEST="that the parser reads a rule list correctly"
+TEST="that the parser reads an ast correctly"
 DATA=emitter1
 
 testdir=`dirname $0`

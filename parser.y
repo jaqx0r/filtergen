@@ -5,7 +5,10 @@
 
 %{
 #include <stdio.h>
+#include <stdlib.h>
 #include "ast.h"
+
+#define YYPARSE_PARAM parm
 
 void yyerror(char * s);
 extern int yylex(void);
@@ -13,12 +16,17 @@ extern int yylex(void);
 #define YYPRINT(f, t, v) yyprint(f, t, v)
 %}
 %debug
-%defines
+
 %union {
 	struct rule_list_s * u_rule_list;
+	struct rule_s * u_rule;
 	char * u_str;
 	int u_int;
 }
+%type <u_rule_list> rule_list
+%type <u_rule> rule
+
+%defines
 %token TOK_ACCEPT
 %token TOK_DEST
 %token TOK_DPORT
@@ -50,24 +58,34 @@ extern int yylex(void);
 %token TOK_ERR
 %token TOK_BANG
 %token TOK_COLON
-
-%type <u_rule_list> rule_list
 %{
 int yyprint(FILE * f, int t, YYSTYPE v);
 %}
-%start rule_list
+%start ast
 %%
+ast: rule_list
+	{
+		/* we expect parm to be already allocated, and that
+		 * it is of type (struct ast_s *) */
+		((struct ast_s *) parm)->rule_list = $1;
+	}
+
 rule_list: /* empty */
 	{
 		$$ = NULL;
 	}
 	| rule_list rule
 	{
-		$$ = NULL;
+		$$ = malloc(sizeof(struct rule_list_s));
+		$$->rule_list = $1;
+		$$->rule = $2;
 	}
 	;
 
 rule:	  specifier_list TOK_SEMICOLON
+	{
+		$$ = NULL;
+	}
 	;
 
 specifier_list: /* empty */

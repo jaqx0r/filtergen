@@ -2,20 +2,44 @@
    as the input */
 
 #include <stdio.h>
-#include "../parser.h"
 #include "../ast.h"
 
-YYSTYPE yyparse(void);
+int yyparse(void *);
+
+void emit_rule(struct rule_s * rule) {
+    /* rules end in a semicolon and newline */
+    printf(";\n");
+}
 
 void emit_rule_list(struct rule_list_s * rule_list) {
+    printf("rule list\n");
+    if (rule_list->rule_list) {
+	emit_rule_list(rule_list->rule_list);
+    }
+    if (rule_list->rule) {
+	emit_rule(rule_list->rule);
+    }
+    /* rule lists end with a newline */
     printf("\n");
 };
 
-int main(int argc, char ** argv) {
-    YYSTYPE r;
+void emit_ast(struct ast_s * ast) {
+    if (ast->rule_list)
+	emit_rule_list(ast->rule_list);
+};
 
-    r = yyparse();
-    emit_rule_list(r.u_rule_list);
+int main(int argc, char ** argv) {
+    struct ast_s ast;
+    int res;
+
+    res = yyparse((void *)&ast);
+
+    if (res != 0) {
+	printf("yyparse returned %d\n", res);
+	return 1;
+    }
+
+    emit_ast(&ast);
 
     return 0;
 }
