@@ -17,9 +17,9 @@ There's a basic webpage at http://hairy.beasts.org/filter/
 
 WARNING!
 
-There are known issues with this package.  The iptables driver does
-generate leaky rulesets.  I hope to address this in the next release.
-Please read the HONESTY file for more information.
+This package isn't perfect.  There are a couple of bugs that I'm working
+on.  Nevertheless, I don't believe that the ipchains or iptables drivers
+leak packets (though I'm less confident of the latter).
 
 
 LICENCE
@@ -154,4 +154,4 @@ to permit or refuse a connection -- it acts only on single packets,
 and is not really able to reason about connections (whatever the blurb
 claims).  It also matches the terminology used by Linux's iptables.
 
-$Id: README,v 1.6 2001/10/09 10:01:17 matthew Exp $
+$Id: README,v 1.7 2001/10/23 20:18:07 matthew Exp $
