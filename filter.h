@@ -1,4 +1,4 @@
-/* $Id: filter.h,v 1.12 2002/04/14 15:18:47 matthew Exp $ */
+/* $Id: filter.h,v 1.13 2002/04/28 22:30:41 matthew Exp $ */
 #ifndef _FK_FILTER_H
 #define _FK_FILTER_H
 
@@ -18,6 +18,7 @@ enum filtertype {
 	SEMICOLON, STRING,
 	INCLUDE,
 	TCP, UDP, ICMP,			/* for F_PROTO */
+	LOCALONLY, ROUTEDONLY,		/* for F_RTYPE */
 	F_INPUT, F_OUTPUT,
 	F_ACCEPT, F_DROP, F_REJECT,
 	F_MASQ, F_REDIRECT,
@@ -27,6 +28,7 @@ enum filtertype {
 	F_NEG, F_SIBLIST, F_SUBGROUP,
 	F_LOG,
 	F_TARGET,
+	F_RTYPE,
 	/* this must be last */
 	F_FILTER_MAX,
 };
@@ -37,6 +39,7 @@ struct filter {
 	union {
 		enum filtertype target;
 		enum filtertype log;
+		enum filtertype rtype;
 		char *iface;
 		char *addrs;
 		char *ports;
@@ -58,7 +61,7 @@ struct filter {
 
 /* from filter.c */
 typedef struct filter *filter_tctor(enum filtertype);
-filter_tctor __new_filter, new_filter_target, new_filter_log;
+filter_tctor __new_filter, new_filter_target, new_filter_log, new_filter_rtype;
 struct filter *new_filter_neg(struct filter *sub);
 struct filter *new_filter_sibs(struct filter *list);
 struct filter *new_filter_subgroup(char *name, struct filter *list);
@@ -91,6 +94,7 @@ struct filterent {
 	int whats_negated:F_FILTER_MAX;
 	char *srcaddr, *dstaddr;
 
+	enum filtertype rtype;
 	enum filtertype proto;
 	enum filtertype log;
 
@@ -126,5 +130,10 @@ filtergen fg_iptables, fg_ipchains, fg_ipfilter, fg_cisco;
 /* ("flags" arguments) */
 #define	FF_NOSKEL	(1 << 0)	/* omit any "skeleton" rules */
 #define	FF_LSTATE	(1 << 1)	/* lightweight state matching */
+#define	FF_LOCAL	(1 << 2)	/* assume all packets are local only */
+
+/* filtergen.c */
+int oputs(const char *s);
+int oprintf(const char *fmt, ...);
 
 #endif /* _FK_FILTER_H */

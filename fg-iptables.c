@@ -1,7 +1,7 @@
 /*
  * Filter generator, iptables driver
  *
- * $Id: fg-iptables.c,v 1.20 2002/04/28 15:18:58 matthew Exp $
+ * $Id: fg-iptables.c,v 1.21 2002/04/28 22:30:41 matthew Exp $
  */
 
 /*
@@ -18,10 +18,8 @@
  *    transproxy) and OUTPUT (for masquerading).
  * 4. Reject rules need to go into FORWARD as well as
  *    INPUT or OUTPUT.
- * 5. Other than for Reject rules, FORWARD stays empty
- *    for now.  The language needs to be extended to
- *    be able to say "please forward this one" - it
- *    shouldn't be default.
+ * 5. INPUT rules also get added to FORWARD.
+ * 6. If LOCALONLY is set, no FORWARD rules are output.
  *
  * The above means that each rulechain can generate up to
  * three rules -- nat, in and out.
@@ -179,7 +177,7 @@ static int cb_iptables_rule(const struct filterent *ent, struct fg_misc *misc)
 	 * fail if any mangling has been done above.
 	 */
 	if(ent->log) {
-		printf("iptables -A %s %s LOG\n", rulechain, rule+1);
+		oprintf("iptables -A %s %s LOG\n", rulechain, rule+1);
 	}
 
 	/* Do this twice, once for NAT, once for filter */
@@ -208,9 +206,9 @@ static int cb_iptables_rule(const struct filterent *ent, struct fg_misc *misc)
 
 	if((misc->flags & FF_LSTATE) && (target != F_REJECT)) needret = 0;
 
-	if(neednat) printf("iptables -t nat -A %s %s\n", natchain, natrule+1);
-	printf("iptables -A %s %s\n", rulechain, rule+1);
-	if(needret) printf("iptables -A %s %s\n", revchain, rule_r+1);
+	if(neednat) oprintf("iptables -t nat -A %s %s\n", natchain, natrule+1);
+	oprintf("iptables -A %s %s\n", rulechain, rule+1);
+	if(needret) oprintf("iptables -A %s %s\n", revchain, rule_r+1);
 
 	free(natrule); free(rule); free(rule_r);
 	return 1 + !!needret + !!neednat;
@@ -218,7 +216,7 @@ static int cb_iptables_rule(const struct filterent *ent, struct fg_misc *misc)
 
 static int cb_iptables_group(const char *name)
 {
-	printf("iptables -N %s\n", name);
+	oprintf("iptables -N %s\n", name);
 	return 1;
 }
 
@@ -236,41 +234,41 @@ int fg_iptables(struct filter *filter, int flags)
 	filter_unroll(&filter);
 
 	if(!(flags & FF_NOSKEL)) {
-		puts("CHAINS=\"INPUT OUTPUT FORWARD\"");
-		puts("");
+		oputs("CHAINS=\"INPUT OUTPUT FORWARD\"");
+		oputs("");
 
-		puts("# Flush/remove rules, set policy");
-		puts("for f in $CHAINS; do iptables -P $f DROP; done");
-		puts("iptables -F; iptables -X");
-		puts("iptables -t nat -F; iptables -t nat -X");
-		puts("");
+		oputs("# Flush/remove rules, set policy");
+		oputs("for f in $CHAINS; do iptables -P $f DROP; done");
+		oputs("iptables -F; iptables -X");
+		oputs("iptables -t nat -F; iptables -t nat -X");
+		oputs("");
 
-		puts("# Setup INVALID chain");
-		puts("iptables -N INVALID");
-		puts("iptables -A INVALID -j LOG --log-prefix \"invalid \"");
-		puts("iptables -A INVALID -j DROP");
-		puts("for f in $CHAINS; do\n"
+		oputs("# Setup INVALID chain");
+		oputs("iptables -N INVALID");
+		oputs("iptables -A INVALID -j LOG --log-prefix \"invalid \"");
+		oputs("iptables -A INVALID -j DROP");
+		oputs("for f in $CHAINS; do\n"
 		     "\tiptables -I $f -m state --state INVALID -j INVALID;\n"
 		     "done");
-		puts("");
+		oputs("");
 		r += nchains;
 	}
 	if((r = filtergen_cprod(filter, &cb_iptables, &misc)) < 0)
 		return r;
 	if(!(flags & FF_NOSKEL)) {
 		if((flags & FF_LSTATE) && (feat & (A_TCP|A_UDP))) {
-			puts("for f in $CHAINS; do");
+			oputs("for f in $CHAINS; do");
 			if(feat & A_TCP) {
 				r += nchains;
-				puts("\tiptables -I $f -p tcp ! --syn -m state --state ESTABLISHED -j ACCEPT;");
+				oputs("\tiptables -I $f -p tcp ! --syn -m state --state ESTABLISHED -j ACCEPT;");
 			}
 			if(feat & A_UDP) {
 				r += nchains;
-				puts("\tiptables -I $f -p udp -m state --state ESTABLISHED -j ACCEPT;");
+				oputs("\tiptables -I $f -p udp -m state --state ESTABLISHED -j ACCEPT;");
 			}
-			puts("done");
+			oputs("done");
 		}
-		puts("for f in $CHAINS; do iptables -A $f -j LOG; done");
+		oputs("for f in $CHAINS; do iptables -A $f -j LOG; done");
 		r += nchains;
 	}
 	return r;

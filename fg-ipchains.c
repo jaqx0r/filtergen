@@ -3,7 +3,7 @@
  *
  * XXX - maybe some of this could be shared with the iptables one?
  *
- * $Id: fg-ipchains.c,v 1.11 2002/04/14 14:24:03 matthew Exp $
+ * $Id: fg-ipchains.c,v 1.12 2002/04/28 22:30:41 matthew Exp $
  */
 
 #include <stdio.h>
@@ -123,8 +123,8 @@ static int cb_ipchains_rule(const struct filterent *ent, struct fg_misc *misc)
 	default: abort();
 	}
 
-	puts(rule);
-	if(needret) puts(rule_r);
+	oputs(rule);
+	if(needret) oputs(rule_r);
 
 	free(rule); free(rule_r);
 	return 1 + !!needret;
@@ -132,7 +132,7 @@ static int cb_ipchains_rule(const struct filterent *ent, struct fg_misc *misc)
 
 static int cb_ipchains_group(const char *name)
 {
-	printf("ipchains -N %s\n", name);
+	oprintf("ipchains -N %s\n", name);
 	return 1;
 }
 
@@ -147,13 +147,13 @@ int fg_ipchains(struct filter *filter, int flags)
 
 	filter_unroll(&filter);
 	if(!(flags & FF_NOSKEL)) {
-		puts("for f in INPUT OUTPUT FORWARD; do ipchains -P $f DENY; done");
-		puts("ipchains -F; ipchains -X");
+		oputs("for f in INPUT OUTPUT FORWARD; do ipchains -P $f DENY; done");
+		oputs("ipchains -F; ipchains -X");
 	}
 	if((r = filtergen_cprod(filter, &cb_ipchains, &misc)) < 0)
 		return r;
 	if(!(flags & FF_NOSKEL)) {
-		puts("for f in INPUT OUTPUT FORWARD; do ipchains -A $f -l -j DENY; done");
+		oputs("for f in INPUT OUTPUT FORWARD; do ipchains -A $f -l -j DENY; done");
 		r += 3;
 	}
 	return r;

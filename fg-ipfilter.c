@@ -1,7 +1,7 @@
 /*
  * Filter generator, ipfilter driver
  *
- * $Id: fg-ipfilter.c,v 1.7 2002/04/14 14:24:03 matthew Exp $
+ * $Id: fg-ipfilter.c,v 1.8 2002/04/28 22:30:41 matthew Exp $
  */
 
 /* TODO:
@@ -105,7 +105,7 @@ static int cb_ipfilter_rule(const struct filterent *ent, struct fg_misc *misc)
 	if(ent->proto && (ent->target == F_ACCEPT))
 		APPS(rule, "keep state");
 
-	puts(rule);
+	oputs(rule);
 	free(rule);
 	return 1;
 }

@@ -1,4 +1,4 @@
-/* $Id: filter.c,v 1.7 2002/04/08 21:54:45 matthew Exp $ */
+/* $Id: filter.c,v 1.8 2002/04/28 22:30:41 matthew Exp $ */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -32,6 +32,16 @@ struct filter *new_filter_log(enum filtertype ltype)
 	struct filter *f;
 	if ((f = __new_filter(F_LOG))) {
 		f->u.log = ltype;
+	}
+	return f;
+}
+
+
+struct filter *new_filter_rtype(enum filtertype rtype)
+{
+	struct filter *f;
+	if ((f = __new_filter(F_RTYPE))) {
+		f->u.rtype = rtype;
 	}
 	return f;
 }

@@ -2,7 +2,7 @@
 /*
  * lexer/parser for packet filtering rules
  *
- * $Id: filterlex.l,v 1.8 2002/04/08 21:54:45 matthew Exp $
+ * $Id: filterlex.l,v 1.9 2002/04/28 22:30:41 matthew Exp $
  */
 
 #include <sys/types.h>
@@ -69,6 +69,9 @@ sport		{ return F_SPORT; }
 dport		{ return F_DPORT; }
 
 icmptype	{ return F_ICMPTYPE; }
+
+local		{ return LOCALONLY; }
+forward		{ return ROUTEDONLY; }
 
 [-"_:[:alnum:]./+]+ { return STRING; }
 
@@ -210,6 +213,8 @@ static struct filter *filter_parse_single(void)
 		return filter_parse_group(tok, NULL, new_filter_icmp);
 	case F_PROTO:
 		return filter_parse_group(tok, new_filter_proto, NULL);
+	case LOCALONLY: case ROUTEDONLY:
+		return new_filter_rtype(tok);
 	case OPENBRACE:
 		return filter_parse_sibs();
 	case OPENBRACKET:
