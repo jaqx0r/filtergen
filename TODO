@@ -1,0 +1,40 @@
+TODO for filtergen
+
+Easy:
+ * Support for Darren Reed's ipfilter.
+ * Better documentation.
+ * Support scripts, documentation and Makefiles for various
+   systems.
+ * Transparent proxying/masquerading support.
+ * Logging options.
+
+Harder:
+ * Testing and auditing of generated rulesets.
+ * Optimiser (de-pessimiser :-) for intermediate step, and
+   also generated rulesets (the latter could be done with a
+   peephole optimiser, I think).
+ * Option to have just a single "state OK -> accept" rule,
+   instead of one per bit of allowed traffic.
+ * Support for sub-groups where supported by the underlying
+   filter.  For example:
+
+   input eth0 source wwwserv dest dbserv
+   [
+   	proto tcp dport { 1521 appserv1 appserv2 appserv3 } accept;
+	proto udp dport { ... } accept;
+	reject;
+   ];
+
+   would have the rules inside "[]" put into a separate chain
+   so that the average packet has to be tested against fewer
+   rules.
+
+Hard:
+ * Implement a negation unroller so that filters which can't,
+   for example, negate a match.  (For example, Ciscos can't say
+   "match all but this host".)
+
+   This is possible, but tiresome, and will require an optimiser
+   if the generated rulesets are not to Suck.
+
+$Id: TODO,v 1.1 2001/10/03 20:39:42 matthew Exp $

@@ -1,0 +1,29 @@
+	FULL-DISCLOSURE (or HONESTY)
+
+WHAT'S THIS?
+
+Here, I explain the status of the package in non-salesman mode.
+It might help you to decide whether this package is useful to
+you (though shouldn't put you off contributing).
+
+
+STATUS
+
+Hard to tell.  I believe that the iptables and ipchains drivers
+support all the features of the parser and seem to generate sane-
+looking rules.
+
+The Cisco ACL generator will silently drop negations, which makes
+is essentially useless for a lot of things.  This will be fixed,
+but probably not soon.
+
+The parser lacks some fairly important features like transparent
+proxying support, masquerading, and various others.  It can't be
+instructed to log or not log permitted, denied, etc., packets.
+
+I am not personally using it to generate rules for my servers and
+firewalls, though I intend to change that once I've added logging
+and transparent proxying support.
+
+
+$Id: HONESTY,v 1.1 2001/10/03 20:39:42 matthew Exp $
