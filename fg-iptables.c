@@ -1,11 +1,12 @@
 /*
  * Filter generator, iptables driver
  *
- * $Id: fg-iptables.c,v 1.9 2001/10/06 17:22:09 matthew Exp $
+ * $Id: fg-iptables.c,v 1.10 2001/10/06 18:25:16 matthew Exp $
  */
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "filter.h"
 #include "util.h"
@@ -110,6 +111,19 @@ static int cb_iptables(const struct filterent *ent, void *misc)
 	}
 
 	APPS(rule, "-j"); APPS(rule_r, "-j");
+
+	/* Yuck, separate rules for logging packets.  Be still my
+	 * beating lunch.
+	 *
+	 * Logging and target rules have to be the last bits
+	 * before output, or this doesn't work.  This will also
+	 * fail if any mangling has been done above.
+	 */
+	if(ent->log) {
+		char *logrule = strdup(rule);
+		APPS(logrule, "LOG");
+		puts(logrule);
+	}
 
 	switch(ent->target) {
 	case F_ACCEPT:	APPS(rule, "ACCEPT");

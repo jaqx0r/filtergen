@@ -1,4 +1,4 @@
-/* $Id: filter.h,v 1.5 2001/10/06 17:22:09 matthew Exp $ */
+/* $Id: filter.h,v 1.6 2001/10/06 18:25:16 matthew Exp $ */
 #ifndef _FK_FILTER_H
 #define _FK_FILTER_H
 
@@ -13,16 +13,17 @@
  */
 enum filtertype {
 	YYEOF = 0,
-	OPENBRACE, CLOSEBRACE,
+	OPENBRACE, CLOSEBRACE,		/* lexer use only */
 	SEMICOLON, STRING,
 	INCLUDE,
-	TCP, UDP, ICMP,
+	TCP, UDP, ICMP,			/* for F_PROTO */
 	F_INPUT, F_OUTPUT,
 	F_ACCEPT, F_DROP, F_REJECT,
 	F_MASQ, F_REDIRECT,
 	F_SOURCE, F_DEST, F_SPORT, F_DPORT,
 	F_PROTO, 
 	F_NEG, F_SIBLIST,
+	F_LOG,
 	F_TARGET,
 	/* this must be last */
 	F_FILTER_MAX,
@@ -33,6 +34,7 @@ struct filter {
 	enum filtertype type;
 	union {
 		enum filtertype target;
+		enum filtertype log;
 		char *iface;
 		char *addrs;
 		char *ports;
@@ -49,7 +51,7 @@ struct filter {
 
 /* from filter.c */
 typedef struct filter *filter_tctor(enum filtertype);
-filter_tctor __new_filter, new_filter_target;
+filter_tctor __new_filter, new_filter_target, new_filter_log;
 struct filter *new_filter_neg(struct filter *sub);
 struct filter *new_filter_sibs(struct filter *list);
 typedef struct filter *filter_ctor(enum filtertype, const char*);
@@ -67,8 +69,7 @@ struct filter *filter_parse_list(void);
 /* from gen.c */
 struct filterent {
 	/* All these must be set */
-	enum filtertype direction;
-	enum filtertype target;
+	enum filtertype direction, target;
 	char *iface;
 	/* These may or may not be set */
 	int whats_set:F_FILTER_MAX;
@@ -76,6 +77,7 @@ struct filterent {
 	char *srcaddr, *dstaddr;
 
 	enum filtertype proto;
+	enum filtertype log;
 	union {
 		struct {
 			char *src, *dst;

@@ -1,7 +1,7 @@
 /*
  * Filter generator, Cisco IOS driver
  *
- * $Id: fg-cisco.c,v 1.3 2001/10/04 14:02:43 matthew Exp $
+ * $Id: fg-cisco.c,v 1.4 2001/10/06 18:25:16 matthew Exp $
  */
 
 #include <stdio.h>
@@ -94,9 +94,8 @@ static int cb_cisco(const struct filterent *ent, void *misc)
 		rule_r = appport(rule_r, ent->u.ports.src, NEG(SPORT));
 	}
 
-	if(ent->proto == TCP) {
-		APPS(rule_r, "established");
-	}
+	if(ent->proto == TCP) APPS(rule_r, "established");
+	if(ent->log) APPS(rule, "log");
 
 	puts(rule);
 	if(needret) puts(rule_r);

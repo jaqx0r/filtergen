@@ -1,4 +1,4 @@
-/* $Id: filter.c,v 1.2 2001/10/03 19:01:54 matthew Exp $ */
+/* $Id: filter.c,v 1.3 2001/10/06 18:25:16 matthew Exp $ */
 
 #include <stdlib.h>
 #include <string.h>
@@ -21,6 +21,16 @@ struct filter *new_filter_target(enum filtertype target)
 	struct filter *f;
 	if ((f = __new_filter(F_TARGET))) {
 		f->u.target = target;
+	}
+	return f;
+}
+
+
+struct filter *new_filter_log(enum filtertype ltype)
+{
+	struct filter *f;
+	if ((f = __new_filter(F_LOG))) {
+		f->u.log = ltype;
 	}
 	return f;
 }
