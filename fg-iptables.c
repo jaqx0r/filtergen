@@ -1,7 +1,7 @@
 /*
  * Filter generator, iptables driver
  *
- * $Id: fg-iptables.c,v 1.24 2002/07/19 13:03:28 matthew Exp $
+ * $Id: fg-iptables.c,v 1.25 2002/07/19 15:49:13 matthew Exp $
  */
 
 /*
@@ -198,9 +198,6 @@ static int cb_iptables_rule(const struct filterent *ent, struct fg_misc *misc)
 			APPS(rule_r, "ACCEPT"); break;
 	case F_DROP:	APPS(rule, "DROP"); needret = 0; break;
 	case F_REJECT:	APPS(rule, "REJECT"); needret = 0;
-			free(rule_r); rule_r = strdup(rule);
-			revchain = "FORWARD";
-			++needret;
 			*feat |= F_REJECT; break;
 	case F_SUBGROUP:APPS(rule, ent->subgroup);
 			APPS(rule_r, ent->subgroup); break;
