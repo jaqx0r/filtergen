@@ -1,7 +1,7 @@
 /*
  * Filter generator, iptables driver
  *
- * $Id: fg-iptables.c,v 1.17 2002/04/14 14:24:03 matthew Exp $
+ * $Id: fg-iptables.c,v 1.18 2002/04/14 15:18:47 matthew Exp $
  */
 
 /*
@@ -36,6 +36,8 @@
 
 /* bitfields for features used */
 #define	REJECT	0x01
+#define	A_TCP	0x10
+#define	A_UDP	0x20
 
 static int cb_iptables_rule(const struct filterent *ent, struct fg_misc *misc)
 {
@@ -97,6 +99,7 @@ static int cb_iptables_rule(const struct filterent *ent, struct fg_misc *misc)
 	case 0:	break;
 	case TCP:
 		needret++;
+		*feat |= A_TCP;
 		APPSS2(natrule, "-p", "tcp");
 		APPSS2(rule, "-p", "tcp");
 		APPSS2(rule_r, "-p", "tcp");
@@ -105,6 +108,7 @@ static int cb_iptables_rule(const struct filterent *ent, struct fg_misc *misc)
 		break;
 	case UDP:
 		needret++;
+		*feat |= A_UDP;
 		APPSS2(natrule, "-p", "udp");
 		APPSS2(rule, "-p", "udp");
 		APPSS2(rule_r, "-p", "udp");
@@ -202,6 +206,8 @@ static int cb_iptables_rule(const struct filterent *ent, struct fg_misc *misc)
 	default: abort();
 	}
 
+	if((misc->flags & FF_LSTATE) && (target != F_REJECT)) needret = 0;
+
 	if(neednat) printf("iptables -t nat -A %s %s\n", natchain, natrule+1);
 	printf("iptables -A %s %s\n", rulechain, rule+1);
 	if(needret) printf("iptables -A %s %s\n", revchain, rule_r+1);
@@ -218,7 +224,7 @@ static int cb_iptables_group(const char *name)
 
 int fg_iptables(struct filter *filter, int flags)
 {
-	long feat;
+	long feat = 0;
 	int r;
 	struct fg_misc misc = { flags, &feat };
 	fg_callback cb_iptables = {
@@ -235,6 +241,18 @@ int fg_iptables(struct filter *filter, int flags)
 	if((r = filtergen_cprod(filter, &cb_iptables, &misc)) < 0)
 		return r;
 	if(!(flags & FF_NOSKEL)) {
+		if((flags & FF_LSTATE) && (feat & (A_TCP|A_UDP))) {
+			puts("for f in INPUT OUTPUT FORWARD; do");
+			if(feat & A_TCP) {
+				r++;
+				puts("\tiptables -I $f -p tcp ! --syn -m state --state ESTABLISHED -j ACCEPT;");
+			}
+			if(feat & A_UDP) {
+				r++;
+				puts("\tiptables -I $f -p udp -m state --state ESTABLISHED -j ACCEPT;");
+			}
+			puts("done");
+		}
 		puts("for f in INPUT OUTPUT FORWARD; do iptables -A $f -j LOG; done");
 		r += 3;
 	}

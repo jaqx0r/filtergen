@@ -1,7 +1,7 @@
 /*
  * filter compilation front-end
  *
- * $Id: filtergen.c,v 1.10 2002/04/14 13:25:17 matthew Exp $
+ * $Id: filtergen.c,v 1.11 2002/04/14 15:18:47 matthew Exp $
  */
 
 #include <stdio.h>
@@ -40,9 +40,10 @@ int main(int argc, char **argv)
 
 	progname = argv[0];
 
-	while((arg = getopt(argc, argv, "na")) > 0) {
+	while((arg = getopt(argc, argv, "nl")) > 0) {
 		switch(arg) {
 		case 'n': flags |= FF_NOSKEL; break;
+		case 'l': flags |= FF_LSTATE; break;
 		case '?': return 1;
 		}
 	}
