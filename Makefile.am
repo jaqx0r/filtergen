@@ -1,18 +1,6 @@
 SUBDIRS = . t
 
-bin_PROGRAMS = filtergen pfc
-#bin_PROGRAMS = fgc fgctl
-
-filtergen_SOURCES = \
-	filtergen.c \
-	gen.c \
-	filter.c \
-	filterlex.l \
-	fg-util.c \
-	fg-iptables.c \
-	fg-ipchains.c \
-	fg-ipfilter.c \
-	fg-cisco.c
+bin_PROGRAMS = pfc
 
 pfc_SOURCES = \
 	pfc.c \
@@ -26,11 +14,11 @@ pfc_SOURCES = \
 	parser.y \
 	scanner.l \
 	glue.c
-pfc_LIBS = @GETOPT_LIBS@
+pfc_LDADD = @GETOPT_LIBS@
 
 headers = filter.h util.h ast.h
 
-mans = filtergen.8 filter_backends.7 filter_syntax.5 pfc.8
+mans = filter_backends.7 filter_syntax.5 pfc.8
 
 man_MANS = $(mans)
 
