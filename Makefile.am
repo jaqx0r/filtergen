@@ -28,6 +28,6 @@ man_MANS = $(mans)
 
 EXTRA_DIST = HISTORY HONESTY README TODO $(headers) $(mans) pfc.spec
 
-AM_CFLAGS = -D_GNU_SOURCE -g -Wall -Werror
+AM_CFLAGS = -D_GNU_SOURCE -g -W -Wall -Werror
 AM_LDFLAGS = -g
 AM_YFLAGS = -d

@@ -106,9 +106,9 @@ struct filtyp {
 } filter_types[] = {
 	{ "iptables", fg_iptables, flush_iptables, },
 	{ "ipchains", fg_ipchains, flush_ipchains, },
-	{ "ipfilter", fg_ipfilter, },
-	{ "cisco", fg_cisco, },
-	{ NULL, },
+	{ "ipfilter", fg_ipfilter, NULL },
+	{ "cisco", fg_cisco, NULL },
+	{ NULL, NULL, NULL },
 };
 
 #ifdef HAVE_GETOPT_H
