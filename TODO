@@ -16,6 +16,7 @@ Medium:
      grouping support
 
 Harder:
+ * iproute2 "ip rule" backend
  * Testing and auditing of generated rulesets.
  * Option to have just a single "state OK -> accept" rule, instead
    of one per bit of allowed traffic.
@@ -31,4 +32,4 @@ Hard:
    This is possible, but tiresome, and will require an optimiser
    if the generated rulesets are not to Suck.
 
-$Id: TODO,v 1.9 2002/04/08 21:54:45 matthew Exp $
+$Id: TODO,v 1.10 2002/04/14 11:41:57 matthew Exp $
