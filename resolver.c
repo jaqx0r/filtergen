@@ -229,8 +229,7 @@ void resolve_host_argument(struct host_argument_s * n) {
             {
             struct addrinfo * i;
 
-            for (i = a; i != NULL; i = i->ai_next) {
-               
+            for (i = a; i; i = i->ai_next) {
                 /*
                 printf("addrinfo: ai_canonname: %s\n\tai_family: %d\n\tai_socktype: %d\n", i->ai_canonname, i->ai_family, i->ai_socktype);
                 */
