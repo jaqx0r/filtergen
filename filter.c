@@ -1,4 +1,4 @@
-/* $Id: filter.c,v 1.13 2002/08/26 22:10:37 matthew Exp $ */
+/* $Id: filter.c,v 1.14 2002/09/02 11:10:42 matthew Exp $ */
 
 #include <arpa/inet.h>
 
@@ -218,8 +218,13 @@ static void filter_append(struct filter *f, struct filter *x)
 {
 	if(!f) abort();
 	if(!x) return;
-	while((f->type != F_SIBLIST) && f->child)
+
+	/* We have to be paranoid about making loops here */
+	while((f->type != F_SIBLIST) && f->child) {
+		if(f == x) return;
 		f = f->child;
+	}
+	if(f == x) return;
 
 	if(f->type == F_SIBLIST) {
 		if(f->child) abort();
