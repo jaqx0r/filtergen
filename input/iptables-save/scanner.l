@@ -89,6 +89,7 @@ id	[[:alnum:]_+-\.\/]+
 
 
 --dport		return TOK_IPTS_DPORT;
+--sport		return TOK_IPTS_SPORT;
 
 {id}	{
 		ipts_lval.u_str = strndup(ipts_text, ipts_leng);
