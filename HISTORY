@@ -13,6 +13,7 @@ recent:
 	implement "local" and "forward" for iptables backend
 	add "-r" option to mirror "-h"
 	cleanup ipchains driver somewhat
+	implement "local" for ipchains backend ("forward" is not possible)
 
 0.6:
 	disable negation of conjunctions ("or"s, aka brace-grouping) for now
@@ -50,4 +51,4 @@ recent:
 	iptables driver
 	a few bugs
 
-$Id: HISTORY,v 1.23 2002/07/18 21:23:19 matthew Exp $
+$Id: HISTORY,v 1.24 2002/07/18 21:28:04 matthew Exp $
