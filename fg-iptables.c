@@ -149,6 +149,8 @@ static int cb_iptables_rule(const struct filterent *ent, struct fg_misc *misc)
     }
 
     /* state and reverse rules here */
+    /* FIXME: state established on reverse for every rule, not just
+     * specifically udp and tcp */
     if(ent->proto.name) {
 	int needstate = 0;
 

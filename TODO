@@ -50,9 +50,14 @@ o [jaq] Optimiser (de-pessimiser :-) for intermediate step, and also
 
   - future optimise orthogonal rules based on hit frequency
 
+* state ESTABLISHED on iptables rules for all rules
+
+* no conntrack (i.e. designed for large fast filters) option for iptables
+
 o [jaq] Implement a negation unroller for filters which can't negate   a
    match.  (For example, Ciscos can't say "match all but this
    host".)  This gives us negation of {}-groups, too.
 
 * reject-with for reject target in iptables
 
+* ipac-friendly filters
