@@ -81,32 +81,41 @@ EMIT(icmptype_specifier) {
 }
 
 EMIT(simple_protocol_argument) {
-    printf("%s ", n->identifier);
+    printf("%s", n->proto);
 }
 
 EMIT(protocol_argument_list) {
     if (n->list) {
+	eprint("emitting protocol_argument_list\n");
 	emit_protocol_argument_list(n->list);
 	printf(" ");
     }
+    eprint("emitting simple_protocol_argument\n");
     emit_simple_protocol_argument(n->arg);
 }
 
 EMIT(compound_protocol_argument) {
     printf("{ ");
-    emit_protocol_argument_list(n->list);
+    if (n->list) {
+	eprint("emitting protocol_argument_list\n");
+	emit_protocol_argument_list(n->list);
+    }
     printf(" }");
 }
 
 EMIT(protocol_argument) {
-    if (n->compound)
+    if (n->compound) {
+	eprint("emitting compound_protocol_argument\n");
 	emit_compound_protocol_argument(n->compound);
-    else
+    } else {
+	eprint("emitting simple_protocol_argument\n");
 	emit_simple_protocol_argument(n->simple);
+    }
 }
 
 EMIT(protocol_specifier) {
-    /* print type */
+    printf("proto ");
+    eprint("emitting protocol_argument\n");
     emit_protocol_argument(n->arg);
 }
 

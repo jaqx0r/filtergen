@@ -40,7 +40,8 @@ TESTS = t_01_ccomment \
 	t_40_direction \
 	t_41_target \
 	t_42_host \
-	t_43_port
+	t_43_port \
+	t_44_protocol
 
 check_PROGRAMS = scan parse emit
 
