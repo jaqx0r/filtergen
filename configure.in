@@ -85,10 +85,13 @@ dnl Configuration files
 eval SYSCONFDIR="$sysconfdir"
 AC_SUBST(SYSCONFDIR)
 
+dnl Documentation
+eval pkgdocdir="$datadir/doc/$PACKAGE"
+AC_SUBST(pkgdocdir)
+
 dnl Example scripts
-eval pkgexdir="$datadir/doc/$PACKAGE/examples"
+eval pkgexdir="$pkgdocdir/examples"
 AC_SUBST(pkgexdir)
-AC_DEFINE_UNQUOTED(PKGEXDIR, "$pkgexdir", [Define this to be the path to filtergen example scripts])
 
 dnl ----------------------------------------------------------
 dnl configuration tests complete, provide a summary of results
