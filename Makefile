@@ -16,7 +16,7 @@ all: $(PROGS)
 %.yy.c: %.l
 	flex -B -o$@ $<
 
-OBJS=filtergen.o gen.o filter.o filterlex.yy.o fg-util.o fg-iptables.o fg-ipchains.o fg-ipfilter.o fg-cisco.o
+OBJS=filtergen.o gen.o filter.o fg-util.o fg-iptables.o fg-ipchains.o fg-ipfilter.o fg-cisco.o scanner.o
 
 filtergen: $(OBJS)
 	$(CC) -o $@ $(OBJS) $(LDFLAGS)
