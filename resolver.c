@@ -220,7 +220,6 @@ void resolve_simple_protocol_argument(struct simple_protocol_argument_s * n) {
 	    }
 	}
     }
-    
 }
 
 void resolve_protocol_argument_list(struct protocol_argument_list_s * n) {
@@ -270,16 +269,17 @@ void resolve_simple_host_argument(struct simple_host_argument_s * n) {
 
             for (i = a; i != NULL; i = i->ai_next) {
                
-                printf("addrinfo: ai_canonname: %s\n\tai_addrlen: %ld\n", i->ai_canonname, (long) i->ai_addrlen);
+                /* printf("addrinfo: ai_canonname: %s\n\tai_addrlen: %ld\n", i->ai_canonname, (long) i->ai_addrlen); */
                 long addr = (long) ntohl(*(int *)&((struct sockaddr_in *) i->ai_addr)->sin_addr);
-                printf("\t addr: %ld.%ld.%ld.%ld\n", addr >> 24 & 255, addr >> 16 & 255, addr >> 8 & 255, addr & 255);
-            
+                /* printf("\taddr: %ld.%ld.%ld.%ld\n", addr >> 24 & 255, addr >> 16 & 255, addr >> 8 & 255, addr & 255); */
+                free(n->host);
+                asprintf(&n->host, "%ld.%ld.%ld.%ld", addr >> 24 & 255, addr >> 16 & 255, addr >> 8 & 255, addr & 255);
             }
             freeaddrinfo(a);
             }
             break;
         default:
-            printf("error: %s\n", gai_strerror(r));
+            printf("warning: %s\n", gai_strerror(r));
             break;
         }
     }
@@ -372,7 +372,6 @@ void resolve_compound_specifier(struct compound_specifier_s * n) {
     if (n->list) {
         resolve_subrule_list(n->list);
     }
-                
 }
 
 void resolve_specifier(struct specifier_s * n) {
