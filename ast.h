@@ -4,16 +4,6 @@
 #ifndef __AST_H__
 #define __AST_H__
 
-struct port_single_s {
-    char * name;
-    int num;
-};
-
-struct port_range_s {
-    struct port_single_s * min;
-    struct port_single_s * max;
-};
-
 struct specifier_list_s;
 
 struct subrule_list_s {
@@ -79,8 +69,8 @@ struct protocol_specifier_s {
 };
 
 struct simple_port_argument_s {
-    struct port_range_s * range;
-    struct port_single_s * single;
+    char * port_min;
+    char * port_max;
 };
 
 struct port_argument_list_s {
