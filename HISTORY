@@ -1,3 +1,8 @@
+0.12.2:
+	New resolver code removes need for struct casting
+	Altered test suite to be more robust
+	minor cosmetic bugs
+
 0.12.1:
 	fixed some dumb bugs
 	fixed some compile bugs on 64 bit platforms
