@@ -50,11 +50,7 @@ number  [[:digit:]]+
                 } while (c != '/' && c != EOF);
              }
 
-"#"          { /* strip shell style comments */
-                 int c;
-                 while ((c = input()) != '\n' && c != EOF)
-		    ;
-             }
+#[^\n]*      /* strip shell style comments */
 
 {string}     {
                  /* spelling = strdup(yytext); */
