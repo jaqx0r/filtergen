@@ -98,8 +98,8 @@ struct icmpent_s * geticmpbyname(char * name) {
     struct icmpent_s * icmpent;
 
     for (icmpent = icmpcodes; icmpent->i_type != NULL; icmpent++) {
-      if (!strcmp(name, icmpent->name))
-	break;
+	if (!strcmp(name, icmpent->name))
+	    break;
     }
     if (icmpent->i_type == NULL)
         icmpent = NULL;

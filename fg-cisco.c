@@ -28,100 +28,100 @@
 
 static char *appip(char *r, const struct addr_spec *h)
 {
-	if(!h->addrstr) return APPS(r, "any");
-	if(!h->maskstr) return APPS2(r, "host ", h->addrstr);
-	return APPSS2(r, h->addrstr, h->maskstr);
+    if(!h->addrstr) return APPS(r, "any");
+    if(!h->maskstr) return APPS2(r, "host ", h->addrstr);
+    return APPSS2(r, h->addrstr, h->maskstr);
 }
 
 static char *appport(char *r, const struct port_spec *p, int neg)
 {
-	if(!p->minstr) return APPS(r, "any");
+    if(!p->minstr) return APPS(r, "any");
 
-	if(!p->maxstr)
-		return APPS2(r, neg ? "ne " : "eq ", p->minstr);
+    if(!p->maxstr)
+	return APPS2(r, neg ? "ne " : "eq ", p->minstr);
 
-	if(neg) abort();
-	APPS(r, "range");
-	APPSS2(r, p->minstr, p->maxstr);
-	return r;
+    if(neg) abort();
+    APPS(r, "range");
+    APPSS2(r, p->minstr, p->maxstr);
+    return r;
 }
 
 static int cb_cisco_rule(const struct filterent *ent, struct fg_misc *misc __attribute__((unused)))
 {
-	char *rule = NULL, *rule_r = NULL;
-	int needret = 0, needports = 1;
+    char *rule = NULL, *rule_r = NULL;
+    int needret = 0, needports = 1;
 
-	APP(rule, "access-list ");
-	APP(rule_r, "access-list ");
+    APP(rule, "access-list ");
+    APP(rule_r, "access-list ");
 
-	/* access list name */
-	if(ent->iface) {
-		APP2(rule, ent->iface, "-");
-		APP2(rule_r, ent->iface, "-");
+    /* access list name */
+    if(ent->iface) {
+	APP2(rule, ent->iface, "-");
+	APP2(rule_r, ent->iface, "-");
+    }
+    switch(ent->direction) {
+      case INPUT:	APP(rule, "IN"); APP(rule_r, "OUT"); break;
+      case OUTPUT:	APP(rule, "OUT"); APP(rule_r, "IN"); break;
+      default: fprintf(stderr, "unknown direction\n"); abort();
+    }
+
+    /* target */
+    switch(ent->target) {
+      case T_ACCEPT:	APPS(rule, "permit"); APPS(rule_r, "permit"); break;
+      case DROP: 	APPS(rule, "deny"); APPS(rule_r, "deny"); break;
+      case T_REJECT:	fprintf(stderr, "Cisco IOS does not support REJECT\n"); return -1;
+      default: abort();
+    }
+
+    /* protocol */
+    if(ent->proto.name) {
+	APPS(rule, ent->proto.name);
+	APPS(rule_r, ent->proto.name);
+	switch(ent->proto.num) {
+	  case IPPROTO_TCP: case IPPROTO_UDP:
+	    needret++;
+	    break;
+	  default:
+	    needports = 0;
 	}
-	switch(ent->direction) {
-	case INPUT:	APP(rule, "IN"); APP(rule_r, "OUT"); break;
-	case OUTPUT:	APP(rule, "OUT"); APP(rule_r, "IN"); break;
-	default: fprintf(stderr, "unknown direction\n"); abort();
-	}
+    } else {
+	APPS(rule, "ip"); APPS(rule_r, "ip");
+    }
 
-	/* target */
-	switch(ent->target) {
-	case T_ACCEPT:	APPS(rule, "permit"); APPS(rule_r, "permit"); break;
-	case DROP: 	APPS(rule, "deny"); APPS(rule_r, "deny"); break;
-	case T_REJECT:	fprintf(stderr, "Cisco IOS does not support REJECT\n"); return -1;
-	default: abort();
-	}
+    rule = appip(rule, &ent->srcaddr);
+    rule = appip(rule, &ent->dstaddr);
+    rule_r = appip(rule_r, &ent->dstaddr);
+    rule_r = appip(rule_r, &ent->srcaddr);
 
-	/* protocol */
-	if(ent->proto.name) {
-		APPS(rule, ent->proto.name);
-		APPS(rule_r, ent->proto.name);
-		switch(ent->proto.num) {
-		case IPPROTO_TCP: case IPPROTO_UDP:
-			needret++;
-			break;
-		default:
-			needports = 0;
-		}
-	} else {
-		APPS(rule, "ip"); APPS(rule_r, "ip");
-	}
+    if(needports) {
+	rule = appport(rule, &ent->u.ports.src, NEG(SPORT));
+	rule = appport(rule, &ent->u.ports.dst, NEG(DPORT));
+	rule_r = appport(rule_r, &ent->u.ports.dst, NEG(DPORT));
+	rule_r = appport(rule_r, &ent->u.ports.src, NEG(SPORT));
+    }
 
-	rule = appip(rule, &ent->srcaddr);
-	rule = appip(rule, &ent->dstaddr);
-	rule_r = appip(rule_r, &ent->dstaddr);
-	rule_r = appip(rule_r, &ent->srcaddr);
+    if(ent->proto.num == IPPROTO_TCP) APPS(rule_r, "established");
+    if(ESET(ent,LOG)) APPS(rule, "log");
 
-	if(needports) {
-		rule = appport(rule, &ent->u.ports.src, NEG(SPORT));
-		rule = appport(rule, &ent->u.ports.dst, NEG(DPORT));
-		rule_r = appport(rule_r, &ent->u.ports.dst, NEG(DPORT));
-		rule_r = appport(rule_r, &ent->u.ports.src, NEG(SPORT));
-	}
+    if(ent->oneway) needret = 0;
 
-	if(ent->proto.num == IPPROTO_TCP) APPS(rule_r, "established");
-	if(ESET(ent,LOG)) APPS(rule, "log");
+    oputs(rule);
+    if(needret) oputs(rule_r);
 
-	if(ent->oneway) needret = 0;
-
-	oputs(rule);
-	if(needret) oputs(rule_r);
-
-	free(rule); free(rule_r);
-	return 1 + !!needret;
+    free(rule); free(rule_r);
+    return 1 + !!needret;
 }
 
 int fg_cisco(struct filter *filter, int flags)
 {
-	struct fg_misc misc = { flags, NULL };
-	fg_callback cb_cisco = {
+    struct fg_misc misc = { flags, NULL };
+    fg_callback cb_cisco = {
 	rule:	cb_cisco_rule,
-	};
-	oputs("# Warning: This backend is not complete and "
-		"can generate broken rulesets.");
-	filter_nogroup(filter);
-	filter_unroll(&filter);
-	filter_apply_flags(filter, flags);
-	return filtergen_cprod(filter, &cb_cisco, &misc);
+    };
+    oputs("# Warning: This backend is not complete and "
+	  "can generate broken rulesets.");
+    filter_nogroup(filter);
+    filter_unroll(&filter);
+    filter_apply_flags(filter, flags);
+    return filtergen_cprod(filter, &cb_cisco, &misc);
 }

@@ -37,72 +37,72 @@
  * filter type
  */
 enum filtertype {
-	YYEOF = 0,
-	F_DIRECTION, F_TARGET,
-	F_SOURCE, F_DEST, F_SPORT, F_DPORT,
-	F_ICMPTYPE,
-	F_PROTO, 
-	F_NEG, F_SIBLIST, F_SUBGROUP,
-	F_LOG,
-	F_RTYPE,
-	F_ONEWAY,
-	/* this must be the last real filter type */
-	F_FILTER_MAX,
-	/* parser use only */
-	INPUT, OUTPUT,
-	/* lex uses "ACCEPT" and "REJECT" */
-	T_ACCEPT, DROP, T_REJECT,
-	MASQ, REDIRECT,
-	OPENBRACE, CLOSEBRACE,
-	OPENBRACKET, CLOSEBRACKET,
-	SEMICOLON, STRING,
-	INCLUDE,
-	LOCALONLY, ROUTEDONLY,		/* for F_RTYPE */
-	TEXT,				/* for F_LOG */
+    YYEOF = 0,
+    F_DIRECTION, F_TARGET,
+    F_SOURCE, F_DEST, F_SPORT, F_DPORT,
+    F_ICMPTYPE,
+    F_PROTO, 
+    F_NEG, F_SIBLIST, F_SUBGROUP,
+    F_LOG,
+    F_RTYPE,
+    F_ONEWAY,
+    /* this must be the last real filter type */
+    F_FILTER_MAX,
+    /* parser use only */
+    INPUT, OUTPUT,
+    /* lex uses "ACCEPT" and "REJECT" */
+    T_ACCEPT, DROP, T_REJECT,
+    MASQ, REDIRECT,
+    OPENBRACE, CLOSEBRACE,
+    OPENBRACKET, CLOSEBRACKET,
+    SEMICOLON, STRING,
+    INCLUDE,
+    LOCALONLY, ROUTEDONLY,		/* for F_RTYPE */
+    TEXT,				/* for F_LOG */
 };
 
 /* Structures which appear in both the parse tree and the output rule */
 struct proto_spec {
-	int num;
-	char *name;
+    int num;
+    char *name;
 };
 
 struct addr_spec {
-	struct in_addr addr, mask;
-	char *addrstr, *maskstr;
+    struct in_addr addr, mask;
+    char *addrstr, *maskstr;
 };
 
 struct port_spec {
-	int min, max;
-	char *minstr, *maxstr;
+    int min, max;
+    char *minstr, *maxstr;
 };
 
 /* This is basically just a parse tree */
 struct filter {
-	enum filtertype type;
-	union {
-		struct {
-			enum filtertype direction;
-			char *iface;
-		} ifinfo;
-		enum filtertype target;
-		char *logmsg;
-		enum filtertype rtype;
-		struct addr_spec addrs;
-		struct port_spec ports;
-		char *icmp;
-		struct proto_spec proto;
-		struct filter *neg;
-		struct filter *sib;
-		struct {
-			char *name;
-			struct filter *list;
-		} sub;
-	} u;
-	struct filter *child, *next;
+    enum filtertype type;
+    union {
+	struct {
+	    enum filtertype direction;
+	    char *iface;
+	} ifinfo;
+	enum filtertype target;
+	char *logmsg;
+	enum filtertype rtype;
+	struct addr_spec addrs;
+	struct port_spec ports;
+	char *icmp;
+	struct proto_spec proto;
+	struct filter *neg;
+	struct filter *sib;
+	struct {
+	    char *name;
+	    struct filter *list;
+	} sub;
+    } u;
+    struct filter *child, *next;
 
-	/* infernal use only */
-	int negate;
+    /* infernal use only */
+    int negate;
 };
 
 
@@ -130,43 +130,43 @@ struct filter *filter_parse_list(void);
 /* from gen.c */
 #define	ESET(e,f)	(e->whats_set & (1 << F_ ##f))
 struct filterent {
-	/* Either direction+iface or groupname must be set */
-	enum filtertype direction;
-	char *iface;
-	char *groupname;
+    /* Either direction+iface or groupname must be set */
+    enum filtertype direction;
+    char *iface;
+    char *groupname;
 
-	/* One of these must be set */
-	enum filtertype target;
-	char *subgroup;
+    /* One of these must be set */
+    enum filtertype target;
+    char *subgroup;
 
-	/* These may or may not be set */
-	int whats_set:F_FILTER_MAX;
-	int whats_negated:F_FILTER_MAX;
-	struct addr_spec srcaddr, dstaddr;
+    /* These may or may not be set */
+    int whats_set:F_FILTER_MAX;
+    int whats_negated:F_FILTER_MAX;
+    struct addr_spec srcaddr, dstaddr;
 
-	enum filtertype rtype;
-	struct proto_spec proto;
-	char *logmsg;
-	int oneway;
+    enum filtertype rtype;
+    struct proto_spec proto;
+    char *logmsg;
+    int oneway;
 
-	/* We need this not to be a union, for error-checking reasons */
+    /* We need this not to be a union, for error-checking reasons */
+    struct {
 	struct {
-		struct {
-			struct port_spec src, dst;
-		} ports;
-		char *icmp;
-	} u;
+	    struct port_spec src, dst;
+	} ports;
+	char *icmp;
+    } u;
 };
 
 struct fg_misc {
-		int flags;
-		void *misc;
+    int flags;
+    void *misc;
 };
 typedef int fg_cb_rule(const struct filterent *ent, struct fg_misc *misc);
 typedef int fg_cb_group(const char *name);
 typedef struct {
-	fg_cb_rule	*rule;
-	fg_cb_group	*group;
+    fg_cb_rule	*rule;
+    fg_cb_group	*group;
 } fg_callback;
 int filtergen_cprod(struct filter *filter, fg_callback *cb, struct fg_misc *misc);
 
