@@ -15,6 +15,13 @@ limitations which need to be removed, but is still a useful tool.
 There's a basic webpage at http://hairy.beasts.org/filter/
 
 
+WARNING!
+
+There are known issues with this package.  The iptables driver does
+generate leaky rulesets.  I hope to address this in the next release.
+Please read the HONESTY file for more information.
+
+
 LICENCE
 
 It was written, and is copyrighted by me <matthew@hairy.beasts.org>,
@@ -147,4 +154,4 @@ to permit or refuse a connection -- it acts only on single packets,
 and is not really able to reason about connections (whatever the blurb
 claims).  It also matches the terminology used by Linux's iptables.
 
-$Id: README,v 1.5 2001/10/06 19:07:17 matthew Exp $
+$Id: README,v 1.6 2001/10/09 10:01:17 matthew Exp $
