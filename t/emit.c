@@ -3,11 +3,16 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include "../ast.h"
+#include "../parser.h"
 
 int yyparse(void *);
+int emittrace = 0;
 
 #define EMIT(x) void emit_##x(struct x##_s * n)
+
+#define eprint(x) if (emittrace) printf(x)
 
 EMIT(specifier_list);
 
@@ -169,98 +174,141 @@ EMIT(log_target_specifier) {
 }
 
 EMIT(target_specifier) {
-    /* print type */
+    if (n->type == TOK_ACCEPT) {
+	printf("accept ");
+    } else if (n->type == TOK_REJECT) {
+	printf("reject ");
+    } else if (n->type == TOK_DROP) {
+	printf("drop ");
+    } else {
+	printf("error ");
+    }
 }
 
 EMIT(simple_direction_argument) {
-    printf("%s ", n->identifier);
+    eprint("emitting identifier\n");
+    printf("%s", n->identifier);
 }
 
 EMIT(direction_argument_list) {
     if (n->list) {
+	eprint("emitting direction_argument_list\n");
 	emit_direction_argument_list(n->list);
 	printf(" ");
     }
+    eprint("emitting simple_direction_argument\n");
     emit_simple_direction_argument(n->arg);
 }
 
 EMIT(compound_direction_argument) {
     printf("{ ");
+    eprint("emitting direction_argument_list\n");
     emit_direction_argument_list(n->list);
     printf(" }");
 }
 
 EMIT(direction_argument) {
-    if (n->compound)
+    if (n->compound) {
+	eprint("emitting compound_direction_argument\n");
 	emit_compound_direction_argument(n->compound);
-    else
+    } else {
+	eprint("emitting simple_direction_argument\n");
 	emit_simple_direction_argument(n->simple);
+    }
 }
 
 EMIT(direction_specifier) {
-    /* print type */
+    if (n->type == TOK_INPUT) {
+	printf("input ");
+    } else {
+	printf("output ");
+    }
+    eprint("emitting direction_argument\n");
     emit_direction_argument(n->arg);
 }
 
 EMIT(specifier) {
-    if (n->compound)
+    if (n->compound) {
+	eprint("emitting compound_specifier\n");
 	emit_compound_specifier(n->compound);
-    else if (n->direction)
+    } else if (n->direction) {
+	eprint("emitting direction_specifier\n");
 	emit_direction_specifier(n->direction);
-    else if (n->target)
+    } else if (n->target) {
+	eprint("emitting target_specifier\n");
 	emit_target_specifier(n->target);
-    else if (n->host)
+    } else if (n->host) {
+	eprint("emitting host_specifier\n");
 	emit_host_specifier(n->host);
-    else if (n->port)
+    } else if (n->port) {
+	eprint("emitting port_specifier\n");
 	emit_port_specifier(n->port);
-    else if (n->protocol)
+    } else if (n->protocol) {
+	eprint("emitting protocol_specifier\n");
 	emit_protocol_specifier(n->protocol);
-    else if (n->icmptype)
+    } else if (n->icmptype) {
+	eprint("emitting icmptype_specifier\n");
 	emit_icmptype_specifier(n->icmptype);
-    else if (n->routing)
+    } else if (n->routing) {
+	eprint("emitting routing_specifier\n");
 	emit_routing_specifier(n->routing);
-    else
+    } else {
+	eprint("emitting chaingroup_specifier\n");
 	emit_chaingroup_specifier(n->chaingroup);
+    }
 }
 
 EMIT(negated_specifier) {
     /* print type */
+    eprint("emitting specifier\n");
     emit_specifier(n->spec);
 }
 
 EMIT(specifier_list) {
     if (n->list) {
+	eprint("emitting specifier_list\n");
 	emit_specifier_list(n->list);
 	/* specifiers are separated by spaces */
 	printf(" ");
     }
+    eprint("emitting negated_specifier\n");
     emit_negated_specifier(n->spec);
 }
 
 EMIT(rule) {
-    if (n->list)
+    if (n->list) {
+	eprint("emitting specifier_list\n");
 	emit_specifier_list(n->list);
+    }
     /* rules end in a semicolon and newline */
     printf(";\n");
 }
 
 EMIT(rule_list) {
     if (n->list) {
+	eprint("emitting rule_list\n");
 	emit_rule_list(n->list);
     }
     if (n->rule) {
+	eprint("emitting rule\n");
 	emit_rule(n->rule);
     }
 }
 
 EMIT(ast) {
-    if (n->list)
+    if (n->list) {
+	eprint("emitting rule_list\n");
 	emit_rule_list(n->list);
+    }
 }
 
 int main(int argc, char ** argv) {
+    char * EMITTRACE;
     struct ast_s ast;
     int res;
+
+    EMITTRACE = getenv("EMITTRACE");
+    emittrace = EMITTRACE ? atoi(EMITTRACE) : 0;
 
     res = yyparse((void *)&ast);
 
@@ -269,6 +317,7 @@ int main(int argc, char ** argv) {
 	return 1;
     }
 
+    eprint("emitting ast\n");
     emit_ast(&ast);
 
     return 0;

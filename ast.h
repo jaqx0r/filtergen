@@ -124,7 +124,7 @@ struct log_target_specifier_s {
 };
 
 struct target_specifier_s {
-    /* type */
+    int type;
     struct log_target_specifier_s * log;
 };
 
@@ -147,7 +147,7 @@ struct direction_argument_s {
 };
 
 struct direction_specifier_s {
-    /* type */
+    int type;
     struct direction_argument_s * arg;
 };
 

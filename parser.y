@@ -243,11 +243,13 @@ specifier: compound_specifier
 direction_specifier: TOK_INPUT direction_argument
 	{
 		$$ = malloc(sizeof(struct direction_specifier_s));
+		$$->type = TOK_INPUT;
 		$$->arg = $2;
 	}
 	| TOK_OUTPUT direction_argument
 	{
 		$$ = malloc(sizeof(struct direction_specifier_s));
+		$$->type = TOK_OUTPUT;
 		$$->arg = $2;
 	}
 	;
@@ -297,36 +299,43 @@ simple_direction_argument: TOK_IDENTIFIER
 target_specifier: TOK_ACCEPT
 	{
 		$$ = malloc(sizeof(struct target_specifier_s));
+		$$->type = TOK_ACCEPT;
 		$$->log = NULL;
 	}
 	| TOK_REJECT
 	{
 		$$ = malloc(sizeof(struct target_specifier_s));
+		$$->type = TOK_REJECT;
 		$$->log = NULL;
 	}
 	| TOK_DROP
 	{
 		$$ = malloc(sizeof(struct target_specifier_s));
+		$$->type = TOK_DROP;
 		$$->log = NULL;
 	}
 	| TOK_MASQ
 	{
 		$$ = malloc(sizeof(struct target_specifier_s));
+		$$->type = TOK_MASQ;
 		$$->log = NULL;
 	}
 	| TOK_PROXY
 	{
 		$$ = malloc(sizeof(struct target_specifier_s));
+		$$->type = TOK_PROXY;
 		$$->log = NULL;
 	}
 	| TOK_REDIRECT
 	{
 		$$ = malloc(sizeof(struct target_specifier_s));
+		$$->type = TOK_PROXY;
 		$$->log = NULL;
 	}
 	| log_target_specifier
 	{
 		$$ = malloc(sizeof(struct target_specifier_s));
+		$$->type = TOK_LOG;
 		$$->log = $1;
 	}
 	;
