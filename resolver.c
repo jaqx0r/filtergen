@@ -257,7 +257,9 @@ void resolve_simple_host_argument(struct simple_host_argument_s * n) {
     int r;
 
     memset(&hints, 0, sizeof(struct addrinfo));
+    /* any address family is good */
     hints.ai_family = PF_UNSPEC;
+    /* return hostname, though we don't use it, for debugging */
     hints.ai_flags = AI_CANONNAME;
     /* limit socktype so duplicate hosts aren't returned for each socktype */
     hints.ai_socktype = SOCK_STREAM;
