@@ -97,7 +97,6 @@ simple_direction_argument: TOK_IDENTIFIER
 target_specifier: TOK_ACCEPT
 	| TOK_REJECT
 	| TOK_DROP
-	| TOK_FORWARD
 	| TOK_MASQ
 	| TOK_PROXY
 	| TOK_REDIRECT
@@ -182,6 +181,7 @@ simple_icmptype_argument: TOK_IDENTIFIER
 
 /* dunno what to do with this one
 	| TOK_LOCAL
+	| TOK_FORWARD
 	;
 */
 
