@@ -160,6 +160,12 @@ option: TOK_OPTION not_identifier
     $$->option = $1;
     $$->not_identifier = $2;
 }
+| TOK_OPTION
+{
+    $$ = malloc(sizeof(struct option_s));
+    $$->option = $1;
+    $$->not_identifier = NULL;
+}
 
 not_identifier: TOK_BANG identifier
 {
