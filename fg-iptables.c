@@ -1,7 +1,7 @@
 /*
  * Filter generator, iptables driver
  *
- * $Id: fg-iptables.c,v 1.6 2001/10/03 20:03:41 matthew Exp $
+ * $Id: fg-iptables.c,v 1.7 2001/10/03 20:17:13 matthew Exp $
  */
 
 #include <stdio.h>
@@ -22,7 +22,7 @@ int cb_iptables(const struct filterent *ent, void *misc)
 	/* this should all be put in a table somehow */
 
 	switch(ent->direction) {
-	case F_INPUT:	APPS(rule, "input"); APPS(rule_r, "output");
+	case F_INPUT:	APPS(rule, "INPUT"); APPS(rule_r, "OUTPUT");
 			if(ent->iface) {
 				if(NEG(INPUT)) {
 					APPS(rule, "!");
@@ -32,7 +32,7 @@ int cb_iptables(const struct filterent *ent, void *misc)
 				APPSS2(rule_r, "-o", ent->iface);
 			}
 			break;
-	case F_OUTPUT:	APPS(rule, "output"); APPS(rule_r, "input");
+	case F_OUTPUT:	APPS(rule, "OUTPUT"); APPS(rule_r, "INPUT");
 			if(ent->iface) {
 				if(NEG(OUTPUT)) {
 					APPS(rule, "!");
@@ -53,7 +53,7 @@ int cb_iptables(const struct filterent *ent, void *misc)
 		APPSS2(rule, "-p", "tcp");
 		APPSS2(rule_r, "-p", "tcp");
 		APPS(rule, "-m state --state=NEW,ESTABLISHED");
-		APPS(rule_r, "-m state --state=ESTABLISHED ! -y");
+		APPS(rule_r, "-m state --state=ESTABLISHED ! --syn");
 		break;
 	case UDP:
 		needret++;
@@ -94,9 +94,11 @@ int cb_iptables(const struct filterent *ent, void *misc)
 	}
 
 	switch(ent->target) {
-	case F_ACCEPT:	APPSS2(rule, "-J", "ACCEPT"); break;
-	case F_DROP:	APPSS2(rule, "-J", "DROP"); break;
-	case F_REJECT:	APPSS2(rule, "-J", "REJECT"); needret = 0; break;
+	case F_ACCEPT:	APPSS2(rule, "-j", "ACCEPT");
+			APPSS2(rule_r, "-j", "ACCEPT"); break;
+	case F_DROP:	APPSS2(rule, "-j", "DROP");
+			APPSS2(rule_r, "-j", "DROP"); break;
+	case F_REJECT:	APPSS2(rule, "-j", "REJECT"); needret = 0; break;
 	default: abort();
 	}
 
