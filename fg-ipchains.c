@@ -3,7 +3,7 @@
  *
  * XXX - maybe this should be shared with the ipchains one?
  *
- * $Id: fg-ipchains.c,v 1.3 2001/10/04 14:02:43 matthew Exp $
+ * $Id: fg-ipchains.c,v 1.4 2001/10/06 17:22:09 matthew Exp $
  */
 
 #include <stdio.h>
@@ -18,14 +18,27 @@ static int cb_ipchains(const struct filterent *ent, void *misc)
 	char *rule = NULL, *rule_r = NULL;
 	int needret = 0;
 
-	APP(rule, "ipchains -A");
-	APP(rule_r, "ipchains -A");
+	APP(rule, "ipchains");
+	APP(rule_r, "ipchains");
 
-	/* this should all be put in a table somehow */
+	/* nat rule */
+	if((ent->target == F_MASQ) || (ent->target == F_REDIRECT)) {
+		if((ent->target == F_MASQ) && (ent->direction == F_OUTPUT)) {
+			fprintf(stderr, "can't masquerade on input\n");
+			return -1;
+		} else if((ent->target == F_MASQ) && (ent->direction == F_OUTPUT)) {
+			fprintf(stderr, "can't redirect on output\n");
+			return -1;
+		}
+	}
+
+	APPS(rule, "-A");
+	APPS(rule_r, "-A");
 
 	switch(ent->direction) {
 	case F_INPUT:	APPS(rule, "input"); APPS(rule_r, "output"); break;
-	case F_OUTPUT:	APPS(rule, "output"); APPS(rule_r, "input"); break;
+	case F_OUTPUT:	APPS(rule, (ent->target == F_MASQ) ? "forward" : "output");
+			APPS(rule_r, "input"); break;
 	default: fprintf(stderr, "unknown direction\n"); abort();
 	}
 
@@ -83,12 +96,14 @@ static int cb_ipchains(const struct filterent *ent, void *misc)
 	default:
 	}
 
+	APPS(rule, "-j"); APPS(rule_r, "-j");
+
 	switch(ent->target) {
-	case F_ACCEPT:	APPSS2(rule, "-j", "ACCEPT");
-			APPSS2(rule_r, "-j", "ACCEPT"); break;
-	case F_DROP:	APPSS2(rule, "-j", "DROP"); 
-			APPSS2(rule_r, "-j", "DROP"); break;
-	case F_REJECT:	APPSS2(rule, "-j", "REJECT"); needret = 0; break;
+	case F_ACCEPT:	APPS(rule, "ACCEPT"); APPS(rule_r, "ACCEPT"); break;
+	case F_DROP:	APPS(rule, "DROP"); needret = 0; break;
+	case F_REJECT:	APPS(rule, "REJECT"); needret = 0; break;
+	case F_MASQ:	APPS(rule, "MASQ"); APPS(rule_r, "ACCEPT"); break;
+	case F_REDIRECT:APPS(rule, "REDIRECT"); APPS(rule_r, "ACCEPT"); break;
 	default: abort();
 	}
 

@@ -1,7 +1,7 @@
 /*
  * filter compilation front-end
  *
- * $Id: filtergen.c,v 1.6 2001/10/04 14:02:43 matthew Exp $
+ * $Id: filtergen.c,v 1.7 2001/10/06 17:22:09 matthew Exp $
  */
 
 #include <stdio.h>
@@ -61,10 +61,8 @@ int main(int argc, char **argv)
 
 	strftime(buf, sizeof(buf)-1, "%a %b %e %H:%M:%S %Z %Y",
 			localtime((time(&t),&t)));
-	fprintf(stderr, "# filter generated from %s via %s backend at %s\n",
-			argv[1] ?: "standard input",
-			ft->name,
-			buf);
+	printf("# filter generated from %s via %s backend at %s\n",
+		argv[1] ?: "standard input", ft->name, buf);
 	l = ft->compiler(f);
 
 	if(l < 0) {
