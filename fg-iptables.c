@@ -1,7 +1,7 @@
 /*
  * Filter generator, iptables driver
  *
- * $Id: fg-iptables.c,v 1.5 2001/10/03 19:38:58 matthew Exp $
+ * $Id: fg-iptables.c,v 1.6 2001/10/03 20:03:41 matthew Exp $
  */
 
 #include <stdio.h>
@@ -52,15 +52,15 @@ int cb_iptables(const struct filterent *ent, void *misc)
 		needret++;
 		APPSS2(rule, "-p", "tcp");
 		APPSS2(rule_r, "-p", "tcp");
-		APPS(rule, "--state=NEW,ESTABLISHED");
-		APPS(rule_r, "--state=ESTABLISHED ! -y");
+		APPS(rule, "-m state --state=NEW,ESTABLISHED");
+		APPS(rule_r, "-m state --state=ESTABLISHED ! -y");
 		break;
 	case UDP:
 		needret++;
 		APPSS2(rule, "-p", "udp");
 		APPSS2(rule_r, "-p", "udp");
-		APPS(rule, "--state=NEW,ESTABLISHED");
-		APPS(rule_r, "--state=ESTABLISHED");
+		APPS(rule, "-m state --state=NEW,ESTABLISHED");
+		APPS(rule_r, "-m state --state=ESTABLISHED");
 		break;
 	default: abort();
 	}
