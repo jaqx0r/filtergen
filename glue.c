@@ -29,15 +29,23 @@ int filter_fopen(const char * filename) {
 struct filter * convert_specifier_list(struct specifier_list_s * n);
 
 struct filter * convert_subrule_list(struct subrule_list_s * n) {
-    struct filter * res = NULL; /*, * end = NULL; */
+    struct filter * res = NULL, * end = NULL;
 
     eprint("converting subrule_list\n");
 
     if (n->subrule_list) {
 	res = convert_subrule_list(n->subrule_list);
-        if (res && n->specifier_list) {
-            res->next = convert_specifier_list(n->specifier_list);
-        }
+	if (res) {
+	  end = res;
+	  while (end->next) {
+	    end = end->next;
+	  }
+	  if (n->specifier_list) {
+            end->next = convert_specifier_list(n->specifier_list);
+	  }
+	} else {
+	  printf("warning: convert_subrule_list returned NULL\n");
+	}
     } else if (n->specifier_list) {
         res = convert_specifier_list(n->specifier_list);
     } else {

@@ -1,2 +1,9 @@
 # convert compound specifiers
 { input lo; output lo} accept;
+# chunky
+input eth0 source foo dest bar proto tcp {
+	dport http;
+	dport https;
+	dport nntp;
+	sport 1:1023 dport ssh;
+} accept;
