@@ -32,40 +32,40 @@ void resolve_option_specifier(struct option_specifier_s * n) {
 
 /* icmp codes from RFC1700 */
 struct icmpent_s {
-    short i_type;
+    char * i_type;
     char * name;
 } icmpcodes[] = {
-    {  0, "echo-reply" },
+    { "0", "echo-reply" },
     /* 1-2 unassigned */
-    {  3, "destination-unreachable" },
-    {  4, "source-quench" },
-    {  5, "redirect" },
-    {  6, "alternate-host-address" },
+    { "3", "destination-unreachable" },
+    { "4", "source-quench" },
+    { "5", "redirect" },
+    { "6", "alternate-host-address" },
     /* 7 unassigned */
-    {  8, "echo-request" },
-    {  9, "router-advertisement" },
-    { 10, "router-selection" },
-    { 11, "time-exceeded" },
-    { 12, "parameter-problem" },
-    { 13, "timestamp-request" },
-    { 14, "timestamp-reply" },
-    { 15, "information-request" },
-    { 16, "information-reply" },
-    { 17, "address-mask-request" },
-    { 18, "address-mask-reply" },
+    { "8", "echo-request" },
+    { "9", "router-advertisement" },
+    { "10", "router-selection" },
+    { "11", "time-exceeded" },
+    { "12", "parameter-problem" },
+    { "13", "timestamp-request" },
+    { "14", "timestamp-reply" },
+    { "15", "information-request" },
+    { "16", "information-reply" },
+    { "17", "address-mask-request" },
+    { "18", "address-mask-reply" },
     /* 19-29 reserved */
-    { 30, "traceroute" },
-    { 31, "datagram-conversion-error" },
-    { 32, "mobile-host-redirect" },
-    { 33, "ipv6-where-are-you" },
-    { 34, "ipv6-i-am-here" },
-    { 35, "mobile-registration-request" },
-    { 36, "mobile-registration-reply" },
-    { 37, "domain-name-request" },
-    { 38, "domain-name-reply" },
-    { 39, "skip" },
-    { 40, "photuris"},
-    { -1, }
+    { "30", "traceroute" },
+    { "31", "datagram-conversion-error" },
+    { "32", "mobile-host-redirect" },
+    { "33", "ipv6-where-are-you" },
+    { "34", "ipv6-i-am-here" },
+    { "35", "mobile-registration-request" },
+    { "36", "mobile-registration-reply" },
+    { "37", "domain-name-request" },
+    { "38", "domain-name-reply" },
+    { "39", "skip" },
+    { "40", "photuris"},
+    { NULL, }
     /* 41-255 reserved */
 };
 
@@ -76,12 +76,12 @@ struct icmpent_s * geticmpentbyname(char * name) {
 
     i = 0;
     icmpent = icmpcodes;
-    while (icmpent[i].i_type != -1) {
+    while (icmpent[i].i_type != NULL) {
         if (!strcmp(name, icmpent[i].name))
             break;
         i++;
     }
-    if (icmpent[i].i_type == -1)
+    if (icmpent[i].i_type == NULL)
         icmpent = NULL;
 
     return icmpent;
@@ -93,7 +93,7 @@ void resolve_icmptype_argument(struct icmptype_argument_s * n) {
     if (n->icmptype) {
         if ((i = geticmpentbyname(n->icmptype))) {
             free(n->icmptype);
-            asprintf(&n->icmptype, "%d", i->i_type);
+            asprintf(&n->icmptype, "%s", i->i_type);
         } else {
 	    /* check that the icmptype is a number if we can't resolve it */
 	    long m;
@@ -210,52 +210,67 @@ void resolve_protocol_specifier(struct protocol_specifier_s * n) {
 }
 
 void resolve_host_argument(struct host_argument_s * n) {
-    struct addrinfo * a = NULL;
-    struct addrinfo hints;
-    int r;
-
-    memset(&hints, 0, sizeof(struct addrinfo));
-    /* any address family is good */
-    hints.ai_family = PF_UNSPEC;
-    /* return hostname, though we don't use it, for debugging */
-    hints.ai_flags = AI_CANONNAME;
-    /* limit socktype so duplicate hosts aren't returned for each socktype */
-    hints.ai_socktype = SOCK_STREAM;
-    
-    if (n->host) {
-        r = getaddrinfo(n->host, NULL, &hints, &a);
-        switch (r) {
-        case 0:
-            {
-            struct addrinfo * i;
-
-            for (i = a; i; i = i->ai_next) {
-                /*
-                printf("addrinfo: ai_canonname: %s\n\tai_family: %d\n\tai_socktype: %d\n", i->ai_canonname, i->ai_family, i->ai_socktype);
-                */
-                long addr = (long) ntohl(*(int *)&((struct sockaddr_in *) i->ai_addr)->sin_addr);
-                /*
-                printf("\taddr: %ld.%ld.%ld.%ld\n", addr >> 24 & 255, addr >> 16 & 255, addr >> 8 & 255, addr & 255);
-                */
-                free(n->host);
-                asprintf(&n->host, "%ld.%ld.%ld.%ld", addr >> 24 & 255, addr >> 16 & 255, addr >> 8 & 255, addr & 255);
-            }
-            freeaddrinfo(a);
-            }
-            break;
-        default:
-            printf("warning: %s\n", gai_strerror(r));
-            break;
-        }
-    }
 }
 
 void resolve_host_argument_list(struct host_argument_list_s * n) {
+    struct addrinfo * a = NULL, * i;
+    struct addrinfo hints;
+    int r, addr;
+    struct host_argument_list_s * list = NULL;
+    struct host_argument_s * host = NULL;
+
     if (n->list) {
         resolve_host_argument_list(n->list);
     }
+
     if (n->arg) {
-        resolve_host_argument(n->arg);
+        memset(&hints, 0, sizeof(struct addrinfo));
+        /* any address family is good */
+        hints.ai_family = PF_UNSPEC;
+        /* return hostname, though we don't use it, for debugging */
+        hints.ai_flags = AI_CANONNAME;
+        /* limit so duplicate hosts aren't returned for each socktype */
+        hints.ai_socktype = SOCK_STREAM;
+    
+        if (n->arg->host) {
+            r = getaddrinfo(n->arg->host, NULL, &hints, &a);
+            switch (r) {
+              case 0:
+                /* replace the hostname with the IP */
+                free(n->arg->host);
+                /* ugh */
+                addr = ntohl(*(int *)&((struct sockaddr_in *) a->ai_addr)->sin_addr);
+                asprintf(&n->arg->host, "%d.%d.%d.%d", addr >> 24 & 255, addr >> 16 & 255, addr >> 8 & 255, addr & 255);
+
+                /* if there's more, create some more hosts */
+                for (i = a->ai_next; i; i = i->ai_next) {
+                    /*
+                    printf("addrinfo:\n\tai_canonname: %s\n\tai_family: %d\n\tai_socktype: %d\n", i->ai_canonname, i->ai_family, i->ai_socktype);
+                    */
+                    addr = ntohl(*(int *)&((struct sockaddr_in *) i->ai_addr)->sin_addr);
+                    /*
+                    printf("\taddr: %d.%d.%d.%d\n", addr >> 24 & 255, addr >> 16 & 255, addr >> 8 & 255, addr & 255);
+                    */
+                    list = malloc(sizeof(struct host_argument_list_s));
+                    host = malloc(sizeof(struct host_argument_s));
+
+                    asprintf(&host->host, "%d.%d.%d.%d", addr >> 24 & 255, addr >> 16 & 255, addr >> 8 & 255, addr & 255);
+                    if (n->arg->mask) {
+                        host->mask = strdup(n->arg->mask);
+                    }
+
+                    /* insert the new node */
+                    list->arg = host;
+                    list->list = n->list;
+                    n->list = list;
+                }
+                freeaddrinfo(a);
+                break;
+              default:
+                printf("warning: %s\n", gai_strerror(r));
+                break;
+            }
+        }
     }
 }
 
