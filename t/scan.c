@@ -35,6 +35,8 @@ char * tok_map(int c) {
 	r = "lsquare"; break;
       case TOK_MASQ: 
 	r = "masq"; break;
+      case TOK_ONEWAY:
+	r = "oneway"; break;
       case TOK_OUTPUT:
 	r = "output"; break;
       case TOK_PROTO:
