@@ -36,7 +36,9 @@ id	[[:alnum:]_+-\.\/]+
 
 %%
 
-#[^\n]* /* strip shell-style comments */
+#[^\n]*[\n] { /* strip shell-style comments and the trailing newline */ 
+		ln++;
+	    }
 
 ^[*]	return TOK_TABLE;
 

@@ -1,3 +1,23 @@
 #!/bin/sh
 
-exit 0
+TEST="that comments are ignored"
+
+testdir=`dirname $0`
+. $testdir/../../../t/testlib
+
+cat > $work/in <<EOF
+# I am a comment
+EOF
+if test $? -ne 0 ; then no_result ; fi
+
+cat > $work/good <<EOF
+EOF
+if test $? -ne 0 ; then no_result ; fi
+
+$testdir/scan < $work/in > $work/out
+if test $? -ne 0 ; then fail ; fi
+
+compare $work/good $work/out
+
+# got this far?
+pass
