@@ -27,7 +27,8 @@ no_result () {
     cd $here
     rm -rf $work
     echo "NO RESULT when testing $TEST"
-    exit 77
+    #exit 77
+    exit 1
 }
 
 trap no_result 1 2 3 15

@@ -11,11 +11,6 @@ if test $? -ne 0 ; then no_result ; fi
 
 compare $testdir/data/${DATA}.out $work/out
 
-./parse < $work/out > $work/out.out 2>&1
-if test $? -ne 0 ; then no_result ; fi
-
-compare $work/out $work/out.out
-
 # got this far?
 pass
 

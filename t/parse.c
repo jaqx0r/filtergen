@@ -8,13 +8,12 @@ extern int yydebug;
 /* void emit(); */
 
 int main(int argc, char ** argv) {
-    struct filter * f;
     char * YYDEBUGTRACE;
 
     YYDEBUGTRACE = getenv("YYDEBUGTRACE");
     yydebug = YYDEBUGTRACE ? atoi(YYDEBUGTRACE) : 0;
 
-    f = yyparse();
+    yyparse();
 
     return 0;
 }
