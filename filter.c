@@ -1,6 +1,7 @@
-/* $Id: filter.c,v 1.5 2001/11/05 10:35:26 matthew Exp $ */
+/* $Id: filter.c,v 1.6 2002/01/25 17:04:55 matthew Exp $ */
 
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 
 #include "filter.h"
@@ -169,7 +170,13 @@ void __filter_neg_expand(struct filter **f, int neg)
 	__filter_neg_expand(&(*f)->next, neg);
 
 	switch((*f)->type) {
-	case F_SIBLIST:	__filter_neg_expand(&(*f)->u.sib, neg); break;
+	case F_SIBLIST:
+		if(neg && (*f)->u.sib && (*f)->u.sib->next) {
+			fprintf(stderr, "error: can't negate conjunctions\n");
+			exit(1);
+		}
+		__filter_neg_expand(&(*f)->u.sib, neg);
+		break;
 	case F_NEG: {
 		struct filter *c = (*f)->child;
 		*f = (*f)->u.neg;
