@@ -57,6 +57,7 @@ struct filter * convert_specifier(struct specifier_s * r) {
     eprint("converting specifier\n");
 
     if (r->compound) {
+      eprint("converting compound specifier\n");
 	res = convert_compound_specifier(r->compound);
     } else if (r->direction) {
 	enum filtertype type;
@@ -72,7 +73,7 @@ struct filter * convert_specifier(struct specifier_s * r) {
 	    break;
 	  default:
 	    printf("error: incorrect direction type encountered\n");
-	    return NULL;
+	    type = YYEOF;
 	    break;
 	}
 	if (r->direction->arg) {
@@ -89,11 +90,39 @@ struct filter * convert_specifier(struct specifier_s * r) {
 	    printf("error: no direction argument\n");
 	}
     } else if (r->target) {
-	res = new_filter_target(T_ACCEPT);
+      enum filtertype type;
+
+      eprint("converting target specifier\n");
+
+      switch (r->target->type) {
+       case TOK_ACCEPT:
+	type = T_ACCEPT;
+	break;
+       case TOK_REJECT:
+	type = T_REJECT;
+	break;
+       case TOK_DROP:
+	type = DROP;
+	break;
+       case TOK_MASQ:
+	type = MASQ;
+	break;
+       case TOK_PROXY:
+	type = REDIRECT;
+	break;
+       case TOK_REDIRECT:
+	type = REDIRECT;
+	break;
+       default:
+	printf("error: incorrect target type encountered\n");
+	type = YYEOF;
+	break;
+      }
+      res = new_filter_target(type);
     } else if (r->host) {
 	enum filtertype type;
 	
-	eprint("converting host_specifier\n");
+	eprint("converting host specifier\n");
 
 	switch (r->host->type) {
 	  case TOK_SOURCE:
@@ -104,13 +133,21 @@ struct filter * convert_specifier(struct specifier_s * r) {
 	    break;
 	  default:
 	    printf("error: incorrect host type encountered\n");
-	    return NULL;
+	    type = YYEOF;
 	    break;
 	}
 	if (r->host->arg) {
 	    if (r->host->arg->simple) {
 		if (r->host->arg->simple->host) {
-		    res = new_filter_host(type, (const char *) r->host->arg->simple->host);
+		  eprint("creating new filter host: ");
+		  eprint(r->host->arg->simple->host->host);
+		  eprint("\n");
+		  if (r->host->arg->simple->host->host) {
+		    
+		    res = new_filter_host(type, r->host->arg->simple->host->host);
+		  } else {
+		    printf("error: no actual contents to the host argument (simple) identifier\n");
+		  }
 		} else {
 		    printf("error: no host argument (simple) identifier\n");
 		}
@@ -121,14 +158,19 @@ struct filter * convert_specifier(struct specifier_s * r) {
 	    printf("error: no host argument\n");
 	}
     } else if (r->port) {
+      eprint("converting port specifier\n");
 	res = new_filter_ports(F_SPORT, "bar");
     } else if (r->protocol) {
+      eprint("converting proto specifier\n");
 	res = new_filter_proto(F_PROTO, "53");
     } else if (r->icmptype) {
+      eprint("converting icmp specifier\n");
 	res = __new_filter(F_SIBLIST);
     } else if (r->routing) {
+      eprint("converting routing specifier\n");
 	res = __new_filter(F_SUBGROUP);
     } else if (r->chaingroup) {
+      eprint("converting chaingroup specifier\n");
 	res = __new_filter(F_RTYPE);
     } else
 	printf("error: no specifiers\n");
@@ -140,11 +182,12 @@ struct filter * convert_negated_specifier(struct negated_specifier_s * r) {
     struct filter * spec = NULL;
     struct filter * res = NULL;
 
-    eprint("converting negated_specifier\n");
+    eprint("converting negated specifier\n");
 
     if (r->spec) {
 	spec = convert_specifier(r->spec);
 	if (spec && r->negated) {
+	  eprint("negating\n");
 	    res = new_filter_neg(spec);
 	} else {
 	    res = spec;
@@ -153,30 +196,24 @@ struct filter * convert_negated_specifier(struct negated_specifier_s * r) {
     return res;
 }
 
-struct filter * convert_specifier_list(struct specifier_list_s * r) {
-    struct filter * spec = NULL, * res = NULL;
-    struct filter * list = NULL;
+struct filter * convert_specifier_list(struct specifier_list_s * n) {
+  struct filter * res = NULL, * end = NULL;
 
     eprint("converting specifier_list\n");
 
-    if (r->list) {
-	eprint("got a list\n");
-	list = convert_specifier_list(r->list);
-	res = list;
-    }
-    if (r->spec) {
-	eprint("got a spec\n");
-	spec = convert_negated_specifier(r->spec);
-	res = spec;
-    }
-    if (list) {
-	eprint("mking a child\n");
-	list->child = spec;
-	res = list;
+    if (n->list) {
+      res = convert_specifier_list(n->list);
+      end = res;
+      while (end->child) {
+	end = end->child;
+      }
+      if (n->spec) {
+	end->child = convert_negated_specifier(n->spec);
+      }
     } else {
-	eprint("not making a child\n");
-	res = spec;
+      res = convert_negated_specifier(n->spec);
     }
+
     return res;
 }
 

@@ -1,7 +1,7 @@
 ( input eth0
   child
   ( neg
-    ( dest 10.0.0.3
+    ( dest foo
      )
     child
     ( reject

@@ -1,2 +1,2 @@
 # test data for the ast converter
-input eth0 ! dest 10.0.0.3 reject;
+input eth0 ! dest foo reject;
