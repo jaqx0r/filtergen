@@ -1,5 +1,7 @@
 0.12:
+	converted build system to automake
 	rewrote parser
+	added test suite
 	add "oneway" option
 	fix iptables log message format (append a space)
 
@@ -88,5 +90,3 @@
 0.1: Initial release
 	iptables driver
 	a few bugs
-
-$Id: HISTORY,v 1.49 2003/04/02 11:07:32 matthew Exp $
