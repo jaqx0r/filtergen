@@ -1,19 +1,23 @@
 .\" -*- nroff -*-
-.TH FILTERGEN 8 "January 7, 2004"
+.TH FILTERGEN 8 "January 20, 2005"
 
 .SH NAME
+
 filtergen \- packet filter compiler
 
 .SH SYNOPSIS
+
 \fBfiltergen\fR [ \fB-h\fR | \fB--help\fR ] [ \fB-V\fR | \fB--version\fR ] [ \fB-c\fR | \fB--compile\fR ] [ \fB-r\fR | \fB--no-resolve\fR ] [ \fB-t \fItarget\fB\fR | \fB--target=\fItarget\fB\fR ] [ \fB-o \fIoutfile\fB\fR | \fB--output=\fIoutfile\fB\fR ] \fIinfile\fR
 
 \fBfiltergen\fR [ \fB-h\fR | \fB--help\fR ] [ \fB-V\fR | \fB--version\fR ] [ \fB-c\fR | \fB--compile\fR ] [ \fB-r\fR | \fB--no-resolve\fR ] [ \fB-t \fItarget\fB\fR | \fB--target=\fItarget\fB\fR ] [ \fB-o \fIoutfile\fB\fR | \fB--output=\fIoutfile\fB\fR ] [ \fB-F \fIpolicy\fB\fR | \fB--flush=\fIpolicy\fB\fR ]
 
 .SH DESCRIPTION
+
 \fBfiltergen\fR compiles a high-level filtering description language into a
 variety of target formats.
 
 .SH USAGE
+
 \fBfiltergen\fR reads the ruleset from the \fIinfile\fR specified on the
 command line (or standard input if \fIinfile\fR is "\-") and outputs to
 standard output (or \fIoutfile\fR) via an optionally specified backend.
@@ -73,14 +77,18 @@ Show command help.
 Show program version.
 
 .SH BUGS
+
 Not all backends implement all features.
 
 The packet filter is not optimised.
 
 .SH SEE ALSO
+
 \fBfgadm\fR(8), \fBfilter_syntax\fR(5), \fBfilter_backends\fR(7)
 
 .SH AUTHOR
+
 \fBfiltergen\fR was originally written by Matthew Kirkwood.
-Jamie Wilkinson <jaq@spacepants.org> then rewrote a lot of the internals,
-added some features, and took on maintenance of the project.
+
+Jamie Wilkinson <jaq@spacepants.org> then took on maintenance of the
+project, added some features, and rewrote a lot of the internals.
