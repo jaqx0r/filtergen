@@ -78,6 +78,8 @@ extern int ipts_lex(void);
 
 %token TOK_IPTS_STATE
 
+%token TOK_IPTS_ICMP_TYPE;
+
 %token <u_str> TOK_IDENTIFIER
 %token <u_str> TOK_OPTION
 

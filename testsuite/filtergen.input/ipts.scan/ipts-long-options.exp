@@ -19,6 +19,7 @@ set options [list \
 		 { "source-port" "SPORT" } \
 		 "syn" \
 		 "state" \
+		 "icmp-type" \
 		]
 
 foreach option_pair $options {

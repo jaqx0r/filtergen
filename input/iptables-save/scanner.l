@@ -97,6 +97,8 @@ id	[[:alnum:]_+-\.\/]+
 
 --state		return TOK_IPTS_STATE;
 
+--icmp-type	return TOK_IPTS_ICMP_TYPE;
+
 {id}	{
 		ipts_lval.u_str = strndup(ipts_text, ipts_leng);
 		return TOK_IDENTIFIER;

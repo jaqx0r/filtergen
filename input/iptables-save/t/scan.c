@@ -30,6 +30,7 @@ char * tok_map(int c) {
 	tok(SPORT);
 	tok(SYN);
 	tok(STATE);
+	tok(ICMP_TYPE);
       case TOK_IDENTIFIER:
 	r = strdup("identifier"); break;
       case TOK_LSQUARE:
