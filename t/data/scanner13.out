@@ -1,4 +1,4 @@
-kind = 27 [<name>], spelling = "inpu", line = 2
+kind = 8 [<input>], spelling = "input", line = 2
 kind = 27 [<name>], spelling = "foo", line = 4
 kind = 27 [<name>], spelling = "bar", line = 5
 kind = 27 [<name>], spelling = "baz", line = 6
