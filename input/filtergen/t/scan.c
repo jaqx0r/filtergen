@@ -77,16 +77,18 @@ char * tok_map(int c) {
     return r;
 }  
 
-int main(int argc __attribute__((unused)), char ** argv __attribute__((unused))) {
+extern FILE * filtergen_in;
+
+int main(int argc, char ** argv) {
     int c;
 
-    /* if running in make distcheck the cwd isn't the same as the srcdir */
-    if (getenv("srcdir")) {
-	chdir(getenv("srcdir"));
+    if (argc > 1) {
+	filtergen_in = fopen(argv[1], "r");
     }
 
+    /* all output is considered a compiler message */
     while ((c = filtergen_lex())) {
-	printf("kind = %s, spelling = \"%s\", file = \"%s\", line = %d\n", tok_map(c), filtergen_text, filtergen_filename(), filtergen_lineno);
+	fprintf(stderr, "%s:%d: kind = %s, spelling = \"%s\"\n", filtergen_filename(), filtergen_lineno, tok_map(c), filtergen_text);
     }
     return 0;
 }

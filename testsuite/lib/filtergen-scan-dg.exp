@@ -3,7 +3,10 @@ load_lib dg.exp
 proc filtergen-dg-test { filter do_what extra_tool_flags } {
     set output_file "[file rootname $filter].out"
 
-    set comp_output [exec input/filtergen/t/scan < $filter 2>@stdout]
+    #set status [local_exec "input/filtergen/t/scan $filter $output_file" "" "" 3]
+
+    set status [remote_exec localhost input/filtergen/t/scan "$filter $output_file"]
+    set comp_output [lindex $status 1]
 
     return [list $comp_output $output_file]
 }
