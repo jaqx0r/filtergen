@@ -98,6 +98,7 @@ env.Command(['fgadm.conf', 'rules.filter'],
 SConscript([
 	'input/filtergen/SConscript',
 	'input/iptables/SConscript',
+	#'input/ipchains-save/SConscript',
 	'output/iptables/SConscript',
 	'output/ipchains/SConscript',
 	'output/ipfilter/SConscript',
