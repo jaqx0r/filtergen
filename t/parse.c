@@ -5,8 +5,6 @@ extern char * yytext;
 int yyparse(void *);
 extern int yydebug;
 
-/* void emit(); */
-
 int main(int argc, char ** argv) {
     char * YYDEBUGTRACE;
     struct ast_s ast;
