@@ -1,0 +1,5 @@
+input eth0 source wwwserv dest dbserv
+[	"web_to_dbserv"
+	proto tcp dport { 1521 appserv1 appserv2 appserv3 } accept;
+	drop;
+];
