@@ -1,4 +1,5 @@
 recent:
+	fix "make install"
 	getopt()ify filtergen.c
 	add "-l" option to minimise the number of rules for established
 		connections, implemented for iptables backend
@@ -40,4 +41,4 @@ recent:
 	iptables driver
 	a few bugs
 
-$Id: HISTORY,v 1.17 2002/04/14 15:46:45 matthew Exp $
+$Id: HISTORY,v 1.18 2002/04/14 15:47:25 matthew Exp $
