@@ -1,7 +1,7 @@
 /*
  * Filter generator, iptables driver
  *
- * $Id: fg-iptables.c,v 1.25 2002/07/19 15:49:13 matthew Exp $
+ * $Id: fg-iptables.c,v 1.26 2002/07/19 15:50:20 matthew Exp $
  */
 
 /*
@@ -179,8 +179,7 @@ static int cb_iptables_rule(const struct filterent *ent, struct fg_misc *misc)
 	 * fail if any mangling has been done above.
 	 */
 	if(ent->log) {
-		if(islocal) oprintf("iptables -A %s %s LOG\n", rulechain, rule+1);
-		if(isforward) oprintf("iptables -A FORWARD %s LOG\n", rule+1);
+		oprintf("iptables -A %s %s LOG\n", rulechain, rule+1);
 	}
 
 	/* Do this twice, once for NAT, once for filter */
