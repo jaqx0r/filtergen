@@ -1,8 +1,20 @@
 SUBDIRS = . t
 
-bin_PROGRAMS = filtergen
+bin_PROGRAMS = filtergen fgc
+#bin_PROGRAMS = fgc fgctl
 
 filtergen_SOURCES = \
+	filtergen.c \
+	gen.c \
+	filter.c \
+	filterlex.l \
+	fg-util.c \
+	fg-iptables.c \
+	fg-ipchains.c \
+	fg-ipfilter.c \
+	fg-cisco.c
+
+fgc_SOURCES = \
 	filtergen.c \
 	gen.c \
 	filter.c \
@@ -12,7 +24,8 @@ filtergen_SOURCES = \
 	fg-ipfilter.c \
 	fg-cisco.c \
 	parser.y \
-	scanner.l
+	scanner.l \
+	glue.c
 
 headers = filter.h util.h ast.h
 

@@ -135,8 +135,7 @@ int main(int argc, char **argv)
 
 		if(filter_fopen(filepol)) return 1;
 
-		/*f = filter_parse_list();*/
-		f = yyparse();
+		f = filter_parse_list();
 		if (!f) {
 			fprintf(stderr, "couldn't parse file\n");
 			return 1;
