@@ -1,0 +1,98 @@
+##
+## Sample filtergen script for a filtering router
+##
+## $Id: router-sample.filter,v 1.1 2002/09/12 09:28:53 matthew Exp $
+##
+
+# The router has:
+#  * a public interface (eth0) on 444.555.666.777
+#  * DMZ interface (eth1) on 111.222.333.254, behind which is a class C
+
+# eth0 is the public interface
+#
+# On this interface, we do martian filtering and not a lot else
+input eth0 forward {
+	dest 111.222.333.0/24 accept;
+	log drop;
+};
+
+output eth0 forward {
+	source 111.222.333.0/24 accept;
+	log drop;
+};
+
+input eth0 local {
+	proto icmp accept;
+
+	# Emergency management connection from outside
+	proto tcp dport ssh source fw0-othersite accept;
+
+	log drop;
+};
+
+output eth0 local {
+	proto icmp accept;
+	log drop;
+};
+
+# eth1 is the DMZ interface
+#
+# Here's where the real filtering happens.  We split this
+# subnet into 4 logical groups of 64 IPs each to make this
+# easier
+output eth1 forward {
+	# First quarter is infrastructure stuff -- nameservers,
+	# mail, gateway, etc.  All traffic is permitted, for now.
+	dest 111.222.333.0/26 accept;
+
+	# Deny everything to top 64 IPs -- DB servers, etc
+	dest 111.222.333.186/26 log drop;
+
+	# Web servers (real _and_ virtual)
+	dest 111.222.333.128/26 {
+		proto icmp accept;
+		proto tcp dport { http https } accept;
+		log text "to-web" accept;
+	};
+
+	# FIXME: For now, we allow everything else, but log it.
+	# Hopefully we can find time to restrict this
+	log text "unmatched-inbound" accept;
+#	log reject;
+};
+
+# TODO: Filter outbound traffic, too
+input eth1 forward accept;
+
+# Inbound management connections, etc
+input eth1 local {
+	# ignore broadcast
+	dest {255.255.255.255 195.157.147.255} drop;
+
+	# SSH and SNMP from management host
+	source mgmt0 {
+		proto tcp dport ssh accept;
+		proto udp dport snmp accept;
+	};
+
+	proto icmp accept;
+	log reject;
+};
+
+# Outbound stuff.  Nothing interesting here:
+output eth1 local {
+	proto icmp accept;
+
+	# DNS and mail via ns0, ns1
+	dest {ns0 ns1} {
+		proto {udp tcp} dport domain accept;
+		proto tcp dport smtp accept;
+	};
+
+	# Emergency ssh to gateway host
+	proto tcp {
+		dest gateway0 dport ssh;
+	} accept;
+
+	log text "from-dmz" reject;
+};

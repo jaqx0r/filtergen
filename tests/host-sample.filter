@@ -1,0 +1,44 @@
+##
+## Sample filtergen ruleset for a host (DB server, in this case)
+##
+## $Id: host-sample.filter,v 1.1 2002/09/12 09:28:53 matthew Exp $
+##
+
+# Process this with the "-h" option
+
+# lo -- we haven't time to audit all local communication
+input lo accept;
+output lo accept;
+
+# eth0 -- DMZ interface
+input eth0 {
+	# ignore bootp and broadcast noise
+	proto udp sport bootpc dport bootps drop;
+	dest {111.222.333.0 111.222.333.255 0.0.0.0 255.255.255.255} drop;
+
+	# We only speak to other hosts on this LAN ...
+	! source 111.222.333.0/24 log drop;
+	# ... and only on one IP
+	! dest db0 log drop;
+
+	# Services we permit
+	proto tcp dport {ssh sqlnet postgres} accept;
+
+	# Everything else, we refuse
+	log drop;
+};
+
+output eth0 {
+	# We only speak to other hosts on this LAN...
+	! dest 111.222.333.0/24 log drop;
+	# ...and only from one IP
+	! source db0 log drop;
+
+	# The usual outbound noise
+	proto {tcp udp} dport domain dest {ns0 ns1} accept;
+	proto tcp dport smtp dest {mail0 mail1} accept;
+
+	# Don't know what else goes out, so for now we permit it,
+	# but also log it
+	log accept;
+};
