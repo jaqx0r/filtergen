@@ -7,7 +7,9 @@ env.AppendUnique(CPPPATH=['../../..', '..'],
 				 CPPFLAGS=['-Dyyparse=ipts_parse',
 						   '-Dconvert=ipts_convert',
 						   '-Dconvtrace=ipts_convtrace',
-						   '-Dyydebug=ipts_debug'])
+						   '-Dyydebug=ipts_debug',
+						   '-Dyyrestart=ipts_restart',
+						   ])
 
 env.Program('scan.c')
 env.Program('parse.c')

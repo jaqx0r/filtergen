@@ -20,6 +20,8 @@
 /* prepend all functions with ipts_ to keep the namespace separate
  * from other parsers */
 %name-prefix="ipts_"
+/* verbose error messages */
+%error-verbose
 
 %{
 #include <stdio.h>
@@ -28,7 +30,7 @@
 
 #define YYPARSE_PARAM parm
 
-void ipts_error(const char *);
+void ipts_error(const char * msg);
 extern int ipts_lineno;
 extern int ipts_lex(void);
 
@@ -258,8 +260,8 @@ pkt_count: TOK_LSQUARE TOK_IDENTIFIER TOK_COLON TOK_IDENTIFIER TOK_RSQUARE
 char * ipts_filename();
 extern char * ipts_text;
 
-void ipts_error(const char * s) {
-    fprintf(stderr, "%s:%d: %s\n", ipts_filename(), ipts_lineno, s);
+void ipts_error(const char * msg) {
+  fprintf(stderr, "%s:%d: %s\n", ipts_filename(), ipts_lineno, msg);
 }
 
 int ipts_print(FILE * f, int type, YYSTYPE v) {
