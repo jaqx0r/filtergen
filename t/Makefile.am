@@ -61,7 +61,7 @@ TESTS = t_01_ccomment \
 	t_61_convertlog \
 	t_62_convertoptions
 
-check_PROGRAMS = scan parse emit filter_emit convert
+check_PROGRAMS = scan parse emit convert
 
 scan_SOURCES = scan.c
 scan_LDADD = ../scanner.o ../parser.o
@@ -72,13 +72,10 @@ parse_LDADD = ../scanner.o ../parser.o
 emit_SOURCES = emit.c
 emit_LDADD = ../scanner.o ../parser.o
 
-filter_emit_SOURCES = convert.c
-filter_emit_LDADD = ../filterlex.o ../filter.o ../fg-util.o
-
 convert_SOURCES = convert.c
-convert_CFLAGS = -DCONVERT
 convert_LDADD = ../scanner.o ../parser.o ../glue.o ../filter.o ../fg-util.o
 
-EXTRA_DIST = $(top_srcdir)/t/data/* testlib $(TESTS)
+EXTRA_DIST = $(top_srcdir)/t/data/*.in $(top_srcdir)/t/data/*.out \
+	testlib $(TESTS)
 
 AM_CFLAGS = -g -Wall -Werror -I$(top_srcdir)

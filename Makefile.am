@@ -14,6 +14,7 @@ pfc_SOURCES = \
 	parser.y \
 	scanner.l \
 	glue.c
+
 pfc_LDADD = @GETOPT_LIBS@
 
 headers = filter.h util.h ast.h
