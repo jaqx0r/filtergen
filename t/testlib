@@ -41,13 +41,6 @@ compare () {
     fi
 }
 
-# check for the source dir
-if test -f ../filtergen.c ; then
-    testdir=.
-elif test -f filtergen.c ; then
-    testdir=t
-fi
-
 mkdir $work
 if test $? -ne 0 ; then no_result ; fi
 

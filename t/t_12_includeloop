@@ -2,10 +2,10 @@
 
 TEST="that c style comments are scanned and ignored"
 
-# source the usual stuff
-. ./testlib
+testdir=`dirname $0`
+. $testdir/testlib
 
-$testdir/scan < $testdir/data/scanner12.in > $work/out 2>&1
+./scan < $testdir/data/scanner12.in > $work/out 2>&1
 if test $? -ne 0 ; then no_result ; fi
 
 compare $testdir/data/scanner12.out $work/out
