@@ -1,5 +1,7 @@
 0.13:
 	Changed build system to SCons.
+	Reorganised code structure.
+	Added filtergen syntax emitter.
 
 0.12.4:
 	Added directory include support.

@@ -24,6 +24,7 @@
 #include "filter.h"
 #include "util.h"
 
+/** Callback for emitting filterents containing rules. */
 static int out_filtergen_rule(const struct filterent * ent, struct fg_misc * misc __attribute__((unused))) {
 
     char * rule = NULL;
