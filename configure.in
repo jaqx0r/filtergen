@@ -1,6 +1,6 @@
 AC_PREREQ(2.50)
 
-AC_INIT(filtergen, 0.12, jaq@spacepants.org)
+AC_INIT(filtergen, 0.12.1, jaq@spacepants.org)
 AM_INIT_AUTOMAKE([foreign dist-bzip2 dist-zip])
 
 AC_CONFIG_AUX_DIR(.)
