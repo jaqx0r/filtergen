@@ -14,7 +14,7 @@ filtergen_SOURCES = \
 	parser.y \
 	scanner.l
 
-headers = filter.h util.h
+headers = filter.h util.h ast.h
 
 mans = filtergen.8 filter_backends.7 filter_syntax.5
 

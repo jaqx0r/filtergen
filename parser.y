@@ -5,9 +5,7 @@
 
 %{
 #include <stdio.h>
-#include "filter.h"
-
-#define YYSTYPE struct filter *
+#include "ast.h"
 
 void yyerror(char * s);
 extern int yylex(void);
@@ -15,9 +13,11 @@ extern int yylex(void);
 #define YYPRINT(f, t, v) yyprint(f, t, v)
 %}
 %debug
+%defines
 %union {
-	char * ustr;
-	long int uint;
+	struct rule_list_s * u_rule_list;
+	char * u_str;
+	int u_int;
 }
 %token TOK_ACCEPT
 %token TOK_DEST
@@ -41,21 +41,30 @@ extern int yylex(void);
 %token TOK_SEMICOLON
 %token TOK_SOURCE
 %token TOK_SPORT
-%token TOK_STRINGLITERAL
-%token TOK_TEXT
-%token TOK_IDENTIFIER
-%token TOK_NUMBER
+%token <u_str> TOK_STRINGLITERAL
+%token <u_str> TOK_TEXT
+%token <u_str> TOK_IDENTIFIER
+%token <u_int> TOK_NUMBER
 %token TOK_DOT
 %token TOK_SLASH
 %token TOK_ERR
 %token TOK_BANG
 %token TOK_COLON
+
+%type <u_rule_list> rule_list
 %{
 int yyprint(FILE * f, int t, YYSTYPE v);
 %}
+%start rule_list
 %%
 rule_list: /* empty */
+	{
+		$$ = NULL;
+	}
 	| rule_list rule
+	{
+		$$ = NULL;
+	}
 	;
 
 rule:	  specifier_list TOK_SEMICOLON
