@@ -3,7 +3,7 @@
  *
  * XXX - maybe this should be shared with the ipchains one?
  *
- * $Id: fg-ipchains.c,v 1.1 2001/10/03 19:47:17 matthew Exp $
+ * $Id: fg-ipchains.c,v 1.2 2001/10/03 20:17:13 matthew Exp $
  */
 
 #include <stdio.h>
@@ -45,7 +45,7 @@ int cb_ipchains(const struct filterent *ent, void *misc)
 		needret++;
 		APPSS2(rule, "-p", "tcp");
 		APPSS2(rule_r, "-p", "tcp");
-		APPS(rule_r, "! -y");
+		APPS(rule_r, "! --syn");
 		break;
 	case UDP:
 		needret++;
@@ -84,9 +84,11 @@ int cb_ipchains(const struct filterent *ent, void *misc)
 	}
 
 	switch(ent->target) {
-	case F_ACCEPT:	APPSS2(rule, "-J", "ACCEPT"); break;
-	case F_DROP:	APPSS2(rule, "-J", "DROP"); break;
-	case F_REJECT:	APPSS2(rule, "-J", "REJECT"); needret = 0; break;
+	case F_ACCEPT:	APPSS2(rule, "-j", "ACCEPT");
+			APPSS2(rule_r, "-j", "ACCEPT"); break;
+	case F_DROP:	APPSS2(rule, "-j", "DROP"); 
+			APPSS2(rule_r, "-j", "DROP"); break;
+	case F_REJECT:	APPSS2(rule, "-j", "REJECT"); needret = 0; break;
 	default: abort();
 	}
 
