@@ -227,10 +227,12 @@ int fg_ipchains(struct filter *filter, int flags)
 	}
 	if((r = filtergen_cprod(filter, &cb_ipchains, &misc)) < 0)
 		return r;
+#if 0
 	if(!(flags & FF_NOSKEL)) {
 		oputs("for f in INPUT OUTPUT FORWARD forw_out; do "IPCHAINS" -A $f -l -j DENY; done");
 		r += 3;
 	}
+#endif
 	return r;
 }
 
