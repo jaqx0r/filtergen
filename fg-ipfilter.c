@@ -107,7 +107,7 @@ static int cb_ipfilter_rule(const struct filterent *ent, struct fg_misc *misc)
 
 	rule = appicmp(rule, ent->u.icmp, NEG(ICMPTYPE));
 
-	if(ent->proto.name && (ent->target == T_ACCEPT))
+	if(ent->proto.name && (ent->target == T_ACCEPT) && !ent->oneway)
 		APPS(rule, "keep state");
 
 	oputs(rule);

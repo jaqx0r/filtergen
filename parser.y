@@ -105,6 +105,7 @@ extern int yylex(void);
 %token TOK_LOG
 %token TOK_LSQUARE
 %token TOK_MASQ
+%token TOK_ONEWAY
 %token TOK_OUTPUT
 %token TOK_PROTO
 %token TOK_PROXY
@@ -493,6 +494,12 @@ option_specifier: TOK_LOCAL
 	{
 		$$ = malloc(sizeof(struct option_specifier_s));
 		$$->type = TOK_FORWARD;
+		$$->logmsg = 0;
+	}
+	| TOK_ONEWAY
+	{
+		$$ = malloc(sizeof(struct option_specifier_s));
+		$$->type = TOK_ONEWAY;
 		$$->logmsg = 0;
 	}
         | TOK_LOG TOK_TEXT TOK_IDENTIFIER

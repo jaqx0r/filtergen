@@ -27,7 +27,7 @@
 #include <netdb.h>
 
 
-struct filter *__new_filter(enum filtertype type)
+static struct filter *__new_filter(enum filtertype type)
 {
 	struct filter *f;
 	if ((f = calloc(1, sizeof(*f)))) {
@@ -36,6 +36,11 @@ struct filter *__new_filter(enum filtertype type)
 	return f;
 }
 
+
+struct filter *new_filter_oneway(void)
+{
+	return __new_filter(F_ONEWAY);
+}
 
 struct filter *new_filter_target(enum filtertype target)
 {
