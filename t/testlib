@@ -34,11 +34,18 @@ trap no_result 1 2 3 15
 # function for comparing files
 compare () {
     cmp "$1" "$2"
-    if test $? -ne 0 ; then
-	# only print diff if not run by automake test suite
-	test "x$srcdir" = "x" && diff -u "$1" "$2"
-	fail
-    fi
+    case "$?" in
+	0)
+	    ;;
+	1)
+	    # only print diff if not run by automake test suite
+	    test "x$srcdir" = "x" && diff -u "$1" "$2"
+	    fail
+	    ;;
+	*)
+	    no_result
+	    ;;
+    esac
 }
 
 mkdir $work
