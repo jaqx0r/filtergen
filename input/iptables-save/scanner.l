@@ -114,6 +114,8 @@ id	[[:alnum:]_+-\.\/]+
 
 --limit		return TOK_IPTS_LIMIT;
 
+--log-prefix	return TOK_IPTS_LOG_PREFIX;
+
 	/* everything else */
 {id}	{
 		ipts_lval.u_str = strndup(ipts_text, ipts_leng);

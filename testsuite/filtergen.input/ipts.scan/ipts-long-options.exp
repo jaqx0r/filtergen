@@ -30,7 +30,8 @@ set options [list \
 		 { "dports" "DESTINATION_PORTS" } \
 		 "to-ports" \
 		 "to-source" \
-		 "limit"
+		 "limit" \
+		 "log-prefix"
 		]
 
 foreach option_pair $options {
@@ -44,7 +45,7 @@ foreach option_pair $options {
 
     verbose "option --$option name $name"
 
-    set test "option --$option"
+    set test "scan on option --$option"
 
     send -- "--$option\r"
 

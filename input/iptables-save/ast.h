@@ -83,6 +83,10 @@ struct limit_option_s {
     struct identifier_s * identifier;
 };
 
+struct log_prefix_option_s {
+    struct identifier_s * identifier;
+};
+
 struct option_s {
     struct in_interface_option_s * in_interface_option;
     struct jump_option_s * jump_option;
@@ -96,6 +100,7 @@ struct option_s {
     struct to_source_option_s * to_source_option;
     struct state_option_s * state_option;
     struct limit_option_s * limit_option;
+    struct log_prefix_option_s * log_prefix_option;
 };
 
 struct not_option_s {

@@ -40,6 +40,7 @@ char * tok_map(int c) {
 	tok(TO_PORTS);
 	tok(TO_SOURCE);
 	tok(LIMIT);
+	tok(LOG_PREFIX);
       case TOK_IDENTIFIER:
 	r = strdup("identifier"); break;
       case TOK_LSQUARE:
