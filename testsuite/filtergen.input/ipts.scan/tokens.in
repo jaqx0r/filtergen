@@ -5,7 +5,6 @@
 COMMIT
 # { dg-warning "kind = TABLE" "" { target *-*-* } 2 }
 # { dg-warning "kind = identifier, spelling = \"filter" "" { target *-*-* } 2 }
-# { dg-warning "kind = newline" "" { target *-*-* } 3 }
 # { dg-warning "kind = CHAIN" "" { target *-*-* } 3 }
 # { dg-warning "kind = identifier, spelling = \"INPUT" "" { target *-*-* } 3 }
 # { dg-warning "kind = identifier, spelling = \"DROP" "" { target *-*-* } 3 }
@@ -14,7 +13,6 @@ COMMIT
 # { dg-warning "kind = colon" "" { target *-*-* } 3 }
 # { dg-warning "kind = identifier, spelling = \"1" "" { target *-*-* } 3 }
 # { dg-warning "kind = rsquare" "" { target *-*-* } 3 }
-# { dg-warning "kind = newline" "" { target *-*-* } 4 }
 # { dg-warning "kind = CHAIN_APPEND" "" { target *-*-* } 4 }
 # { dg-warning "kind = identifier, spelling = \"INPUT" "" { target *-*-* } 4 }
 # { dg-warning "kind = IN_INTERFACE" "" { target *-*-* } 4 }
@@ -25,6 +23,4 @@ COMMIT
 # { dg-warning "kind = identifier, spelling = \"ntp" "" { target *-*-* } 4 }
 # { dg-warning "kind = colon" "" { target *-*-* } 4 }
 # { dg-warning "kind = quote" "" { target *-*-* } 4 }
-# { dg-warning "kind = newline" "" { target *-*-* } 5 }
 # { dg-warning "kind = commit" "" { target *-*-* } 5 }
-# { dg-warning "kind = newline" "" { target *-*-* } 6 }

@@ -35,7 +35,7 @@ id	[[:alnum:]_+-\.\/]+
 
 %%
 
-#[^\n]*[\n] { /* strip shell-style comments and the trailing newline */  }
+#[^\n]* 	/* strip shell-style comments */
 
 ^[*]		return TOK_IPTS_TABLE;
 
@@ -43,9 +43,9 @@ id	[[:alnum:]_+-\.\/]+
 
 {space}	/* ignore */
 
-\n	return TOK_NEWLINE;
+\n		/* ignore */
 
-^COMMIT	return TOK_COMMIT;
+^COMMIT		return TOK_COMMIT;
 
 {string}	{
 		/* we do not store the " characters in the string, so lop

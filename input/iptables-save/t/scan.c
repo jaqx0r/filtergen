@@ -41,8 +41,6 @@ char * tok_map(int c) {
 	r = strdup("quote"); break;
       case TOK_COMMIT:
 	r = strdup("commit"); break;
-      case TOK_NEWLINE:
-	r = strdup("newline"); break;
       default:
 	r = strdup("UNRECOGNISED"); break;
     }
