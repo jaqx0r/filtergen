@@ -80,20 +80,20 @@ for a single-interface host (perhaps a mail server):
 			# We don't answer this, but don't want to
 			# cause timeouts by blocking it
 			dport auth reject;
-			drop;
+			log drop;
 		};
 		# We don't run any UDP (or other non-TCP)
 		# services
-		drop;
+		log drop;
 	};
 	output eth0 {
 		proto tcp {
 			dport { smtp auth } accept;
-			drop;
+			log drop;
 		};
 		# Outbound DNS is OK
 		proto udp dport domain dest { ns0 ns1 } accept;
-		drop;
+		log drop;
 	};
 
 
@@ -147,4 +147,4 @@ to permit or refuse a connection -- it acts only on single packets,
 and is not really able to reason about connections (whatever the blurb
 claims).  It also matches the terminology used by Linux's iptables.
 
-$Id: README,v 1.4 2001/10/06 17:44:04 matthew Exp $
+$Id: README,v 1.5 2001/10/06 19:07:17 matthew Exp $

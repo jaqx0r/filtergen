@@ -2,6 +2,7 @@
 	add transproxy and masquerading support
 	fix syntax problems with iptables output
 	simple logging support (logs only initiating packets)
+	rule checking -- ports only allowed with tcp or udp
 
 0.3:
 	add ipfilter backend
@@ -20,4 +21,4 @@
 	iptables driver
 	a few bugs
 
-$Id: HISTORY,v 1.7 2001/10/06 18:55:36 matthew Exp $
+$Id: HISTORY,v 1.8 2001/10/06 19:07:17 matthew Exp $
