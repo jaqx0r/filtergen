@@ -25,7 +25,7 @@
 
 #define YYPARSE_PARAM parm
 
-void yyerror(char * s);
+void yyerror(const char * s);
 extern int yylex(void);
 
 #define YYPRINT(f, t, v) yyprint(f, t, v)
@@ -556,11 +556,11 @@ char * filename();
 long int lineno();
 extern char * yytext;
 
-void yyerror(char * s) {
+void yyerror(const char * s) {
 	fprintf(stderr, "%s:%ld: %s\n", filename(), lineno(), s);
 }
 
 int yyprint(FILE * f, int type, YYSTYPE v) {
-	fprintf(f, "%s", yytext);
+	fprintf(f, "%d:\"%s\":%p", type, yytext, &v);
 	return 0;
 }

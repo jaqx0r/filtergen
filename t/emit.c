@@ -299,7 +299,7 @@ EMIT(ast) {
     }
 }
 
-int main(int argc, char ** argv) {
+int main(int argc __attribute__((unused)), char ** argv __attribute__((unused))) {
     char * EMITTRACE;
     struct ast_s ast;
     int res;

@@ -111,11 +111,12 @@ static int cb_iptables_rule(const struct filterent *ent, struct fg_misc *misc)
 	else subchain = strdup("");
 
 	switch(ent->direction) {
-	case INPUT:	natchain = "PREROUTING";
-			rulechain = "INPUT";
-			revchain = "OUTPUT";
-			forchain = "FORWARD";
-			forrevchain = "FORW_OUT";
+	  case INPUT:
+	    natchain = strdup("PREROUTING");
+	    rulechain = strdup("INPUT");
+	    revchain = strdup("OUTPUT");
+	    forchain = strdup("FORWARD");
+	    forrevchain = strdup("FORW_OUT");
 			if(ent->iface) {
 				if(NEG(DIRECTION)) {
 					APPS(natrule, "!");
@@ -127,11 +128,12 @@ static int cb_iptables_rule(const struct filterent *ent, struct fg_misc *misc)
 				APPSS2(rule_r, "-o", ent->iface);
 			}
 			break;
-	case OUTPUT:	natchain = "POSTROUTING";
-			rulechain = "OUTPUT";
-			revchain = "INPUT";
-			forchain = "FORW_OUT";
-			forrevchain = "FORWARD";
+	case OUTPUT:
+	  natchain = strdup("POSTROUTING");
+	  rulechain = strdup("OUTPUT");
+	  revchain = strdup("INPUT");
+	  forchain = strdup("FORW_OUT");
+	  forrevchain = strdup("FORWARD");
 			if(ent->iface) {
 				if(NEG(DIRECTION)) {
 					APPS(natrule, "!");
@@ -231,53 +233,75 @@ static int cb_iptables_rule(const struct filterent *ent, struct fg_misc *misc)
 	if(ESET(ent, LOG)) {
 		char *lc, *la, *ls;
 		if(ent->logmsg) {
-			lc = " --log-prefix=";
+		    lc = strdup(" --log-prefix=");
 			la = ent->logmsg;
-			ls = "\" \"";
+			ls = strdup("\" \"");
 		} else
-			lc = la = ls = "";
+		    lc = la = ls = strdup("");
 		if(islocal) orules++,oprintf(IPTABLES" -A %s %s LOG%s%s%s\n", rulechain, rule+1, lc, la, ls);
 		if(isforward) orules++,oprintf(IPTABLES" -A %s %s LOG%s%s%s\n", forchain, rule+1, lc, la, ls);
 	}
 
 	/* Do this twice, once for NAT, once for filter */
 	if(neednat) {
-		switch(target) {
-		case MASQ:	nattarget = "MASQUERADE"; break;
-		case REDIRECT:	nattarget = "REDIRECT"; break;
-		default: abort();
-		}
+	    switch(target) {
+	      case MASQ:
+		nattarget = strdup("MASQUERADE");
+		break;
+	      case REDIRECT:
+		nattarget = strdup("REDIRECT");
+		break;
+	      default:
+		abort();
+	    }
 	}
 
 	switch(target) {
-	case MASQ: case REDIRECT:
-	case T_ACCEPT:	ruletarget = revtarget =
-			fortarget = forrevtarget = "ACCEPT";
-			switch(ent->direction) {
-			case INPUT: fortarget = "FORW_OUT"; break;
-			case OUTPUT: forrevtarget = "FORW_OUT"; break;
-			default: abort();
-			}
-			break;
-	case DROP:	ruletarget = fortarget = "DROP"; needret = 0; break;
-	case T_REJECT:	ruletarget = fortarget = "REJECT"; needret = 0;
-			*feat |= T_REJECT; break;
-	case F_SUBGROUP:
-			switch(ent->direction) {
-			case INPUT:	ruletarget = "INPUT";
-					revtarget = "OUTPUT";
-					fortarget = "FORWARD";
-					forrevtarget = "FORW_OUT";
-					break;
-			case OUTPUT:	ruletarget = "OUTPUT";
-					revtarget = "INPUT";
-					fortarget = "FORW_OUT";
-					forrevtarget = "FORWARD";
-					break;
-			default: abort();
-			}
-			break;
-	default: abort();
+	  case MASQ:
+	  case REDIRECT:
+	  case T_ACCEPT:
+	    ruletarget = revtarget =
+		fortarget = forrevtarget = strdup("ACCEPT");
+	    switch(ent->direction) {
+	      case INPUT:
+		fortarget = strdup("FORW_OUT");
+		break;
+	      case OUTPUT:
+		forrevtarget = strdup("FORW_OUT");
+		break;
+	      default:
+		abort();
+	    }
+	    break;
+	  case DROP:
+	    ruletarget = fortarget = strdup("DROP");
+	    needret = 0;
+	    break;
+	  case T_REJECT:
+	    ruletarget = fortarget = strdup("REJECT");
+	    needret = 0;
+	    *feat |= T_REJECT;
+	    break;
+	  case F_SUBGROUP:
+	    switch(ent->direction) {
+	      case INPUT:
+		ruletarget = strdup("INPUT");
+		revtarget = strdup("OUTPUT");
+		fortarget = strdup("FORWARD");
+		forrevtarget = strdup("FORW_OUT");
+		break;
+	      case OUTPUT:
+		ruletarget = strdup("OUTPUT");
+		revtarget = strdup("INPUT");
+		fortarget = strdup("FORW_OUT");
+		forrevtarget = strdup("FORWARD");
+		break;
+	      default:
+		abort();
+	    }
+	    break;
+	  default:
+	    abort();
 	}
 
 	if((misc->flags & FF_LSTATE) && (target != T_REJECT)) needret = 0;
@@ -368,23 +392,29 @@ int fg_iptables(struct filter *filter, int flags)
 
 
 /* Rules which just flush the packet filter */
-int flush_iptables(enum filtertype policy, int flags)
-{
-	char *ostr;
-	oputs("CHAINS=\"INPUT OUTPUT FORWARD\"");
-	oputs("");
+int flush_iptables(enum filtertype policy) {
+    char * ostr;
 
-	switch (policy) {
-	case T_ACCEPT: ostr = "ACCEPT"; break;
-	case DROP: ostr = "DROP"; break;
-	case T_REJECT: ostr = "REJECT"; break;
-	default:
-		fprintf(stderr, "invalid filtertype %d\n", policy);
-		abort();
-	}
-	oprintf("for f in $CHAINS; do "IPTABLES" -P $f %s; done\n", ostr);
-	oputs(IPTABLES" -F; "IPTABLES" -X");
-	oputs(IPTABLES" -t nat -F; "IPTABLES" -t nat -X");
+    oputs("CHAINS=\"INPUT OUTPUT FORWARD\"");
+    oputs("");
 
-	return 0;
+    switch (policy) {
+      case T_ACCEPT:
+	ostr = strdup("ACCEPT");
+	break;
+      case DROP:
+	ostr = strdup("DROP");
+	break;
+      case T_REJECT:
+	ostr = strdup("REJECT");
+	break;
+      default:
+	fprintf(stderr, "invalid filtertype %d\n", policy);
+	abort();
+    }
+    oprintf("for f in $CHAINS; do "IPTABLES" -P $f %s; done\n", ostr);
+    oputs(IPTABLES" -F; "IPTABLES" -X");
+    oputs(IPTABLES" -t nat -F; "IPTABLES" -t nat -X");
+
+    return 0;
 }

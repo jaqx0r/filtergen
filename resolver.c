@@ -28,7 +28,7 @@
 #include "ast.h"
 #include "icmpent.h"
 
-void resolve_option_specifier(struct option_specifier_s * n) {
+void resolve_option_specifier(struct option_specifier_s * n __attribute__((unused))) {
 }
 
 void resolve_icmptype_argument(struct icmptype_argument_s * n) {
@@ -153,7 +153,7 @@ void resolve_protocol_specifier(struct protocol_specifier_s * n) {
     }
 }
 
-void resolve_host_argument(struct host_argument_s * n) {
+void resolve_host_argument(struct host_argument_s * n __attribute__((unused))) {
 }
 
 void resolve_host_argument_list(struct host_argument_list_s * n) {
@@ -224,10 +224,10 @@ void resolve_host_specifier(struct host_specifier_s * n) {
     }
 }
 
-void resolve_target_specifier(struct target_specifier_s * n) {
+void resolve_target_specifier(struct target_specifier_s * n __attribute__((unused))) {
 }
 
-void resolve_direction_argument(struct direction_argument_s * n) {
+void resolve_direction_argument(struct direction_argument_s * n __attribute__((unused))) {
 }
 
 void resolve_direction_argument_list(struct direction_argument_list_s * n) {

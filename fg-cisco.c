@@ -46,7 +46,7 @@ static char *appport(char *r, const struct port_spec *p, int neg)
 	return r;
 }
 
-static int cb_cisco_rule(const struct filterent *ent, struct fg_misc *misc)
+static int cb_cisco_rule(const struct filterent *ent, struct fg_misc *misc __attribute__((unused)))
 {
 	char *rule = NULL, *rule_r = NULL;
 	int needret = 0, needports = 1;

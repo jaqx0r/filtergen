@@ -162,7 +162,7 @@ long int lineno(void) {
 
 /* FIXME: make this return an immutable string */
 char * filename(void) {
-    return inc_stack[inc_stackptr].filename ?: "(standard input)";
+    return inc_stack[inc_stackptr].filename ?: strdup("(standard input)");
 }
 
 static void scan_err(const char * fmt, ...) {

@@ -57,7 +57,7 @@ static char *appicmp(char *r, const char *h, int neg)
 	return APPSS2(r, "icmp-type", h);
 }
 
-static int cb_ipfilter_rule(const struct filterent *ent, struct fg_misc *misc)
+static int cb_ipfilter_rule(const struct filterent *ent, struct fg_misc *misc __attribute__((unused)))
 {
 	char *rule = NULL;
 

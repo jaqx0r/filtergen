@@ -100,9 +100,9 @@ int oprintf(const char *fmt, ...)
 }
 
 struct filtyp {
-	char *name;
-	filtergen *compiler;
-	filter_flush *flusher;
+	const char * name;
+	filtergen * compiler;
+	filter_flush * flusher;
 } filter_types[] = {
 	{ "iptables", fg_iptables, flush_iptables, },
 	{ "ipchains", fg_ipchains, flush_ipchains, },
@@ -194,7 +194,7 @@ int main(int argc, char **argv) {
     } else
 	outfile = stdout;
 
-    if(!ftn || !*ftn) ftn = "iptables";
+    if(!ftn || !*ftn) ftn = strdup("iptables");
     for (ft = filter_types; ft->name; ft++)
 	if (!strcmp(ftn, ft->name))
 	    break;
@@ -207,7 +207,7 @@ int main(int argc, char **argv) {
     /* What to do, then? */
     if(flags & FF_FLUSH) {
 	/* Just flush it */
-	l = ft->flusher(flushpol, flags);
+	l = ft->flusher(flushpol);
     } else {
 	/* Compile from a file */
 	if(filename && !strcmp(filename, "-")) filename = NULL;

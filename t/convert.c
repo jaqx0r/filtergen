@@ -154,7 +154,7 @@ void emit_filter(struct filter * f) {
     indent -= 2;
 }
 
-int main(int argc, char ** argv) {
+int main(int argc __attribute__((unused)), char ** argv __attribute__((unused))) {
     struct filter * f = NULL;
 
 #ifndef FILTER_EMIT

@@ -2,8 +2,8 @@
 #define __ICMPENT_H__
 
 struct icmpent_s {
-    char * i_type;
-    char * name;
+    const char * i_type;
+    const char * name;
 };
 
 struct icmpent_s * geticmpbyname(char * name);

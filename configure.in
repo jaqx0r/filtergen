@@ -42,6 +42,16 @@ if test "x$HAVE_GETOPT" = xyes ; then
 	AC_SUBST(GETOPT_LIBS)
 fi
 
+dnl -----------------
+dnl set warning level
+dnl -----------------
+
+if test "x$ac_cv_c_compiler_gnu" = xyes ; then
+	CFLAGS="$CFLAGS -W -Wall -Werror -Waggregate-return"
+	CFLAGS="$CFLAGS -Wcast-align -Wcast-qual -Wnested-externs"
+	CFLAGS="$CFLAGS -Wshadow -Wbad-function-cast -Wwrite-strings"
+fi
+
 dnl ----------------------------------------------------------
 dnl configuration tests complete, provide a summary of results
 dnl ----------------------------------------------------------

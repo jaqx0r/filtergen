@@ -52,7 +52,7 @@ static char *appport(char *r, const struct port_spec *h)
 #define	APPPORT2(f, r, h)	(APPS(r, f), APPPORT(r, h))
 
 
-static int cb_ipchains_rule(const struct filterent *ent, struct fg_misc *misc)
+static int cb_ipchains_rule(const struct filterent *ent, struct fg_misc *misc __attribute__((unused)))
 {
 	char *rule = NULL, *rule_r = NULL;
 	char *rulechain = NULL, *revchain = NULL;
@@ -91,12 +91,21 @@ static int cb_ipchains_rule(const struct filterent *ent, struct fg_misc *misc)
 	}
 
 	switch(ent->direction) {
-	case INPUT:	rulechain = "input"; revchain = "output";
-			forchain = "forward"; forrevchain = "forw_out"; break;
-	case OUTPUT:	rulechain = (ent->target == MASQ) ? "forw_out" : "output";
-			revchain = "input";
-			forchain = "forw_out"; forrevchain = "forward"; break;
-	default: fprintf(stderr, "unknown direction\n"); abort();
+	  case INPUT:
+	    rulechain = strdup("input");
+	    revchain = strdup("output");
+	    forchain = strdup("forward");
+	    forrevchain = strdup("forw_out");
+	    break;
+	  case OUTPUT:
+	    rulechain = (ent->target == MASQ) ? strdup("forw_out") : strdup("output") ;
+		revchain = strdup("input");
+		forchain = strdup("forw_out");
+		forrevchain = strdup("forward");
+		break;
+	  default:
+	    fprintf(stderr, "unknown direction\n");
+	    abort();
 	}
 
 	if(ent->iface) {
@@ -162,33 +171,56 @@ static int cb_ipchains_rule(const struct filterent *ent, struct fg_misc *misc)
 	APPS(rule, "-j"); APPS(rule_r, "-j");
 
 	switch(ent->target) {
-	case T_ACCEPT:	ruletarget = revtarget =
-			fortarget = forrevtarget = "ACCEPT";
-			switch(ent->direction) {
-			case INPUT: fortarget = "forw_out"; break;
-			case OUTPUT: forrevtarget = "forw_out"; break;
-			default: abort();
-			}
-			break;
-	case DROP:	ruletarget = fortarget = "DENY"; needret = 0; break;
-	case T_REJECT:	ruletarget = fortarget = "REJECT"; needret = 0; break;
-	case MASQ:	ruletarget = "MASQ"; revtarget = "ACCEPT"; break;
-	case REDIRECT:	ruletarget = "REDIRECT"; revtarget = "ACCEPT"; break;
-	case F_SUBGROUP:switch(ent->direction) {
-			case INPUT:	ruletarget = "input";
-					revtarget = "output";
-					fortarget = "forward";
-					forrevtarget = "forw_out";
-					break;
-			case OUTPUT:	ruletarget = "output";
-					revtarget = "input";
-					fortarget = "forw_out";
-					forrevtarget = "forward";
-					break;
-			default: abort();
-			}
-			break;
-	default: abort();
+	  case T_ACCEPT:
+	    ruletarget = revtarget =
+		fortarget = forrevtarget = strdup("ACCEPT");
+	    switch(ent->direction) {
+	      case INPUT:
+		fortarget = strdup("forw_out");
+		break;
+	      case OUTPUT:
+		forrevtarget = strdup("forw_out");
+		break;
+	      default:
+		abort();
+	    }
+	    break;
+	  case DROP:
+	    ruletarget = fortarget = strdup("DENY");
+	    needret = 0;
+	    break;
+	  case T_REJECT:
+	    ruletarget = fortarget = strdup("REJECT");
+	    needret = 0;
+	    break;
+	  case MASQ:
+	    ruletarget = strdup("MASQ");
+	    revtarget = strdup("ACCEPT");
+	    break;
+	  case REDIRECT:
+	    ruletarget = strdup("REDIRECT");
+	    revtarget = strdup("ACCEPT");
+	    break;
+	  case F_SUBGROUP:
+	    switch(ent->direction) {
+	      case INPUT:
+		ruletarget = strdup("input");
+		revtarget = strdup("output");
+		fortarget = strdup("forward");
+		forrevtarget = strdup("forw_out");
+		break;
+	      case OUTPUT:
+		ruletarget = strdup("output");
+		revtarget = strdup("input");
+		fortarget = strdup("forw_out");
+		forrevtarget = strdup("forward");
+		break;
+	      default:
+		abort();
+	    }
+	    break;
+	  default:
+	    abort();
 	}
 
 	if(ent->oneway) needret = 0;
@@ -240,19 +272,25 @@ int fg_ipchains(struct filter *filter, int flags)
 
 
 /* Rules which just flush the packet filter */
-int flush_ipchains(enum filtertype policy, int flags)
+int flush_ipchains(enum filtertype policy)
 {
 	char *ostr;
 	oputs("CHAINS=\"INPUT OUTPUT FORWARD\"");
 	oputs("");
 
 	switch(policy) {
-	case T_ACCEPT: ostr = "ACCEPT"; break;
-	case DROP: ostr = "DENY"; break;
-	case T_REJECT: ostr = "REJECT"; break;
-	default:
-		fprintf(stderr, "invalid filtertype %d\n", policy);
-		abort();
+	  case T_ACCEPT:
+	    ostr = strdup("ACCEPT");
+	    break;
+	  case DROP:
+	    ostr = strdup("DENY");
+	    break;
+	  case T_REJECT:
+	    ostr = strdup("REJECT");
+	    break;
+	  default:
+	    fprintf(stderr, "invalid filtertype %d\n", policy);
+	    abort();
 	}
 	oprintf("for f in $CHAINS; do "IPCHAINS" -P $f %s; done\n", ostr);
 	oputs(IPCHAINS" -F; "IPCHAINS" -X");
