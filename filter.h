@@ -1,4 +1,4 @@
-/* $Id: filter.h,v 1.6 2001/10/06 18:25:16 matthew Exp $ */
+/* $Id: filter.h,v 1.7 2001/10/06 20:24:35 matthew Exp $ */
 #ifndef _FK_FILTER_H
 #define _FK_FILTER_H
 
@@ -21,6 +21,7 @@ enum filtertype {
 	F_ACCEPT, F_DROP, F_REJECT,
 	F_MASQ, F_REDIRECT,
 	F_SOURCE, F_DEST, F_SPORT, F_DPORT,
+	F_ICMPTYPE,
 	F_PROTO, 
 	F_NEG, F_SIBLIST,
 	F_LOG,
@@ -38,6 +39,7 @@ struct filter {
 		char *iface;
 		char *addrs;
 		char *ports;
+		char *icmp;
 		enum filtertype proto;
 		struct filter *neg;
 		struct filter *sib;
@@ -55,7 +57,7 @@ filter_tctor __new_filter, new_filter_target, new_filter_log;
 struct filter *new_filter_neg(struct filter *sub);
 struct filter *new_filter_sibs(struct filter *list);
 typedef struct filter *filter_ctor(enum filtertype, const char*);
-filter_ctor new_filter_device, new_filter_host, new_filter_ports;
+filter_ctor new_filter_device, new_filter_host, new_filter_ports, new_filter_icmp;
 filter_tctor new_filter_proto;
 
 /* filter manipulations */
@@ -78,11 +80,13 @@ struct filterent {
 
 	enum filtertype proto;
 	enum filtertype log;
-	union {
+
+	/* We need this not to be a union, for error-checking reasons */
+	struct {
 		struct {
 			char *src, *dst;
 		} ports;
-		/* XXX - icmp types here */
+		char *icmp;
 	} u;
 };
 typedef int fg_callback(const struct filterent *ent, void *misc);

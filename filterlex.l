@@ -2,7 +2,7 @@
 /*
  * lexer/parser for packet filtering rules
  *
- * $Id: filterlex.l,v 1.5 2001/10/06 18:25:16 matthew Exp $
+ * $Id: filterlex.l,v 1.6 2001/10/06 20:24:35 matthew Exp $
  */
 
 #include <sys/types.h>
@@ -64,6 +64,8 @@ source		{ return F_SOURCE; }
 dest		{ return F_DEST; }
 sport		{ return F_SPORT; }
 dport		{ return F_DPORT; }
+
+icmptype	{ return F_ICMPTYPE; }
 
 [-:[:alnum:]./]+ { return STRING; }
 
@@ -170,6 +172,8 @@ static struct filter *filter_parse_single(void)
 		return filter_parse_group(tok, NULL, new_filter_host);
 	case F_SPORT: case F_DPORT:
 		return filter_parse_group(tok, NULL, new_filter_ports);
+	case F_ICMPTYPE:
+		return filter_parse_group(tok, NULL, new_filter_icmp);
 	case F_PROTO:
 		return filter_parse_group(tok, new_filter_proto, NULL);
 	case OPENBRACE:

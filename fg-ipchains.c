@@ -3,7 +3,7 @@
  *
  * XXX - maybe some of this could be shared with the iptables one?
  *
- * $Id: fg-ipchains.c,v 1.5 2001/10/06 18:25:16 matthew Exp $
+ * $Id: fg-ipchains.c,v 1.6 2001/10/06 20:24:34 matthew Exp $
  */
 
 #include <stdio.h>
@@ -65,6 +65,9 @@ static int cb_ipchains(const struct filterent *ent, void *misc)
 		APPSS2(rule, "-p", "udp");
 		APPSS2(rule_r, "-p", "udp");
 		break;
+	case ICMP:
+		APPSS2(rule, "-p", "icmp");
+		break;
 	default: abort();
 	}
 
@@ -84,13 +87,19 @@ static int cb_ipchains(const struct filterent *ent, void *misc)
 	case UDP: case TCP:
 		if(ent->u.ports.src) {
 			NEGA(rule, SPORT); NEGA(rule_r, SPORT);
-			APPS2(rule, "--sport=", ent->u.ports.src);
-			APPS2(rule_r, "--dport=", ent->u.ports.src);
+			APPSS2(rule, "--sport", ent->u.ports.src);
+			APPSS2(rule_r, "--dport", ent->u.ports.src);
 		}
 		if(ent->u.ports.dst) {
 			NEGA(rule, DPORT); NEGA(rule_r, DPORT);
-			APPS2(rule, "--dport=", ent->u.ports.dst);
-			APPS2(rule_r, "--sport=", ent->u.ports.dst);
+			APPSS2(rule, "--dport", ent->u.ports.dst);
+			APPSS2(rule_r, "--sport", ent->u.ports.dst);
+		}
+		break;
+	case ICMP:
+		if(ent->u.icmp) {
+			NEGA(rule, ICMPTYPE);
+			APPSS2(rule, "--icmp-type", ent->u.icmp);
 		}
 		break;
 	default:
