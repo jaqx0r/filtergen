@@ -1,5 +1,5 @@
 .\" filter syntax reference
-.\" $Id: filter_syntax.5,v 1.2 2002/05/06 13:06:03 matthew Exp $
+.\" $Id: filter_syntax.5,v 1.3 2002/07/21 12:36:48 matthew Exp $
 .TH "FILTER SYNTAX" 8
 
 .SH NAME
@@ -53,8 +53,9 @@ that the packet should be allowed as normal, or thrown away.  Some
 backends support \fIreject\fR to throw away a packet, but send
 notification to the sender that it was denied, \fImasq\fR (on \fIoutput\fR
 rules only) to "masquerade" a packet - alter it so that it appears
-to come from the address of the sending interface - and \fIredirect\fR
-to divert a connection via the local system.
+to come from the address of the sending interface - and \fIproxy\fR
+(and its deprecated alias \fIredirect\fR) to divert a connection via
+the local system.
 
 .SS MATCHES
 The \fImatches\fR are the meat of the rule.  They apply a set of
