@@ -31,7 +31,7 @@ if conf.CheckLib('getopt', 'getopt'):
 	conf.env.append(LIBS = 'getopt')
 e = conf.Finish()
 
-e.Program('filtergen', ['filtergen.c',
+filtergen  = e.Program('filtergen', ['filtergen.c',
 					  'gen.c',
 					  'filter.c',
 					  'fg-util.c',
@@ -45,3 +45,7 @@ e.Program('filtergen', ['filtergen.c',
 					  'resolver.c',
 					  'icmpent.c',
 					  'factoriser.c'])
+
+DESTDIR = ARGUMENTS.get('DESTDIR', '')
+e.Install('%s/usr/sbin' % (DESTDIR,), filtergen)
+e.Alias('install', '%s/usr/sbin' % (DESTDIR,))
