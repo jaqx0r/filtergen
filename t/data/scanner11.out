@@ -1,4 +1,4 @@
-kind = 27 [<name>], spelling = "foo", line = 3
-kind = 27 [<name>], spelling = "bar", line = 4
-kind = 27 [<name>], spelling = "baz", line = 5
-kind = 27 [<name>], spelling = "quux", line = 6
+kind = 27 [<name>], spelling = "foo", file = "data/scanner7.in", line = 2
+kind = 27 [<name>], spelling = "bar", file = "data/scanner7.in", line = 3
+kind = 27 [<name>], spelling = "baz", file = "data/scanner7.in", line = 4
+kind = 27 [<name>], spelling = "quux", file = "data/scanner7.in", line = 5

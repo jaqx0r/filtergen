@@ -11,11 +11,18 @@
 #include "tokens.h"
 
 /* include file stack */
-#define MAXINCLUDES 10
-YY_BUFFER_STATE inc_stack[MAXINCLUDES];
+#define MAXINCLUDES 16
+struct inc_stack_s {
+    YY_BUFFER_STATE state;
+    char * filename;
+    long int lineno;
+};
+struct inc_stack_s inc_stack[MAXINCLUDES] = { { filename: NULL, lineno: 1 } };
+
 int inc_stackptr = 0;
 
-long int lineno = 1;
+long int lineno();
+char * filename();
 %}
 
 string  \"[^\n]+\"
@@ -37,7 +44,7 @@ number  [[:digit:]]+
                         yyerror("comment reached end of file");
 		    */
                     if (c == '\n')
-                        lineno++;
+                        inc_stack[inc_stackptr].lineno++;
                 } while (c != '/' && c != EOF);
              }
 
@@ -54,7 +61,7 @@ number  [[:digit:]]+
 
 {space}      /* ignore */
 
-\n           lineno++;
+\n           inc_stack[inc_stackptr].lineno++;
 
 include      BEGIN(include);
 
@@ -92,15 +99,18 @@ text         return TOK_TEXT;
 
 <include>[ \t]*       /* eat whitespace after include */
 <include>[^ \t\n]+    { /* include file name */
-                          if (inc_stackptr >= MAXINCLUDES) {
-                              fprintf(stderr, "too many nested includes\n");
-                              exit(1);
-                          }
-                          inc_stack[inc_stackptr++] = YY_CURRENT_BUFFER;
+                          if (inc_stackptr >= MAXINCLUDES)
+                              fprintf(stderr, "warning: %s:%ld too many nested includes\n", filename(), lineno());
+
+			  else {
+                          inc_stack[inc_stackptr++].state = YY_CURRENT_BUFFER;
+                          inc_stack[inc_stackptr].lineno = 1;
+                          inc_stack[inc_stackptr].filename = strdup(yytext);
                           yyin = fopen(yytext, "r");
                           if (!yyin)
                               fprintf(stderr, "fopen failed on %s\n", yytext);
                           yy_switch_to_buffer(yy_create_buffer(yyin, YY_BUF_SIZE));
+                          }
                           BEGIN(INITIAL);
                        }
 
@@ -109,7 +119,16 @@ text         return TOK_TEXT;
                               yyterminate();
 			   else {
                               yy_delete_buffer(YY_CURRENT_BUFFER);
-                              yy_switch_to_buffer(inc_stack[inc_stackptr]);
+                              yy_switch_to_buffer(inc_stack[inc_stackptr].state);
                            }
                        }
 %%
+
+long int lineno(void) {
+    return inc_stack[inc_stackptr].lineno;
+}
+
+/* FIXME: make this return an immutable string */
+char * filename(void) {
+    return inc_stack[inc_stackptr].filename;
+}

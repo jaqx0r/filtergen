@@ -1,8 +1,9 @@
 #include "../tokens.h"
 
 extern char * yytext;
-extern long int lineno;
 int yylex();
+long int lineno();
+char * filename();
 
 char * tok_map[] = {
     "",
@@ -43,7 +44,7 @@ int main(int argc, char ** argv) {
     int c;
 
     while (c = yylex()) {
-	printf("kind = %d [<%s>], spelling = \"%s\", line = %d\n", c, tok_map[c], yytext, lineno);
+	printf("kind = %d [<%s>], spelling = \"%s\", file = \"%s\", line = %ld\n", c, tok_map[c], yytext, filename(), lineno());
     }
     return 0;
 }

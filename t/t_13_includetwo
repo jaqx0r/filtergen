@@ -8,11 +8,7 @@ TEST="that including more than one file works"
 $testdir/scan < $testdir/data/scanner13.in > $work/out 2>&1
 if test $? -ne 0 ; then no_result ; fi
 
-cmp $testdir/data/scanner13.out $work/out
-if test $? -ne 0 ; then
-    diff -u $testdir/data/scanner13.out $work/out
-    fail
-fi
+compare $testdir/data/scanner13.out $work/out
 
 # got this far?
 pass
