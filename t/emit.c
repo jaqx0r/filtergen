@@ -130,31 +130,12 @@ EMIT(protocol_specifier) {
     emit_protocol_argument(n->arg);
 }
 
-EMIT(port_single) {
-    if (n->name) {
-	eprint("emitting port name\n");
-	printf("%s", n->name);
-    } else {
-	eprint("emitting port number\n");
-	printf("%d", n->num);
-    }
-}
-
-EMIT(port_range) {
-    eprint("emitting port_single\n");
-    emit_port_single(n->min);
-    printf(":");
-    eprint("emitting port_single\n");
-    emit_port_single(n->max);
-}
-
 EMIT(simple_port_argument) {
-    if (n->range) {
-	eprint("emitting port_range\n");
-	emit_port_range(n->range);
-    } else if (n->single) {
-	eprint("emitting port_single\n");
-	emit_port_single(n->single);
+    if (n->port_min) {
+	printf("%s", n->port_min);
+    }
+    if (n->port_max) {
+	printf(":%s", n->port_max);
     }
 }
 

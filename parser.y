@@ -56,10 +56,6 @@ extern int yylex(void);
 	struct log_text_argument_s * u_log_text_argument;
 	struct chaingroup_specifier_s * u_chaingroup_specifier;
 	struct subrule_list_s * u_subrule_list;
-	struct host_part_s * u_host_part;
-	struct netmask_part_s * u_netmask_part;
-	struct port_range_s * u_port_range;
-	struct port_single_s * u_port_single;
 	char * u_str;
 }
 %type <u_rule_list> rule_list
@@ -97,8 +93,6 @@ extern int yylex(void);
 %type <u_compound_specifier> compound_specifier
 %type <u_chaingroup_specifier> chaingroup_specifier
 %type <u_subrule_list> subrule_list
-%type <u_port_range> port_range
-%type <u_port_single> port_single
 
 %defines
 %token TOK_ACCEPT
@@ -457,17 +451,17 @@ port_argument_list: simple_port_argument
 	}
 	;
 
-simple_port_argument: port_range
+simple_port_argument: TOK_IDENTIFIER TOK_COLON TOK_IDENTIFIER
 	{
 		$$ = malloc(sizeof(struct simple_port_argument_s));
-		$$->range = $1;
-		$$->single = NULL;
+		$$->port_min = $1;
+		$$->port_max = $3;
 	}
-	| port_single
+	| TOK_IDENTIFIER
 	{
 		$$ = malloc(sizeof(struct simple_port_argument_s));
-		$$->range = NULL;
-		$$->single = $1;
+		$$->port_min = $1;
+		$$->port_max = NULL;
 	}
 	;
 
@@ -609,22 +603,6 @@ chaingroup_specifier: TOK_LSQUARE TOK_IDENTIFIER subrule_list TOK_RSQUARE
 		$$ = malloc(sizeof(struct chaingroup_specifier_s));
 		$$->name = NULL;
 		$$->list = $2;
-	}
-	;
-
-port_range: port_single TOK_COLON port_single
-	{
-		$$ = malloc(sizeof(struct port_range_s));
-		$$->min = $1;
-		$$->max = $3;
-	}
-	;
-
-port_single: TOK_IDENTIFIER
-	{
-		$$ = malloc(sizeof(struct port_single_s));
-		$$->name = strdup($1);
-		$$->num = 0;
 	}
 	;
 
