@@ -29,7 +29,8 @@ TESTS = t_01_ccomment \
 	t_29_nocommentend \
 	t_30_chaingroup \
 	t_31_chaingroupbad \
-	t_32_syntaxexamples
+	t_32_syntaxexamples \
+	t_33_nestedparse
 
 check_PROGRAMS = scan parse
 
