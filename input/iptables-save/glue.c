@@ -54,8 +54,11 @@ void ipts_convert_not_identifier(struct not_identifier_s * n) {
   }
 }
 
-void ipts_convert_option(struct option_s * n) {
+struct filter * ipts_convert_option(struct option_s * n) {
+  struct filter * res = NULL;
+
   eprint("converting option\n");
+  
 
   if (n->option) {
 
@@ -65,18 +68,22 @@ void ipts_convert_option(struct option_s * n) {
   if (n->not_identifier) {
     ipts_convert_not_identifier(n->not_identifier);
   }
+
+  return res;
 }
 
 struct filter * ipts_convert_not_option(struct not_option_s * n) {
-  struct filter * res = NULL;
+  struct filter * res = NULL, * opt = NULL;
 
   eprint("converting not_option\n");
 
-  if (n->neg) {
-    /* neg is a boolean */
-  }
   if (n->option) {
-    ipts_convert_option(n->option);
+    opt = ipts_convert_option(n->option);
+    if (opt && n->neg) {
+      res = new_filter_neg(opt);
+    } else {
+      res = opt;
+    }
   }
 
   return res;
