@@ -5,9 +5,9 @@
 pfc \- packet filter compiler
 
 .SH SYNOPSIS
-\fBpfc\fR [ \fB-c\fR | \fB--compile\fR ] [ \fB-t \fItarget\fB\fR | \fB--target=\fItarget\fB\fR ] [ \fB-o \fIoutfile\fB\fR | \fB--output=\fIoutfile\fB\fR ] \fIinfile\fR
+\fBpfc\fR [ \fB-h\fR | \fB--help\fR ] [ \fB-c\fR | \fB--compile\fR ] [ \fB-t \fItarget\fB\fR | \fB--target=\fItarget\fB\fR ] [ \fB-o \fIoutfile\fB\fR | \fB--output=\fIoutfile\fB\fR ] \fIinfile\fR
 
-\fBpfc\fR [ \fB-c\fR | \fB--compile\fR ] [ \fB-t \fItarget\fB\fR | \fB--target=\fItarget\fB\fR ] [ \fB-o \fIoutfile\fB\fR | \fB--output=\fIoutfile\fB\fR ] [ \fB-F \fIpolicy\fB\fR | \fB--flush=\fIpolicy\fB\fR ]
+\fBpfc\fR [ \fB-h\fR | \fB--help\fR ] [ \fB-c\fR | \fB--compile\fR ] [ \fB-t \fItarget\fB\fR | \fB--target=\fItarget\fB\fR ] [ \fB-o \fIoutfile\fB\fR | \fB--output=\fIoutfile\fB\fR ] [ \fB-F \fIpolicy\fB\fR | \fB--flush=\fIpolicy\fB\fR ]
 
 .SH DESCRIPTION
 \fBpfc\fR compiles a high-level filtering description language into a
@@ -47,6 +47,10 @@ having no filter loaded at all.  It is not necessary to specify an
 .TP
 \fB-o \fIoutfile\fB, --output=\fIoutfile\fB\fR
 Write output to \fIoutfile\fR instead of standard output.
+
+.TP
+\fB-h, --help\fR
+Show command help.
 
 .SH BUGS
 Not all backends implement all features.

@@ -28,6 +28,7 @@
 #include <time.h>
 #include <unistd.h>
 #include <stdarg.h>
+
 #ifdef HAVE_GETOPT_H
 #include <getopt.h>
 #endif
@@ -42,8 +43,27 @@ extern struct filter * convert(struct ast_s * n);
 static FILE *outfile;
 
 void usage(char * prog) {
-    fprintf(stderr, "Usage: %s [options] [-o output] input\n\n", prog);
+    fprintf(stderr, "Usage: %s [-cht] [-o output] input\n", prog);
+    fprintf(stderr, "       %s [-cht] [-o output] -F policy\n\n", prog);
     fprintf(stderr, "Options:\n");
+
+#ifdef HAVE_GETOPT_H
+    fprintf(stderr, " --compile/-c              compile only, no generate\n");
+#else
+    fprintf(stderr, "           -c              compile only, no generate\n");
+#endif
+
+#ifdef HAVE_GETOPT_H
+    fprintf(stderr, " --target/-t target        generate for target (default: iptables\n");
+#else
+    fprintf(stderr, "          -t target        generate for target (default: iptables\n");
+#endif
+
+#ifdef HAVE_GETOPT_H
+    fprintf(stderr, " --flush/-F policy         don't process input, generate flush rules\n");
+#else
+    fprintf(stderr, "         -F policy         don't process input, generate flush rules\n");
+#endif
 
 #ifdef HAVE_GETOPT_H
     fprintf(stderr, " --output/-o filename      write the generated packet filter to filename\n");
@@ -93,9 +113,15 @@ struct filtyp {
 #ifdef HAVE_GETOPT_H
 static struct option long_options[] = {
     {"help", no_argument, 0, 'h'},
+    {"compile", no_argument, 0, 'c'},
+    {"target", required_argument, 0, 't'},
     {"output", required_argument, 0, 'o'},
+    {"flush", required_argument, 0, 'F'},
     {0, 0, 0, 0}
 };
+# define GETOPT(x, y, z) getopt_long(x, y, z, long_options, NULL)
+#else
+# define GETOPT(x, y, z) getopt(x, y, z)
 #endif
 
 int main(int argc, char **argv) {
@@ -104,15 +130,15 @@ int main(int argc, char **argv) {
     time_t t;
     char buf[100];
     char *filepol = NULL, *ftn = NULL, *ofn = NULL;
-    struct filtyp *ft;
+    struct filtyp *ft = NULL; 
     int flags = 0;
     char *progname;
     int arg;
+    enum filtertype flushpol = T_ACCEPT;
 
     progname = argv[0];
 
-#ifdef HAVE_GETOPT_H
-    while ((arg = getopt_long(argc, argv, "ho:", long_options, NULL)) > 0) {
+    while ((arg = GETOPT(argc, argv, "hco:t:F:")) > 0) {
 	switch (arg) {
 	  case ':':
 	    usage(progname);
@@ -122,78 +148,65 @@ int main(int argc, char **argv) {
 	    usage(progname);
 	    exit(0);
 	    break;
+	  case 'c':
+	    flags |= FF_NOSKEL;
+	    break;
 	  case 'o':
 	    ofn = strdup(optarg);
+	    break;
+	  case 't':
+	    ftn = strdup(optarg);
+	    break;
+	  case 'F':
+	    flags |= FF_FLUSH;
+	    if (!strcasecmp(optarg, "accept")) {
+		flushpol = T_ACCEPT;
+	    } else if (!strcasecmp(optarg, "drop")) {
+		flushpol = DROP;
+	    } else if (!strcasecmp(optarg, "reject")) {
+		flushpol = T_REJECT;
+	    } else {
+		fprintf(stderr, "%s: flush policy unrecofgnised: %s\n", progname, optarg);
+		usage(progname);
+		exit(1);
+	    }
 	    break;
 	  default:
 	    break;
 	}
     }
-    if (optind >= argc) {
-	usage(progname);
-    } else {
-	filepol = argv[optind++];
-    }
-#else /* !HAVE_GETOPT_H */
-    while((arg = getopt(argc, argv, "ho:")) > 0) {
-	switch(arg) {
-	  case 'o':
-	    ofn = strdup(optarg);
-	    break;
-	  case 'h':
+    if (!(flags & FF_FLUSH)) {
+	if (optind >= argc) {
 	    usage(progname);
-	    exit(0);
-	    break;
-	  default: return 1;
-	}
+	    exit(1);
+	} else
+	    filepol = argv[optind++];
     }
-#endif
 
     if (ofn) {
 	/* XXX - open a different tempfile, and rename on success */
 	outfile = fopen(ofn, "w");
 	if(!outfile) {
-	    fprintf(stderr, "can't open output file \"%s\"\n", ofn);
+	    fprintf(stderr, "%s: can't open output file \"%s\"\n", progname, ofn);
 	    return 1;
 	}
     } else
 	outfile = stdout;
 
     if(!ftn || !*ftn) ftn = "iptables";
-    for(ft = filter_types; ft->name; ft++)
-	if(!strcmp(ftn, ft->name))
+    for (ft = filter_types; ft->name; ft++)
+	if (!strcmp(ftn, ft->name))
 	    break;
-    if(!ft->name) {
-	fprintf(stderr, "%s: unknown filter type \"%s\"\n", progname, ftn);
-	return 1;
-    }
-
-    /* Extra arg (either filename or flush policy) */
-    if((filepol = argv[optind])) {
-	/* Extra args? */
-	while(argv[++optind])
-	    fprintf(stderr, "%s: extra argument \"%s\" ignored\n",
-		    progname, argv[optind]);
+    if (!ft->name) {
+	fprintf(stderr, "%s: target filter unrecognised: %s\n", progname, ftn);
+	usage(progname);
+	exit(1);
     }
 
     /* What to do, then? */
     if(flags & FF_FLUSH) {
 	/* Just flush it */
-	enum filtertype flushpol;
-
-	if(!filepol || !strcasecmp(filepol, "accept"))
-	    flushpol = T_ACCEPT;
-	else if(!strcasecmp(filepol, "drop"))
-	    flushpol = DROP;
-	else if(!strcasecmp(filepol, "reject"))
-	    flushpol = T_REJECT;
-	else {
-	    fprintf(stderr, "invalid flush policy \"%s\"\n", filepol);
-	    return 1;
-	}
-
 	l = ft->flusher(flushpol, flags);
-
     } else {
 	/* Compile from a file */
 	if(filepol && !strcmp(filepol, "-")) filepol = NULL;
