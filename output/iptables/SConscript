@@ -1,5 +1,5 @@
 Import('env')
 
 env.Library('out_iptables',
-			source=['../../fg-iptables.c'],
+			source=['fg-iptables.c'],
 			CPPPATH='../..')
