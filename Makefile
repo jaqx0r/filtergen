@@ -5,7 +5,7 @@ CFLAGS=-g -Wall -Werror
 LDFLAGS=-g
 
 PROGS=filtergen
-PREFIX=/usr/local
+PREFIX=$(DESTDIR)/usr
 BINDIR=$(PREFIX)/sbin
 MANDIR=$(PREFIX)/share/man
 
@@ -25,7 +25,10 @@ clean:
 	rm -f *.o *~ core $(PROGS) *.yy.c
 
 install:
-	install -d $(BINDIR) $(MANDIR)/man{5,7,8}
+	install -d $(BINDIR)
+	for i in 5 7 8; do \
+		install -d $(MANDIR)/man$$i ; \
+	done
 	install -m755 $(PROGS) $(BINDIR)
 	install -m644 *.5 $(MANDIR)/man5
 	install -m644 *.7 $(MANDIR)/man7
