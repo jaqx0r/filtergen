@@ -1,7 +1,7 @@
 /*
  * Filter generator, iptables driver
  *
- * $Id: fg-iptables.c,v 1.28 2002/07/31 22:00:01 matthew Exp $
+ * $Id: fg-iptables.c,v 1.29 2002/08/20 17:29:08 matthew Exp $
  */
 
 /*
@@ -103,31 +103,29 @@ static int cb_iptables_rule(const struct filterent *ent, struct fg_misc *misc)
 	}
 
 	/* state and reverse rules here */
-	switch(ent->proto) {
-	case 0:	break;
-	case TCP:
-		needret++;
-		*feat |= A_TCP;
-		APPSS2(natrule, "-p", "tcp");
-		APPSS2(rule, "-p", "tcp");
-		APPSS2(rule_r, "-p", "tcp");
-		APPS(rule, "-m state --state NEW,ESTABLISHED");
-		APPS(rule_r, "-m state --state ESTABLISHED ! --syn");
-		break;
-	case UDP:
-		needret++;
-		*feat |= A_UDP;
-		APPSS2(natrule, "-p", "udp");
-		APPSS2(rule, "-p", "udp");
-		APPSS2(rule_r, "-p", "udp");
-		APPS(rule, "-m state --state NEW,ESTABLISHED");
-		APPS(rule_r, "-m state --state ESTABLISHED");
-		break;
-	case ICMP:
-		APPSS2(natrule, "-p", "icmp");
-		APPSS2(rule, "-p", "icmp");
-		break;
-	default: abort();
+	if(ent->proto.name) {
+		int needstate = 0;
+
+		APPSS2(natrule, "-p", ent->proto.name);
+		APPSS2(rule, "-p", ent->proto.name);
+		APPSS2(rule_r, "-p", ent->proto.name);
+		switch(ent->proto.num) {
+		case IPPROTO_TCP:
+			needret++;
+			needstate++;
+			*feat |= A_TCP;
+			APPS(rule_r, "! --syn");
+			break;
+		case IPPROTO_UDP:
+			needret++;
+			needstate++;
+			*feat |= A_UDP;
+			break;
+		}
+		if(needstate) {
+			APPS(rule, "-m state --state NEW,ESTABLISHED");
+			APPS(rule_r, "-m state --state ESTABLISHED");
+		}
 	}
 
 	if(ent->srcaddr) {
@@ -143,9 +141,9 @@ static int cb_iptables_rule(const struct filterent *ent, struct fg_misc *misc)
 		APPSS2(rule_r, "-s", ent->dstaddr);
 	}
 
-	switch(ent->proto) {
+	switch(ent->proto.num) {
 	case 0: break;
-	case UDP: case TCP:
+	case IPPROTO_UDP: case IPPROTO_TCP:
 		if(ent->u.ports.src) {
 			NEGA(natrule, SPORT);
 			APPSS2(natrule, "--sport", ent->u.ports.src);
@@ -163,7 +161,7 @@ static int cb_iptables_rule(const struct filterent *ent, struct fg_misc *misc)
 			APPSS2(rule_r, "--sport", ent->u.ports.dst);
 		}
 		break;
-	case ICMP:
+	case IPPROTO_ICMP:
 		if(ent->u.icmp) {
 			NEGA(natrule, ICMPTYPE);
 			APPSS2(natrule, "--icmp-type", ent->u.icmp);

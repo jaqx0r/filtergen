@@ -1,8 +1,9 @@
-/* $Id: filter.c,v 1.10 2002/07/19 12:21:49 matthew Exp $ */
+/* $Id: filter.c,v 1.11 2002/08/20 17:29:08 matthew Exp $ */
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <netdb.h>
 
 #include "filter.h"
 
@@ -77,11 +78,19 @@ struct filter *new_filter_subgroup(char *name, struct filter *list)
 
 
 
-struct filter *new_filter_proto(enum filtertype proto)
+struct filter *new_filter_proto(enum filtertype type, const char *name)
 {
 	struct filter *f;
+	struct protoent *e;
+
+	if(!(e = getprotobyname(name))) {
+		fprintf(stderr, "don't know protocol \"%s\"\n", name);
+		return NULL;
+	}
+
 	if ((f = __new_filter(F_PROTO))) {
-		f->u.proto = proto;
+		f->u.proto.num = e->p_proto;
+		f->u.proto.name = strdup(e->p_name);
 	}
 	return f;
 }

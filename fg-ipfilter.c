@@ -1,7 +1,7 @@
 /*
  * Filter generator, ipfilter driver
  *
- * $Id: fg-ipfilter.c,v 1.8 2002/04/28 22:30:41 matthew Exp $
+ * $Id: fg-ipfilter.c,v 1.9 2002/08/20 17:29:07 matthew Exp $
  */
 
 /* TODO:
@@ -58,7 +58,7 @@ static int cb_ipfilter_rule(const struct filterent *ent, struct fg_misc *misc)
 	case F_REJECT:
 		/* XXX - can this violate the rule about icmp errors
 		 * about icmp errors? */
-		if (ent->proto == TCP)
+		if (ent->proto.num == IPPROTO_TCP)
 			APP(rule, "block return-rst");
 		else
 			APP(rule, "block return-icmp-as-dest(port-unr)");
@@ -85,13 +85,8 @@ static int cb_ipfilter_rule(const struct filterent *ent, struct fg_misc *misc)
 	if(ent->iface) APPSS2(rule, "on", ent->iface);
 
 	/* protocol */
-	switch(ent->proto) {
-	case 0: break;
-	case TCP: APPSS2(rule, "proto", "tcp"); break;
-	case UDP: APPSS2(rule, "proto", "udp"); break;
-	case ICMP: APPSS2(rule, "proto", "icmp"); break;
-	default: abort();
-	}
+	if(ent->proto.name)
+		APPSS2(rule, "proto", ent->proto.name);
 
 	APPS(rule, "from");
 	rule = appip(rule, ent->srcaddr);
@@ -102,7 +97,7 @@ static int cb_ipfilter_rule(const struct filterent *ent, struct fg_misc *misc)
 
 	rule = appicmp(rule, ent->u.icmp, NEG(ICMPTYPE));
 
-	if(ent->proto && (ent->target == F_ACCEPT))
+	if(ent->proto.name && (ent->target == F_ACCEPT))
 		APPS(rule, "keep state");
 
 	oputs(rule);

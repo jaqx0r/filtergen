@@ -1,7 +1,7 @@
 /*
  * filter compilation routines
  *
- * $Id: gen.c,v 1.11 2002/07/21 12:34:44 matthew Exp $
+ * $Id: gen.c,v 1.12 2002/08/20 17:29:08 matthew Exp $
  */
 
 #include <stdio.h>
@@ -35,12 +35,12 @@ int checkmatch(const struct filterent *e)
 #undef MUST
 
 	if((e->u.ports.src || e->u.ports.dst)
-	&& (e->proto != TCP) && (e->proto != UDP)) {
+	&& (e->proto.num != IPPROTO_TCP) && (e->proto.num != IPPROTO_UDP)) {
 		fprintf(stderr, "can only use ports with tcp or udp\n");
 		r++;
 	}
 
-	if(e->u.icmp && (e->proto != ICMP)) {
+	if(e->u.icmp && (e->proto.num != IPPROTO_ICMP)) {
 		fprintf(stderr, "icmptype can only be used with icmp\n");
 		r++;
 	}
@@ -124,13 +124,21 @@ int __fg_applyone(struct filterent *e, const struct filter *f,
 
 	case F_LOG: e->log = f->u.log; break;
 
+	case F_PROTO:
+		if(e->proto.name) {
+			fprintf(stderr, "filter has already defined a protocol\n");
+			return -1;
+		}
+		e->proto.num = f->u.proto.num;
+		e->proto.name = f->u.proto.name;
+		break;
+
 #define	DV(n, v, p)						\
 	case F_ ## n: NA(v); e->v = f->u.p; break;
 	DV(SOURCE, srcaddr, addrs);
 	DV(DEST, dstaddr, addrs);
 	DV(SPORT, u.ports.src, ports);
 	DV(DPORT, u.ports.dst, ports);
-	DV(PROTO, proto, proto);
 	DV(ICMPTYPE, u.icmp, icmp);
 	DV(RTYPE, rtype, rtype);
 

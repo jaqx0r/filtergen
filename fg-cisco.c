@@ -1,7 +1,7 @@
 /*
  * Filter generator, Cisco IOS driver
  *
- * $Id: fg-cisco.c,v 1.9 2002/04/28 22:30:41 matthew Exp $
+ * $Id: fg-cisco.c,v 1.10 2002/08/20 17:29:07 matthew Exp $
  */
 
 /* XXX - does this need skeleton rules? */
@@ -68,20 +68,18 @@ static int cb_cisco_rule(const struct filterent *ent, struct fg_misc *misc)
 	}
 
 	/* protocol */
-	switch(ent->proto) {
-	case 0:
+	if(ent->proto.name) {
+		APPS(rule, ent->proto.name);
+		APPS(rule_r, ent->proto.name);
+		switch(ent->proto.num) {
+		case IPPROTO_TCP: case IPPROTO_UDP:
+			needret++;
+			break;
+		default:
+			needports = 0;
+		}
+	} else {
 		APPS(rule, "ip"); APPS(rule_r, "ip");
-		needports = 0;
-		break;
-	case TCP:
-		needret++;
-		APPS(rule, "tcp"); APPS(rule_r, "tcp");
-		break;
-	case UDP:
-		needret++;
-		APPS(rule, "udp"); APPS(rule_r, "udp");
-		break;
-	default: abort();
 	}
 
 	rule = appip(rule, ent->srcaddr);
@@ -96,7 +94,7 @@ static int cb_cisco_rule(const struct filterent *ent, struct fg_misc *misc)
 		rule_r = appport(rule_r, ent->u.ports.src, NEG(SPORT));
 	}
 
-	if(ent->proto == TCP) APPS(rule_r, "established");
+	if(ent->proto.num == IPPROTO_TCP) APPS(rule_r, "established");
 	if(ent->log) APPS(rule, "log");
 
 	oputs(rule);
