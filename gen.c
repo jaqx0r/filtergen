@@ -1,7 +1,7 @@
 /*
  * filter compilation routines
  *
- * $Id: gen.c,v 1.10 2002/07/18 21:20:02 matthew Exp $
+ * $Id: gen.c,v 1.11 2002/07/21 12:34:44 matthew Exp $
  */
 
 #include <stdio.h>
@@ -45,9 +45,8 @@ int checkmatch(const struct filterent *e)
 		r++;
 	}
 
-	if((e->rtype == LOCALONLY)
-	&& ((e->target == F_MASQ) || (e->target == F_REDIRECT))) {
-		fprintf(stderr, "\"local\" and NAT are incompatible\n");
+	if((e->rtype == LOCALONLY) && (e->target == F_MASQ)) {
+		fprintf(stderr, "\"local\" and masquerading are incompatible\n");
 		r++;
 	}
 
