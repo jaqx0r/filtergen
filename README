@@ -63,11 +63,19 @@ and using "-" to imply standard input:
 
 $ cat oldbox.filter | filtergen - ipchains > oldbox.rules
 
+Some of the backends (notably iptables and ipchains) generate a "skeleton"
+around the rules that they output.  This can be disabled with "-n":
+
+$ filtergen -n tests/ticmp.filter ipchains
+
+The rulesets generated with this option may not be complete, but the
+flag is useful to allow one to see what sort of output is generated.
+
 
 SYNTAX
 
 The syntax looks not entirely unlike that of "fk"s ACL facility ("fk"
-is another project of mine, and lives at http://hairy.beasts.org/fk/),
+is another project of mine which lives at http://hairy.beasts.org/fk/),
 and it might be worth familiarising yourself with that first (not least
 because it is rather less experimental).
 
@@ -154,4 +162,4 @@ to permit or refuse a connection -- it acts only on single packets,
 and is not really able to reason about connections (whatever the blurb
 claims).  It also matches the terminology used by Linux's iptables.
 
-$Id: README,v 1.7 2001/10/23 20:18:07 matthew Exp $
+$Id: README,v 1.8 2001/11/04 22:43:55 matthew Exp $

@@ -3,7 +3,7 @@
  *
  * XXX - maybe some of this could be shared with the iptables one?
  *
- * $Id: fg-ipchains.c,v 1.6 2001/10/06 20:24:34 matthew Exp $
+ * $Id: fg-ipchains.c,v 1.7 2001/11/04 22:43:55 matthew Exp $
  */
 
 #include <stdio.h>
@@ -111,7 +111,7 @@ static int cb_ipchains(const struct filterent *ent, void *misc)
 
 	switch(ent->target) {
 	case F_ACCEPT:	APPS(rule, "ACCEPT"); APPS(rule_r, "ACCEPT"); break;
-	case F_DROP:	APPS(rule, "DROP"); needret = 0; break;
+	case F_DROP:	APPS(rule, "DENY"); needret = 0; break;
 	case F_REJECT:	APPS(rule, "REJECT"); needret = 0; break;
 	case F_MASQ:	APPS(rule, "MASQ"); APPS(rule_r, "ACCEPT"); break;
 	case F_REDIRECT:APPS(rule, "REDIRECT"); APPS(rule_r, "ACCEPT"); break;
@@ -126,8 +126,18 @@ static int cb_ipchains(const struct filterent *ent, void *misc)
 }
 
 
-int fg_ipchains(struct filter *filter)
+int fg_ipchains(struct filter *filter, int skel)
 {
+	int r;
 	filter_unroll(&filter);
-	return filtergen_cprod(filter, cb_ipchains, NULL);
+	if(skel) {
+		puts("for f in INPUT OUTPUT FORWARD; do ipchains -P $f DENY; done");
+		puts("ipchains -F; ipchains -X");
+	}
+	r = filtergen_cprod(filter, cb_ipchains, NULL);
+	if(skel) {
+		puts("for f in INPUT OUTPUT FORWARD; do ipchains -A $f -l -j DENY; done");
+		r += 3;
+	}
+	return r;
 }

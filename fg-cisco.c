@@ -1,8 +1,10 @@
 /*
  * Filter generator, Cisco IOS driver
  *
- * $Id: fg-cisco.c,v 1.4 2001/10/06 18:25:16 matthew Exp $
+ * $Id: fg-cisco.c,v 1.5 2001/11/04 22:43:55 matthew Exp $
  */
+
+/* XXX - does this need skeleton rules? */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -104,7 +106,7 @@ static int cb_cisco(const struct filterent *ent, void *misc)
 	return 1 + !!needret;
 }
 
-int fg_cisco(struct filter *filter)
+int fg_cisco(struct filter *filter, int skel)
 {
 	printf("# Warning: This backend is not complete and "
 		"can generate broken rulesets.\n");

@@ -1,8 +1,10 @@
 /*
  * Filter generator, ipfilter driver
  *
- * $Id: fg-ipfilter.c,v 1.3 2001/10/06 20:24:34 matthew Exp $
+ * $Id: fg-ipfilter.c,v 1.4 2001/11/04 22:43:55 matthew Exp $
  */
+
+/* XXX - does this need skeleton routines? */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -105,7 +107,7 @@ static int cb_ipfilter(const struct filterent *ent, void *misc)
 	return 1;
 }
 
-int fg_ipfilter(struct filter *filter)
+int fg_ipfilter(struct filter *filter, int skel)
 {
 	filter_unroll(&filter);
 	return filtergen_cprod(filter, cb_ipfilter, NULL);
