@@ -1,4 +1,4 @@
-recent:
+0.10:
 	some cleanups, slight memory usage reduction
 	add log messages: 'log text "foo etc"'
 	fixed iptables and ipchains brace-grouping
@@ -78,4 +78,4 @@ recent:
 	iptables driver
 	a few bugs
 
-$Id: HISTORY,v 1.41 2002/09/12 09:29:48 matthew Exp $
+$Id: HISTORY,v 1.42 2002/09/12 10:03:08 matthew Exp $
