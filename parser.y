@@ -142,8 +142,8 @@ port_argument_list: simple_port_argument
 	| port_argument_list simple_port_argument
 	;
 
-simple_port_argument: TOK_IDENTIFIER
-	| TOK_NUMBER
+simple_port_argument: port_range
+	| port_single
 	;
 
 protocol_specifier: TOK_PROTO protocol_argument
@@ -206,6 +206,14 @@ netmask_part: TOK_NUMBER
 	| TOK_NUMBER TOK_DOT TOK_NUMBER TOK_DOT TOK_NUMBER
 	| TOK_NUMBER TOK_DOT TOK_NUMBER TOK_DOT TOK_NUMBER TOK_DOT TOK_NUMBER
 	;
+
+port_range: port_single TOK_COLON port_single
+	;
+
+port_single: TOK_IDENTIFIER
+	| TOK_NUMBER
+	;
+
 /*
 accept;
 ACCEPT SEMICOLON
