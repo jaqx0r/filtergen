@@ -26,26 +26,53 @@
 int ipts_parse(void *);
 int ipts_restart(FILE *);
 
-int ipts_convtrace = 0;
+int ipts_convtrace = 1;
 
 #define eprint(x) if (ipts_convtrace) fprintf(stderr, x)
 
+struct filter * ipts_convert_rule(struct rule_s * n) {
+  struct filter * res = NULL;
+
+  eprint("converting rule\n");
+
+  if (n->table) {
+    /* do something with the table declaration */
+    /* nat vs filter */
+  } else if (n->chain) {
+    /* do something with the chain declaration */
+    /* chain, policy, pkt_count are set */
+  } else if (n->option_list) {
+    /* do something with the option list */
+    /* option list, and optionally pkt_count, are set */
+  }
+
+  return res;
+}
+
 struct filter * ipts_convert_rule_list(struct rule_list_s * n) {
     struct filter * res = NULL;
+    struct filter * r = NULL;
+
+    eprint("converting rule list\n");
 
     if (n->list) {
 	res = ipts_convert_rule_list(n->list);
     }
+    if (n->rule) {
+      r = ipts_convert_rule(n->rule);
+    }
+      
     return res;
 }
 
 struct filter * ipts_convert(struct ast_s * ast) {
-    struct filter * res = NULL;
+  struct filter * res = NULL;
 
     eprint("converting ast\n");
 
     if (ast->list)
-	res = ipts_convert_rule_list(ast->list);
+      res = ipts_convert_rule_list(ast->list);
+
     return res;
 }
 
