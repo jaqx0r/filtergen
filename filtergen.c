@@ -1,7 +1,7 @@
 /*
  * filter compilation front-end
  *
- * $Id: filtergen.c,v 1.11 2002/04/14 15:18:47 matthew Exp $
+ * $Id: filtergen.c,v 1.12 2002/04/28 22:30:41 matthew Exp $
  */
 
 #include <stdio.h>
@@ -9,8 +9,32 @@
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
+#include <stdarg.h>
 
 #include "filter.h"
+
+
+static FILE *outfile;
+
+int oputs(const char *s)
+{
+	int r = 0;
+	if(s) {
+		r = fputs(s, outfile);
+		if(r > 0) {
+			fputc('\n', outfile);
+			r++;
+		}
+	}
+	return r;
+}
+
+int oprintf(const char *fmt, ...)
+{
+	va_list args;
+	va_start(args, fmt);
+	return vfprintf(outfile, fmt, args);
+}
 
 
 struct filtyp {
@@ -32,7 +56,7 @@ int main(int argc, char **argv)
 	int l;
 	time_t t;
 	char buf[100];
-	char *fn = NULL, *ftn = NULL;
+	char *fn = NULL, *ftn = NULL, *ofn = NULL;
 	struct filtyp *ft;
 	int flags = 0;
 	char *progname;
@@ -40,13 +64,26 @@ int main(int argc, char **argv)
 
 	progname = argv[0];
 
-	while((arg = getopt(argc, argv, "nl")) > 0) {
+	while((arg = getopt(argc, argv, "nlho:t:")) > 0) {
 		switch(arg) {
 		case 'n': flags |= FF_NOSKEL; break;
 		case 'l': flags |= FF_LSTATE; break;
+		case 'h': flags |= FF_LOCAL; break;
+		case 'o': ofn = strdup(optarg); break;
+		case 't': ftn = strdup(optarg); break;
 		case '?': return 1;
 		}
 	}
+
+	if (ofn) {
+		/* XXX - open a different tempfile, and rename on success */
+		outfile = fopen(ofn, "w");
+		if(!outfile) {
+			fprintf(stderr, "can't open output file \"%s\"\n", ofn);
+			return 1;
+		}
+	} else
+		outfile = stdout;
 
 	fn = argv[optind];
 	if(fn && strcmp(fn, "-")) {
@@ -55,11 +92,15 @@ int main(int argc, char **argv)
 					progname, fn);
 			return 1;
 		}
+		/* Another arg? */
+		while(argv[++optind]) {
+			fprintf(stderr, "%s: extra argument \"%s\" ignored\n",
+					progname, argv[optind]);
+		}
 	} else {
 		fn = NULL;
 	}
 
-	if(argc > optind) ftn = argv[optind+1];
 	if(!ftn || !*ftn) ftn = "iptables";
 	for(ft = filter_types; ft->name; ft++)
 		if(!strcmp(ftn, ft->name))
@@ -71,7 +112,7 @@ int main(int argc, char **argv)
 
 	strftime(buf, sizeof(buf)-1, "%a %b %e %H:%M:%S %Z %Y",
 			localtime((time(&t),&t)));
-	printf("# filter generated from %s via %s backend at %s\n",
+	oprintf("# filter generated from %s via %s backend at %s\n",
 		fn ?: "standard input", ft->name, buf);
 
 	f = filter_parse_list();
@@ -81,8 +122,11 @@ int main(int argc, char **argv)
 	}
 	l = ft->compiler(f, flags);
 
+	if(ofn) fclose(outfile);
+
 	if(l < 0) {
 		fprintf(stderr, "an error occurred: most likely the filters defined make no sense\n");
+		if(ofn) unlink(ofn);
 		return 1;
 	}
 	fprintf(stderr, "generated %d rules\n", l);

@@ -1,7 +1,7 @@
 /*
  * Filter generator, Cisco IOS driver
  *
- * $Id: fg-cisco.c,v 1.8 2002/04/14 14:24:03 matthew Exp $
+ * $Id: fg-cisco.c,v 1.9 2002/04/28 22:30:41 matthew Exp $
  */
 
 /* XXX - does this need skeleton rules? */
@@ -99,8 +99,8 @@ static int cb_cisco_rule(const struct filterent *ent, struct fg_misc *misc)
 	if(ent->proto == TCP) APPS(rule_r, "established");
 	if(ent->log) APPS(rule, "log");
 
-	puts(rule);
-	if(needret) puts(rule_r);
+	oputs(rule);
+	if(needret) oputs(rule_r);
 
 	free(rule); free(rule_r);
 	return 1 + !!needret;
@@ -112,8 +112,8 @@ int fg_cisco(struct filter *filter, int flags)
 	fg_callback cb_cisco = {
 	rule:	cb_cisco_rule,
 	};
-	printf("# Warning: This backend is not complete and "
-		"can generate broken rulesets.\n");
+	oputs("# Warning: This backend is not complete and "
+		"can generate broken rulesets.");
 	filter_nogroup(filter);
 	filter_unroll(&filter);
 	return filtergen_cprod(filter, &cb_cisco, &misc);

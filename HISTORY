@@ -1,4 +1,9 @@
 recent:
+	add "local" and "forward" syntax to state that packets are only
+		for local or remote consumption (and "-h" option to
+		default rules to the former)
+	begin manpages
+	add "-o" option to specify output file
 	fix "make install"
 	getopt()ify filtergen.c
 	add "-l" option to minimise the number of rules for established
@@ -41,4 +46,4 @@ recent:
 	iptables driver
 	a few bugs
 
-$Id: HISTORY,v 1.18 2002/04/14 15:47:25 matthew Exp $
+$Id: HISTORY,v 1.19 2002/04/28 22:30:41 matthew Exp $

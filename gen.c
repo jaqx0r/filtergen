@@ -1,7 +1,7 @@
 /*
  * filter compilation routines
  *
- * $Id: gen.c,v 1.8 2002/04/14 14:24:03 matthew Exp $
+ * $Id: gen.c,v 1.9 2002/04/28 22:30:41 matthew Exp $
  */
 
 #include <stdio.h>
@@ -10,11 +10,19 @@
 
 #include "filter.h"
 
+void applydefaults(struct filterent *e, long flags)
+{
+	if(!e->rtype) {
+		if(flags & FF_LOCAL)
+			e->rtype = LOCALONLY;
+	}
+}
+
 int checkmatch(const struct filterent *e)
 {
 	int r = 0;
 #define	MUST(t)							\
-	do if(!(e->t)) {						\
+	do if(!(e->t)) {					\
 		fprintf(stderr, #t " missing from filter\n");	\
 		r++;						\
 	} while(0)
@@ -36,16 +44,22 @@ int checkmatch(const struct filterent *e)
 		fprintf(stderr, "icmptype can only be used with icmp\n");
 		r++;
 	}
-	
+
+	if((e->rtype == LOCALONLY)
+	&& ((e->target == F_MASQ) || (e->target == F_REDIRECT))) {
+		fprintf(stderr, "\"local\" and NAT are incompatible\n");
+		r++;
+	}
+
 	return r;
 }
 
 
 int __fg_apply(struct filterent *e, const struct filter *f,
-		fg_callback *cb, void *misc);
+		fg_callback *cb, struct fg_misc *misc);
 
 int __fg_applylist(struct filterent *e, const struct filter *f,
-			fg_callback *cb, void *misc)
+			fg_callback *cb, struct fg_misc *misc)
 {
 	/* This is the interesting one.  The filters are
 	 * unrolled by now, so there's only one way to
@@ -60,10 +74,10 @@ int __fg_applylist(struct filterent *e, const struct filter *f,
 }
 
 int __fg_apply(struct filterent *_e, const struct filter *f,
-		fg_callback *cb, void *misc);
+		fg_callback *cb, struct fg_misc *misc);
 
 int __fg_applyone(struct filterent *e, const struct filter *f,
-		fg_callback *cb, void *misc)
+		fg_callback *cb, struct fg_misc *misc)
 {
 #define NA(t)							\
 	if(e->t) {						\
@@ -119,6 +133,7 @@ int __fg_applyone(struct filterent *e, const struct filter *f,
 	DV(DPORT, u.ports.dst, ports);
 	DV(PROTO, proto, proto);
 	DV(ICMPTYPE, u.icmp, icmp);
+	DV(RTYPE, rtype, rtype);
 
 	case F_SIBLIST:
 		return __fg_applylist(e, f->u.sib, cb, misc);
@@ -134,12 +149,13 @@ int __fg_applyone(struct filterent *e, const struct filter *f,
 }
 
 int __fg_apply(struct filterent *_e, const struct filter *f,
-		fg_callback *cb, void *misc)
+		fg_callback *cb, struct fg_misc *misc)
 {
 	struct filterent e = *_e;
 
 	/* Looks like we're all done */
 	if(!f) {
+		applydefaults(&e, misc->flags);
 		if (checkmatch(&e)) {
 			fprintf(stderr, "filter definition incomplete\n");
 			return -1;
