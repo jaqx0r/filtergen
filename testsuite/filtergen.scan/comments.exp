@@ -2,27 +2,29 @@ spawn input/filtergen/t/scan
 
 set timeout 3
 
-set test "that c-style comments are ignored"
+set test "c-style comment"
 
 send "/* blah */\n\r"
 
 expect { 
-	"" { pass $test }
-	timeout { fail $test }
-	eof { fail $test }
-}
-
-set test "that shell-style hash comments are ignored"
-
-send "# blah\n\r"
-
-expect {
+	-re ".+" { fail $test }
 	-re "^$" { pass $test }
 	timeout { fail $test }
 	eof { fail $test }
 }
 
-set test "that shell-style comments with no newlines work"
+set test "shell-style hash comment"
+
+send "# blah\n\r"
+
+expect {
+	-re ".+" { fail $test }
+	-re "^$" { pass $test }
+	timeout { fail $test }
+	eof { fail $test }
+}
+
+set test "shell-style comments with no newline"
 
 send "# blah\r"
 
