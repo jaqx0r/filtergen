@@ -1,0 +1,17 @@
+spawn input/filtergen/t/scan
+
+set timeout 3
+
+set numbers [list 37 69 255]
+
+foreach number $numbers {
+	set test "$number number"
+
+	send "$number\r"
+
+	expect {
+		"kind = identifier, spelling = \"$number\"" { pass $test }
+		timeout { fail $test }
+		eof { fail "$test (eof)" }
+	}
+}
