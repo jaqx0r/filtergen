@@ -120,6 +120,8 @@ id	[[:alnum:]_+-\.\/~]+
 
 --reject-with	return TOK_IPTS_REJECT_WITH;
 
+--clamp-mss-to-pmtu	return TOK_IPTS_CLAMP_MSS_TO_PMTU;
+
 	/* everything else */
 {id}	{
 		ipts_lval.u_str = strndup(ipts_text, ipts_leng);

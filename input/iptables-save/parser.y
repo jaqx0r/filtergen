@@ -66,6 +66,7 @@ extern int ipts_lex(void);
     struct reject_with_option_s * u_reject_with_option;
     struct icmp_type_option_s * u_icmp_type_option;
     struct fragment_option_s * u_fragment_option;
+    struct clamp_mss_to_pmtu_option_s * u_clamp_mss_to_pmtu_option;
 
     struct not_range_s * u_not_range;
     struct range_s * u_range;
@@ -83,6 +84,7 @@ extern int ipts_lex(void);
 %type <u_not_option> not_option
 %type <u_option> option
 
+%type <u_clamp_mss_to_pmtu_option> clamp_mss_to_pmtu_option
 %type <u_fragment_option> fragment_option
 %type <u_icmp_type_option> icmp_type_option
 %type <u_reject_with_option> reject_with_option
@@ -152,6 +154,8 @@ extern int ipts_lex(void);
 %token TOK_IPTS_UID_OWNER
 
 %token TOK_IPTS_REJECT_WITH
+
+%token TOK_IPTS_CLAMP_MSS_TO_PMTU
 
 %token <u_str> TOK_IDENTIFIER
 %token <u_str> TOK_OPTION
@@ -348,6 +352,17 @@ option: in_interface_option
 {
     $$ = malloc(sizeof(struct option_s));
     $$->fragment_option = $1;
+}
+| clamp_mss_to_pmtu_option
+{
+    $$ = malloc(sizeof(struct option_s));
+    $$->clamp_mss_to_pmtu_option = $1;
+}
+
+clamp_mss_to_pmtu_option: TOK_IPTS_CLAMP_MSS_TO_PMTU
+{
+    $$ = malloc(sizeof(struct clamp_mss_to_pmtu_option_s));
+    $$->i = 1;
 }
 
 fragment_option: TOK_IPTS_FRAGMENT
