@@ -54,6 +54,8 @@ EMIT(option_specifier) {
 	printf("local"); break;
       case TOK_FORWARD:
 	printf("forward"); break;
+      case TOK_ONEWAY:
+	printf("oneway"); break;
       case TOK_LOG:
 	if (n->logmsg) {
 	  printf("log text \"%s\"", n->logmsg);

@@ -118,6 +118,9 @@ void emit_filter(struct filter * f) {
 	  case LOCALONLY:
 	    printf("local\n");
 	    break;
+	  case F_ONEWAY:
+	    printf("oneway\n");
+	    break;
 	  default:
 	    printf("error: encountered a rtype %d\n", (int) f->u.rtype);
 	    break;

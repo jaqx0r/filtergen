@@ -27,5 +27,21 @@
          )
        )
      )
+    next
+    ( siblist
+      ( input eth0
+       )
+      child
+      ( siblist
+        ( dest foo
+         )
+        child
+        ( oneway
+          child
+          ( accept
+           )
+         )
+       )
+     )
    )
  )

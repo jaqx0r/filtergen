@@ -56,6 +56,3 @@ o [jaq] Implement a negation unroller for filters which can't negate   a
 
 * reject-with for reject target in iptables
 
-
-* Create test for 'oneway' option.
-

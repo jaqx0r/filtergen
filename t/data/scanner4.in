@@ -8,6 +8,7 @@ input
 local
 log
 masq
+oneway
 output
 proto
 proxy

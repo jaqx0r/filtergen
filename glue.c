@@ -411,6 +411,9 @@ struct filter * convert_option_specifier(struct option_specifier_s * n) {
       case TOK_FORWARD:
 	res = new_filter_rtype(ROUTEDONLY);
 	break;
+      case TOK_ONEWAY:
+	res = new_filter_rtype(F_ONEWAY);
+	break;
       case TOK_LOG:
 	res = new_filter_log(F_LOG, n->logmsg);
 	break;
