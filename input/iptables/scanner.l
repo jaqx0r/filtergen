@@ -68,8 +68,7 @@ id	[[:alnum:]_+-\.\/]+
 	}
 
 {id}	{
-		/* ignore the first character */
-		yylval.u_str = strndup(yytext + 1, yyleng - 1);
+		yylval.u_str = strndup(yytext, yyleng);
 		return TOK_IDENTIFIER;
 	}
 
