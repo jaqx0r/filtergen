@@ -18,14 +18,14 @@
  */
 
 #include <stdio.h>
+
+#include <sys/types.h>
+#include <sys/socket.h>
 #include <netdb.h>
 #include <stdlib.h>
 #include <string.h>
 #include "resolver.h"
 #include "ast.h"
-
-void resolve_chaingroup_specifier(struct chaingroup_specifier_s * n) {
-}
 
 void resolve_option_specifier(struct option_specifier_s * n) {
 }
@@ -84,7 +84,7 @@ struct icmpent_s * geticmpentbyname(char * name) {
     if (icmpent[i].i_type == -1)
         icmpent = NULL;
 
-    return &icmpent[i];
+    return icmpent;
 }
 
 void resolve_simple_icmptype_argument(struct simple_icmptype_argument_s * n) {
@@ -252,7 +252,66 @@ void resolve_protocol_specifier(struct protocol_specifier_s * n) {
     }
 }
 
+void resolve_simple_host_argument(struct simple_host_argument_s * n) {
+    struct addrinfo * a = NULL;
+    struct addrinfo hints;
+    int r;
+
+    memset(&hints, 0, sizeof(struct addrinfo));
+    hints.ai_family = PF_UNSPEC;
+    hints.ai_flags = AI_CANONNAME;
+    
+    if (n->host) {
+        r = getaddrinfo(n->host, NULL, &hints, &a);
+        switch (r) {
+        case 0:
+            {
+            struct addrinfo * i;
+
+            for (i = a; i != NULL; i = i->ai_next) {
+               
+                printf("addrinfo: ai_canonname: %s\n\tai_addrlen: %ld\n", i->ai_canonname, (long) i->ai_addrlen);
+                long addr = (long) ntohl(*(int *)&((struct sockaddr_in *) i->ai_addr)->sin_addr);
+                printf("\t addr: %ld.%ld.%ld.%ld\n", addr >> 24 & 255, addr >> 16 & 255, addr >> 8 & 255, addr & 255);
+            
+            }
+            freeaddrinfo(a);
+            }
+            break;
+        default:
+            printf("error: %s\n", gai_strerror(r));
+            break;
+        }
+    }
+}
+
+void resolve_host_argument_list(struct host_argument_list_s * n) {
+    if (n->list) {
+        resolve_host_argument_list(n->list);
+    }
+    if (n->arg) {
+        resolve_simple_host_argument(n->arg);
+    }
+}
+
+void resolve_compound_host_argument(struct compound_host_argument_s * n) {
+    if (n->list) {
+        resolve_host_argument_list(n->list);
+    }
+}
+
+void resolve_host_argument(struct host_argument_s * n) {
+    if (n->compound) {
+        resolve_compound_host_argument(n->compound);
+    } else if (n->simple) {
+        resolve_simple_host_argument(n->simple);
+    }
+}
+
 void resolve_host_specifier(struct host_specifier_s * n) {
+    if (n->arg) {
+        resolve_host_argument(n->arg);
+    }
 }
 
 void resolve_target_specifier(struct target_specifier_s * n) {
@@ -295,9 +354,25 @@ void resolve_direction_specifier(struct direction_specifier_s * n) {
 void resolve_specifier_list(struct specifier_list_s * n);
 
 void resolve_subrule_list(struct subrule_list_s * n) {
+    if (n->subrule_list) {
+        resolve_subrule_list(n->subrule_list);
+    }
+    if (n->specifier_list) {
+        resolve_specifier_list(n->specifier_list);
+    }
+}
+
+void resolve_chaingroup_specifier(struct chaingroup_specifier_s * n) {
+    if (n->list) {
+        resolve_subrule_list(n->list);
+    }
 }
 
 void resolve_compound_specifier(struct compound_specifier_s * n) {
+    if (n->list) {
+        resolve_subrule_list(n->list);
+    }
+                
 }
 
 void resolve_specifier(struct specifier_s * n) {
