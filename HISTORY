@@ -1,5 +1,7 @@
 recent:
 	add "no skeleton" option
+	fix a couple of segfaults/aborts where input filter
+	is invalid
 
 0.5: that's better
 	much fixing of iptables driver.  Now shouldn't leak
@@ -29,4 +31,4 @@ recent:
 	iptables driver
 	a few bugs
 
-$Id: HISTORY,v 1.11 2001/11/04 22:43:55 matthew Exp $
+$Id: HISTORY,v 1.12 2001/11/05 10:36:57 matthew Exp $
