@@ -62,7 +62,8 @@ input eth0 ! source { a b } accept;
 #
 # ORDER MATTERS when factoring/expanding, e.g.:
 #
-# order of targets matters, actions are not swappable (commutative?)
+# order of targets matters, actions on same predicates 
+# are not swappable (commutative?)
 #
 # input eth0 {
 #    proto icmp accept;
@@ -79,6 +80,9 @@ input eth0 ! source { a b } accept;
 # where 3,4's target is explicitly after [2] target inthe initial input
 #
 # TODO: prove that reordering targets has congruence
+
+COMMUTATIVITY OF RULES
+if two consecutive rules are sufficiently different, i.e. they are non overlapping predicate sets (???) then their order may be swapped
 
 
 

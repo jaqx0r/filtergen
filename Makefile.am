@@ -16,11 +16,12 @@ pfc_SOURCES = \
 	scanner.l \
 	glue.c \
 	resolver.c \
-	icmpent.c
+	icmpent.c \
+	factoriser.c
 
 pfc_LDADD = @GETOPT_LIBS@
 
-headers = filter.h util.h ast.h resolver.h icmpent.h
+headers = filter.h util.h ast.h resolver.h icmpent.h factoriser.h
 
 mans = filter_backends.7 filter_syntax.5 pfc.8
 
