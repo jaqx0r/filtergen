@@ -109,6 +109,8 @@ id	[[:alnum:]_+-\.\/]+
 
 --icmp-type	return TOK_IPTS_ICMP_TYPE;
 
+--to-ports	return TOK_IPTS_TO_PORTS;
+
 	/* everything else */
 {id}	{
 		ipts_lval.u_str = strndup(ipts_text, ipts_leng);
