@@ -38,6 +38,8 @@
 #define	A_TCP	0x10
 #define	A_UDP	0x20
 
+/* full path to iptables executable */
+#define IPTABLES "/sbin/iptables"
 
 static char *appip(char *r, const struct addr_spec *h)
 {
@@ -220,8 +222,8 @@ static int cb_iptables_rule(const struct filterent *ent, struct fg_misc *misc)
 			la = ent->logmsg;
 		} else
 			lc = la = "";
-		if(islocal) orules++,oprintf("iptables -A %s %s LOG%s%s\n", rulechain, rule+1, lc, la);
-		if(isforward) orules++,oprintf("iptables -A %s %s LOG%s%s\n", forchain, rule+1, lc, la);
+		if(islocal) orules++,oprintf(IPTABLES" -A %s %s LOG%s%s\n", rulechain, rule+1, lc, la);
+		if(isforward) orules++,oprintf(IPTABLES" -A %s %s LOG%s%s\n", forchain, rule+1, lc, la);
 	}
 
 	/* Do this twice, once for NAT, once for filter */
@@ -266,12 +268,12 @@ static int cb_iptables_rule(const struct filterent *ent, struct fg_misc *misc)
 
 	if((misc->flags & FF_LSTATE) && (target != T_REJECT)) needret = 0;
 
-	if(neednat) orules++,oprintf("iptables -t nat -A %s%s %s %s%s\n", subchain, natchain, natrule+1, subtarget, nattarget);
-	if(islocal) orules++,oprintf("iptables -A %s%s %s %s%s\n", subchain, rulechain, rule+1, subtarget, ruletarget);
-	if(needret) orules++,oprintf("iptables -I %s%s %s %s%s\n", subchain, revchain, rule_r+1, subtarget, revtarget);
+	if(neednat) orules++,oprintf(IPTABLES" -t nat -A %s%s %s %s%s\n", subchain, natchain, natrule+1, subtarget, nattarget);
+	if(islocal) orules++,oprintf(IPTABLES" -A %s%s %s %s%s\n", subchain, rulechain, rule+1, subtarget, ruletarget);
+	if(needret) orules++,oprintf(IPTABLES" -I %s%s %s %s%s\n", subchain, revchain, rule_r+1, subtarget, revtarget);
 	if(isforward) {
-		 orules++,oprintf("iptables -A %s%s %s %s%s\n", subchain, forchain, rule+1, subtarget, fortarget);
-		 if(needret) orules++,oprintf("iptables -I %s%s %s %s%s\n", subchain, forrevchain, rule_r+1, subtarget, forrevtarget);
+		 orules++,oprintf(IPTABLES" -A %s%s %s %s%s\n", subchain, forchain, rule+1, subtarget, fortarget);
+		 if(needret) orules++,oprintf(IPTABLES" -I %s%s %s %s%s\n", subchain, forrevchain, rule_r+1, subtarget, forrevtarget);
 	}
 
 	free(natrule); free(rule); free(rule_r);
@@ -281,7 +283,7 @@ static int cb_iptables_rule(const struct filterent *ent, struct fg_misc *misc)
 
 static int cb_iptables_group(const char *name)
 {
-	oprintf("for f in INPUT OUTPUT FORWARD FORW_OUT; do iptables -N %s-$f; done\n", name);
+	oprintf("for f in INPUT OUTPUT FORWARD FORW_OUT; do "IPTABLES" -N %s-$f; done\n", name);
 	return 4;
 }
 
@@ -304,21 +306,21 @@ int fg_iptables(struct filter *filter, int flags)
 		oputs("");
 
 		oputs("# Flush/remove rules, set policy");
-		oputs("for f in $CHAINS; do iptables -P $f DROP; done");
-		oputs("iptables -F; iptables -X");
-		oputs("iptables -t nat -F; iptables -t nat -X");
+		oputs("for f in $CHAINS; do "IPTABLES" -P $f DROP; done");
+		oputs(IPTABLES" -F; "IPTABLES" -X");
+		oputs(IPTABLES" -t nat -F; "IPTABLES" -t nat -X");
 		oputs("");
 
 		oputs("# Create FORW_OUT chain");
-		oputs("iptables -N FORW_OUT");
+		oputs(IPTABLES" -N FORW_OUT");
 		oputs("");
 
 		oputs("# Setup INVALID chain");
-		oputs("iptables -N INVALID");
-		oputs("iptables -A INVALID -j LOG --log-prefix \"invalid \"");
-		oputs("iptables -A INVALID -j DROP");
+		oputs(IPTABLES" -N INVALID");
+		oputs(IPTABLES" -A INVALID -j LOG --log-prefix \"invalid \"");
+		oputs(IPTABLES" -A INVALID -j DROP");
 		oputs("for f in $CHAINS; do\n"
-		     "\tiptables -I $f -m state --state INVALID -j INVALID;\n"
+		     "\t"IPTABLES" -I $f -m state --state INVALID -j INVALID;\n"
 		     "done");
 		oputs("");
 		r += nchains;
@@ -330,15 +332,15 @@ int fg_iptables(struct filter *filter, int flags)
 			oputs("for f in $CHAINS; do");
 			if(feat & A_TCP) {
 				r += nchains;
-				oputs("\tiptables -I $f -p tcp ! --syn -m state --state ESTABLISHED -j ACCEPT;");
+				oputs("\t"IPTABLES" -I $f -p tcp ! --syn -m state --state ESTABLISHED -j ACCEPT;");
 			}
 			if(feat & A_UDP) {
 				r += nchains;
-				oputs("\tiptables -I $f -p udp -m state --state ESTABLISHED -j ACCEPT;");
+				oputs("\t"IPTABLES" -I $f -p udp -m state --state ESTABLISHED -j ACCEPT;");
 			}
 			oputs("done");
 		}
-		oputs("for f in $CHAINS; do iptables -A $f -j LOG; done");
+		oputs("for f in $CHAINS; do "IPTABLES" -A $f -j LOG; done");
 		r += nchains;
 	}
 	return r;
@@ -360,9 +362,9 @@ int flush_iptables(enum filtertype policy, int flags)
 		fprintf(stderr, "invalid filtertype %d\n", policy);
 		abort();
 	}
-	oprintf("for f in $CHAINS; do iptables -P $f %s; done\n", ostr);
-	oputs("iptables -F; iptables -X");
-	oputs("iptables -t nat -F; iptables -t nat -X");
+	oprintf("for f in $CHAINS; do "IPTABLES" -P $f %s; done\n", ostr);
+	oputs(IPTABLES" -F; "IPTABLES" -X");
+	oputs(IPTABLES" -t nat -F; "IPTABLES" -t nat -X");
 
 	return 0;
 }

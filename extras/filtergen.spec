@@ -1,5 +1,5 @@
 # $Id: filtergen.spec,v 1.6 2002/11/13 10:01:45 matthew Exp $
-Summary: Firewall rule generator
+Summary: packet filter generator for various firewall systems
 Name: filtergen
 Version: 0.11
 Release: 1
@@ -13,10 +13,9 @@ Packager: Wil Cooley <wcooley@nakedape.cc>
 Vendor: Naked Ape Consulting <http://nakedape.cc>
 
 %description
-This tool is for generating packet filtering rules from a fairly
-high- level description language.  It doesn't support all of the
-whizz-bang features of the latest and greatest packet filters,
-but supports a useful subset.
+filtergen is a packet filter generator.  It compiles a fairly high-level
+description language into iptables, ipchains, or ipfilter rules (and has
+bits of support for Cisco IOS access lists).
 
 
 %prep
@@ -50,7 +49,7 @@ rm -rf $RPM_BUILD_ROOT
 /etc/init.d/filtergen
 /etc/filter/
 %{_mandir}/*
-%doc HISTORY HONESTY README TODO INSTALL tests/host-sample.filter tests/router-sample.filter tests/proxy-fw-sample.filter
+%doc HISTORY HONESTY README TODO tests/*.filter
 
 %changelog
 * Wed Nov 13 2002 Matthew Kirkwood <matthew@hairy.beasts.org> 0.11-1
