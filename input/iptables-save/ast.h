@@ -127,6 +127,10 @@ struct clamp_mss_to_pmtu_option_s {
     int i;
 };
 
+struct helper_option_s {
+    struct identifier_s * identifier;
+};
+
 struct option_s {
     struct in_interface_option_s * in_interface_option;
     struct jump_option_s * jump_option;
@@ -148,6 +152,7 @@ struct option_s {
     struct icmp_type_option_s * icmp_type_option;
     struct fragment_option_s * fragment_option;
     struct clamp_mss_to_pmtu_option_s * clamp_mss_to_pmtu_option;
+    struct helper_option_s * helper_option;
 };
 
 struct not_option_s {

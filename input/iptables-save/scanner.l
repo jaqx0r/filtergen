@@ -122,6 +122,8 @@ id	[[:alnum:]_+-\.\/~]+
 
 --clamp-mss-to-pmtu	return TOK_IPTS_CLAMP_MSS_TO_PMTU;
 
+--helper	return TOK_IPTS_HELPER;
+
 	/* everything else */
 {id}	{
 		ipts_lval.u_str = strndup(ipts_text, ipts_leng);

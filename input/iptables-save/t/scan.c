@@ -44,6 +44,7 @@ char * tok_map(int c) {
 	tok(UID_OWNER);
 	tok(REJECT_WITH);
 	tok(CLAMP_MSS_TO_PMTU);
+	tok(HELPER);
       case TOK_IDENTIFIER:
 	r = strdup("identifier"); break;
       case TOK_LSQUARE:

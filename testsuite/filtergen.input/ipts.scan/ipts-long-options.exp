@@ -34,7 +34,8 @@ set options [list \
 		 "log-prefix" \
 		 "uid-owner" \
 		 "reject-with" \
-		 "clamp-mss-to-pmtu"
+		 "clamp-mss-to-pmtu" \
+		 "helper"
 		]
 
 foreach option_pair $options {
