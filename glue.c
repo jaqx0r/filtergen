@@ -6,7 +6,7 @@
 int yyparse(void *);
 int yyrestart(FILE *);
 
-int convtrace = 1;
+int convtrace = 0;
 
 int filter_fopen(const char * filename) {
     FILE * file;

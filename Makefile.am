@@ -13,6 +13,7 @@ filtergen_SOURCES = \
 	fg-ipchains.c \
 	fg-ipfilter.c \
 	fg-cisco.c
+filtergen_CFLAGS = -DOLD_FILTERGEN
 
 fgc_SOURCES = \
 	filtergen.c \
