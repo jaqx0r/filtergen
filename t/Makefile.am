@@ -1,6 +1,6 @@
 TESTS = t_01_ccomment \
 	t_02_hashcomment \
-	t_03_nothing \
+	t_03_hashnonewline \
 	t_04_keywords \
 	t_05_punct \
 	t_06_numbers \
