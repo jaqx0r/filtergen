@@ -278,8 +278,20 @@ struct filter * convert_protocol_specifier(struct protocol_specifier_s * n) {
 
 struct filter * convert_port_argument(struct simple_port_argument_s * n, int type) {
     struct filter * res = NULL;
+    char * p;
 
     eprint("converting simple_port_argument\n");
+
+    if (n->port_min) {
+        if (n->port_max) {
+            asprintf(&p, "%s:%s", n->port_min, n->port_max);
+            res = new_filter_ports(type, p);
+        } else {
+            res = new_filter_ports(type, n->port_min);
+        }
+    } else {
+        printf("error: no port argument contents\n");
+    }
 
     return res;
 }
@@ -316,11 +328,11 @@ struct filter * convert_port_specifier(struct port_specifier_s * n) {
     eprint("converting port specifier\n");
 
     switch (n->type) {
-    case TOK_SOURCE:
-        type = F_SOURCE;
+    case TOK_SPORT:
+        type = F_SPORT;
         break;
-    case TOK_DEST:
-        type = F_DEST;
+    case TOK_DPORT:
+        type = F_DPORT;
         break;
     default:
         printf("error: incorrect port type encountered\n");
