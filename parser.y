@@ -282,11 +282,12 @@ compound_direction_argument: TOK_LCURLY direction_argument_list TOK_RCURLY
 	}
 	;
 
-direction_argument_list: simple_direction_argument
+direction_argument_list: /* empty */
 	{
-		$$ = malloc(sizeof(struct direction_argument_list_s));
+		$$ = NULL;
+/*malloc(sizeof(struct direction_argument_list_s));
 		$$->list = NULL;
-		$$->arg = $1;
+		$$->arg = NULL;*/
 	}
 	| direction_argument_list simple_direction_argument
 	{
