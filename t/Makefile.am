@@ -11,7 +11,8 @@ TESTS = t_01_ccomment \
 	t_11_includeone \
 	t_12_includeloop \
 	t_13_includetwo \
-	t_14_includeinline
+	t_14_includeinline \
+	t_15_includenotfound
 
 check_PROGRAMS = scan
 

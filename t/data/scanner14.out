@@ -1,14 +1,14 @@
-kind = 8 [<input>], spelling = "input", file = "(null)", line = 2
+kind = 8 [<input>], spelling = "input", file = "(standard input)", line = 2
 kind = 27 [<name>], spelling = "foo", file = "data/scanner7.in", line = 2
 kind = 27 [<name>], spelling = "bar", file = "data/scanner7.in", line = 3
 kind = 27 [<name>], spelling = "baz", file = "data/scanner7.in", line = 4
 kind = 27 [<name>], spelling = "quux", file = "data/scanner7.in", line = 5
-kind = 1 [<accept>], spelling = "accept", file = "(null)", line = 2
-kind = 21 [<semicolon>], spelling = ";", file = "(null)", line = 2
-kind = 14 [<output>], spelling = "output", file = "(null)", line = 3
+kind = 1 [<accept>], spelling = "accept", file = "(standard input)", line = 2
+kind = 21 [<semicolon>], spelling = ";", file = "(standard input)", line = 2
+kind = 14 [<output>], spelling = "output", file = "(standard input)", line = 3
 kind = 27 [<name>], spelling = "foo", file = "data/scanner7.in", line = 2
 kind = 27 [<name>], spelling = "bar", file = "data/scanner7.in", line = 3
 kind = 27 [<name>], spelling = "baz", file = "data/scanner7.in", line = 4
 kind = 27 [<name>], spelling = "quux", file = "data/scanner7.in", line = 5
-kind = 1 [<accept>], spelling = "accept", file = "(null)", line = 3
-kind = 21 [<semicolon>], spelling = ";", file = "(null)", line = 3
+kind = 1 [<accept>], spelling = "accept", file = "(standard input)", line = 3
+kind = 21 [<semicolon>], spelling = ";", file = "(standard input)", line = 3
