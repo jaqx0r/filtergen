@@ -6,11 +6,24 @@ opts.AddOptions(
 
 e = Environment(options = opts)
 
+warnings = ['',
+	'all',
+	'error',
+	'aggregate-return',
+	'cast-align',
+	'cast-qual',
+	'nested-externs',
+	'shadow',
+	'bad-function-cast',
+	'write-strings']
+for w in warnings:
+	e.Append(CPPFLAGS='-W%s ' % (w,))
+
 Help(opts.GenerateHelpText(e))
 
 conf = Configure(e)
 if conf.CheckCHeader('getopt.h'):
-	conf.env.Append(CCFLAGS = '-DHAVE_GETOPT_H')
+	conf.env.Append(CPPFLAGS = '-DHAVE_GETOPT_H ')
 if conf.CheckLib('getopt', 'getopt'):
 	conf.env.append(LIBS = 'getopt')
 e = conf.Finish()
