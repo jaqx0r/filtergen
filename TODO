@@ -6,8 +6,6 @@ Easy:
  * Better logging options.
  * Better Makefiles.
  * Option to do all name lookups (hosts, services, ICMP)
- * Option to output a skeleton around the filter (set policies, drop
-   invalid packets, etc)
  * Translate icmp names (at least for ipfilter and cisco)
  * masq and transproxy for ipfilter backend
 
@@ -40,4 +38,4 @@ Hard:
    This is possible, but tiresome, and will require an optimiser
    if the generated rulesets are not to Suck.
 
-$Id: TODO,v 1.7 2001/10/07 10:43:07 matthew Exp $
+$Id: TODO,v 1.8 2001/11/05 10:40:34 matthew Exp $
