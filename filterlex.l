@@ -1,3 +1,4 @@
+%option nounput
 %{
 /*
  * lexer/parser for packet filtering rules
@@ -31,7 +32,6 @@ struct filterparse_state {
 #define	yylineno	curinc.lineno
 
 %}
-
 %%
 
 include		{ return INCLUDE; }
