@@ -45,9 +45,10 @@ TESTS = t_01_ccomment \
 	t_45_icmptype \
 	t_46_routing \
 	t_47_subrule_list \
-	t_48_chaingroup
+	t_48_chaingroup \
+	t_49_astconverter
 
-check_PROGRAMS = scan parse emit
+check_PROGRAMS = scan parse emit filter_emit convert
 
 scan_SOURCES = scan.c
 scan_LDADD = ../scanner.o ../parser.o
@@ -57,6 +58,12 @@ parse_LDADD = ../scanner.o ../parser.o
 
 emit_SOURCES = emit.c
 emit_LDADD = ../scanner.o ../parser.o
+
+filter_emit_SOURCES = filter_emit.c
+filter_emit_LDADD = ../filterlex.o ../filter.o ../fg-util.o
+
+convert_SOURCES = convert.c
+convert_LDADD = ../scanner.o ../parser.o ../glue.o ../filter.o ../fg-util.o
 
 EXTRA_DIST = $(top_srcdir)/t/data/* testlib $(TESTS)
 

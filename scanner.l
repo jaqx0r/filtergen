@@ -164,4 +164,3 @@ static void scan_err(const char * fmt, ...) {
     vfprintf(stderr, fmt, args);
     fprintf(stderr, "\n");
 }
-	

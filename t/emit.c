@@ -12,7 +12,7 @@ int emittrace = 0;
 
 #define EMIT(x) void emit_##x(struct x##_s * n)
 
-#define eprint(x) if (emittrace) printf(x)
+#define eprint(x) if (emittrace) fprintf(stderr, x)
 
 EMIT(specifier_list);
 
