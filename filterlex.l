@@ -2,7 +2,7 @@
 /*
  * lexer/parser for packet filtering rules
  *
- * $Id: filterlex.l,v 1.1 2001/09/25 17:22:39 matthew Exp $
+ * $Id: filterlex.l,v 1.2 2001/10/03 19:01:54 matthew Exp $
  */
 
 #include <sys/types.h>
@@ -157,7 +157,7 @@ static struct filter *filter_parse_single(void)
 	case F_INPUT: case F_OUTPUT:
 		return filter_parse_group(tok, NULL, new_filter_device);
 	case F_ACCEPT: case F_DROP: case F_REJECT:
-		return new_filter_sense(tok);
+		return new_filter_target(tok);
 	case F_SOURCE: case F_DEST:
 		return filter_parse_group(tok, NULL, new_filter_host);
 	case F_SPORT: case F_DPORT:

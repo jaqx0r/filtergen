@@ -1,4 +1,4 @@
-/* $Id: filter.c,v 1.1 2001/09/25 17:22:39 matthew Exp $ */
+/* $Id: filter.c,v 1.2 2001/10/03 19:01:54 matthew Exp $ */
 
 #include <stdlib.h>
 #include <string.h>
@@ -11,6 +11,16 @@ struct filter *__new_filter(enum filtertype type)
 	struct filter *f;
 	if ((f = calloc(1, sizeof(*f)))) {
 		f->type = type;
+	}
+	return f;
+}
+
+
+struct filter *new_filter_target(enum filtertype target)
+{
+	struct filter *f;
+	if ((f = __new_filter(F_TARGET))) {
+		f->u.target = target;
 	}
 	return f;
 }
@@ -153,8 +163,41 @@ void __filter_neg_expand(struct filter **f, int neg)
 }
 
 
+/* Move targets to end of each list */
+void __filter_targets_to_end(struct filter **f)
+{
+	if(!*f) return;
+	if(((*f)->type == F_TARGET) && (*f)->child) {
+		struct filter *c = (*f)->child;
+
+		/* Unlink this one */
+		(*f)->child = NULL;
+
+		/* Append ourselves */
+		filter_append(c, (*f));
+
+		/* Tell them upstairs */
+		*f = c;
+	} else {
+		__filter_targets_to_end(&(*f)->child);
+		__filter_targets_to_end(&(*f)->next);
+	}
+}
+
 void filter_unroll(struct filter **f)
 {
 	__filter_neg_expand(f, 0);
+	__filter_targets_to_end(f);
 	__filter_unroll(*f);
+}
+
+
+/* Remove negations by reordering tree:
+ *	NEG(ent)->child,next
+ * becomes
+ *	ent->next,child,next
+ */
+void filter_noneg(struct filter **f)
+{
+	
 }
