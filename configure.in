@@ -1,0 +1,14 @@
+AC_INIT
+AC_PREREQ(2.50)
+
+AM_INIT_AUTOMAKE(filtergen, 0.12, jaq@spacepants.org)
+AC_CONFIG_SRCDIR(filtergen.c)
+AM_CONFIG_HEADER(config.h)
+
+AM_MAINTAINER_MODE
+
+AC_PROG_CC
+AC_PROG_LEX
+
+AC_CONFIG_FILES([Makefile])
+AC_OUTPUT

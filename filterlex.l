@@ -1,4 +1,5 @@
 %option nounput
+%option noyywrap
 %{
 /*
  * lexer/parser for packet filtering rules
