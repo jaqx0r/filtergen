@@ -14,6 +14,8 @@ recent:
 	add "-r" option to mirror "-h"
 	cleanup ipchains driver somewhat
 	implement "local" for ipchains backend ("forward" is not possible)
+	fix bug where accept would get lost from:
+		input eth0 { ! dest bar drop; accept; };
 
 0.6:
 	disable negation of conjunctions ("or"s, aka brace-grouping) for now
@@ -51,4 +53,4 @@ recent:
 	iptables driver
 	a few bugs
 
-$Id: HISTORY,v 1.24 2002/07/18 21:28:04 matthew Exp $
+$Id: HISTORY,v 1.25 2002/07/19 12:21:49 matthew Exp $

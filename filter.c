@@ -1,4 +1,4 @@
-/* $Id: filter.c,v 1.9 2002/07/18 14:04:13 matthew Exp $ */
+/* $Id: filter.c,v 1.10 2002/07/19 12:21:49 matthew Exp $ */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -207,11 +207,12 @@ void __filter_neg_expand(struct filter **f, int neg)
 		__filter_neg_expand(&(*f)->u.sub.list, neg);
 		break;
 	case F_NEG: {
-		struct filter *c = (*f)->child;
+		struct filter *c = (*f)->child, *n = (*f)->next;
 		*f = (*f)->u.neg;
 		neg = !neg;
 		__filter_neg_expand(f, neg);
 		if(c) filter_append(*f, c);
+		(*f)->next = n;
 		break;
 	}
 	default: break;
