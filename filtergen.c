@@ -51,37 +51,37 @@ void usage(char * prog) {
 #ifdef HAVE_GETOPT_H
     fprintf(stderr, " --compile/-c              compile only, no generate\n");
 #else
-    fprintf(stderr, "           -c              compile only, no generate\n");
+    fprintf(stderr, "\t-c\t\tcompile only, no generate\n");
 #endif
 
 #ifdef HAVE_GETOPT_H
     fprintf(stderr, " --target/-t target        generate for target (default: iptables)\n");
 #else
-    fprintf(stderr, "          -t target        generate for target (default: iptables)\n");
+    fprintf(stderr, "\t-t target\tgenerate for target (default: iptables)\n");
 #endif
 
 #ifdef HAVE_GETOPT_H
     fprintf(stderr, " --flush/-F policy         don't process input, generate flush rules\n");
 #else
-    fprintf(stderr, "         -F policy         don't process input, generate flush rules\n");
+    fprintf(stderr, "\t-F policy\tdon't process input, generate flush rules\n");
 #endif
 
 #ifdef HAVE_GETOPT_H
     fprintf(stderr, " --output/-o filename      write the generated packet filter to filename\n");
 #else
-    fprintf(stderr, "          -o filename      write the generated packet filter to filename\n");
+    fprintf(stderr, "\t-o filename\twrite the generated packet filter to filename\n");
 #endif
 
 #ifdef HAVE_GETOPT_H
     fprintf(stderr, " --help/-h                 show this help\n");
 #else
-    fprintf(stderr, "        -h                 show this help\n");
+    fprintf(stderr, "\t-h\t\tshow this help\n");
 #endif
 
 #ifdef HAVE_GETOPT_H
     fprintf(stderr, " --version/-V              show program version\n");
 #else
-    fprintf(stderr, "           -V              show program version\n");
+    fprintf(stderr, "\t-V\t\tshow program version\n");
 #endif
 }
 
@@ -180,7 +180,7 @@ int main(int argc, char **argv) {
 	    }
 	    break;
 	  case 'V':
-	    printf(PACKAGE " " VERSION "\n");
+	    printf("filtergen " VERSION "\n");
 	    exit(0);
 	    break;
 	  default:

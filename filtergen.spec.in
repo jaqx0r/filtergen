@@ -1,6 +1,6 @@
 Summary: packet filter generator for various firewall systems
-Name: @PACKAGE@
-Version: @VERSION@
+Name: filtergen
+Version: %(VERSION)s
 Release: 1
 License: GPL
 Group: Applications/System
