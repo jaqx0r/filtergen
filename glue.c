@@ -41,6 +41,82 @@ CONVERT(subrule_list) {
     return res;
 }
 
+struct filter * convert_direction_arg(struct simple_direction_argument_s * n, int type) {
+    struct filter * res = NULL;
+
+    if (n->identifier) {
+        res = new_filter_device(type, n->identifier);
+    } else {
+        printf("error: no direction argument (simple) identifier\n");
+    }
+
+    return res;
+}
+
+struct filter * convert_direction_argument_list(struct direction_argument_list_s * n, int type) {
+    struct filter * res = NULL, * end = NULL;
+
+    eprint("converting direction argument list\n");
+
+    if (n->list) {
+        res = convert_direction_argument_list(n->list, type);
+        if (res) {
+            end = res;
+            while (end->next) {
+                end = end->next;
+            }
+            if (n->arg) {
+                end->next = convert_direction_arg(n->arg, type);
+            }
+        } else {
+            printf("warning: convert_direction_argument_list returned NULL\n");
+        }
+    } else {
+        res = convert_direction_arg(n->arg, type);
+    }
+
+    return res;
+}
+    
+struct filter * convert_direction(struct direction_specifier_s * n) {
+    struct filter * res = NULL;
+    int type;
+
+    eprint("converting direction specifier\n");
+        
+    switch (n->type) {
+      case TOK_INPUT:
+	type = INPUT;
+	break;
+      case TOK_OUTPUT:
+	type = OUTPUT;
+	break;
+      default:
+	printf("error: incorrect direction type encountered\n");
+	type = YYEOF;
+	break;
+    }
+    if (n->arg) {
+        if (n->arg->simple) {
+            res = convert_direction_arg(n->arg->simple, type);
+        } else if (n->arg->compound) {
+            eprint("converting compound direction argument\n");
+
+            if (n->arg->compound->list) {
+                res = new_filter_sibs(convert_direction_argument_list(n->arg->compound->list, type));
+            } else {
+                printf("error: no direction argument (compound) list\n");
+            }
+        } else {
+            printf("error: neither simple nor compound argument\n");
+        }
+    } else {
+        printf("error: no direction argument\n");
+    }
+
+    return res;
+}
+
 struct filter * convert_compound_specifier(struct compound_specifier_s * r) {
     struct filter * res = NULL;
 
@@ -55,40 +131,12 @@ struct filter * convert_compound_specifier(struct compound_specifier_s * r) {
 struct filter * convert_specifier(struct specifier_s * r) {
     struct filter * res = NULL;
     eprint("converting specifier\n");
-
+    
     if (r->compound) {
-      eprint("converting compound specifier\n");
+        eprint("converting compound specifier\n");
 	res = convert_compound_specifier(r->compound);
     } else if (r->direction) {
-	enum filtertype type;
-
-	eprint("converting direction specifier\n");
-
-	switch (r->direction->type) {
-	  case TOK_INPUT:
-	    type = INPUT;
-	    break;
-	  case TOK_OUTPUT:
-	    type = OUTPUT;
-	    break;
-	  default:
-	    printf("error: incorrect direction type encountered\n");
-	    type = YYEOF;
-	    break;
-	}
-	if (r->direction->arg) {
-	    if (r->direction->arg->simple) {
-		if (r->direction->arg->simple->identifier) {
-		    res = new_filter_device(type, r->direction->arg->simple->identifier);
-		} else {
-		    printf("error: no direction argument (simple) identifier\n");
-		}
-	    } else {
-		printf("error: no direction argument (simple)\n");
-	    }
-	} else {
-	    printf("error: no direction argument\n");
-	}
+        res = convert_direction(r->direction);
     } else if (r->target) {
       enum filtertype type;
 
@@ -203,12 +251,16 @@ struct filter * convert_specifier_list(struct specifier_list_s * n) {
 
     if (n->list) {
       res = convert_specifier_list(n->list);
-      end = res;
-      while (end->child) {
-	end = end->child;
-      }
-      if (n->spec) {
-	end->child = convert_negated_specifier(n->spec);
+      if (res) {
+          end = res;
+          while (end->child) {
+              end = end->child;
+          }
+          if (n->spec) {
+              end->child = convert_negated_specifier(n->spec);
+          }
+      } else {
+          printf("warning: convert_specifier_list returned NULL\n");
       }
     } else {
       res = convert_negated_specifier(n->spec);
