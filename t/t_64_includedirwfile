@@ -17,7 +17,7 @@ include $work/include.d
 EOF
 if test $? -ne 0 ; then no_result; fi
 
-$testdir/scan < $work/in > $work/out 2>&1
+$here/scan < $work/in > $work/out 2>&1
 if test $? -ne 0 ; then fail ; fi
 
 cat >$work/good <<EOF

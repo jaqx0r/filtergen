@@ -13,7 +13,7 @@ input eth0 {
 EOF
 if test $? -ne 0 ; then no_result ; fi
 
-$testdir/convert < $work/rules > $work/out
+$here/convert < $work/rules > $work/out
 if test $? -ne 0 ; then fail ; fi
 
 cat > $work/good <<EOF
