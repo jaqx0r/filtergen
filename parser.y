@@ -604,10 +604,14 @@ subrule_list: specifier_list
 chaingroup_specifier: TOK_LSQUARE TOK_IDENTIFIER subrule_list TOK_RSQUARE
 	{
 		$$ = malloc(sizeof(struct chaingroup_specifier_s));
+		$$->name = strdup($2);
+		$$->list = $3;
 	}
 	| TOK_LSQUARE subrule_list TOK_RSQUARE
 	{
 		$$ = malloc(sizeof(struct chaingroup_specifier_s));
+		$$->name = NULL;
+		$$->list = $2;
 	}
 	;
 
