@@ -1,7 +1,7 @@
 /*
  * Filter generator, iptables driver
  *
- * $Id: fg-iptables.c,v 1.26 2002/07/19 15:50:20 matthew Exp $
+ * $Id: fg-iptables.c,v 1.27 2002/07/19 16:30:58 matthew Exp $
  */
 
 /*
@@ -46,6 +46,7 @@ static int cb_iptables_rule(const struct filterent *ent, struct fg_misc *misc)
 	int isforward = (ent->rtype != LOCALONLY);
 	long *feat = (long*)misc->misc;
 	enum filtertype target = ent->target;
+	int orules = 0;
 
 	/* nat rule? */
 	if((target == F_MASQ) || (target == F_REDIRECT)) {
@@ -179,7 +180,8 @@ static int cb_iptables_rule(const struct filterent *ent, struct fg_misc *misc)
 	 * fail if any mangling has been done above.
 	 */
 	if(ent->log) {
-		oprintf("iptables -A %s %s LOG\n", rulechain, rule+1);
+		if(islocal) orules++,oprintf("iptables -A %s %s LOG\n", rulechain, rule+1);
+		if(isforward) orules++,oprintf("iptables -A FORWARD %s LOG\n", rule+1);
 	}
 
 	/* Do this twice, once for NAT, once for filter */
@@ -205,16 +207,16 @@ static int cb_iptables_rule(const struct filterent *ent, struct fg_misc *misc)
 
 	if((misc->flags & FF_LSTATE) && (target != F_REJECT)) needret = 0;
 
-	if(neednat) oprintf("iptables -t nat -A %s %s\n", natchain, natrule+1);
-	if(islocal) oprintf("iptables -A %s %s\n", rulechain, rule+1);
-	if(needret) oprintf("iptables -A %s %s\n", revchain, rule_r+1);
+	if(neednat) orules++,oprintf("iptables -t nat -A %s %s\n", natchain, natrule+1);
+	if(islocal) orules++,oprintf("iptables -A %s %s\n", rulechain, rule+1);
+	if(needret) orules++,oprintf("iptables -I %s %s\n", revchain, rule_r+1);
 	if(isforward) {
-		 oprintf("iptables -A FORWARD %s\n", rule+1);
-		 if(needret) oprintf("iptables -A FORWARD %s\n", rule_r+1);
+		 orules++,oprintf("iptables -A FORWARD %s\n", rule+1);
+		 if(needret) orules++,oprintf("iptables -I FORWARD %s\n", rule_r+1);
 	}
 
 	free(natrule); free(rule); free(rule_r);
-	return 1 + !!needret + !!neednat;
+	return orules;
 }
 
 static int cb_iptables_group(const char *name)

@@ -16,6 +16,7 @@ recent:
 	implement "local" for ipchains backend ("forward" is not possible)
 	fix bug where accept would get lost from:
 		input eth0 { ! dest bar drop; accept; };
+	iptables and ipchains add "established packet" rules to head of chain
 
 0.6:
 	disable negation of conjunctions ("or"s, aka brace-grouping) for now
@@ -53,4 +54,4 @@ recent:
 	iptables driver
 	a few bugs
 
-$Id: HISTORY,v 1.25 2002/07/19 12:21:49 matthew Exp $
+$Id: HISTORY,v 1.26 2002/07/19 16:30:58 matthew Exp $
