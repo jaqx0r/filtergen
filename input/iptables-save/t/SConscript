@@ -12,4 +12,4 @@ env.AppendUnique(CPPPATH=['../../..', '..'],
 env.Program('scan.c')
 env.Program('parse.c')
 env.Program('emit.c')
-env.Program('convert', source='../../../t/convert.c')
+env.Program('convert', source=['#t/convert.c', '#filter.o', '#fg-util.o'])

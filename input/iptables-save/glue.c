@@ -18,6 +18,7 @@
  */
 
 #include <stdio.h>
+#include <string.h>
 #include "filter.h"
 #include "input/input.h"
 #include "ast.h"
@@ -57,6 +58,8 @@ void ipts_convert_option(struct option_s * n) {
   eprint("converting option\n");
 
   if (n->option) {
+
+    fprintf(stderr, "n->option is %s\n", n->option);
     /* option is a string representing the option */
   }
   if (n->not_identifier) {
@@ -104,6 +107,9 @@ struct filter * ipts_convert_option_list(struct option_list_s * n) {
   return res;
 }
 
+/* FIXME: this function doesn't cope with non-standard chain names
+ * and the filter structure can't cope with default chain policies without
+ * a device */
 struct filter * ipts_convert_rule(struct rule_s * n) {
   struct filter * res = NULL;
 
@@ -117,6 +123,31 @@ struct filter * ipts_convert_rule(struct rule_s * n) {
     /* chain, policy, pkt_count are set */
     /* FIXME: somehow append the chain default policy to the end of the
      * rule list */
+    int direction;
+
+    if (!strcasecmp(n->chain, "input")) {
+      direction = INPUT;
+    } else if (!strcasecmp(n->chain, "output")) {
+      direction = OUTPUT;
+    } else {
+      fprintf(stderr, "warning: unhandled chain name %s\n", n->chain);
+    }
+    res = new_filter_device(direction, "eth0");
+
+    if (n->policy) {
+      enum filtertype type;
+      if (!strcasecmp(n->policy, "accept")) {
+	type = T_ACCEPT;
+      } else if (!strcasecmp(n->policy, "drop")) {
+	type = DROP;
+      } else if (!strcasecmp(n->policy, "reject")) {
+	type = T_REJECT;
+      } else {
+	fprintf(stderr, "warning: invalid chain policy %s\n", n->policy);
+	type = YYEOF;
+      }
+      res->child = new_filter_target(type);
+    }
   } else if (n->option_list) {
     /* do something with the option list */
     /* option list, and optionally pkt_count, are set */
@@ -146,8 +177,11 @@ struct filter * ipts_convert_rule_list(struct rule_list_s * n) {
 	}
     } else {
       res = ipts_convert_rule(n->rule);
+      if (!res) {
+	fprintf(stderr, "warning: going to return NULL\n");
+      }
     }
-      
+
     return res;
 }
 
