@@ -41,16 +41,17 @@ char * tok_map(int c) {
     return r;
 }  
 
-int main(int argc __attribute__((unused)), char ** argv __attribute__((unused))) {
+extern FILE * ipts_in;
+
+int main(int argc, char ** argv) {
     int c;
 
-    /* if running in make distcheck the cwd isn't the same as the srcdir */
-    if (getenv("srcdir")) {
-	chdir(getenv("srcdir"));
+    if (argc > 1) {
+      ipts_in = fopen(argv[1], "r");
     }
 
     while ((c = ipts_lex())) {
-	printf("kind = %s, spelling = \"%s\", file = \"%s\", line = %d\n", tok_map(c), ipts_text, ipts_filename(), ipts_lineno);
+      fprintf(stderr, "%s:%d: kind = %s, spelling = \"%s\"\n", ipts_filename(), ipts_lineno, tok_map(c), ipts_text);
     }
     return 0;
 }
