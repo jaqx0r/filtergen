@@ -6,8 +6,7 @@ VERSION = "0.13"
 
 opts = Options()
 opts.AddOptions(
-	EnumOption('debug', 'debugging compiler options', 'no',
-			   allowed_values = ('yes', 'no'))
+	BoolOption('debug', 'debugging compiler options', 0)
 	)
 
 e = Environment(options = opts)

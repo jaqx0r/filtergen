@@ -1,9 +1,0 @@
-AC_INIT(filtergen, 0.13, jaq@spacepants.org)
-AM_INIT_AUTOMAKE([foreign dist-bzip2])
-
-dnl --------------------------
-dnl configuration success flag
-dnl --------------------------
-
-filtergen_config_ok=yes
-
