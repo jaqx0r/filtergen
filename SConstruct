@@ -64,13 +64,15 @@ filtergen  = env.Program('filtergen', ['filtergen.c',
 							   'out_iptables',
 							   'out_ipchains',
 							   'out_ipfilter',
-							   'out_cisco'
+							   'out_cisco',
+							   'out_filtergen',
 							   ],
 						 LIBPATH=['input/filtergen',
 								  'output/iptables',
 								  'output/ipchains',
 								  'output/ipfilter',
-								  'output/cisco'
+								  'output/cisco',
+								  'output/filtergen',
 								  ]
 						 )
 
@@ -103,6 +105,7 @@ SConscript([
 	'output/ipchains/SConscript',
 	'output/ipfilter/SConscript',
 	'output/cisco/SConscript',
+	'output/filtergen/SConscript',
 	], 'env')
 
 env.Install(DESTDIR + sbindir, [filtergen, fgadm])
@@ -122,7 +125,7 @@ sysconf = env.Alias('install-sysconf', DESTDIR + sysconfdir)
 env.Install(DESTDIR + pkgexdir, glob.glob('examples/*.filter'))
 pkgex = env.Alias('install-examples', DESTDIR + pkgexdir)
 
-env.Install(DESTDIR + pkgdocdir, glob.glob('doc/*'))
+env.Install(DESTDIR + pkgdocdir, ['doc/flow', 'doc/generator.notes', 'doc/notes'])
 pkgdoc = env.Alias('install-doc', DESTDIR + pkgdocdir)
 
 env.Alias('install', [bin, man, sysconf, pkgdoc, pkgex])
