@@ -170,10 +170,15 @@ EMIT(port_specifier) {
 }
 
 EMIT(host_part) {
-    printf("%s", n->host);
+    if (n->host) {
+	printf("%s", n->host);
+    } else {
+	printf("%d.%d.%d.%d", n->ip1, n->ip2, n->ip3, n->ip4);
+    }
 }
 
 EMIT(netmask_part) {
+    printf("%d.%d.%d.%d", n->mask1, n->mask2, n->mask3, n->mask4);
 }
 
 EMIT(simple_host_argument) {

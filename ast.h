@@ -16,9 +16,11 @@ struct port_range_s {
 
 struct host_part_s {
     char * host;
+    int ip1, ip2, ip3, ip4;
 };
 
 struct netmask_part_s {
+    int mask1, mask2, mask3, mask4;
 };
     
 struct specifier_list_s;
