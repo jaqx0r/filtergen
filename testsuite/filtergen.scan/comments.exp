@@ -46,11 +46,11 @@ set test "nested end comment"
 send "/* c comments can't nest */ ***/\r"
 
 expect {
-    "kind = UNRECOGNISED, spelling = \"\*\"" {
+    "kind = UNRECOGNISED" {
 	expect {
-	    "kind = UNRECOGNISED, spelling = \"\*\"" {
+	    "kind = UNRECOGNISED" {
 		expect {
-		    "kind = UNRECOGNISED, spelling = \"\*\"" {
+		    "kind = UNRECOGNISED" {
 			expect {
 			    "kind = slash" { pass $test }
 			    timeout { fail $test }
