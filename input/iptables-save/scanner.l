@@ -37,9 +37,9 @@ id	[[:alnum:]_+-\.\/]+
 
 #[^\n]*[\n] { /* strip shell-style comments and the trailing newline */  }
 
-^[*]	return TOK_IPTS_TABLE;
+^[*]		return TOK_IPTS_TABLE;
 
-^:	return TOK_IPTS_CHAIN;
+^:		return TOK_IPTS_CHAIN;
 
 {space}	/* ignore */
 
@@ -86,6 +86,9 @@ id	[[:alnum:]_+-\.\/]+
 
 -m		return TOK_IPTS_MATCH;
 --match		return TOK_IPTS_MATCH;
+
+
+--dport		return TOK_IPTS_DPORT;
 
 {id}	{
 		ipts_lval.u_str = strndup(ipts_text, ipts_leng);

@@ -72,6 +72,8 @@ extern int ipts_lex(void);
 %token TOK_IPTS_SET_COUNTERS
 %token TOK_IPTS_MATCH
 
+%token TOK_IPTS_DPORT
+
 %token <u_str> TOK_IDENTIFIER
 %token <u_str> TOK_OPTION
 

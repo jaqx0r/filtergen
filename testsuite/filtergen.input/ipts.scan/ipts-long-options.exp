@@ -13,6 +13,7 @@ set options [list \
 		 "fragment" \
 		 "set-counters" \
 		 "match" \
+		 "dport" \
 		]
 
 foreach option_pair $options {

@@ -21,7 +21,7 @@ COMMIT
 # { dg-warning "kind = identifier, spelling = \"lo" "" { target *-*-* } 4 }
 # { dg-warning "kind = bang" "" { target *-*-* } 4 }
 # { dg-warning "kind = FRAGMENT" "" { target *-*-* } 4 }
-# { dg-warning "kind = identifier, spelling = \"--dport" "" { target *-*-* } 4 }
+# { dg-warning "kind = DPORT" "" { target *-*-* } 4 }
 # { dg-warning "kind = identifier, spelling = \"ntp" "" { target *-*-* } 4 }
 # { dg-warning "kind = colon" "" { target *-*-* } 4 }
 # { dg-warning "kind = quote" "" { target *-*-* } 4 }

@@ -26,6 +26,7 @@ char * tok_map(int c) {
 	tok(FRAGMENT);
 	tok(SET_COUNTERS);
 	tok(MATCH);
+	tok(DPORT);
       case TOK_IDENTIFIER:
 	r = strdup("identifier"); break;
       case TOK_LSQUARE:
