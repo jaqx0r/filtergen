@@ -1,13 +1,14 @@
 /*
  * filter compilation front-end
  *
- * $Id: filtergen.c,v 1.9 2002/04/14 11:38:40 matthew Exp $
+ * $Id: filtergen.c,v 1.10 2002/04/14 13:25:17 matthew Exp $
  */
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <unistd.h>
 
 #include "filter.h"
 
@@ -31,47 +32,52 @@ int main(int argc, char **argv)
 	int l;
 	time_t t;
 	char buf[100];
-	char *ftn;
+	char *fn = NULL, *ftn = NULL;
 	struct filtyp *ft;
 	int flags = 0;
 	char *progname;
+	int arg;
 
 	progname = argv[0];
 
-	if((argc > 1) && !strcmp(argv[1], "-n")) {
-		argc--; argv++;
-		flags |= FF_NOSKEL;
+	while((arg = getopt(argc, argv, "na")) > 0) {
+		switch(arg) {
+		case 'n': flags |= FF_NOSKEL; break;
+		case '?': return 1;
+		}
 	}
 
-	if((argc > 1) && strcmp(argv[1], "-")) {
-		if(!(yyin = fopen(argv[1], "r"))) {
+	fn = argv[optind];
+	if(fn && strcmp(fn, "-")) {
+		if(!(yyin = fopen(fn, "r"))) {
 			fprintf(stderr, "%s: can't open file \"%s\"\n",
-					progname, argv[1]);
+					progname, fn);
 			return 1;
 		}
 	} else {
-		argv[1] = NULL;
+		fn = NULL;
 	}
 
-	ftn = (argc > 2) ? argv[2] : "iptables";
+	if(argc > optind) ftn = argv[optind+1];
+	if(!ftn || !*ftn) ftn = "iptables";
 	for(ft = filter_types; ft->name; ft++)
 		if(!strcmp(ftn, ft->name))
 			break;
 	if(!ft->name) {
-		fprintf(stderr, "%s: unknown filter type \"%s\"\n", *argv, ftn);
-		return 1;
-	}
-
-	f = filter_parse_list();
-	if (!f) {
-		fprintf(stderr, "couldn't parse file\n");
+		fprintf(stderr, "%s: unknown filter type \"%s\"\n", progname, ftn);
 		return 1;
 	}
 
 	strftime(buf, sizeof(buf)-1, "%a %b %e %H:%M:%S %Z %Y",
 			localtime((time(&t),&t)));
 	printf("# filter generated from %s via %s backend at %s\n",
-		argv[1] ?: "standard input", ft->name, buf);
+		fn ?: "standard input", ft->name, buf);
+
+	f = filter_parse_list();
+	if (!f) {
+		fprintf(stderr, "couldn't parse file\n");
+		return 1;
+	}
 	l = ft->compiler(f, flags);
 
 	if(l < 0) {
