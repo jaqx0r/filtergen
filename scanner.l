@@ -43,7 +43,7 @@ static void scan_err(const char * fmt, ...);
 
 string  \"[^\n]+\"
 space   [ \t]+
-id      [[:alnum:]_][[:alnum:]_-]*
+id      [[:alnum:]_][[:alnum:]_+-]*
 
 %%
 
