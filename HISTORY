@@ -3,6 +3,7 @@ recent:
 	add log messages: 'log text "foo etc"'
 	fixed iptables and ipchains brace-grouping
 	fix filter_unroll loop-making bug
+	add RPM spec file from Wil Cooley <wcooley@nakedape.cc>
 
 0.9:
 	fix install target to install section 7 manpages too
@@ -74,4 +75,4 @@ recent:
 	iptables driver
 	a few bugs
 
-$Id: HISTORY,v 1.38 2002/09/02 11:10:42 matthew Exp $
+$Id: HISTORY,v 1.39 2002/09/02 12:53:06 matthew Exp $
