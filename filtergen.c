@@ -34,12 +34,7 @@
 #endif
 
 #include "filter.h"
-#include "ast.h"
-#include "resolver.h"
-
-int yyparse(void *);
-void yyrestart(FILE *);
-extern struct filter * convert(struct ast_s * n);
+#include "input/input.h"
 
 static FILE *outfile;
 
@@ -236,28 +231,20 @@ int main(int argc, char **argv) {
 	/* Just flush it */
 	l = ft->flusher(flushpol);
     } else {
+	FILE * file;
+
 	/* Compile from a file */
 	if(filename && !strcmp(filename, "-")) filename = NULL;
 
-	if(filter_fopen(filename)) return 1;
-
-	{
-	    struct ast_s ast;
-
-	    if (yyparse((void *) &ast) == 0) {
-		if (resolve_names)
-		    resolve(&ast);
-		f = convert(&ast);
-		if (!f) {
-		    fprintf(stderr, "couldn't convert file\n");
-		    return 1;
-		}
-	    } else {
-		fprintf(stderr, "couldn't parse file\n");
-		return 1;
+	if (filename) {
+	    /** FIXME: make more effort to find the file */
+	    if (!(file = fopen(filename, "r"))) {
+		fprintf(stderr, "can't open file \"%s\"", filename);
 	    }
+	} else {
+	    file = stdin;
 	}
-
+	f = filtergen_source_parser(file, resolve_names);
 	l = ft->compiler(f, flags);
     }
 

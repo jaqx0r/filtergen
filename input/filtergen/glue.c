@@ -19,29 +19,15 @@
 
 #include <stdio.h>
 #include "filter.h"
+#include "input/input.h"
 #include "ast.h"
 #include "parser.h"
+#include "resolver.h"
 
 int yyparse(void *);
 int yyrestart(FILE *);
 
 int convtrace = 0;
-
-int filter_fopen(const char * filename) {
-    FILE * file;
-
-    if (filename) {
-	/* XXX - make more effort to find file */
-	if (!(file = fopen(filename, "r"))) {
-	    printf("can't open file \"%s\"", filename);
-	    return -1;
-	}
-    } else {
-	file = stdin;
-    }
-    yyrestart(file);
-    return 0;
-}
 
 #define eprint(x) if (convtrace) fprintf(stderr, x)
 
@@ -606,5 +592,25 @@ struct filter * filter_parse_list(void) {
 	printf("conversion failed!\n");
     }
 
+    return f;
+}
+
+struct filter * filtergen_source_parser(FILE * file, int resolve_names) {
+    struct ast_s ast;
+    struct filter * f;
+
+    yyrestart(file);
+    if (yyparse((void *) &ast) == 0) {
+	if (resolve_names)
+	    resolve(&ast);
+	f = convert(&ast);
+	if (!f) {
+	    fprintf(stderr, "couldn't convert file to IR\n");
+	    return NULL;
+	}
+    } else {
+	fprintf(stderr, "couldn't parse file\n");
+	return NULL;
+    }
     return f;
 }
