@@ -2,7 +2,7 @@
 %option nounput
 %x include
 %{
-/* input scanner for filtergen
+/* input scanner for pfc (filtergen language)
  *
  * Copyright (c) 2003 Jamie Wilkinson <jaq@spacepants.org>
  *

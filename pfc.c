@@ -129,7 +129,7 @@ int main(int argc, char **argv) {
     int l;
     time_t t;
     char buf[100];
-    char *filepol = NULL, *ftn = NULL, *ofn = NULL;
+    char *filename = NULL, *ftn = NULL, *ofn = NULL;
     struct filtyp *ft = NULL; 
     int flags = 0;
     char *progname;
@@ -180,7 +180,7 @@ int main(int argc, char **argv) {
 	    usage(progname);
 	    exit(1);
 	} else
-	    filepol = argv[optind++];
+	    filename = argv[optind++];
     }
 
     if (ofn) {
@@ -209,9 +209,9 @@ int main(int argc, char **argv) {
 	l = ft->flusher(flushpol, flags);
     } else {
 	/* Compile from a file */
-	if(filepol && !strcmp(filepol, "-")) filepol = NULL;
+	if(filename && !strcmp(filename, "-")) filename = NULL;
 
-	if(filter_fopen(filepol)) return 1;
+	if(filter_fopen(filename)) return 1;
 
 	{
 	    struct ast_s ast;
@@ -231,7 +231,7 @@ int main(int argc, char **argv) {
 	strftime(buf, sizeof(buf)-1, "%a %b %e %H:%M:%S %Z %Y",
 		 localtime((time(&t),&t)));
 	oprintf("# filter generated from %s via %s backend at %s\n",
-		filepol ?: "standard input", ft->name, buf);
+		filename ?: "standard input", ft->name, buf);
 	l = ft->compiler(f, flags);
     }
 
