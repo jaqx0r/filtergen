@@ -1,0 +1,2 @@
+# test include directive
+include testsuite/filtergen.scan/ccomment.in
