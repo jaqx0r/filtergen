@@ -28,6 +28,7 @@ Hard:
  * Optimiser (de-pessimiser :-) for intermediate step, and also
    generated rulesets (the latter could be done with a peephole
    optimiser, I think).
+   -- equation factoriser should be simpler and quite good.
  * Implement a negation unroller for filters which can't negate
    a match.  (For example, Ciscos can't say "match all but this
    host".)  This gives us negation of {}-groups, too.
