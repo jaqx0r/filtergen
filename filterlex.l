@@ -2,12 +2,13 @@
 /*
  * lexer/parser for packet filtering rules
  *
- * $Id: filterlex.l,v 1.12 2002/08/26 22:10:37 matthew Exp $
+ * $Id: filterlex.l,v 1.13 2002/11/11 20:51:38 matthew Exp $
  */
 
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <stdarg.h>
 #include <assert.h>
 
 #include <string.h>
@@ -21,11 +22,13 @@ struct filterparse_state {
 	int incldepth;
 	struct {
 		YY_BUFFER_STATE bufferstat;
+		char *filename;
 		int lineno;
 	} incl[MAXINCLUDES];
-} state = { 0, { { lineno: 1 } } };
+} state = { -1, { { lineno: 1 } } };
 
-#define	yylineno	state.incl[state.incldepth].lineno
+#define	curinc		state.incl[state.incldepth]
+#define	yylineno	curinc.lineno
 
 %}
 
@@ -77,24 +80,54 @@ forward		{ return ROUTEDONLY; }
 
 %%
 
+static void parse_err(const char *fmt, ...) _PRINTF_ATTR(1,2);
+
+static void parse_err(const char *fmt, ...)
+{
+	va_list args;
+	va_start(args, fmt);
+	if(state.incldepth >= 0)
+		fprintf(stderr, "%s:%d: ", curinc.filename ?: "(standard input)",
+				curinc.lineno);
+	vfprintf(stderr, fmt, args);
+	fprintf(stderr, "\n");
+}
+
+int filter_fopen(const char *filename)
+{
+	FILE *file;
+
+	if(filename) {
+		/* XXX - make more effort to find file */
+		if(!(file = fopen(filename, "r"))) {
+			parse_err("can't open file \"%s\"", filename);
+			return -1;
+		}
+	} else {
+		/* Standard input */
+		file = stdin;
+	}
+
+	state.incldepth++;
+	yyin = file;
+	yy_switch_to_buffer(yy_create_buffer(yyin, YY_BUF_SIZE));
+	curinc.bufferstat = YY_CURRENT_BUFFER;
+	curinc.filename = filename ? strdup(filename) : NULL;
+	curinc.lineno = 1;
+	return 0;
+}
+
 int filter_yylex(void)
 {
 	int tok = yylex();
-	FILE *incl;
 
 	switch(tok) {
 	case INCLUDE:
 		yylex();
 		if(state.incldepth >= MAXINCLUDES+1)
-			fprintf(stderr, "%d: too many nested includes\n", yylineno);
-		/* XXX - make more effort to find file */
-		else if(!(incl = fopen(yytext, "r")))
-			fprintf(stderr, "%d: couldn't open include file \"%s\"\n", yylineno, yytext);
-		else {
-			state.incl[state.incldepth++].bufferstat = YY_CURRENT_BUFFER;
-			state.incl[state.incldepth].lineno = 1;
-			yy_switch_to_buffer(yy_create_buffer(yyin=incl, YY_BUF_SIZE));
-		}
+			parse_err("too many nested includes");
+		else
+			filter_fopen(yytext);
 		tok = filter_yylex();
 		break;
 
@@ -103,8 +136,10 @@ int filter_yylex(void)
 			yyterminate();
 			return YYEOF;
 		}
+		free(curinc.filename); curinc.filename = NULL;
+		curinc.lineno = -1;
 		state.incldepth--;
-		yy_switch_to_buffer(state.incl[state.incldepth].bufferstat);
+		yy_switch_to_buffer(curinc.bufferstat);
 		/* skip semicolon after include clause */
 		if((tok = filter_yylex()) == SEMICOLON)
 			tok = filter_yylex();
@@ -125,8 +160,7 @@ static struct filter *filter_parse_sibs(void)
 	f = filter_parse_list();
 	t = filter_yylex();
 	if(t != CLOSEBRACE) {
-		fprintf(stderr, "%d: group not ended by a brace, but by \"%s\"\n",
-				yylineno, yytext);
+		parse_err("group not ended by a brace, but by \"%s\"", yytext);
 		yyless(0);
 	}
 	return new_filter_sibs(f);
@@ -156,8 +190,7 @@ static struct filter *filter_parse_subgroup(void)
 	f = filter_parse_list();
 	t = filter_yylex();
 	if(t != CLOSEBRACKET) {
-		fprintf(stderr, "%d: group not ended by a bracket, but by \"%s\"\n",
-				yylineno, yytext);
+		parse_err("group not ended by a bracket, but by \"%s\"", yytext);
 		yyless(0);
 	}
 	return new_filter_subgroup(name, f);
@@ -230,7 +263,7 @@ static struct filter *filter_parse_single(void)
 	case SEMICOLON: yyless(0);
 	case YYEOF:	break;
 	default:
-		fprintf(stderr, "%d: unknown token \"%s\"\n", yylineno, yytext);
+		parse_err("unknown token \"%s\"", yytext);
 	}
 	return NULL;
 }

@@ -1,10 +1,17 @@
-/* $Id: filter.h,v 1.18 2002/11/11 19:48:38 matthew Exp $ */
+/* $Id: filter.h,v 1.19 2002/11/11 20:51:38 matthew Exp $ */
 #ifndef _FK_FILTER_H
 #define _FK_FILTER_H
 
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+
+
+#ifdef	__GNUC__
+#define	_PRINTF_ATTR(s,e) __attribute__ ((__format__(__printf__, (s), (e))))
+#else
+#define	_PRINTF_ATTR(s,e)
+#endif
 
 
 /*
@@ -97,6 +104,7 @@ void filter_apply_flags(struct filter *f, long flags);
 
 
 /* from generated lexer and parer in filterlex.l */
+int filter_fopen(const char *filename);
 struct filter *filter_parse_list(void);
 
 /* from gen.c */
@@ -165,6 +173,6 @@ filter_flush flush_iptables, flush_ipchains;
 
 /* filtergen.c */
 int oputs(const char *s);
-int oprintf(const char *fmt, ...);
+int oprintf(const char *fmt, ...) _PRINTF_ATTR(1,2);
 
 #endif /* _FK_FILTER_H */
