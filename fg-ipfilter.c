@@ -119,7 +119,7 @@ int fg_ipfilter(struct filter *filter, int flags)
 {
     struct fg_misc misc = { flags, NULL };
     fg_callback cb_ipfilter = {
-	rule:	cb_ipfilter_rule,
+	rule:	cb_ipfilter_rule, NULL
     };
 
     filter_nogroup(filter);

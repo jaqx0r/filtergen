@@ -32,7 +32,7 @@ struct inc_stack_s {
     char * filename;
     long int lineno;
 };
-struct inc_stack_s inc_stack[MAXINCLUDES] = { { filename: NULL, lineno: 1 } };
+struct inc_stack_s inc_stack[MAXINCLUDES] = { { state: 0, filename: NULL, lineno: 1 } };
 
 int inc_stackptr = 0;
 

@@ -184,7 +184,6 @@ void resolve_host_argument_list(struct host_argument_list_s * n) {
               case 0:
                 /* replace the hostname with the IP */
                 free(n->arg->host);
-                /* ugh */
 		n->arg->host = strdup(inet_ntoa(((struct sockaddr_in *) a->ai_addr)->sin_addr));
                 /* if there's more, create some more hosts */
                 for (i = a->ai_next; i; i = i->ai_next) {
