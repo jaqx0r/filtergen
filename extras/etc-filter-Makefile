@@ -1,13 +1,13 @@
 # slightly configurable things
 # XXX - autodetect format
-RULEBASE=lon-fw1
+RULEBASE=example
 FILTERFLAGS=
 FILTERGEN=/sbin/filtergen
 FORMAT=iptables
 
-all: $(RULEBASE).out
+all: $(RULEBASE).$(FORMAT).out
 
-%.out: %.filter
+%.$(FORMAT).out: %.filter
 	$(FILTERGEN) $(FILTERFLAGS) -t $(FORMAT) $< > $@.new
 	if [ -f $@ ]; then mv $@ $@.old; fi
 	mv $@.new $@
@@ -15,15 +15,11 @@ all: $(RULEBASE).out
 install: all
 	PATH=$$PATH:/sbin:/usr/sbin sh $(RULEBASE).out
 
-# this is shit -- filtergen needs to know how to make an "accept" ruleset
-accept:
-	PATH=$$PATH:/sbin:/usr/sbin;				\
-	for f in INPUT OUTPUT FORWARD; do			\
-		iptables -P $$f ACCEPT;				\
-	done;							\
-	iptables -F; iptables -X;				\
-	for f in PREROUTING POSTROUTING; do			\
-		iptables -t nat -P $$f ACCEPT;			\
-	done;							\
-	iptables -t nat -F; iptables -t nat -X
+$(FORMAT).accept:
+	$(FILTERGEN) $(FILTERFLAGS) -t $(FORMAT) -F accept > $@.new
+	if [ -f $@ ]; then mv $@ $@.old; fi
+	mv $@.new $@
+
+accept: $(FORMAT).accept
+	PATH=$$PATH:/sbin:/usr/sbin sh $(FORMAT).accept
 
