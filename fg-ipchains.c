@@ -3,7 +3,7 @@
  *
  * XXX - maybe this should be shared with the ipchains one?
  *
- * $Id: fg-ipchains.c,v 1.2 2001/10/03 20:17:13 matthew Exp $
+ * $Id: fg-ipchains.c,v 1.3 2001/10/04 14:02:43 matthew Exp $
  */
 
 #include <stdio.h>
@@ -13,7 +13,7 @@
 #include "util.h"
 
 
-int cb_ipchains(const struct filterent *ent, void *misc)
+static int cb_ipchains(const struct filterent *ent, void *misc)
 {
 	char *rule = NULL, *rule_r = NULL;
 	int needret = 0;

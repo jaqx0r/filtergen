@@ -1,7 +1,7 @@
 /*
  * Filter generator, iptables driver
  *
- * $Id: fg-iptables.c,v 1.7 2001/10/03 20:17:13 matthew Exp $
+ * $Id: fg-iptables.c,v 1.8 2001/10/04 14:02:43 matthew Exp $
  */
 
 #include <stdio.h>
@@ -11,7 +11,7 @@
 #include "util.h"
 
 
-int cb_iptables(const struct filterent *ent, void *misc)
+static int cb_iptables(const struct filterent *ent, void *misc)
 {
 	char *rule = NULL, *rule_r = NULL;
 	int needret = 0;
