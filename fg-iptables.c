@@ -1,7 +1,7 @@
 /*
  * Filter generator, iptables driver
  *
- * $Id: fg-iptables.c,v 1.3 2001/10/03 19:32:57 matthew Exp $
+ * $Id: fg-iptables.c,v 1.4 2001/10/03 19:36:50 matthew Exp $
  */
 
 #include <stdio.h>
@@ -16,8 +16,8 @@ int cb_iptables(const struct filterent *ent, void *misc)
 	char *rule = NULL, *rule_r = NULL;
 	int needret = 0;
 
-	APP(rule, "ipchains -A");
-	APP(rule_r, "ipchains -A");
+	APP(rule, "iptables -A");
+	APP(rule_r, "iptables -A");
 
 	/* this should all be put in a table somehow */
 
