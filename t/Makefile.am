@@ -30,15 +30,19 @@ TESTS = t_01_ccomment \
 	t_30_chaingroup \
 	t_31_chaingroupbad \
 	t_32_syntaxexamples \
-	t_33_nestedparse
+	t_33_nestedparse \
+	t_34_rule_list
 
-check_PROGRAMS = scan parse
+check_PROGRAMS = scan parse emit
 
 scan_SOURCES = scan.c
 scan_LDADD = ../scanner.o
 
 parse_SOURCES = parse.c
 parse_LDADD = ../scanner.o ../parser.o
+
+emit_SOURCES = emit.c
+emit_LDADD = ../scanner.o ../parser.o
 
 EXTRA_DIST = $(top_srcdir)/t/data/* testlib $(TESTS)
 
