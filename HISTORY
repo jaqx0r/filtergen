@@ -3,6 +3,7 @@
 	Reorganised code structure.
 	Added filtergen syntax emitter.
 	Added option to turn off the resolver (useful for debugging!)
+	Fixed bug with DROP targets at the end of forwaring chains.
 
 0.12.4:
 	Added directory include support.

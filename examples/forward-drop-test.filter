@@ -1,0 +1,21 @@
+# test case for forwarded packets that shouldn't get dropped
+# expected output is to not put the DROP at the end of the FORWARD chain,
+# but instead at the end of the FORW_OUT chain, otherwise packets for the
+# second block will get dropped before they're accepted.
+
+# similar test needed for REJECT
+
+{ input eth0 forward; output eth0 forward }
+{
+	source { 10.0.0.1/24 } accept;
+	# Iptables backend bug will DROP all packets forwarded via eth0
+	drop;
+};
+
+{ input eth0 forward; output eth1 forward }
+{
+	source { 10.0.0.2/24 } accept;
+	# Iptables backend bug will DROP all packets forwarded via eth0
+	drop;
+};
+

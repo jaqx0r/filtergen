@@ -277,10 +277,30 @@ static int cb_iptables_rule(const struct filterent *ent, struct fg_misc *misc)
 	break;
       case DROP:
 	ruletarget = fortarget = strdup("DROP");
+	switch (ent->direction) {
+	  case INPUT:
+	    fortarget = strdup("FORW_OUT");
+	    break;
+	  case OUTPUT:
+	    /* nothing, fortarget is already DROP */
+	    break;
+	  default:
+	    abort();
+	}
 	needret = 0;
 	break;
       case T_REJECT:
 	ruletarget = fortarget = strdup("REJECT");
+	switch (ent->direction) {
+	  case INPUT:
+	    fortarget = strdup("FORW_OUT");
+	    break;
+	  case OUTPUT:
+	    /* nothing, fortarget is already DROP */
+	    break;
+	  default:
+	    abort();
+	}
 	needret = 0;
 	*feat |= T_REJECT;
 	break;
