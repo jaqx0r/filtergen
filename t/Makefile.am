@@ -13,7 +13,8 @@ TESTS = t_01_ccomment \
 	t_13_includetwo \
 	t_14_includeinline \
 	t_15_includenotfound \
-	t_16_emptyfilter
+	t_16_emptyfilter \
+	t_17_oneemptyrule
 
 check_PROGRAMS = scan parse
 

@@ -10,6 +10,7 @@
 void yyerror(char * s);
 extern int yylex(void);
 %}
+%debug
 %union {
 	char * ustr;
 	long int uint;
@@ -62,31 +63,32 @@ rule:	  TOK_SEMICOLON
 list:	  TOK_LCURLY rule TOK_RCURLY
 	;
 
-crap:	  TOK_ACCEPT
-	| TOK_DEST
-	| TOK_DPORT
-	| TOK_DROP
-	| TOK_FORWARD
-	| TOK_ICMPTYPE
-	| TOK_INPUT
-	| TOK_LOCAL
-	| TOK_LOG
-	| TOK_MASQ
-	| TOK_OUTPUT
-	| TOK_PROTO
-	| TOK_PROXY
-	| TOK_REDIRECT
-	| TOK_REJECT
-	| TOK_SOURCE
-	| TOK_SPORT
-	| TOK_STRINGLITERAL
-	| TOK_TEXT
-	| TOK_IDENTIFIER
-	| TOK_NUMBER
-	| TOK_DOT
-	| TOK_SLASH
-	| TOK_BANG
-	| TOK_COLON
+crap:	  /* empty */
+	| crap TOK_ACCEPT
+	| crap TOK_DEST
+	| crap TOK_DPORT
+	| crap TOK_DROP
+	| crap TOK_FORWARD
+	| crap TOK_ICMPTYPE
+	| crap TOK_INPUT
+	| crap TOK_LOCAL
+	| crap TOK_LOG
+	| crap TOK_MASQ
+	| crap TOK_OUTPUT
+	| crap TOK_PROTO
+	| crap TOK_PROXY
+	| crap TOK_REDIRECT
+	| crap TOK_REJECT
+	| crap TOK_SOURCE
+	| crap TOK_SPORT
+	| crap TOK_STRINGLITERAL
+	| crap TOK_TEXT
+	| crap TOK_IDENTIFIER
+	| crap TOK_NUMBER
+	| crap TOK_DOT
+	| crap TOK_SLASH
+	| crap TOK_BANG
+	| crap TOK_COLON
 	;
 	
 
@@ -277,5 +279,5 @@ char * filename();
 long int lineno();
 
 void yyerror(char * s) {
-	fprintf(stderr, "%s:%ld: %s\n", filename(), lineno(), s);
+	fprintf(stderr, "%s:%ld: error: %s\n", filename(), lineno(), s);
 }
