@@ -1,16 +1,14 @@
-# $Id: filtergen.spec,v 1.6 2002/11/13 10:01:45 matthew Exp $
 Summary: packet filter generator for various firewall systems
-Name: filtergen
-Version: 0.11
+Name: @PACKAGE@
+Version: @VERSION@
 Release: 1
 License: GPL
 Group: Applications/System
-Source: http://hairy.beasts.org/filter/filtergen-%{version}.tar.gz
-URL: http://hairy.beasts.org/filter/
+Source: http://spacepants.org/src/pfc/download/%name-%version.tar.gz
+URL: http://spacepants.org/src/pfc
 Buildroot: %{_tmppath}/%{name}-root
 BuildPrereq: rpm-build gcc flex make
-Packager: Wil Cooley <wcooley@nakedape.cc>
-Vendor: Naked Ape Consulting <http://nakedape.cc>
+Packager: Jamie Wilkinson <jaq@spacepants.org>
 
 %description
 filtergen is a packet filter generator.  It compiles a fairly high-level
@@ -19,18 +17,16 @@ bits of support for Cisco IOS access lists).
 
 
 %prep
-%setup -q -n filtergen-%{version}
+%setup -q
+
+./configure
 
 %build
-make CFLAGS="${RPM_OPT_FLAGS}" LDFLAGS="-lfl"
+make CFLAGS="${RPM_OPT_FLAGS}"
 
 %install
 rm -rf $RPM_BUILD_ROOT
 make PREFIX=${RPM_BUILD_ROOT}/usr BINDIR=${RPM_BUILD_ROOT}/sbin install
-install -d ${RPM_BUILD_ROOT}/etc/init.d
-install -m755 extras/filter.init ${RPM_BUILD_ROOT}/etc/init.d/filtergen
-install -d ${RPM_BUILD_ROOT}/etc/filter
-install extras/etc-filter-Makefile ${RPM_BUILD_ROOT}/etc/filter/Makefile
 
 %post
 /sbin/chkconfig --add filtergen
@@ -52,6 +48,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc HISTORY HONESTY README TODO tests/*.filter
 
 %changelog
+* Wed Mar 10 2004 Jamie Wilkinson <jaq@spacepants.org> - 0.12-1
+- New release.
+
 * Wed Nov 13 2002 Matthew Kirkwood <matthew@hairy.beasts.org> 0.11-1
 - Release 0.11, rename init script from "filter" to "filtergen"
 

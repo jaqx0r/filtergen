@@ -49,7 +49,11 @@ if test "x$pfc_config_ok" = xno ; then
 else
 
 dnl Dump it out
-AC_CONFIG_FILES([Makefile t/Makefile])
+AC_CONFIG_FILES([
+	Makefile
+	t/Makefile
+	pfc.spec
+])
 AC_OUTPUT
 
 AC_MSG_RESULT([

@@ -1,4 +1,5 @@
 0.12:
+	renamed to "pfc"
 	rewrote parser
 	add "oneway" option
 	fix iptables log message format (append a space)
