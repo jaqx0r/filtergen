@@ -17,7 +17,8 @@ TESTS = t_01_ccomment \
 	t_17_oneemptyrule \
 	t_18_manyemptyrules \
 	t_19_simplerule \
-	t_20_fullrule
+	t_20_fullrule \
+	t_21_compoundportarg
 
 check_PROGRAMS = scan parse
 
