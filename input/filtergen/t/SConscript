@@ -1,0 +1,8 @@
+Import('env')
+
+env = env.Copy()
+env.Append(CPPPATH = '..', LIBPATH = '..', LIBS = 'in_filtergen')
+
+env.Program('scan.c')
+env.Program('parse.c')
+env.Program('emit.c')

@@ -6,3 +6,5 @@ env.Library('in_filtergen', ['parser.y',
 							 'glue.c'],
 			CPPPATH='../..')
 env.SideEffect('parser.h', 'parser.c')
+
+SConscript('t/SConscript', 'env')
