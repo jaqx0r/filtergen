@@ -1,4 +1,4 @@
-/* $Id: filter.h,v 1.16 2002/08/20 22:54:38 matthew Exp $ */
+/* $Id: filter.h,v 1.17 2002/08/26 22:10:37 matthew Exp $ */
 #ifndef _FK_FILTER_H
 #define _FK_FILTER_H
 
@@ -13,23 +13,26 @@
  */
 enum filtertype {
 	YYEOF = 0,
-	OPENBRACE, CLOSEBRACE,		/* lexer use only */
-	OPENBRACKET, CLOSEBRACKET,
-	SEMICOLON, STRING,
-	INCLUDE,
-	LOCALONLY, ROUTEDONLY,		/* for F_RTYPE */
-	F_INPUT, F_OUTPUT,
-	F_ACCEPT, F_DROP, F_REJECT,
-	F_MASQ, F_REDIRECT,
+	F_DIRECTION, F_TARGET,
 	F_SOURCE, F_DEST, F_SPORT, F_DPORT,
 	F_ICMPTYPE,
 	F_PROTO, 
 	F_NEG, F_SIBLIST, F_SUBGROUP,
 	F_LOG,
-	F_TARGET,
 	F_RTYPE,
-	/* this must be last */
+	/* this must be the last real filter type */
 	F_FILTER_MAX,
+	/* parser use only */
+	INPUT, OUTPUT,
+	/* lex uses "ACCEPT" and "REJECT" */
+	T_ACCEPT, DROP, T_REJECT,
+	MASQ, REDIRECT,
+	OPENBRACE, CLOSEBRACE,
+	OPENBRACKET, CLOSEBRACKET,
+	SEMICOLON, STRING,
+	INCLUDE,
+	LOCALONLY, ROUTEDONLY,		/* for F_RTYPE */
+	TEXT,				/* for F_LOG */
 };
 
 /* Structures which appear in both the parse tree and the output rule */
@@ -52,10 +55,13 @@ struct port_spec {
 struct filter {
 	enum filtertype type;
 	union {
+		struct {
+			enum filtertype direction;
+			char *iface;
+		} ifinfo;
 		enum filtertype target;
-		enum filtertype log;
+		char *logmsg;
 		enum filtertype rtype;
-		char *iface;
 		struct addr_spec addrs;
 		struct port_spec ports;
 		char *icmp;
@@ -76,12 +82,12 @@ struct filter {
 
 /* from filter.c */
 typedef struct filter *filter_tctor(enum filtertype);
-filter_tctor __new_filter, new_filter_target, new_filter_log, new_filter_rtype;
+filter_tctor __new_filter, new_filter_target, new_filter_rtype;
 struct filter *new_filter_neg(struct filter *sub);
 struct filter *new_filter_sibs(struct filter *list);
 struct filter *new_filter_subgroup(char *name, struct filter *list);
 typedef struct filter *filter_ctor(enum filtertype, const char*);
-filter_ctor new_filter_device, new_filter_host, new_filter_ports, new_filter_icmp, new_filter_proto;
+filter_ctor new_filter_device, new_filter_host, new_filter_ports, new_filter_icmp, new_filter_proto, new_filter_log;
 
 /* filter manipulations */
 void filter_unroll(struct filter **f);
@@ -94,6 +100,7 @@ void filter_apply_flags(struct filter *f, long flags);
 struct filter *filter_parse_list(void);
 
 /* from gen.c */
+#define	ESET(e,f)	(e->whats_set & (1 << F_ ##f))
 struct filterent {
 	/* Either direction+iface or groupname must be set */
 	enum filtertype direction;
@@ -111,7 +118,7 @@ struct filterent {
 
 	enum filtertype rtype;
 	struct proto_spec proto;
-	enum filtertype log;
+	char *logmsg;
 
 
 	/* We need this not to be a union, for error-checking reasons */

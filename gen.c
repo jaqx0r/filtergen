@@ -1,7 +1,7 @@
 /*
  * filter compilation routines
  *
- * $Id: gen.c,v 1.13 2002/08/20 22:54:38 matthew Exp $
+ * $Id: gen.c,v 1.14 2002/08/26 22:10:37 matthew Exp $
  */
 
 #include <stdio.h>
@@ -45,7 +45,7 @@ int checkmatch(const struct filterent *e)
 		r++;
 	}
 
-	if((e->rtype == LOCALONLY) && (e->target == F_MASQ)) {
+	if((e->rtype == LOCALONLY) && (e->target == MASQ)) {
 		fprintf(stderr, "\"local\" and masquerading are incompatible\n");
 		r++;
 	}
@@ -72,30 +72,27 @@ int __fg_applylist(struct filterent *e, const struct filter *f,
 	return c;
 }
 
-int __fg_apply(struct filterent *_e, const struct filter *f,
-		fg_callback *cb, struct fg_misc *misc);
-
 int __fg_applyone(struct filterent *e, const struct filter *f,
 		fg_callback *cb, struct fg_misc *misc)
 {
 #define _NA(t,f)						\
-	if(e->f) {						\
+	if(f) {							\
 		fprintf(stderr, "filter has already defined a %s\n", t); \
 		return -1;					\
 	}
-#define NA(t)	_NA(#t,t)
+#define NA(t)	_NA(#t,e->t)
+
+#define	NC(type, str)	case F_ ## type: _NA(str, ESET(e, type)); e->whats_set |= (1 << F_ ## type);
 
 	switch(f->type) {
-	case F_TARGET:
-		NA(target);
+	NC(TARGET, "target")
 		e->target = f->u.target;
 		break;
 
-	case F_SUBGROUP: {
+	NC(SUBGROUP, "subgroup") {
 		struct filterent fe;
 		int r;
 
-		NA(subgroup);
 		if(e->subgroup) {
 			fprintf(stderr, "cannot compose subgroups\n");
 			return -1;
@@ -109,6 +106,8 @@ int __fg_applyone(struct filterent *e, const struct filter *f,
 
 		memset(&fe, 0, sizeof(fe));
 		fe.groupname = f->u.sub.name;
+		/* direction is special -- we need to save it */
+		fe.direction = e->direction;
 		cb->group(fe.groupname);
 		if((r = __fg_applylist(&fe, f->u.sub.list, cb, misc)) < 0)
 			return r;
@@ -116,17 +115,19 @@ int __fg_applyone(struct filterent *e, const struct filter *f,
 		break;
 	}
 
-	case F_INPUT: case F_OUTPUT:
-		NA(direction);
+	NC(DIRECTION, "direction and interface")
 		NA(iface);
-		e->direction = f->type;
-		e->iface = f->u.iface;
+		e->direction = f->u.ifinfo.direction;
+		e->iface = f->u.ifinfo.iface;
 		break;
 
-	case F_LOG: e->log = f->u.log; break;
+	case F_LOG:
+		e->whats_set |= (1 << F_LOG);
+		e->logmsg = f->u.logmsg;
+		break;
 
 #define	_DV(tag, str, test, targ, source)						\
-	case F_ ## tag: _NA(str, test); e->targ = f->u.source; break
+	case F_ ## tag: _NA(str, e->test); e->targ = f->u.source; break
 #define	DV(tag, targ, source) _DV(tag, #targ, targ, targ, source)
 
 	_DV(PROTO, "protocol", proto.name, proto, proto);

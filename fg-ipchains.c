@@ -3,11 +3,12 @@
  *
  * XXX - maybe some of this could be shared with the iptables one?
  *
- * $Id: fg-ipchains.c,v 1.22 2002/08/20 22:54:38 matthew Exp $
+ * $Id: fg-ipchains.c,v 1.23 2002/08/26 22:10:37 matthew Exp $
  */
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "filter.h"
 #include "util.h"
@@ -40,20 +41,31 @@ static int cb_ipchains_rule(const struct filterent *ent, struct fg_misc *misc)
 	char *ruletarget = NULL, *revtarget = NULL;
 	char *forchain = NULL, *forrevchain = NULL;
 	char *fortarget = NULL, *forrevtarget = NULL;
+	char *subchain = NULL, *subtarget = NULL;
 	int needret = 0;
 	int isforward = (ent->rtype != LOCALONLY);
 	int orules = 0;
 
 	/* nat rule */
-	if((ent->target == F_MASQ) || (ent->target == F_REDIRECT)) {
-		if((ent->target == F_MASQ) && (ent->direction == F_OUTPUT)) {
+	if((ent->target == MASQ) || (ent->target == REDIRECT)) {
+		if((ent->target == MASQ) && (ent->direction == INPUT)) {
 			fprintf(stderr, "can't masquerade on input\n");
 			return -1;
-		} else if((ent->target == F_MASQ) && (ent->direction == F_OUTPUT)) {
+		} else if((ent->target == REDIRECT) && (ent->direction == OUTPUT)) {
 			fprintf(stderr, "can't redirect on output\n");
 			return -1;
 		}
 	}
+
+	/* sub-stuff? */
+	if(ent->target == F_SUBGROUP) {
+		subtarget = strapp(strdup(ent->subgroup), "-");
+		needret = 1;
+	} else
+		subtarget = strdup("");
+
+	if(ent->groupname) subchain = strapp(strdup(ent->groupname), "-");
+	else subchain = strdup("");
 
 	if(ent->rtype == ROUTEDONLY) {
 		fprintf(stderr, "ipchains can't do forward-only rules\n");
@@ -61,18 +73,16 @@ static int cb_ipchains_rule(const struct filterent *ent, struct fg_misc *misc)
 	}
 
 	switch(ent->direction) {
-	case 0:		/* This is a rule in a subgroup */
-			rulechain = revchain = ent->groupname; break;
-	case F_INPUT:	rulechain = "input"; revchain = "output";
+	case INPUT:	rulechain = "input"; revchain = "output";
 			forchain = "forward"; forrevchain = "forw_out"; break;
-	case F_OUTPUT:	rulechain = (ent->target == F_MASQ) ? "forw_out" : "output";
+	case OUTPUT:	rulechain = (ent->target == MASQ) ? "forw_out" : "output";
 			revchain = "input";
 			forchain = "forw_out"; forrevchain = "forward"; break;
 	default: fprintf(stderr, "unknown direction\n"); abort();
 	}
 
 	if(ent->iface) {
-		if(NEG(INPUT)) {
+		if(NEG(DIRECTION)) {
 			APPS(rule, "!");
 			APPS(rule_r, "!");
 		}
@@ -129,41 +139,55 @@ static int cb_ipchains_rule(const struct filterent *ent, struct fg_misc *misc)
 	default:;
 	}
 
-	if(ent->log) APPS(rule, "-l");
+	if(ESET(ent,LOG)) APPS(rule, "-l");
 
 	APPS(rule, "-j"); APPS(rule_r, "-j");
 
 	switch(ent->target) {
-	case F_ACCEPT:	ruletarget = revtarget =
+	case T_ACCEPT:	ruletarget = revtarget =
 			fortarget = forrevtarget = "ACCEPT";
 			switch(ent->direction) {
-			case F_INPUT: fortarget = "forw_out"; break;
-			case F_OUTPUT: forrevtarget = "forw_out"; break;
+			case INPUT: fortarget = "forw_out"; break;
+			case OUTPUT: forrevtarget = "forw_out"; break;
 			default: abort();
 			}
 			break;
-	case F_DROP:	ruletarget = fortarget = "DENY"; needret = 0; break;
-	case F_REJECT:	ruletarget = fortarget = "REJECT"; needret = 0; break;
-	case F_MASQ:	ruletarget = "MASQ"; revtarget = "ACCEPT"; break;
-	case F_REDIRECT:ruletarget = "REDIRECT"; revtarget = "ACCEPT"; break;
-	case F_SUBGROUP:ruletarget = revtarget = ent->subgroup; break;
+	case DROP:	ruletarget = fortarget = "DENY"; needret = 0; break;
+	case T_REJECT:	ruletarget = fortarget = "REJECT"; needret = 0; break;
+	case MASQ:	ruletarget = "MASQ"; revtarget = "ACCEPT"; break;
+	case REDIRECT:	ruletarget = "REDIRECT"; revtarget = "ACCEPT"; break;
+	case F_SUBGROUP:switch(ent->direction) {
+			case INPUT:	ruletarget = "input";
+					revtarget = "output";
+					fortarget = "forward";
+					forrevtarget = "forw_out";
+					break;
+			case OUTPUT:	ruletarget = "output";
+					revtarget = "input";
+					fortarget = "forw_out";
+					forrevtarget = "forward";
+					break;
+			default: abort();
+			}
+			break;
 	default: abort();
 	}
 
-	orules++, oprintf("ipchains -A %s %s %s\n", rulechain, rule+1, ruletarget);
-	if(needret) orules++, oprintf("ipchains -I %s %s %s\n", revchain, rule_r+1, revtarget);
+	orules++, oprintf("ipchains -A %s%s %s %s%s\n", subchain, rulechain, rule+1, subtarget, ruletarget);
+	if(needret) orules++, oprintf("ipchains -I %s%s %s %s%s\n", subchain, revchain, rule_r+1, subtarget, revtarget);
 	if(isforward) {
-		orules++, oprintf("ipchains -A %s %s %s\n", forchain, rule+1, fortarget);
-		if(needret) orules++, oprintf("ipchains -I %s %s %s\n", forrevchain, rule_r+1, forrevtarget);
+		orules++, oprintf("ipchains -A %s%s %s %s%s\n", subchain, forchain, rule+1, subtarget, fortarget);
+		if(needret) orules++, oprintf("ipchains -I %s%s %s %s%s\n", subchain, forrevchain, rule_r+1, subtarget, forrevtarget);
 	}
 
 	free(rule); free(rule_r);
+	free(subchain); free(subtarget);
 	return orules;
 }
 
 static int cb_ipchains_group(const char *name)
 {
-	oprintf("ipchains -N %s\n", name);
+	oprintf("for f in input output forward forw_out; do ipchains -N %s-${f}; done\n", name);
 	return 1;
 }
 

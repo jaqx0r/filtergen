@@ -2,7 +2,7 @@
 /*
  * lexer/parser for packet filtering rules
  *
- * $Id: filterlex.l,v 1.11 2002/08/20 17:29:08 matthew Exp $
+ * $Id: filterlex.l,v 1.12 2002/08/26 22:10:37 matthew Exp $
  */
 
 #include <sys/types.h>
@@ -46,18 +46,19 @@ include		{ return INCLUDE; }
 
 [!]		{ return F_NEG; }
 
-accept		{ return F_ACCEPT; }
-drop		{ return F_DROP; }
-reject		{ return F_REJECT; }
+accept		{ return T_ACCEPT; }
+drop		{ return DROP; }
+reject		{ return T_REJECT; }
 
 log		{ return F_LOG; }
+text		{ return TEXT; }
 
-masq		{ return F_MASQ; }
-redirect	{ return F_REDIRECT; }
-proxy		{ return F_REDIRECT; }
+masq		{ return MASQ; }
+redirect	{ return REDIRECT; }
+proxy		{ return REDIRECT; }
 
-input		{ return F_INPUT; }
-output		{ return F_OUTPUT; }
+input		{ return INPUT; }
+output		{ return OUTPUT; }
 
 proto		{ return F_PROTO; }
 
@@ -71,7 +72,8 @@ icmptype	{ return F_ICMPTYPE; }
 local		{ return LOCALONLY; }
 forward		{ return ROUTEDONLY; }
 
-[-"_:[:alnum:]./+]+ { return STRING; }
+\"[^\"]*\"	{ return STRING; }
+[-_:[:alnum:]./+]+ { return STRING; }
 
 %%
 
@@ -196,13 +198,20 @@ static struct filter *filter_parse_single(void)
 	tok = filter_yylex();
 	switch(tok) {
 	case F_NEG: return new_filter_neg(filter_parse_single());
-	case F_INPUT: case F_OUTPUT:
+	case INPUT: case OUTPUT:
 		return filter_parse_group(tok, new_filter_device);
-	case F_ACCEPT: case F_DROP: case F_REJECT:
-	case F_MASQ: case F_REDIRECT:
+	case T_ACCEPT: case DROP: case T_REJECT:
+	case MASQ: case REDIRECT:
 		return new_filter_target(tok);
-	case F_LOG:
-		return new_filter_log(tok);
+	case F_LOG: {
+		char *msg = NULL;
+		if(filter_yylex() == TEXT) {
+			filter_yylex();
+			msg = yytext;
+		} else
+			yyless(0);
+		return new_filter_log(tok, msg);
+	}
 	case F_SOURCE: case F_DEST:
 		return filter_parse_group(tok, new_filter_host);
 	case F_SPORT: case F_DPORT:

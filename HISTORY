@@ -1,3 +1,8 @@
+recent:
+	some cleanups, slight memory usage reduction
+	add log messages: 'log text "foo etc"'
+	fixed iptables and ipchains brace-grouping
+
 0.9:
 	fix install target to install section 7 manpages too
 	do protocol lookups properly, support protocol numbers
@@ -68,4 +73,4 @@
 	iptables driver
 	a few bugs
 
-$Id: HISTORY,v 1.36 2002/08/23 14:41:11 matthew Exp $
+$Id: HISTORY,v 1.37 2002/08/26 22:10:37 matthew Exp $

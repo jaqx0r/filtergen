@@ -1,4 +1,4 @@
-/* $Id: filter.c,v 1.12 2002/08/20 22:54:38 matthew Exp $ */
+/* $Id: filter.c,v 1.13 2002/08/26 22:10:37 matthew Exp $ */
 
 #include <arpa/inet.h>
 
@@ -30,11 +30,11 @@ struct filter *new_filter_target(enum filtertype target)
 }
 
 
-struct filter *new_filter_log(enum filtertype ltype)
+struct filter *new_filter_log(enum filtertype ltype, const char *text)
 {
 	struct filter *f;
 	if ((f = __new_filter(F_LOG))) {
-		f->u.log = ltype;
+		f->u.logmsg = text ? strdup(text) : NULL;
 	}
 	return f;
 }
@@ -106,8 +106,9 @@ struct filter *new_filter_proto(enum filtertype type, const char *name)
 struct filter *new_filter_device(enum filtertype type, const char *iface)
 {
 	struct filter *f;
-	if ((f = __new_filter(type))) {
-		f->u.iface = strdup(iface);
+	if ((f = __new_filter(F_DIRECTION))) {
+		f->u.ifinfo.direction = type;
+		f->u.ifinfo.iface = strdup(iface);
 	}
 	return f;
 }
@@ -166,23 +167,23 @@ struct filter *new_filter_ports(enum filtertype type, const char *matchstr)
 		*max++ = 0;
 		max = strdup(max);
 	}
-	
+
 	if(str_to_int(min, &imin)) {
-		if(!(s = getservbyname(min, NULL))) {
-			fprintf(stderr, "unknown service \"%s\"\n", min);
-			return NULL;
+		if(!(s = getservbyname(min, NULL)))
+			imin = -1;
+		else {
+			free(min); min = strdup(s->s_name);
+			imin = ntohs(s->s_port);
 		}
-		free(min); min = strdup(s->s_name);
-		imin = ntohs(s->s_port);
 	}
 	if(max) {
 		if(str_to_int(max, &imax)) {
-			if(!(s = getservbyname(max, NULL))) {
-				fprintf(stderr, "unknown service \"%s\"\n", max);
-				return NULL;
+			if(!(s = getservbyname(max, NULL)))
+				imax = -1;
+			else {
+				free(max); max = strdup(s->s_name);
+				imax = ntohs(s->s_port);
 			}
-			free(max); max = strdup(s->s_name);
-			imax = ntohs(s->s_port);
 		}
 	} else
 		imax = imin;
@@ -382,9 +383,17 @@ void filter_apply_flags(struct filter *f, long flags)
 	case F_SPORT: case F_DPORT:
 		if(flags & FF_LOOKUP) {
 			struct port_spec *p = &f->u.ports;
+			if(p->min == -1) {
+				fprintf(stderr, "warning: couldn't lookup service \"%s\"\n", p->minstr);
+				break;
+			}
 			free(p->minstr);
 			p->minstr = int_to_str_dup(p->min);
 			if(p->maxstr) {
+				if(p->max == -1) {
+					fprintf(stderr, "warning: couldn't lookup service \"%s\"\n", p->minstr);
+					break;
+				}
 				free(p->maxstr);
 				p->maxstr = int_to_str_dup(p->max);
 			}

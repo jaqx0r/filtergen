@@ -1,5 +1,5 @@
 .\" filter backend notes
-.\" $Id: filter_backends.7,v 1.1 2002/07/21 13:28:34 matthew Exp $
+.\" $Id: filter_backends.7,v 1.2 2002/08/26 22:10:37 matthew Exp $
 .TH "FILTER BACKENDS" 7
 
 .SH INTRODUCTION
@@ -8,9 +8,9 @@ available \fBfiltergen\fR backends.
 
 .SH IPTABLES
 Most development is done first against the iptables driver.  It supports
-reject, masquerading, transparent proxying, logging and sub-groups, though
-the latter support is somewhat imperfect.  The forwarding support was
-recently fixed-up and should be working fine now.
+reject, masquerading, transparent proxying, logging (with text) and
+sub-groups, all of which should work fine (though the latter has only
+recently been fixed).
 
 .SH IPCHAINS
 The ipchains driver supports all of the above features, too.  Its state

@@ -1,7 +1,7 @@
 /*
  * Filter generator, ipfilter driver
  *
- * $Id: fg-ipfilter.c,v 1.10 2002/08/20 22:54:38 matthew Exp $
+ * $Id: fg-ipfilter.c,v 1.11 2002/08/26 22:10:37 matthew Exp $
  */
 
 /* TODO:
@@ -50,9 +50,9 @@ static int cb_ipfilter_rule(const struct filterent *ent, struct fg_misc *misc)
 
 	/* target first */
 	switch(ent->target) {
-	case F_ACCEPT:	APP(rule, "pass"); break;
-	case F_DROP:	APP(rule, "block"); break;
-	case F_REJECT:
+	case T_ACCEPT:	APP(rule, "pass"); break;
+	case DROP:	APP(rule, "block"); break;
+	case T_REJECT:
 		/* XXX - can this violate the rule about icmp errors
 		 * about icmp errors? */
 		if (ent->proto.num == IPPROTO_TCP)
@@ -65,12 +65,12 @@ static int cb_ipfilter_rule(const struct filterent *ent, struct fg_misc *misc)
 
 	/* in or out? */
 	switch(ent->direction) {
-	case F_INPUT:	APPS(rule, "in"); break;
-	case F_OUTPUT:	APPS(rule, "out"); break;
+	case INPUT:	APPS(rule, "in"); break;
+	case OUTPUT:	APPS(rule, "out"); break;
 	default: fprintf(stderr, "unknown direction\n"); abort();
 	}
 
-	if(ent->log) APPS(rule, "log");
+	if(ESET(ent,LOG)) APPS(rule, "log");
 
 	/* XXX - All our rules have to be "quick", but ipfilter
 	 * people seem to prefer having defaults at the top.
@@ -94,7 +94,7 @@ static int cb_ipfilter_rule(const struct filterent *ent, struct fg_misc *misc)
 
 	rule = appicmp(rule, ent->u.icmp, NEG(ICMPTYPE));
 
-	if(ent->proto.name && (ent->target == F_ACCEPT))
+	if(ent->proto.name && (ent->target == T_ACCEPT))
 		APPS(rule, "keep state");
 
 	oputs(rule);

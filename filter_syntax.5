@@ -1,5 +1,5 @@
 .\" filter syntax reference
-.\" $Id: filter_syntax.5,v 1.4 2002/08/20 22:54:38 matthew Exp $
+.\" $Id: filter_syntax.5,v 1.5 2002/08/26 22:10:37 matthew Exp $
 .TH "FILTER SYNTAX" 8
 
 .SH NAME
@@ -83,6 +83,15 @@ Matches can be negated by prefixing them with a "!":
 Currently implemented are \fIlog\fR, which logs packets, and
 \fIlocal\fR, which means only to check packets to or from this
 interface, and \fIforward\fR which means the opposite of \fIlocal\fR.
+
+The \fIlog\R option can optionally specify a message to log matching
+packets with, where the backend supports it:
+
+.nf
+	input eth0 source {
+		10.0.0.0/8 192.168.0.0/16
+	} log text "private addresses" drop;
+.fi
 
 .SH GROUPING
 Because it can get tedious to type:

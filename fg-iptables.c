@@ -1,7 +1,7 @@
 /*
  * Filter generator, iptables driver
  *
- * $Id: fg-iptables.c,v 1.30 2002/08/20 22:54:38 matthew Exp $
+ * $Id: fg-iptables.c,v 1.31 2002/08/26 22:10:37 matthew Exp $
  */
 
 /*
@@ -11,6 +11,7 @@
  *    + "filter" chains DROP.
  *    + "nat" chains ACCEPT.
  * 2. State:
+ *    + Non-TCP/UDP rules don't include state.
  *    + Allow rules include state.
  *    + Deny rules don't.
  * 3. NAT is done in PRE- and POSTROUTING, as required.
@@ -65,6 +66,7 @@ static int cb_iptables_rule(const struct filterent *ent, struct fg_misc *misc)
 	char *natrule = NULL, *rule = NULL, *rule_r = NULL;
 	char *forchain = NULL, *forrevchain = NULL;
 	char *fortarget = NULL, *forrevtarget = NULL;
+	char *subchain = NULL, *subtarget = NULL;
 	int neednat = 0, needret = 0;
 	int islocal = (ent->rtype != ROUTEDONLY);
 	int isforward = (ent->rtype != LOCALONLY);
@@ -73,28 +75,34 @@ static int cb_iptables_rule(const struct filterent *ent, struct fg_misc *misc)
 	int orules = 0;
 
 	/* nat rule? */
-	if((target == F_MASQ) || (target == F_REDIRECT)) {
+	if((target == MASQ) || (target == REDIRECT)) {
 		neednat = 1;
-		if((target == F_MASQ) && (ent->direction == F_OUTPUT)) {
+		if((target == MASQ) && (ent->direction == INPUT)) {
 			fprintf(stderr, "can't masquerade on input\n");
 			return -1;
-		} else if((target == F_MASQ) && (ent->direction == F_OUTPUT)) {
+		} else if((target == REDIRECT) && (ent->direction == OUTPUT)) {
 			fprintf(stderr, "can't redirect on output\n");
 			return -1;
 		}
 	}
 
+	/* sub-stuff? */
+	if(target == F_SUBGROUP) {
+		subtarget = strapp(strdup(ent->subgroup), "-");
+		needret = 1;
+	} else subtarget = strdup("");
+
+	if(ent->groupname) subchain = strapp(strdup(ent->groupname), "-");
+	else subchain = strdup("");
+
 	switch(ent->direction) {
-	case 0:		/* This is a rule in a subgroup */
-			revchain = rulechain = ent->groupname;
-			break;
-	case F_INPUT:	natchain = "PREROUTING";
+	case INPUT:	natchain = "PREROUTING";
 			rulechain = "INPUT";
 			revchain = "OUTPUT";
 			forchain = "FORWARD";
 			forrevchain = "FORW_OUT";
 			if(ent->iface) {
-				if(NEG(INPUT)) {
+				if(NEG(DIRECTION)) {
 					APPS(natrule, "!");
 					APPS(rule, "!");
 					APPS(rule_r, "!");
@@ -104,13 +112,13 @@ static int cb_iptables_rule(const struct filterent *ent, struct fg_misc *misc)
 				APPSS2(rule_r, "-o", ent->iface);
 			}
 			break;
-	case F_OUTPUT:	natchain = "POSTROUTING";
+	case OUTPUT:	natchain = "POSTROUTING";
 			rulechain = "OUTPUT";
 			revchain = "INPUT";
 			forchain = "FORW_OUT";
 			forrevchain = "FORWARD";
 			if(ent->iface) {
-				if(NEG(OUTPUT)) {
+				if(NEG(DIRECTION)) {
 					APPS(natrule, "!");
 					APPS(rule, "!");
 					APPS(rule_r, "!");
@@ -205,54 +213,76 @@ static int cb_iptables_rule(const struct filterent *ent, struct fg_misc *misc)
 	 * before output, or this doesn't work.  This will also
 	 * fail if any mangling has been done above.
 	 */
-	if(ent->log) {
-		if(islocal) orules++,oprintf("iptables -A %s %s LOG\n", rulechain, rule+1);
-		if(isforward) orules++,oprintf("iptables -A %s %s LOG\n", forchain, rule+1);
+	if(ESET(ent, LOG)) {
+		char *lc, *la;
+		if(ent->logmsg) {
+			lc = " --log-prefix=";
+			la = ent->logmsg;
+		} else
+			lc = la = "";
+		if(islocal) orules++,oprintf("iptables -A %s %s LOG%s%s\n", rulechain, rule+1, lc, la);
+		if(isforward) orules++,oprintf("iptables -A %s %s LOG%s%s\n", forchain, rule+1, lc, la);
 	}
 
 	/* Do this twice, once for NAT, once for filter */
 	if(neednat) {
 		switch(target) {
-		case F_MASQ:	nattarget = "MASQUERADE"; break;
-		case F_REDIRECT:nattarget = "REDIRECT"; break;
+		case MASQ:	nattarget = "MASQUERADE"; break;
+		case REDIRECT:	nattarget = "REDIRECT"; break;
 		default: abort();
 		}
 	}
 
 	switch(target) {
-	case F_MASQ: case F_REDIRECT:
-	case F_ACCEPT:	ruletarget = revtarget = fortarget = forrevtarget = "ACCEPT";
+	case MASQ: case REDIRECT:
+	case T_ACCEPT:	ruletarget = revtarget =
+			fortarget = forrevtarget = "ACCEPT";
 			switch(ent->direction) {
-			case F_INPUT: fortarget = "FORW_OUT"; break;
-			case F_OUTPUT: forrevtarget = "FORW_OUT"; break;
+			case INPUT: fortarget = "FORW_OUT"; break;
+			case OUTPUT: forrevtarget = "FORW_OUT"; break;
 			default: abort();
 			}
 			break;
-	case F_DROP:	ruletarget = fortarget = "DROP"; needret = 0; break;
-	case F_REJECT:	ruletarget = fortarget = "REJECT"; needret = 0;
-			*feat |= F_REJECT; break;
-	case F_SUBGROUP:ruletarget = revtarget = ent->subgroup; break;
+	case DROP:	ruletarget = fortarget = "DROP"; needret = 0; break;
+	case T_REJECT:	ruletarget = fortarget = "REJECT"; needret = 0;
+			*feat |= T_REJECT; break;
+	case F_SUBGROUP:
+			switch(ent->direction) {
+			case INPUT:	ruletarget = "INPUT";
+					revtarget = "OUTPUT";
+					fortarget = "FORWARD";
+					forrevtarget = "FORW_OUT";
+					break;
+			case OUTPUT:	ruletarget = "OUTPUT";
+					revtarget = "INPUT";
+					fortarget = "FORW_OUT";
+					forrevtarget = "FORWARD";
+					break;
+			default: abort();
+			}
+			break;
 	default: abort();
 	}
 
-	if((misc->flags & FF_LSTATE) && (target != F_REJECT)) needret = 0;
+	if((misc->flags & FF_LSTATE) && (target != T_REJECT)) needret = 0;
 
-	if(neednat) orules++,oprintf("iptables -t nat -A %s %s %s\n", natchain, natrule+1, nattarget);
-	if(islocal) orules++,oprintf("iptables -A %s %s %s\n", rulechain, rule+1, ruletarget);
-	if(needret) orules++,oprintf("iptables -I %s %s %s\n", revchain, rule_r+1, revtarget);
+	if(neednat) orules++,oprintf("iptables -t nat -A %s%s %s %s%s\n", subchain, natchain, natrule+1, subtarget, nattarget);
+	if(islocal) orules++,oprintf("iptables -A %s%s %s %s%s\n", subchain, rulechain, rule+1, subtarget, ruletarget);
+	if(needret) orules++,oprintf("iptables -I %s%s %s %s%s\n", subchain, revchain, rule_r+1, subtarget, revtarget);
 	if(isforward) {
-		 orules++,oprintf("iptables -A %s %s %s\n", forchain, rule+1, fortarget);
-		 if(needret) orules++,oprintf("iptables -I %s %s %s\n", forrevchain, rule_r+1, forrevtarget);
+		 orules++,oprintf("iptables -A %s%s %s %s%s\n", subchain, forchain, rule+1, subtarget, fortarget);
+		 if(needret) orules++,oprintf("iptables -I %s%s %s %s%s\n", subchain, forrevchain, rule_r+1, subtarget, forrevtarget);
 	}
 
 	free(natrule); free(rule); free(rule_r);
+	free(subchain); free(subtarget);
 	return orules;
 }
 
 static int cb_iptables_group(const char *name)
 {
-	oprintf("iptables -N %s\n", name);
-	return 1;
+	oprintf("for f in INPUT OUTPUT FORWARD FORW_OUT; do iptables -N %s-$f; done\n", name);
+	return 4;
 }
 
 int fg_iptables(struct filter *filter, int flags)
