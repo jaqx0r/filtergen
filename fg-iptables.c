@@ -1,7 +1,7 @@
 /*
  * Filter generator, iptables driver
  *
- * $Id: fg-iptables.c,v 1.31 2002/08/26 22:10:37 matthew Exp $
+ * $Id: fg-iptables.c,v 1.32 2002/11/11 19:48:38 matthew Exp $
  */
 
 /*
@@ -342,4 +342,27 @@ int fg_iptables(struct filter *filter, int flags)
 		r += nchains;
 	}
 	return r;
+}
+
+
+/* Rules which just flush the packet filter */
+int flush_iptables(enum filtertype policy, int flags)
+{
+	char *ostr;
+	oputs("CHAINS=\"INPUT OUTPUT FORWARD\"");
+	oputs("");
+
+	switch (policy) {
+	case T_ACCEPT: ostr = "ACCEPT"; break;
+	case DROP: ostr = "DROP"; break;
+	case T_REJECT: ostr = "REJECT"; break;
+	default:
+		fprintf(stderr, "invalid filtertype %d\n", policy);
+		abort();
+	}
+	oprintf("for f in $CHAINS; do iptables -P $f %s; done\n", ostr);
+	oputs("iptables -F; iptables -X");
+	oputs("iptables -t nat -F; iptables -t nat -X");
+
+	return 0;
 }

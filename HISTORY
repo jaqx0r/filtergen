@@ -1,6 +1,7 @@
 recent:
 	fixed non-working example in filter_syntax man page
 	fix 64-bit warning in filter.c netmask calculation
+	add "-F [policy]" flush option
 
 0.10:
 	some cleanups, slight memory usage reduction
@@ -82,4 +83,4 @@ recent:
 	iptables driver
 	a few bugs
 
-$Id: HISTORY,v 1.44 2002/11/08 01:18:30 matthew Exp $
+$Id: HISTORY,v 1.45 2002/11/11 19:48:38 matthew Exp $

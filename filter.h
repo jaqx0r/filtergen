@@ -1,4 +1,4 @@
-/* $Id: filter.h,v 1.17 2002/08/26 22:10:37 matthew Exp $ */
+/* $Id: filter.h,v 1.18 2002/11/11 19:48:38 matthew Exp $ */
 #ifndef _FK_FILTER_H
 #define _FK_FILTER_H
 
@@ -151,6 +151,9 @@ char *int_to_str_dup(int i);
 /* various drivers */
 typedef int filtergen(struct filter *filter, int flags);
 filtergen fg_iptables, fg_ipchains, fg_ipfilter, fg_cisco;
+typedef int filter_flush(enum filtertype policy, int flags);
+filter_flush flush_iptables, flush_ipchains;
+
 /* ("flags" arguments) */
 #define	FF_NOSKEL	(1 << 0)	/* omit any "skeleton" rules */
 #define	FF_LSTATE	(1 << 1)	/* lightweight state matching */
@@ -158,6 +161,7 @@ filtergen fg_iptables, fg_ipchains, fg_ipfilter, fg_cisco;
 #define	FF_ROUTE	(1 << 3)	/* assume packets are forwarded */
 #define	FF_LOOKUP	(1 << 4)	/* translate host and service names into
 					 * IP addresses and port numbers */
+#define	FF_FLUSH	(1 << 5)	/* just flush the ruleset instead */
 
 /* filtergen.c */
 int oputs(const char *s);
