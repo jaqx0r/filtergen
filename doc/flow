@@ -1,19 +1,21 @@
+program flow block diagram
+
 [parser]
  |
  v
-(AST)
+(AST)                    input/* modules
  |
  v
 [translator]
- |
+ |            -------------------------
  v
-(IR) <-> [factoriser]
- |
- v
+(IR) <-> [factoriser]    main
+ |         
+ v            -------------------------
 [generator]
  |
  v
-(TR) <-> [optimiser]
+(TR) <-> [optimiser]     targets
  |
  v
 [emitter]
