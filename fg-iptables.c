@@ -282,6 +282,8 @@ static int cb_iptables_rule(const struct filterent *ent, struct fg_misc *misc)
 
 	if((misc->flags & FF_LSTATE) && (target != T_REJECT)) needret = 0;
 
+	if(ent->oneway) needret = 0;
+
 	if(neednat) orules++,oprintf(IPTABLES" -t nat -A %s%s %s %s%s\n", subchain, natchain, natrule+1, subtarget, nattarget);
 	if(islocal) orules++,oprintf(IPTABLES" -A %s%s %s %s%s\n", subchain, rulechain, rule+1, subtarget, ruletarget);
 	if(needret) orules++,oprintf(IPTABLES" -I %s%s %s %s%s\n", subchain, revchain, rule_r+1, subtarget, revtarget);

@@ -103,6 +103,8 @@ static int cb_cisco_rule(const struct filterent *ent, struct fg_misc *misc)
 	if(ent->proto.num == IPPROTO_TCP) APPS(rule_r, "established");
 	if(ESET(ent,LOG)) APPS(rule, "log");
 
+	if(ent->oneway) needret = 0;
+
 	oputs(rule);
 	if(needret) oputs(rule_r);
 

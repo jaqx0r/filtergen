@@ -191,6 +191,8 @@ static int cb_ipchains_rule(const struct filterent *ent, struct fg_misc *misc)
 	default: abort();
 	}
 
+	if(ent->oneway) needret = 0;
+
 	orules++, oprintf(IPCHAINS" -A %s%s %s %s%s\n", subchain, rulechain, rule+1, subtarget, ruletarget);
 	if(needret) orules++, oprintf(IPCHAINS" -I %s%s %s %s%s\n", subchain, revchain, rule_r+1, subtarget, revtarget);
 	if(isforward) {

@@ -89,6 +89,7 @@ input        return TOK_INPUT;
 local        return TOK_LOCAL;
 log          return TOK_LOG;
 masq         return TOK_MASQ;
+oneway       return TOK_ONEWAY;
 output       return TOK_OUTPUT;
 proto        return TOK_PROTO;
 proxy        return TOK_PROXY;

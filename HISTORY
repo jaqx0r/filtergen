@@ -1,5 +1,6 @@
 0.12:
 	rewrote parser
+	add "oneway" option
 	fix iptables log message format (append a space)
 
 0.11:
@@ -88,4 +89,4 @@
 	iptables driver
 	a few bugs
 
-$Id: HISTORY,v 1.48 2003/04/02 11:06:49 matthew Exp $
+$Id: HISTORY,v 1.49 2003/04/02 11:07:32 matthew Exp $

@@ -79,11 +79,13 @@ Matches can be negated by prefixing them with a "!":
 
 .SS OPTIONS
 \fIOptions\fR affect the behaviour of the matcher or the target.
-Currently implemented are \fIlog\fR, which logs packets, and
-\fIlocal\fR, which means only to check packets to or from this
-interface, and \fIforward\fR which means the opposite of \fIlocal\fR.
+Currently implemented are \fIlog\fR, which logs packets, \fIlocal\fR,
+which means only to check packets to or from this interface,
+\fIforward\fR which means the opposite of \fIlocal\fR, and
+\fIoneway\fR which causes the backend to omit rules which permit
+return packets.
 
-The \fIlog\R option can optionally specify a message to log matching
+The \fIlog\fR option can optionally specify a message to log matching
 packets with, where the backend supports it:
 
 .nf

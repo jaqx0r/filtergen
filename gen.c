@@ -146,6 +146,10 @@ int __fg_applyone(struct filterent *e, const struct filter *f,
 	DV(ICMPTYPE, u.icmp, icmp);
 	DV(RTYPE, rtype, rtype);
 
+      case F_ONEWAY:
+	e->oneway = 1;
+	break;
+
       case F_SIBLIST:
 	return __fg_applylist(e, f->u.sib, cb, misc);
 
