@@ -55,6 +55,7 @@ AC_CONFIG_FILES([
 	Makefile
 	t/Makefile
 	pfc.spec
+	pfctl
 ])
 AC_OUTPUT
 

@@ -1,6 +1,7 @@
 SUBDIRS = . t
 
 bin_PROGRAMS = pfc
+bin_SCRIPTS = pfctl
 
 pfc_SOURCES = \
 	pfc.c \

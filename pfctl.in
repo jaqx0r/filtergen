@@ -1,0 +1,37 @@
+#!/bin/sh
+
+FILTER=@SYSCONFDIR@/rules.pfc
+
+reload () {
+    if test @BINDIR@/pfc $FILTER > /dev/null ; then
+	@BINDIR@/pfc $FILTER | /bin/sh
+    fi
+    save
+}
+
+stop () {
+    @BINDIR@/pfc -F ACCEPT
+}
+
+save () {
+}
+
+usage () {
+    echo <<EOF
+usage: $0 [reload|stop|save]
+EOF
+
+case "$1" in
+    reload)
+	reload
+	;;
+    stop)
+	stop
+	;;
+    save)
+	save
+	;;
+    *)
+	usage
+	;;
+esac
