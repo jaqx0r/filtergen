@@ -5,10 +5,10 @@
 
 #include "../parser.h"
 
-extern char * yytext;
-int yylex();
-long int lineno();
-char * filename();
+extern char * filtergen_text;
+int filtergen_lex();
+extern int filtergen_lineno;
+char * filtergen_filename();
 
 char * tok_map(int c) {
     char * r;
@@ -85,8 +85,8 @@ int main(int argc __attribute__((unused)), char ** argv __attribute__((unused)))
 	chdir(getenv("srcdir"));
     }
 
-    while ((c = yylex())) {
-	printf("kind = %s, spelling = \"%s\", file = \"%s\", line = %ld\n", tok_map(c), yytext, filename(), lineno());
+    while ((c = filtergen_lex())) {
+	printf("kind = %s, spelling = \"%s\", file = \"%s\", line = %d\n", tok_map(c), filtergen_text, filtergen_filename(), filtergen_lineno);
     }
     return 0;
 }
