@@ -31,16 +31,20 @@ int ipts_convtrace = 1;
 
 #define eprint(x) if (ipts_convtrace) fprintf(stderr, x)
 
-void ipts_convert_identifier(struct identifier_s * n) {
+#undef CONVERT
+#define CONVERT(x) struct filter * ipts_convert_##x(struct x##_s * n)
 
+CONVERT(identifier) {
   eprint("converting identifier\n");
 
   if (n->string) {
     /* do something with string value */
   }
+
+  return NULL;
 }
 
-void ipts_convert_not_identifier(struct not_identifier_s * n) {
+CONVERT(not_identifier) {
   eprint("converting not_identifier\n");
 
   if (n->neg) {
@@ -49,9 +53,11 @@ void ipts_convert_not_identifier(struct not_identifier_s * n) {
   if (n->identifier) {
     ipts_convert_identifier(n->identifier);
   }
+
+  return NULL;
 }
 
-struct filter * ipts_convert_in_interface_option(struct in_interface_option_s * n) {
+CONVERT(in_interface_option) {
   struct filter * res = NULL;
 
   eprint("converting in_interface_option\n");
