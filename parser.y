@@ -71,6 +71,7 @@ specifier: compound_specifier
 	| protocol_specifier
 	| icmptype_specifier
 	| routing_specifier
+	| chaingroup_specifier
 	;
 
 negated_specifier: specifier
@@ -195,6 +196,9 @@ log_text_argument: TOK_STRINGLITERAL
 	| TOK_IDENTIFIER
 	;
 
+chaingroup_specifier: TOK_LSQUARE TOK_STRINGLITERAL subrule_list TOK_RSQUARE
+	| TOK_LSQUARE subrule_list TOK_RSQUARE
+	;
 
 host_part: TOK_IDENTIFIER
 	| TOK_NUMBER TOK_DOT TOK_NUMBER TOK_DOT TOK_NUMBER TOK_DOT TOK_NUMBER
