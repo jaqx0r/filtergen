@@ -127,8 +127,13 @@ text         return TOK_TEXT;
                               scan_err("warning: too many nested includes");
     			      scan_err("warning: skipping include of file %s", yytext);
 
-			  } else
-				include_file(yytext);
+			  } else {
+				char * name;
+
+				name = strdup(yytext);
+				include_file(name);
+				free(name);
+			  }
                           BEGIN(INITIAL);
                        }
 
@@ -188,11 +193,6 @@ void include_file(const char * name) {
 	struct dirent * r;
 	char * fn;
 
-	if (!name) {
-		scan_err("warning: no filename");
-		return;
-	}
-
 	if (stat(name, &st)) {
 		scan_err("warning: stat failed on %s: %s", name, strerror(errno));
 	} else {
@@ -201,11 +201,12 @@ void include_file(const char * name) {
 				scan_err("warning: opendir failed on %s: %s", name, strerror(errno));
 			} else {
 				while ((r = readdir(d)) != NULL) {
-					if (strcmp(r->d_name, ".") && strcmp(r->d_name, "..")) {
-						asprintf(&fn, "%s/%s", name, r->d_name);
-						include_file(fn);
-						free(fn);
-					}
+					/* FIXME: assumes d_name */
+					if (r->d_name[0] == '.')
+						continue;
+					asprintf(&fn, "%s/%s", name, r->d_name);
+					include_file(fn);
+					free(fn);
 				}
 				closedir(d);
 			}
