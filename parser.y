@@ -123,8 +123,8 @@ host_argument_list: simple_host_argument
 	| host_argument_list simple_host_argument
 	;
 
-simple_host_argument: TOK_IDENTIFIER
-	| TOK_IDENTIFIER TOK_SLASH TOK_NUMBER
+simple_host_argument: host_part
+	| host_part TOK_SLASH netmask_part
 	;
 
 port_specifier: TOK_SPORT port_argument
@@ -196,6 +196,16 @@ subrule_list: specifier
 log_text_argument: TOK_STRINGLITERAL
 	;
 
+
+host_part: TOK_IDENTIFIER
+	| TOK_NUMBER TOK_DOT TOK_NUMBER TOK_DOT TOK_NUMBER TOK_DOT TOK_NUMBER
+	;
+
+netmask_part: TOK_NUMBER
+	| TOK_NUMBER TOK_DOT TOK_NUMBER
+	| TOK_NUMBER TOK_DOT TOK_NUMBER TOK_DOT TOK_NUMBER
+	| TOK_NUMBER TOK_DOT TOK_NUMBER TOK_DOT TOK_NUMBER TOK_DOT TOK_NUMBER
+	;
 /*
 accept;
 ACCEPT SEMICOLON

@@ -3,6 +3,7 @@ kind = name, spelling = "foo", file = "data/scanner7.in", line = 2
 kind = name, spelling = "bar", file = "data/scanner7.in", line = 3
 kind = name, spelling = "baz", file = "data/scanner7.in", line = 4
 kind = name, spelling = "quux", file = "data/scanner7.in", line = 5
+kind = name, spelling = "mail.example.com", file = "data/scanner7.in", line = 6
 kind = accept, spelling = "accept", file = "(standard input)", line = 4
 kind = semicolon, spelling = ";", file = "(standard input)", line = 5
 kind = output, spelling = "output", file = "(standard input)", line = 6
@@ -10,5 +11,6 @@ kind = name, spelling = "foo", file = "data/scanner7.in", line = 2
 kind = name, spelling = "bar", file = "data/scanner7.in", line = 3
 kind = name, spelling = "baz", file = "data/scanner7.in", line = 4
 kind = name, spelling = "quux", file = "data/scanner7.in", line = 5
+kind = name, spelling = "mail.example.com", file = "data/scanner7.in", line = 6
 kind = accept, spelling = "accept", file = "(standard input)", line = 8
 kind = semicolon, spelling = ";", file = "(standard input)", line = 8

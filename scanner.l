@@ -91,7 +91,7 @@ text         return TOK_TEXT;
 ":"          return TOK_COLON;
 "!"          return TOK_BANG;
 
-{id}         return TOK_IDENTIFIER;
+{id}(\.{id})*	return TOK_IDENTIFIER;
 {number}     return TOK_NUMBER;
 "."          return TOK_DOT;
 "/"          return TOK_SLASH;
