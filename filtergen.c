@@ -1,7 +1,7 @@
 /*
  * filter compilation front-end
  *
- * $Id: filtergen.c,v 1.4 2001/10/03 19:51:48 matthew Exp $
+ * $Id: filtergen.c,v 1.5 2001/10/03 20:05:40 matthew Exp $
  */
 
 #include <stdio.h>
@@ -39,6 +39,8 @@ int main(int argc, char **argv)
 					argv[0], argv[1]);
 			return 1;
 		}
+	} else {
+		argv[1] = NULL;
 	}
 
 	ftn = (argc > 2) ? argv[2] : "iptables";
