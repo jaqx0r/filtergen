@@ -107,6 +107,8 @@ dnl Dump it out
 AC_CONFIG_FILES([
 	Makefile
 	t/Makefile
+	input/Makefile
+	input/iptables/Makefile
 	filtergen.spec
 	fgadm
 	fgadm.conf

@@ -1,4 +1,4 @@
-SUBDIRS = . t
+SUBDIRS = . t input
 
 sbin_PROGRAMS = filtergen
 sbin_SCRIPTS = fgadm
