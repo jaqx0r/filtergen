@@ -1,0 +1,6 @@
+HACKING on filtergen
+--------------------
+
+build: "scons"
+
+test: "runtest", need dejagnu installed
