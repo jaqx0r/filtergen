@@ -59,10 +59,11 @@ parse_LDADD = ../scanner.o ../parser.o
 emit_SOURCES = emit.c
 emit_LDADD = ../scanner.o ../parser.o
 
-filter_emit_SOURCES = filter_emit.c
+filter_emit_SOURCES = convert.c
 filter_emit_LDADD = ../filterlex.o ../filter.o ../fg-util.o
 
 convert_SOURCES = convert.c
+convert_CFLAGS = -DCONVERT
 convert_LDADD = ../scanner.o ../parser.o ../glue.o ../filter.o ../fg-util.o
 
 EXTRA_DIST = $(top_srcdir)/t/data/* testlib $(TESTS)
