@@ -1,5 +1,5 @@
 .\" filter syntax reference
-.\" $Id: filter_syntax.5,v 1.7 2003/04/02 11:07:32 matthew Exp $
+.\" $Id: filter_syntax.5,v 1.8 2003/04/02 12:21:43 matthew Exp $
 .TH "FILTER SYNTAX" 8
 
 .SH NAME
@@ -95,6 +95,9 @@ packets with, where the backend supports it:
 	} log text "private addresses" drop;
 .fi
 
+Note that the \fIoneway\fR option make have no effect when used with
+the \fB-l\fR command-line flag on backends which support it.
+
 .SH GROUPING
 Because it can get tedious to type:
 
@@ -179,6 +182,8 @@ Here's a fairly complete example, for a single-interface machine:
 .nf
 	#
 	# Example filter for (for example) a mail server
+	#
+	# Process this with the "-h" command-line option.
 	#
 
 	# Unfortunately, we don't have time to audit the
