@@ -58,9 +58,7 @@ char * tok_map(int c) {
       case TOK_TEXT:
 	r = "text"; break;
       case TOK_IDENTIFIER:
-	r = "name"; break;
-      case TOK_NUMBER:
-	r = "number"; break;
+	r = "identifier"; break;
       case TOK_DOT:
 	r = "dot"; break;
       case TOK_SLASH:

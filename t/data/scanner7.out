@@ -1,5 +1,5 @@
-kind = name, spelling = "foo", file = "(standard input)", line = 2
-kind = name, spelling = "bar", file = "(standard input)", line = 3
-kind = name, spelling = "baz", file = "(standard input)", line = 4
-kind = name, spelling = "quux", file = "(standard input)", line = 5
-kind = name, spelling = "mail.example.com", file = "(standard input)", line = 6
+kind = identifier, spelling = "foo", file = "(standard input)", line = 2
+kind = identifier, spelling = "bar", file = "(standard input)", line = 3
+kind = identifier, spelling = "baz", file = "(standard input)", line = 4
+kind = identifier, spelling = "quux", file = "(standard input)", line = 5
+kind = identifier, spelling = "mail.example.com", file = "(standard input)", line = 6

@@ -14,15 +14,6 @@ struct port_range_s {
     struct port_single_s * max;
 };
 
-struct host_part_s {
-    char * host;
-    int ip1, ip2, ip3, ip4;
-};
-
-struct netmask_part_s {
-    int mask1, mask2, mask3, mask4;
-};
-    
 struct specifier_list_s;
 
 struct subrule_list_s {
@@ -112,8 +103,8 @@ struct port_specifier_s {
 };
 
 struct simple_host_argument_s {
-    struct host_part_s * host;
-    struct netmask_part_s * netmask;
+    char * host;
+    char * mask;
 };
 
 struct host_argument_list_s {

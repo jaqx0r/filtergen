@@ -61,7 +61,6 @@ extern int yylex(void);
 	struct port_range_s * u_port_range;
 	struct port_single_s * u_port_single;
 	char * u_str;
-	int u_int;
 }
 %type <u_rule_list> rule_list
 %type <u_rule> rule
@@ -98,8 +97,6 @@ extern int yylex(void);
 %type <u_compound_specifier> compound_specifier
 %type <u_chaingroup_specifier> chaingroup_specifier
 %type <u_subrule_list> subrule_list
-%type <u_host_part> host_part
-%type <u_netmask_part> netmask_part
 %type <u_port_range> port_range
 %type <u_port_single> port_single
 
@@ -128,7 +125,6 @@ extern int yylex(void);
 %token TOK_SPORT
 %token TOK_TEXT
 %token <u_str> TOK_IDENTIFIER
-%token <u_int> TOK_NUMBER
 %token TOK_DOT
 %token TOK_SLASH
 %token TOK_ERR
@@ -398,16 +394,17 @@ host_argument_list: /* empty */
 	}
 	;
 
-simple_host_argument: host_part
+simple_host_argument: TOK_IDENTIFIER TOK_SLASH TOK_IDENTIFIER
 	{
 		$$ = malloc(sizeof(struct simple_host_argument_s));
 		$$->host = $1;
+		$$->mask = $3;
 	}
-	| host_part TOK_SLASH netmask_part
-	{
+        | TOK_IDENTIFIER
+        {
 		$$ = malloc(sizeof(struct simple_host_argument_s));
 		$$->host = $1;
-		$$->netmask = $3;
+                $$->mask = 0;
 	}
 	;
 
@@ -615,57 +612,6 @@ chaingroup_specifier: TOK_LSQUARE TOK_IDENTIFIER subrule_list TOK_RSQUARE
 	}
 	;
 
-host_part: TOK_IDENTIFIER
-	{
-		$$ = malloc(sizeof(struct host_part_s));
-		$$->host = strdup($1);
-		$$->ip1 = $$->ip2 = $$->ip3 = $$->ip4 = 0;
-	}
-	| TOK_NUMBER TOK_DOT TOK_NUMBER TOK_DOT TOK_NUMBER TOK_DOT TOK_NUMBER
-	{
-		$$ = malloc(sizeof(struct host_part_s));
-		$$->host = NULL;
-		$$->ip1 = $1;
-		$$->ip2 = $3;
-		$$->ip3 = $5;
-		$$->ip4 = $7;
-	}
-	;
-
-netmask_part: TOK_NUMBER
-	{
-		$$ = malloc(sizeof(struct netmask_part_s));
-		/* ugly! there's got to be a nice way to do this */
-		$$->mask1 = ((0xffffffff << (32 - $1)) >> 24) & 0xff;
-		$$->mask2 = ((0xffffffff << (32 - $1)) >> 16) & 0xff;
-		$$->mask3 = ((0xffffffff << (32 - $1)) >>  8) & 0xff;
-		$$->mask4 = ((0xffffffff << (32 - $1)) >>  0) & 0xff;
-	}
-	| TOK_NUMBER TOK_DOT TOK_NUMBER
-	{
-		$$ = malloc(sizeof(struct netmask_part_s));
-		$$->mask1 = $1;
-		$$->mask2 = $3;
-		$$->mask3 = $$->mask4 = 0;
-	}
-	| TOK_NUMBER TOK_DOT TOK_NUMBER TOK_DOT TOK_NUMBER
-	{
-		$$ = malloc(sizeof(struct netmask_part_s));
-		$$->mask1 = $1;
-		$$->mask2 = $3;
-		$$->mask3 = $5;
-		$$->mask4 = 0;
-	}
-	| TOK_NUMBER TOK_DOT TOK_NUMBER TOK_DOT TOK_NUMBER TOK_DOT TOK_NUMBER
-	{
-		$$ = malloc(sizeof(struct netmask_part_s));
-		$$->mask1 = $1;
-		$$->mask2 = $3;
-		$$->mask3 = $5;
-		$$->mask4 = $7;
-	}
-	;
-
 port_range: port_single TOK_COLON port_single
 	{
 		$$ = malloc(sizeof(struct port_range_s));
@@ -679,12 +625,6 @@ port_single: TOK_IDENTIFIER
 		$$ = malloc(sizeof(struct port_single_s));
 		$$->name = strdup($1);
 		$$->num = 0;
-	}
-	| TOK_NUMBER
-	{
-		$$ = malloc(sizeof(struct port_single_s));
-		$$->name = NULL;
-		$$->num = $1;
 	}
 	;
 

@@ -29,8 +29,7 @@ static void scan_err(const char * fmt, ...);
 
 string  \"[^\n]+\"
 space   [ \t]+
-id      [[:alpha:]_][[:alnum:]_-]*
-number  [[:digit:]]+
+id      [[:alnum:]_][[:alnum:]_-]*
 
 %%
 
@@ -97,11 +96,7 @@ text         return TOK_TEXT;
 			yylval.u_str = strndup(yytext, yyleng);
 			return TOK_IDENTIFIER;
 		}
-{number}     	{
-			yylval.u_int = atoi(yytext);
-			return TOK_NUMBER;
-		}
-"."          return TOK_DOT;
+
 "/"          return TOK_SLASH;
 
 .            return TOK_ERR;
