@@ -1,0 +1,2 @@
+# check multiple options together
+input eth0 local log text "foo" drop;
