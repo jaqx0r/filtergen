@@ -54,19 +54,39 @@ void ipts_convert_not_identifier(struct not_identifier_s * n) {
   }
 }
 
+struct filter * ipts_convert_in_interface_option(struct in_interface_option_s * n) {
+  struct filter * res = NULL;
+
+  eprint("converting in_interface_option\n");
+
+  if (n->not_identifier) {
+    ipts_convert_not_identifier(n->not_identifier);
+  }
+
+  return res;
+}
+
+struct filter * ipts_convert_jump_option(struct jump_option_s * n) {
+  struct filter * res = NULL;
+
+  eprint("converting jump_option\n");
+
+  if (n->identifier) {
+    ipts_convert_identifier(n->identifier);
+  }
+
+  return res;
+}
+
 struct filter * ipts_convert_option(struct option_s * n) {
   struct filter * res = NULL;
 
   eprint("converting option\n");
   
-
-  if (n->option) {
-
-    fprintf(stderr, "n->option is %s\n", n->option);
-    /* option is a string representing the option */
-  }
-  if (n->not_identifier) {
-    ipts_convert_not_identifier(n->not_identifier);
+  if (n->in_interface_option) {
+    ipts_convert_in_interface_option(n->in_interface_option);
+  } else if (n->jump_option) {
+    ipts_convert_jump_option(n->jump_option);
   }
 
   return res;

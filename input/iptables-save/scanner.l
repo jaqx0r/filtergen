@@ -57,6 +57,7 @@ id	[[:alnum:]_+-\.\/]+
                 return TOK_IDENTIFIER;
                 }
 
+		/* chain commands */
 -A		return TOK_IPTS_CHAIN_APPEND;
 --append	return TOK_IPTS_CHAIN_APPEND;
 
@@ -87,7 +88,7 @@ id	[[:alnum:]_+-\.\/]+
 -m		return TOK_IPTS_MATCH;
 --match		return TOK_IPTS_MATCH;
 
-
+		/* match arguments */
 --dport		return TOK_IPTS_DPORT;
 --destination-port	return TOK_IPTS_DPORT;
 --sport		return TOK_IPTS_SPORT;
@@ -108,6 +109,7 @@ id	[[:alnum:]_+-\.\/]+
 
 --icmp-type	return TOK_IPTS_ICMP_TYPE;
 
+	/* everything else */
 {id}	{
 		ipts_lval.u_str = strndup(ipts_text, ipts_leng);
 		return TOK_IDENTIFIER;

@@ -57,13 +57,25 @@ EMIT(not_identifier) {
     }
 }
 
-EMIT(option) {
-    if (n->option) {
-	printf("-%s", n->option);
-    }
+EMIT(in_interface_option) {
     if (n->not_identifier) {
-	printf(" ");
+	printf("-i ");
 	emit_not_identifier(n->not_identifier);
+    }
+}
+
+EMIT(jump_option) {
+  if (n->identifier) {
+    printf("-j ");
+    emit_identifier(n->identifier);
+  }
+}
+
+EMIT(option) {
+    if (n->in_interface_option) {
+      emit_in_interface_option(n->in_interface_option);
+    } else if (n->jump_option) {
+      emit_jump_option(n->jump_option);
     }
 }
 

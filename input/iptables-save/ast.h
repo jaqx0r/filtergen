@@ -35,9 +35,17 @@ struct not_identifier_s {
     struct identifier_s * identifier;
 };
 
+struct in_interface_option_s {
+  struct not_identifier_s * not_identifier;
+};
+
+struct jump_option_s {
+  struct identifier_s * identifier;
+};
+
 struct option_s {
-    char * option;
-    struct not_identifier_s * not_identifier;
+  struct in_interface_option_s * in_interface_option;
+  struct jump_option_s * jump_option;
 };
 
 struct not_option_s {
