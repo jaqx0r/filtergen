@@ -11,6 +11,7 @@ recent:
 	add more stuff to the iptables skeleton
 	warning fixups
 	implement "local" and "forward" for iptables backend
+	add "-r" option to mirror "-h"
 
 0.6:
 	disable negation of conjunctions ("or"s, aka brace-grouping) for now
@@ -48,4 +49,4 @@ recent:
 	iptables driver
 	a few bugs
 
-$Id: HISTORY,v 1.21 2002/07/18 21:00:00 matthew Exp $
+$Id: HISTORY,v 1.22 2002/07/18 21:20:02 matthew Exp $

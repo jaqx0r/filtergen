@@ -1,4 +1,4 @@
-/* $Id: filter.h,v 1.13 2002/04/28 22:30:41 matthew Exp $ */
+/* $Id: filter.h,v 1.14 2002/07/18 21:20:02 matthew Exp $ */
 #ifndef _FK_FILTER_H
 #define _FK_FILTER_H
 
@@ -130,7 +130,8 @@ filtergen fg_iptables, fg_ipchains, fg_ipfilter, fg_cisco;
 /* ("flags" arguments) */
 #define	FF_NOSKEL	(1 << 0)	/* omit any "skeleton" rules */
 #define	FF_LSTATE	(1 << 1)	/* lightweight state matching */
-#define	FF_LOCAL	(1 << 2)	/* assume all packets are local only */
+#define	FF_LOCAL	(1 << 2)	/* assume packets are local only */
+#define	FF_ROUTE	(1 << 3)	/* assume packets are forwarded */
 
 /* filtergen.c */
 int oputs(const char *s);

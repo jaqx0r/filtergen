@@ -1,5 +1,5 @@
 .\" filter command-line reference
-.\" $Id: filtergen.8,v 1.1 2002/04/28 22:15:39 matthew Exp $
+.\" $Id: filtergen.8,v 1.2 2002/07/18 21:20:02 matthew Exp $
 .TH FILTERGEN 8
 
 .SH NAME
@@ -13,6 +13,8 @@ filtergen \- A packet filter compiler
 .B -l
 ] [
 .B -h
+|
+.B -r
 ] [
 .B -o
 .BI output-file
@@ -62,6 +64,14 @@ Operate in "host" mode.  The backend will default to omitting rules
 which allow packets to be routed, as though every rule had the "local"
 option set.  This can be overridden per-rule with the "forward" option.
 (See \fBfilter_syntax\fR(8) for more details.)
+
+.TP
+.BI "\-r"
+Operate in "router" mode.  This is the opposite of "host" mode: the
+backend will default to omitting rules which deal with packets destined
+locally, as though every rule had the "forward" option set.  This can be
+overridden per-rule with the "local" option.  (See \fBfilter_syntax\fR(8)
+for more details.)
 
 .TP
 .BI "\-o output-file"

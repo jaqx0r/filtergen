@@ -1,7 +1,7 @@
 /*
  * filter compilation routines
  *
- * $Id: gen.c,v 1.9 2002/04/28 22:30:41 matthew Exp $
+ * $Id: gen.c,v 1.10 2002/07/18 21:20:02 matthew Exp $
  */
 
 #include <stdio.h>
@@ -13,8 +13,8 @@
 void applydefaults(struct filterent *e, long flags)
 {
 	if(!e->rtype) {
-		if(flags & FF_LOCAL)
-			e->rtype = LOCALONLY;
+		if(flags & FF_LOCAL) e->rtype = LOCALONLY;
+		else if(flags & FF_ROUTE) e->rtype = ROUTEDONLY;
 	}
 }
 
