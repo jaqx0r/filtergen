@@ -1,5 +1,5 @@
 Import('env')
 
 env.Library('out_ipfilter',
-			source=['../../fg-ipfilter.c'],
+			source=['fg-ipfilter.c'],
 			CPPPATH='../..')
