@@ -180,7 +180,7 @@ int main(int argc, char **argv) {
 	    }
 	    break;
 	  case 'V':
-	    printf("filtergen 0.13\n");
+	    printf("filtergen " VERSION "\n");
 	    exit(0);
 	    break;
 	  default:
