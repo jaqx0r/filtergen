@@ -1,20 +1,14 @@
 /*
  * Filter generator, Cisco IOS driver
  *
- * $Id: fg-cisco.c,v 1.1 2001/10/03 19:01:54 matthew Exp $
+ * $Id: fg-cisco.c,v 1.2 2001/10/03 19:32:57 matthew Exp $
  */
 
 #include <stdio.h>
 #include <stdlib.h>
 
 #include "filter.h"
-
-#define	APP(l,s)	l = strapp(l,s)
-#define	APP2(l,s1,s2)	l = strapp2(l,s1,s2)
-#define	APPS(l,s)	APP2(l, " ", s)
-#define	APPS2(l,s1,s2)	(APPS(l,s1), APP(l,s2))
-
-#define	NEG(t)		(ent->whats_negated & (1<<F_ ## t))
+#include "util.h"
 
 char *appip(char *r, const char *h)
 {
@@ -95,6 +89,7 @@ int cb_cisco(const struct filterent *ent, void *misc)
 	puts(rule);
 	if(needret) puts(rule_r);
 
+	free(rule); free(rule_r);
 	return 1 + !!needret;
 }
 
@@ -103,4 +98,3 @@ int fg_cisco(struct filter *filter)
 	filter_unroll(&filter);
 	return filtergen_cprod(filter, cb_cisco, NULL);
 }
-

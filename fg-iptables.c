@@ -1,90 +1,109 @@
 /*
  * Filter generator, iptables driver
  *
- * $Id: fg-iptables.c,v 1.2 2001/10/03 19:01:54 matthew Exp $
+ * $Id: fg-iptables.c,v 1.3 2001/10/03 19:32:57 matthew Exp $
  */
 
 #include <stdio.h>
 #include <stdlib.h>
 
 #include "filter.h"
+#include "util.h"
 
 
 int cb_iptables(const struct filterent *ent, void *misc)
 {
-	const char *chain, *chain_r, *target;
-	const char *proto, *state, *state_r;
-	const char *ifarg, *ifarg_r;
+	char *rule = NULL, *rule_r = NULL;
 	int needret = 0;
+
+	APP(rule, "ipchains -A");
+	APP(rule_r, "ipchains -A");
 
 	/* this should all be put in a table somehow */
 
 	switch(ent->direction) {
-	case F_INPUT:	chain = "input"; chain_r = "output";
-			ifarg = "-i"; ifarg_r = "-o"; break;
-	case F_OUTPUT:	chain = "output"; chain_r = "input";
-			ifarg = "-o"; ifarg_r = "-i"; break;
+	case F_INPUT:	APPS(rule, "input"); APPS(rule_r, "output");
+			if(ent->iface) {
+				if(NEG(INPUT)) {
+					APPS(rule, "!");
+					APPS(rule_r, "!");
+				}
+				APPSS2(rule, "-i", ent->iface);
+				APPSS2(rule_r, "-o", ent->iface);
+			}
+			break;
+	case F_OUTPUT:	APPS(rule, "output"); APPS(rule_r, "input");
+			if(ent->iface) {
+				if(NEG(OUTPUT)) {
+					APPS(rule, "!");
+					APPS(rule_r, "!");
+				}
+				APPSS2(rule, "-o", ent->iface);
+				APPSS2(rule_r, "-i", ent->iface);
+			}
+			break;
 	default: fprintf(stderr, "unknown direction\n"); abort();
 	}
 
-	if(!(ent->iface)) ifarg = ifarg_r = NULL;
-
 	/* state and reverse rules here */
 	switch(ent->proto) {
-	case 0:
-		proto = NULL;
-		state = state_r = NULL;
-		break;
+	case 0:	break;
 	case TCP:
 		needret++;
-		proto = "tcp";
-		state = "--state=NEW,ESTABLISHED";
-		state_r = "--state=ESTABLISHED ! -y";
+		APPSS2(rule, "-p", "tcp");
+		APPSS2(rule_r, "-p", "tcp");
+		APPS(rule, "--state=NEW,ESTABLISHED");
+		APPS(rule_r, "--state=ESTABLISHED ! -y");
 		break;
 	case UDP:
 		needret++;
-		proto = "udp";
-		state = "--state=NEW,ESTABLISHED";
-		state_r = "--state=ESTABLISHED";
+		APPSS2(rule, "-p", "udp");
+		APPSS2(rule_r, "-p", "udp");
+		APPS(rule, "--state=NEW,ESTABLISHED");
+		APPS(rule_r, "--state=ESTABLISHED ! -y");
 		break;
 	default: abort();
 	}
 
-#define	NL(s) ((s) ?: "")
-#define ARGIF(v,s) ((v) ? " " s " " : "")
-#define ARGSIF(v,s) ARGIF(v,s), NL(v)
-#define NARGSIF(a,v,s) ((ent->whats_negated & (1<<F_##a)) ? " !" : ""),	\
-			ARGSIF(v,s)
+	if(ent->srcaddr) {
+		NEGA(rule, SOURCE); NEGA(rule_r, SOURCE);
+		APPSS2(rule, "-s", ent->srcaddr);
+		APPSS2(rule_r, "-d", ent->srcaddr);
+	}
+	if(ent->dstaddr) {
+		NEGA(rule, DEST); NEGA(rule_r, DEST);
+		APPSS2(rule, "-d", ent->dstaddr);
+		APPSS2(rule_r, "-s", ent->dstaddr);
+	}
+
+	switch(ent->proto) {
+	case 0: break;
+	case UDP: case TCP:
+		if(ent->u.ports.src) {
+			NEGA(rule, SPORT); NEGA(rule_r, SPORT);
+			APPS2(rule, "--sport=", ent->u.ports.src);
+			APPS2(rule_r, "--dport=", ent->u.ports.src);
+		}
+		if(ent->u.ports.dst) {
+			NEGA(rule, DPORT); NEGA(rule_r, DPORT);
+			APPS2(rule, "--dport=", ent->u.ports.dst);
+			APPS2(rule_r, "--sport=", ent->u.ports.dst);
+		}
+		break;
+	default:
+	}
 
 	switch(ent->target) {
-	case F_ACCEPT: target = "ACCEPT"; break;
-	case F_DROP: target = "DROP"; break;
-	case F_REJECT: needret = 0; state = NULL; target = "REJECT"; break;
+	case F_ACCEPT:	APPSS2(rule, "-J", "ACCEPT"); break;
+	case F_DROP:	APPSS2(rule, "-J", "DROP"); break;
+	case F_REJECT:	APPSS2(rule, "-J", "REJECT"); needret = 0; break;
 	default: abort();
 	}
 
-#define FORMAT "iptables -A %s %s %s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s %s -J %s\n"
-	printf(FORMAT,
-			chain,
-			NL(ifarg), NL(ent->iface),
-			NARGSIF(PROTO, proto, "-p"),
-			NARGSIF(SOURCE, ent->srcaddr, "-s"),
-			NARGSIF(DEST, ent->dstaddr, "-d"),
-			NARGSIF(SPORT, ent->u.ports.src, "--sport"),
-			NARGSIF(DPORT, ent->u.ports.dst, "--dport"),
-			NL(state), target);
-	if(needret) {
-		printf(FORMAT,
-			chain_r,
-			NL(ifarg_r), NL(ent->iface),
-			NARGSIF(PROTO, proto, "-p"),
-			NARGSIF(SOURCE, ent->srcaddr, "-d"),
-			NARGSIF(DEST, ent->dstaddr, "-s"),
-			NARGSIF(SPORT, ent->u.ports.src, "--dport"),
-			NARGSIF(DPORT, ent->u.ports.dst, "--sport"),
-			NL(state_r), target);
-	}
+	puts(rule);
+	if(needret) puts(rule_r);
 
+	free(rule); free(rule_r);
 	return 1 + !!needret;
 }
 
