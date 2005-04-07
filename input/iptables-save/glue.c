@@ -37,6 +37,7 @@ CONVERT(identifier) {
   eprint("converting identifier\n");
 
   if (n->string) {
+      printf("%s", n->string);
     /* do something with string value */
   }
 
@@ -170,12 +171,13 @@ struct filter * ipts_convert_rule(struct rule_s * n) {
 
   eprint("converting rule\n");
 
-  if (n->chain) {
+  if (n->policy) {
     /* do something with the chain declaration */
     /* chain, policy, pkt_count are set */
     /* FIXME: somehow append the chain default policy to the end of the
      * rule list */
     int direction;
+    enum filtertype type;
 
     if (!strcasecmp(n->chain, "input")) {
       direction = INPUT;
@@ -186,20 +188,18 @@ struct filter * ipts_convert_rule(struct rule_s * n) {
     }
     res = new_filter_device(direction, "eth0");
 
-    if (n->policy) {
-      enum filtertype type;
-      if (!strcasecmp(n->policy, "accept")) {
+    if (!strcasecmp(n->policy, "accept")) {
 	type = T_ACCEPT;
-      } else if (!strcasecmp(n->policy, "drop")) {
+    } else if (!strcasecmp(n->policy, "drop")) {
 	type = DROP;
-      } else if (!strcasecmp(n->policy, "reject")) {
+    } else if (!strcasecmp(n->policy, "reject")) {
 	type = T_REJECT;
-      } else {
+    } else {
 	fprintf(stderr, "warning: invalid chain policy %s\n", n->policy);
 	type = YYEOF;
-      }
-      res->child = new_filter_target(type);
     }
+    res->child = new_filter_target(type);
+
   } else if (n->option_list) {
     /* do something with the option list */
     /* option list, and optionally pkt_count, are set */
