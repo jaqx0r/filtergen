@@ -1,4 +1,4 @@
-/* internal representation of packet filter
+/* internal representation of packet filter description
  *
  * Copyright (c) 2005 Jamie Wilkinson <jaq@spacepants.org>
  *
