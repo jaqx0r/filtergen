@@ -29,23 +29,29 @@ struct ir_node_s {
     struct ir_node_s * right;
 };
 
-enum ir_action_type { IR_ACCEPT, IR_DROP, IR_REJECT };
+/** Actions that can be performed by packet filters. */
+enum ir_action_type { IR_ACCEPT, IR_DROP, IR_REJECT, IR_LOG };
 
-/** declares action to take with packet matching associated predicates */
+/** Declares action to take on packets. */
 struct ir_action_s {
-    /** action to take */
+    /** Type of action to take on this packet. */
     enum ir_action_type action;
-    /** options that affect action taken
-     * e.g. --reject-with icmp-host-unreachable */
+    /** Options to modify the behaviour of the action.
+     * e.g. --reject-with icmp-host-unreachable .
+     * TODO: change the char * into some enumeration to make it pf agnostic
+     */
     char * options;
 };
 
+/** Represents a rule in a packet filter.
+ * If a packet satisfies all the predicates, then the associated action
+ * will be taken on that packet. */
 struct ir_rule_s {
     struct ir_node_s * predicates;
     struct ir_action_s * action;
 };
 
-/** top level container for the internal representation.  Names reflect
+/** Top level container for the internal representation.  The names reflect
  * those used in iptables, but have analogies with other packet filters.
  */
 struct ir_s {
@@ -53,11 +59,11 @@ struct ir_s {
     struct ir_rule_s ** filter;
     /** list of rules for Network Address Translation */
     struct ir_rule_s ** nat;
-    /** list of rules for packet modification, c.f. pf's "options: scrub" */
+    /** list of rules for packet modification.
+	c.f. pf's "options: scrub" */
     struct ir_rule_s ** mangle;
     /* TODO: add "conf" section, correlating to pf's "options: set",
        and for modifying kernel sysctl parameters */
 };
-    
-    
+
 #endif /* __FILTERGEN_IR_H__ */
