@@ -13,6 +13,24 @@ opts.AddOptions(
 
 env = Environment(options = opts)
 
+Help(opts.GenerateHelpText(env))
+
+if not env.GetOption("clean"):
+	conf = Configure(env)
+	if conf.CheckCHeader('getopt.h'):
+		conf.env.AppendUnique(CPPFLAGS=['-DHAVE_GETOPT_H'])
+	conf.CheckLib('getopt', 'getopt')
+	env = conf.Finish()
+
+# choose debugging level
+if ARGUMENTS.get("debug") in ('yes', 'gcov'):
+	env.AppendUnique(CCFLAGS=['-g', '-O0'])
+	if ARGUMENTS.get("debug") in ('gcov'):
+		env.AppendUnique(CCFLAGS=['-fprofile-arcs', '-ftest-coverage'])
+else:
+	env.AppendUnique(CCFLAGS=['-O2'])
+
+# set warning flags
 warnings = ['',
 			'all',
 			'error',
@@ -30,23 +48,6 @@ env.AppendUnique(CPPFLAGS=['-DVERSION=\\\"%s\\\"' % (VERSION,)])
 
 # compile as GNU SOURCE to get strndup
 env.AppendUnique(CPPFLAGS=['-D_GNU_SOURCE'])
-
-Help(opts.GenerateHelpText(env))
-
-if not env.GetOption("clean"):
-	conf = Configure(env)
-	if conf.CheckCHeader('getopt.h'):
-		conf.env.AppendUnique(CPPFLAGS=['-DHAVE_GETOPT_H'])
-	conf.CheckLib('getopt', 'getopt')
-	env = conf.Finish()
-
-# choose debugging level
-if ARGUMENTS.get("debug") in ('yes', 'gcov'):
-	env.AppendUnique(CCFLAGS=['-g', '-O0'])
-	if ARGUMENTS.get("debug") in ('gcov'):
-		env.AppendUnique(CCFLAGS=['-fprofile-arcs', '-ftest-coverage'])
-else:
-	env.AppendUnique(CCFLAGS=['-O2'])
 
 DESTDIR = ARGUMENTS.get('DESTDIR', '')
 

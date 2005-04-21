@@ -176,7 +176,7 @@ struct filter * ipts_convert_rule(struct rule_s * n) {
     /* chain, policy, pkt_count are set */
     /* FIXME: somehow append the chain default policy to the end of the
      * rule list */
-    int direction;
+    int direction = 0;
     enum filtertype type;
 
     if (!strcasecmp(n->chain, "input")) {
