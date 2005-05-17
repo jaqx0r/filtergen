@@ -15,6 +15,46 @@ opts.AddOptions(
 
 env = Environment(options = opts)
 
+## all below thanks to Paul Davis and his ardour build system
+def distcopy(target, source, env):
+	treedir = str(target[0])
+
+	try:
+		os.mkdir(treedir)
+	except OSError, (errnum, strerror):
+		if errnum != errno.EEXIST:
+			print 'mkdir %s:%s' % (treedir, strerror)
+
+	cmd = 'tar cf - '
+	#
+	# we don't know what characters might be in the file names
+	# so quote them all before passing them to the shell
+	#
+	all_files = ([ str(s) for s in source ])
+	cmd += " ".join ([ "'%s'" % quoted for quoted in all_files])
+	cmd += ' | (cd ' + treedir + ' && tar xf -)'
+	p = os.popen (cmd)
+	return p.close ();
+
+def tarballer (target, source, env):
+	cmd = 'tar -zcf ' + str (target[0]) +  ' ' + str(source[0]) + "  --exclude '*~'"
+	print 'running ', cmd, ' ... '
+	p = os.popen (cmd)
+	return p.close ()
+
+dist_bld = Builder(action = distcopy,
+				   target_factory = SCons.Node.FS.default_fs.Entry,
+				   source_factory = SCons.Node.FS.default_fs.Entry,
+				   multi = 1)
+
+tarball_bld = Builder(action = tarballer,
+					  target_factory = SCons.Node.FS.default_fs.Entry,
+					  source_factory = SCons.Node.FS.default_fs.Entry)
+
+env.Append(BUILDERS = {'Distribute': dist_bld})
+env.Append(BUILDERS = {'Tarball': tarball_bld})
+### end Paul Davis' ardour coolness
+
 Help(opts.GenerateHelpText(env))
 
 if not env.GetOption("clean"):
@@ -69,12 +109,14 @@ pkgexdir = pkgdocdir + '/examples'
 # Add the top level directory to the include path
 env.AppendUnique(CPPPATH=['#'])
 
-filtergen  = env.Program('filtergen', ['filtergen.c',
-									   'gen.c',
-									   'filter.c',
-									   'fg-util.c',
-									   'icmpent.c',
-									   'factoriser.c'],
+filtergen_sources = ['filtergen.c',
+					 'gen.c',
+					 'filter.c',
+					 'fg-util.c',
+					 'icmpent.c',
+					 'factoriser.c',
+					 ]
+filtergen  = env.Program('filtergen', filtergen_sources,
 						 LIBS=['in_filtergen',
 							   'in_iptables_save',
 							   'out_iptables',
@@ -92,6 +134,13 @@ filtergen  = env.Program('filtergen', ['filtergen.c',
 								  'output/filtergen',
 								  ]
 						 )
+Default(filtergen)
+env.Distribute(env['DISTTREE'], filtergen_sources + ['filter.h',
+													 'icmpent.h',
+													 'util.h',
+													 'factoriser.h',
+													 'input/input.h',
+													 ])
 
 def sed(target, source, env):
 	expandos = {
@@ -113,6 +162,8 @@ fgadm = env.Command('fgadm', 'fgadm.in', [sed, Chmod('fgadm', 0755)])
 env.Command(['fgadm.conf', 'rules.filter'],
 		  ['fgadm.conf.in', 'rules.filter.in'],
 		  sed)
+Default(fgadm)
+env.Distribute(env['DISTTREE'], ['fgadm.in', 'rules.filter.in', 'fgadm.conf.in'])
 
 SConscript([
 	'input/filtergen/SConscript',
@@ -147,46 +198,6 @@ pkgdoc = env.Alias('install-doc', DESTDIR + pkgdocdir)
 env.Alias('install', [bin, man, sysconf, pkgdoc, pkgex])
 
 Precious(env['DISTTREE'])
-
-## all below thanks to Paul Davis and his ardour build system
-def distcopy(target, source, env):
-	treedir = str(target[0])
-
-	try:
-		os.mkdir(treedir)
-	except OSError, (errnum, strerror):
-		if errnum != errno.EEXIST:
-			print 'mkdir %s:%s' % (treedir, strerror)
-
-	cmd = 'tar cf - '
-	#
-	# we don't know what characters might be in the file names
-	# so quote them all before passing them to the shell
-	#
-	all_files = ([ str(s) for s in source ])
-	cmd += " ".join ([ "'%s'" % quoted for quoted in all_files])
-	cmd += ' | (cd ' + treedir + ' && tar xf -)'
-	p = os.popen (cmd)
-	return p.close ();
-
-def tarballer (target, source, env):
-	cmd = 'tar -zcf ' + str (target[0]) +  ' ' + str(source[0]) + "  --exclude '*~'"
-	print 'running ', cmd, ' ... '
-	p = os.popen (cmd)
-	return p.close ()
-
-dist_bld = Builder(action = distcopy,
-				   target_factory = SCons.Node.FS.default_fs.Entry,
-				   source_factory = SCons.Node.FS.default_fs.Entry,
-				   multi = 1)
-
-tarball_bld = Builder(action = tarballer,
-					  target_factory = SCons.Node.FS.default_fs.Entry,
-					  source_factory = SCons.Node.FS.default_fs.Entry)
-
-env.Append(BUILDERS = {'Distribute': dist_bld})
-env.Append(BUILDERS = {'Tarball': tarball_bld})
-### end Paul Davis' ardour coolness
 
 env.Distribute(env['DISTTREE'],
 			   ['SConstruct', 'Doxyfile',

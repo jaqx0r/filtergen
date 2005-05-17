@@ -1,8 +1,18 @@
 Import('env')
 
-env.Library('in_filtergen', ['parser.y',
-							 'scanner.l',
-							 'resolver.c',
-							 'glue.c'])
+sources = ['parser.y',
+		   'scanner.l',
+		   'resolver.c',
+		   'glue.c']
+
+env.Library('in_filtergen', sources)
+
+env.Distribute(env['DISTTREE'], sources + ['SConscript',
+										   'ast.h',
+										   'resolver.h',
+										   # build these so users don't have to
+										   # require flex and bison
+										   'parser.c', 'parser.h', 'scanner.c',
+										   ])
 
 SConscript('t/SConscript', 'env')

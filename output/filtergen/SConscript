@@ -3,3 +3,7 @@ Import('env')
 env.Library('out_filtergen',
 			source=['emit.c'],
 			CPPPATH='../..')
+
+env.Distribute(env['DISTTREE'], ['SConscript',
+								 'emit.c',
+								 ])

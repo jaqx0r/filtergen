@@ -1,5 +1,9 @@
 Import('env')
 
-env.Library('out_iptables',
-			source=['fg-iptables.c'],
-			CPPPATH='../..')
+sources = ['fg-iptables.c']
+
+env.Library('out_iptables', source=sources, CPPPATH='../..')
+
+env.Distribute(env['DISTTREE'], ['SConscript',
+								 ] + sources)
+

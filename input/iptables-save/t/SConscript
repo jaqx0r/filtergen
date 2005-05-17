@@ -1,5 +1,11 @@
 Import('env')
 
+env.Distribute(env['DISTTREE'], ['SConscript',
+								 'scan.c',
+								 'parse.c',
+								 'emit.c',
+								 ])
+								 
 env = env.Copy()
 env.AppendUnique(CPPPATH=['../../..', '..'],
 				 LIBPATH=['..'],
