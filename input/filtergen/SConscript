@@ -4,6 +4,5 @@ env.Library('in_filtergen', ['parser.y',
 							 'scanner.l',
 							 'resolver.c',
 							 'glue.c'])
-env.SideEffect('parser.h', 'parser.c')
 
 SConscript('t/SConscript', 'env')

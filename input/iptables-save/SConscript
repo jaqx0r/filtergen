@@ -6,6 +6,5 @@ env.Library('in_iptables_save',
 					'glue.c'
 					]
 			)
-env.SideEffect('parser.h', 'parser.c')
 
 SConscript('t/SConscript', 'env')

@@ -49,6 +49,9 @@ env.AppendUnique(CPPFLAGS=['-DVERSION=\\\"%s\\\"' % (VERSION,)])
 # compile as GNU SOURCE to get strndup
 env.AppendUnique(CPPFLAGS=['-D_GNU_SOURCE'])
 
+# tell yacc to create a header file
+env.AppendUnique(YACCFLAGS=['-d'])
+
 DESTDIR = ARGUMENTS.get('DESTDIR', '')
 
 sbindir = '/usr/sbin'
