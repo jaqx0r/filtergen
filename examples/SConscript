@@ -1,0 +1,6 @@
+Import('env')
+
+import glob
+
+env.Distribute(env['DISTTREE'], ['SConscript',
+								 ] + glob.glob('*.filter'))

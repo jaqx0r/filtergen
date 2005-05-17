@@ -1,0 +1,7 @@
+Import('env')
+
+env.Distribute(env['DISTTREE'], ['SConscript',
+								 'flow',
+								 'generator.notes',
+								 'notes',
+								 ])

@@ -173,6 +173,8 @@ SConscript([
 	'output/ipfilter/SConscript',
 	'output/cisco/SConscript',
 	'output/filtergen/SConscript',
+	'examples/SConscript',
+	'doc/SConscript',
 	], 'env')
 
 env.Install(DESTDIR + sbindir, [filtergen, fgadm])
@@ -203,8 +205,9 @@ env.Distribute(env['DISTTREE'],
 			   ['SConstruct', 'Doxyfile',
 				'AUTHORS', 'THANKS',
 				'README', 'INSTALL', 'HISTORY', 'HONESTY', 'HACKING', 'TODO',
-				]
-			   )
+				'filtergen.8', 'fgadm.8', 'filter_syntax.5', 'filter_backends.7',
+				'filtergen.spec.in',
+				])
 
 srcdist = env.Tarball(env['TARBALL'], env['DISTTREE'])
 env.Alias('dist', srcdist)
