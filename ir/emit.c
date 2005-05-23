@@ -97,6 +97,7 @@ int main(void) {
     ir->filter->next = ir_rule_new();
     ir->filter->next->action = ir_action_new();
     ir->filter->next->action->type = IR_DROP;
+    ir->filter->next->predicates = ir_node_new();
 
     emit_ir(ir);
 
