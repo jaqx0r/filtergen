@@ -8,9 +8,9 @@
 int indent = 0;
 int indentsize = 1;
 
-EMIT(ir_node) {
-  if (ir_node) {
-    eprint("(node");
+EMIT(ir_expr) {
+  if (ir_expr) {
+    eprint("(expr");
     indent += indentsize;
 
     indent -= indentsize;
@@ -54,8 +54,8 @@ EMIT(ir_rule) {
   if (ir_rule) {
     eprint("(rule");
     indent += indentsize;
-    if (ir_rule->predicates) {
-      emit_ir_node(ir_rule->predicates);
+    if (ir_rule->expr) {
+      emit_ir_expr(ir_rule->expr);
     }
     if (ir_rule->action) {
       emit_ir_action(ir_rule->action);
@@ -89,7 +89,7 @@ int main(void) {
 
     ir->filter = ir_rule_new();
 
-    ir->filter->predicates = ir_node_new();
+    ir->filter->expr = ir_expr_new();
     ir->filter->action = ir_action_new();
     ir->filter->action->type = IR_ACCEPT;
     ir->filter->action->options = strdup("bim bam bom");
@@ -97,7 +97,7 @@ int main(void) {
     ir->filter->next = ir_rule_new();
     ir->filter->next->action = ir_action_new();
     ir->filter->next->action->type = IR_DROP;
-    ir->filter->next->predicates = ir_node_new();
+    ir->filter->next->expr = ir_expr_new();
 
     emit_ir(ir);
 

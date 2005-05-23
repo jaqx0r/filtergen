@@ -20,13 +20,26 @@
 #ifndef __FILTERGEN_IR_H__
 #define __FILTERGEN_IR_H__
 
-enum ir_operator { IR_AND, IR_OR };
+enum ir_expr_type { IR_EXPR_VALUE, IR_EXPR_UNARY, IR_EXPR_BINARY };
 
-/** binary expression tree */
-struct ir_node_s {
-    struct ir_node_s * left;
-    enum ir_operator op;
-    struct ir_node_s * right;
+enum ir_operator { IR_AND, IR_OR, IR_NOT, IR_PRED };
+
+/** expression tree */
+struct ir_expr_s {
+  /** type of this expression node */
+  enum ir_expr_type type;
+
+  /** the value of this expression node */
+  char * value;
+
+  /** the type of operator for this expression */
+  enum ir_operator operator;
+
+  /** the left child, or first argument to this expression */
+  struct ir_expr_s * left;
+
+  /** the right child, or second argument, to this expression */
+  struct ir_expr_s * right;
 };
 
 /** Actions that can be performed by packet filters. */
@@ -47,7 +60,7 @@ struct ir_action_s {
  * If a packet satisfies all the predicates, then the associated action
  * will be taken on that packet. */
 struct ir_rule_s {
-    struct ir_node_s * predicates;
+    struct ir_expr_s * expr;
     struct ir_action_s * action;
 
   struct ir_rule_s * next;
@@ -74,11 +87,11 @@ struct ir_s {
 IR_NEW(ir);
 IR_NEW(ir_rule);
 IR_NEW(ir_action);
-IR_NEW(ir_node);
+IR_NEW(ir_expr);
 IR_FREE(ir);
 IR_FREE(ir_rule);
 IR_FREE(ir_action);
-IR_FREE(ir_node);
+IR_FREE(ir_expr);
 
 #undef IR_NEW
 #undef IR_FREE
