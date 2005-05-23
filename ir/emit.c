@@ -13,6 +13,57 @@ EMIT(ir_expr) {
     eprint("(expr");
     indent += indentsize;
 
+    switch (ir_expr->type) {
+     case IR_EXPR_VALUE:
+      eprint(ir_expr->value);
+      break;
+     case IR_EXPR_UNARY:
+      switch (ir_expr->operator) {
+       case IR_OP_NOT:
+	eprint("(not");
+	indent += indentsize;
+	emit_ir_expr(ir_expr->left);
+	indent -= indentsize;
+	eprint(")");
+	break;
+       case IR_OP_PRED:
+	eprint("(pred");
+	eprint(ir_expr->value);
+	indent += indentsize;
+	emit_ir_expr(ir_expr->left);
+	indent -= indentsize;
+	eprint(")");
+	break;
+       default:
+	break;
+      }
+      break;
+     case IR_EXPR_BINARY:
+      switch (ir_expr->operator) {
+       case IR_OP_AND:
+	eprint("(and");
+	indent += indentsize;
+	emit_ir_expr(ir_expr->left);
+	emit_ir_expr(ir_expr->right);
+	indent -= indentsize;
+	eprint(")");
+	break;
+       case IR_OP_OR:
+	eprint("(or");
+	indent += indentsize;
+	emit_ir_expr(ir_expr->left);
+	emit_ir_expr(ir_expr->right);
+	indent -= indentsize;
+	eprint(")");
+	break;
+       default:
+	break;
+      }
+      break;
+     default:
+      break;
+    }
+
     indent -= indentsize;
     eprint(")");
   }
@@ -93,6 +144,10 @@ int main(void) {
     ir->filter->action = ir_action_new();
     ir->filter->action->type = IR_ACCEPT;
     ir->filter->action->options = strdup("bim bam bom");
+    ir->filter->expr->type = IR_EXPR_BINARY;
+    ir->filter->expr->operator = IR_OP_AND;
+    ir->filter->expr->left = ir_expr_new();
+    ir->filter->expr->right = ir_expr_new();
 
     ir->filter->next = ir_rule_new();
     ir->filter->next->action = ir_action_new();

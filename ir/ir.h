@@ -20,9 +20,9 @@
 #ifndef __FILTERGEN_IR_H__
 #define __FILTERGEN_IR_H__
 
-enum ir_expr_type { IR_EXPR_VALUE, IR_EXPR_UNARY, IR_EXPR_BINARY };
+enum ir_expr_type { IR_EXPR_NONE, IR_EXPR_VALUE, IR_EXPR_UNARY, IR_EXPR_BINARY };
 
-enum ir_operator { IR_AND, IR_OR, IR_NOT, IR_PRED };
+enum ir_operator { IR_OP_NONE, IR_OP_AND, IR_OP_OR, IR_OP_NOT, IR_OP_PRED };
 
 /** expression tree */
 struct ir_expr_s {
