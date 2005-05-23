@@ -66,4 +66,19 @@ struct ir_s {
        and for modifying kernel sysctl parameters */
 };
 
+#define IR_NEW(x) struct x##_s * x##_new()
+#define IR_FREE(x) void x##_free(struct x##_s *)
+
+IR_NEW(ir);
+IR_NEW(ir_rule);
+IR_NEW(ir_action);
+IR_NEW(ir_node);
+IR_FREE(ir);
+IR_FREE(ir_rule);
+IR_FREE(ir_action);
+IR_FREE(ir_node);
+
+#undef IR_NEW
+#undef IR_FREE
+
 #endif /* __FILTERGEN_IR_H__ */

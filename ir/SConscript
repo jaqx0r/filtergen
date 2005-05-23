@@ -1,0 +1,13 @@
+Import('env')
+
+sources = ['ir.c',
+		   ]
+
+env.Distribute(env['DISTTREE'], sources + ['SConscript',
+										   'ir.h',
+										   'emit.c'
+										   ])
+
+t = env.Copy()
+
+t.Program('iremit', source=sources + ['emit.c'])
