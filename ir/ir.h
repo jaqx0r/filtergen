@@ -35,7 +35,7 @@ enum ir_action_type { IR_ACCEPT, IR_DROP, IR_REJECT, IR_LOG };
 /** Declares action to take on packets. */
 struct ir_action_s {
     /** Type of action to take on this packet. */
-    enum ir_action_type action;
+    enum ir_action_type type;
     /** Options to modify the behaviour of the action.
      * e.g. --reject-with icmp-host-unreachable .
      * TODO: change the char * into some enumeration to make it pf agnostic
@@ -49,6 +49,8 @@ struct ir_action_s {
 struct ir_rule_s {
     struct ir_node_s * predicates;
     struct ir_action_s * action;
+
+  struct ir_rule_s * next;
 };
 
 /** Top level container for the internal representation.  The names reflect
@@ -56,12 +58,12 @@ struct ir_rule_s {
  */
 struct ir_s {
     /** list of rules for the main packet filter */
-    struct ir_rule_s ** filter;
+    struct ir_rule_s * filter;
     /** list of rules for Network Address Translation */
-    struct ir_rule_s ** nat;
+    struct ir_rule_s * nat;
     /** list of rules for packet modification.
 	c.f. pf's "options: scrub" */
-    struct ir_rule_s ** mangle;
+    struct ir_rule_s * mangle;
     /* TODO: add "conf" section, correlating to pf's "options: set",
        and for modifying kernel sysctl parameters */
 };
