@@ -5,7 +5,7 @@
 void * gv_emit_value(struct ir_value_s * ir_value, FILE * f) {
     assert(ir_value);
 
-    fprintf(f, "\"%p\" [label=", ir_value);
+    fprintf(f, "\"%p\" [label=\"", ir_value);
     switch (ir_value->type) {
       case IR_VAL_OPERATOR:
 	switch (ir_value->u.operator) {
@@ -32,7 +32,7 @@ void * gv_emit_value(struct ir_value_s * ir_value, FILE * f) {
 	fprintf(stderr, "warning: can't emit value type %d\n", ir_value->type);
     }
 
-    fprintf(f, "];\n");
+    fprintf(f, "\"];\n");
 
     return ir_value;
 }

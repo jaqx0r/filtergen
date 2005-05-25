@@ -125,6 +125,20 @@ int ipts_convert_in_interface_option(struct in_interface_option_s * n, struct ir
     return res;
 }
 
+int ipts_convert_source_option(struct source_option_s * n, struct ir_expr_s * ir_expr) {
+    int res = 1;
+
+    eprint("converting source_option\n");
+
+    assert(ir_expr);
+
+    if (n->not_identifier) {
+	ipts_convert_not_identifier(n->not_identifier, ir_expr);
+    }
+
+    return res;
+}
+
 int ipts_convert_jump_option(struct jump_option_s * n, struct ir_rule_s * ir_rule) {
     int res = 1;
 
@@ -186,6 +200,7 @@ int ipts_convert_option(struct option_s * n, struct ir_rule_s * ir_rule) {
 	  res = ipts_convert_in_interface_option(n->in_interface_option, e);
       } else if (n->source_option) {
 	  eprint("going to convert source option\n");
+	  res = ipts_convert_source_option(n->source_option, e);
       }	  
   }
 
