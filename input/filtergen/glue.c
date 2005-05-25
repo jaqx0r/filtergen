@@ -18,8 +18,8 @@
  */
 
 #include <stdio.h>
-#include "filter.h"
 #include "input/input.h"
+#include "ir/ir.h"
 #include "ast.h"
 #include "parser.h"
 #include "resolver.h"

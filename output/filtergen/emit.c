@@ -18,12 +18,11 @@
  */
 
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <assert.h>
 
-#include "filter.h"
-#include "util.h"
+#include "ir/ir.h"
 
+#if 0
 /** Callback for emitting filterents containing rules. */
 static int out_filtergen_rule(const struct filterent * ent, struct fg_misc * misc __attribute__((unused))) {
 
@@ -91,16 +90,26 @@ static int out_filtergen_rule(const struct filterent * ent, struct fg_misc * mis
     free(rule);
     return 1;
 }
+#endif /* 0 */
 
 /** Emit the filter's internal representation into the filtergen language */
-int emit_filtergen(struct filter * filter, int flags) {
+int emit_filtergen(struct ir_s * ir, FILE * file) {
+    /*
     struct fg_misc misc = { flags, NULL };
     fg_callback out_filtergen_cb = {
 	rule: out_filtergen_rule, NULL
     };
+    */
+
+    assert(ir);
+
+    /*
 
     filter_nogroup(filter);
     filter_unroll(&filter);
     filter_apply_flags(filter, flags);
     return filtergen_cprod(filter, &out_filtergen_cb, &misc);
+    */
+    fputs("filtergen emitter busted\n", file);
+    return 0;
 }

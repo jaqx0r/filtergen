@@ -3,12 +3,16 @@ Import('env')
 sources = ['ir.c',
 		   ]
 
+env.Library('ir', sources)
+
 env.Distribute(env['DISTTREE'], sources + ['SConscript',
 										   'ir.h',
 										   'emit.c'
 										   ])
 
 t = env.Copy()
-
-iremit = t.Program('iremit', source=sources + ['emit.c'])
-t.Default(iremit)
+t.AppendUnique(CPPPATH=['../../..', '..'],
+			   LIBPATH=['.'],
+			   LIBS=['ir'],
+			   )
+iremit = t.Program('iremit', source=['emit.c'])

@@ -19,7 +19,8 @@
 
 #include <stdio.h>
 #include <string.h>
-#include "filter.h"
+#include <assert.h>
+#include "ir/ir.h"
 #include "input/input.h"
 #include "ast.h"
 #include "parser.h"
@@ -31,259 +32,252 @@ int ipts_convtrace = 1;
 
 #define eprint(x) if (ipts_convtrace) fprintf(stderr, x)
 
-#define CONVERT(x) struct filter * ipts_convert_##x(struct x##_s * n)
+#define CONVERT(x) int ipts_convert_##x(struct x##_s * n)
 
-CONVERT(identifier) {
-  eprint("converting identifier\n");
+int ipts_convert_identifier(struct identifier_s * n, struct ir_expr_s * ir_expr) {
+    eprint("converting identifier\n");
 
-  if (n->string) {
-      printf("%s", n->string);
-    /* do something with string value */
-  }
+    assert(ir_expr);
+    
+    if (n->string) {
+	printf("%s\n", n->string);
+	/* do something with string value */
+    }
 
-  return NULL;
+    return 1;
 }
 
-CONVERT(not_identifier) {
-  eprint("converting not_identifier\n");
+int ipts_convert_not_identifier(struct not_identifier_s * n, struct ir_expr_s * ir_expr) {
+    eprint("converting not_identifier\n");
 
-  if (n->neg) {
-    /* neg is a boolean */
-  }
-  if (n->identifier) {
-    ipts_convert_identifier(n->identifier);
-  }
+    assert(ir_expr);
 
-  return NULL;
+    if (n->neg) {
+	/* neg is a boolean */
+    }
+    if (n->identifier) {
+	ipts_convert_identifier(n->identifier, ir_expr);
+    }
+
+    return 1;
 }
 
-CONVERT(range) {
+int ipts_convert_range(struct range_s * n, struct ir_expr_s * ir_expr) {
     eprint("converting range\n");
 
+    assert(ir_expr);
+
     if (n->start) {
-	ipts_convert_identifier(n->start);
+	ipts_convert_identifier(n->start, ir_expr);
     }
     if (n->end) {
-	ipts_convert_identifier(n->end);
+	ipts_convert_identifier(n->end, ir_expr);
     }
 
-    return NULL;
+    return 1;
 }
 
-CONVERT(not_range) {
+int ipts_convert_not_range(struct not_range_s * n, struct ir_expr_s * ir_expr) {
     eprint("converting not_range\n");
+
+    assert(ir_expr);
 
     if (n->neg) {
 	/* neg is boolean */
     }
     if (n->range) {
-	ipts_convert_range(n->range);
+	ipts_convert_range(n->range, ir_expr);
     }
 
-    return NULL;
+    return 1;
 }
 
-CONVERT(in_interface_option) {
-  struct filter * res = NULL;
+int ipts_convert_in_interface_option(struct in_interface_option_s * n, struct ir_expr_s * ir_expr) {
+    int res = 1;
 
-  eprint("converting in_interface_option\n");
+    eprint("converting in_interface_option\n");
 
-  if (n->not_identifier) {
-    ipts_convert_not_identifier(n->not_identifier);
-  }
+    assert(ir_expr);
 
-  return res;
+    if (n->not_identifier) {
+	ipts_convert_not_identifier(n->not_identifier, ir_expr);
+    }
+
+    return res;
 }
 
-struct filter * ipts_convert_jump_option(struct jump_option_s * n) {
-  struct filter * res = NULL;
+int ipts_convert_jump_option(struct jump_option_s * n, struct ir_expr_s * ir_expr) {
+    int res = 1;
 
-  eprint("converting jump_option\n");
+    eprint("converting jump_option\n");
 
-  if (n->identifier) {
-    ipts_convert_identifier(n->identifier);
-  }
+    if (n->identifier) {
+	ipts_convert_identifier(n->identifier, ir_expr);
+    }
 
-  return res;
+    return res;
 }
 
-struct filter * ipts_convert_option(struct option_s * n) {
-  struct filter * res = NULL;
+int ipts_convert_option(struct option_s * n, struct ir_expr_s * ir_expr) {
+  int res = 1;
 
   eprint("converting option\n");
   
   if (n->in_interface_option) {
-    ipts_convert_in_interface_option(n->in_interface_option);
+      res = ipts_convert_in_interface_option(n->in_interface_option, ir_expr);
   } else if (n->jump_option) {
-    ipts_convert_jump_option(n->jump_option);
+      res = ipts_convert_jump_option(n->jump_option, ir_expr);
   }
 
   return res;
 }
 
-struct filter * ipts_convert_not_option(struct not_option_s * n) {
-  struct filter * res = NULL, * opt = NULL;
+int ipts_convert_not_option(struct not_option_s * n, struct ir_expr_s * ir_expr) {
+    int res = 1;
 
   eprint("converting not_option\n");
 
   if (n->option) {
-    opt = ipts_convert_option(n->option);
-    if (opt && n->neg) {
-      res = new_filter_neg(opt);
-    } else {
-      res = opt;
-    }
+      res = ipts_convert_option(n->option, ir_expr);
   }
 
   return res;
 }
 
-struct filter * ipts_convert_option_list(struct option_list_s * n) {
-  struct filter * res = NULL, * end = NULL;
+int ipts_convert_option_list(struct option_list_s * n, struct ir_expr_s * ir_expr) {
+    int res = 1;
 
-  eprint("converting option_list\n");
+    eprint("converting option_list\n");
 
-  if (n->option_list) {
-    res = ipts_convert_option_list(n->option_list);
-    if (res) {
-      end = res;
-      while (end->child) {
-	end = end->child;
-      }
-      if (n->not_option) {
-	end->child = ipts_convert_not_option(n->not_option);
-      }
+    assert(ir_expr);
+
+    if (n->option_list) {
+	res = ipts_convert_option_list(n->option_list, ir_expr);
     } else {
-      fprintf(stderr, "warning: ipts_convert_option_list returned NULL\n");
+	res = ipts_convert_not_option(n->not_option, ir_expr);
     }
-  } else {
-    res = ipts_convert_not_option(n->not_option);
-  }
 
-  return res;
+    return res;
 }
 
 /* FIXME: this function doesn't cope with non-standard chain names
  * and the filter structure can't cope with default chain policies without
  * a device */
-struct filter * ipts_convert_rule(struct rule_s * n) {
-  struct filter * res = NULL;
+int ipts_convert_rule(struct rule_s * n, struct ir_rule_s * ir_rule) {
+    int res = 1;
 
-  eprint("converting rule\n");
+    eprint("converting rule\n");
 
-  if (n->policy) {
-    /* do something with the chain declaration */
-    /* chain, policy, pkt_count are set */
-    /* FIXME: somehow append the chain default policy to the end of the
-     * rule list */
-    int direction = 0;
-    enum filtertype type;
+    if (n->policy) {
+	/* do something with the chain declaration */
+	/* chain, policy, pkt_count are set */
+	/* FIXME: somehow append the chain default policy to the end of the
+	 * rule list */
+	/*int direction = 0;*/
 
-    if (!strcasecmp(n->chain, "input")) {
-      direction = INPUT;
-    } else if (!strcasecmp(n->chain, "output")) {
-      direction = OUTPUT;
-    } else {
-      fprintf(stderr, "warning: unhandled chain name %s\n", n->chain);
+	if (!strcasecmp(n->chain, "input")) {
+	    /*direction = INPUT;*/
+	} else if (!strcasecmp(n->chain, "output")) {
+	    /*direction = OUTPUT;*/
+	} else {
+	    fprintf(stderr, "warning: unhandled chain name %s\n", n->chain);
+	}
+	/* res = new_filter_device(direction, "eth0");*/
+
+	if (!strcasecmp(n->policy, "accept")) {
+	    /*type = T_ACCEPT;*/
+	} else if (!strcasecmp(n->policy, "drop")) {
+	    /*type = DROP;*/
+	} else if (!strcasecmp(n->policy, "reject")) {
+	    /*type = T_REJECT;*/
+	} else {
+	    fprintf(stderr, "warning: invalid chain policy %s\n", n->policy);
+	    /*type = YYEOF;*/
+	}
+	/*res->child = new_filter_target(type);*/
+
+    } else if (n->option_list) {
+	/* do something with the option list */
+	/* option list, and optionally pkt_count, are set */
+	ir_rule->expr = ir_expr_new();
+	res = ipts_convert_option_list(n->option_list, ir_rule->expr);
     }
-    res = new_filter_device(direction, "eth0");
 
-    if (!strcasecmp(n->policy, "accept")) {
-	type = T_ACCEPT;
-    } else if (!strcasecmp(n->policy, "drop")) {
-	type = DROP;
-    } else if (!strcasecmp(n->policy, "reject")) {
-	type = T_REJECT;
-    } else {
-	fprintf(stderr, "warning: invalid chain policy %s\n", n->policy);
-	type = YYEOF;
+    return res;
+}
+
+int ipts_convert_rule_list(struct rule_list_s * n, struct ir_rule_s * ir_rule) {
+    int res = 1;
+
+    eprint("converting rule list\n");
+
+    assert(ir_rule);
+
+    res = ipts_convert_rule(n->rule, ir_rule);
+
+    if (n->list) {
+	ir_rule->next = ir_rule_new();
+	res = ipts_convert_rule_list(n->list, ir_rule->next);
     }
-    res->child = new_filter_target(type);
 
-  } else if (n->option_list) {
-    /* do something with the option list */
-    /* option list, and optionally pkt_count, are set */
-    res = ipts_convert_option_list(n->option_list);
+    return res;
+}
+
+int ipts_convert_table(struct table_s * n, struct ir_s * ir) {
+  int res = 1;
+
+  eprint("converting table\n");
+
+  assert(ir);
+
+  if (!strcasecmp(n->name, "filter")) {
+      ir->filter = ir_rule_new();
+      res = ipts_convert_rule_list(n->rule_list, ir->filter);
+  } else {
+      fprintf(stderr, "warning: not handling table name %s\n", n->name);
   }
 
   return res;
 }
 
-struct filter * ipts_convert_rule_list(struct rule_list_s * n) {
-  struct filter * res = NULL, * end = NULL;
+int ipts_convert_table_list(struct table_list_s * n, struct ir_s * ir) {
+    int res = 1;
+    
+    eprint("converting table_list\n");
 
-    eprint("converting rule list\n");
-
-    if (n->list) {
-	res = ipts_convert_rule_list(n->list);
-	if (res) {
-	  end = res;
-	  while (end->next) {
-	    end = end->next;
-	  }
-	  if (n->rule) {
-	    end->next = ipts_convert_rule(n->rule);
-	  }
-	} else {
-	  fprintf(stderr, "warning: ipts_convert_rule_list returned NULL\n");
-	}
-    } else {
-      res = ipts_convert_rule(n->rule);
-      if (!res) {
-	fprintf(stderr, "warning: going to return NULL\n");
-      }
-    }
+    if (n->list)
+	res = ipts_convert_table_list(n->list, ir);
+    
+    if (n->table)
+	res = ipts_convert_table(n->table, ir);
 
     return res;
 }
 
-struct filter * ipts_convert_table(struct table_s * n) {
-  struct filter * res = NULL;
-
-  eprint("converting table\n");
-
-  if (n->rule_list)
-    res = ipts_convert_rule_list(n->rule_list);
-
-  return res;
-}
-
-struct filter * ipts_convert_table_list(struct table_list_s * n) {
-  struct filter * res = NULL;
-
-  eprint("converting table_list\n");
-
-  if (n->list)
-    res = ipts_convert_table_list(n->list);
-  if (n->table)
-    res = ipts_convert_table(n->table);
-
-  return res;
-}
-
-struct filter * ipts_convert(struct ast_s * ast) {
-  struct filter * res = NULL;
-
+int ipts_convert(struct ast_s * ast, struct ir_s * ir) {
+    int res = 1;
+    
     eprint("converting ast\n");
 
     if (ast->list)
-      res = ipts_convert_table_list(ast->list);
+	res = ipts_convert_table_list(ast->list, ir);
 
     return res;
 }
 
-struct filter * ipts_source_parser(FILE * file, int resolve_names __attribute__((unused))) {
+struct ir_s * ipts_source_parser(FILE * file, int resolve_names __attribute__((unused))) {
     struct ast_s ast;
-    struct filter * f = NULL;
+    struct ir_s * ir;
+
+    ir = ir_new();
 
     ipts_restart(file);
     if (ipts_parse((void *) &ast) != 0) {
 	fprintf(stderr, "iptables-save parse failed\n");
-	f = NULL;
     } else {
-	if ((f = ipts_convert(&ast)) == NULL) {
+	if (!ipts_convert(&ast, ir)) {
 	    fprintf(stderr, "iptables-save conversion failed\n");
 	}
     }
-    return f;
+    return ir;
 }
