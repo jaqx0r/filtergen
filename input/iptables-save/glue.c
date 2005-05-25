@@ -217,9 +217,9 @@ int ipts_convert_option_list(struct option_list_s * n, struct ir_rule_s * ir_rul
 
     if (n->option_list) {
 	res = ipts_convert_option_list(n->option_list, ir_rule);
-    } else {
-	res = ipts_convert_not_option(n->not_option, ir_rule);
     }
+    if (n->not_option)
+	res = ipts_convert_not_option(n->not_option, ir_rule);
 
     return res;
 }
@@ -239,6 +239,7 @@ int ipts_convert_rule(struct rule_s * n, struct ir_rule_s * ir_rule) {
 	/* chain, policy, pkt_count are set */
 	/* FIXME: somehow append the chain default policy to the end of the
 	 * rule list */
+	eprint("ignoring default chain policy\n");
     } else if (n->option_list) {
 	/* do something with the option list */
 	/* option list, and optionally pkt_count, are set */

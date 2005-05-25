@@ -5,8 +5,35 @@
 void * gv_emit_value(struct ir_value_s * ir_value, FILE * f) {
     assert(ir_value);
 
-    fprintf(f, "\"%p\" [label=value];\n", ir_value);
-    
+    fprintf(f, "\"%p\" [label=", ir_value);
+    switch (ir_value->type) {
+      case IR_VAL_OPERATOR:
+	switch (ir_value->u.operator) {
+	  case IR_OP_AND:
+	    fprintf(f, "AND");
+	    break;
+	  case IR_OP_OR:
+	    fprintf(f, "OR");
+	    break;
+	  case IR_OP_NOT:
+	    fprintf(f, "NOT");
+	    break;
+	  default:
+	    fprintf(stderr, "warning: can't handle operator type %d\n", ir_value->u.operator);
+	}
+	break;
+      case IR_VAL_PREDICATE:
+	fprintf(f, "%s", ir_value->u.name);
+	break;
+      case IR_VAL_LITERAL:
+	fprintf(f, "%s", ir_value->u.value);
+	break;
+      default:
+	fprintf(stderr, "warning: can't emit value type %d\n", ir_value->type);
+    }
+
+    fprintf(f, "];\n");
+
     return ir_value;
 }
 
@@ -64,7 +91,7 @@ void gv_emit_ir(struct ir_s * ir, FILE * f) {
     fprintf(f, "digraph ir {\n");
 
     if (ir->filter) {
-	fprintf(f, "subgraph \"cluster filter\" {\nlabel=\"filter\";\n");
+	fprintf(f, "subgraph \"filter\" {\nlabel=\"filter\";\n");
 	gv_emit_rule(ir->filter, f);
 	fprintf(f, "}\n");
     }
