@@ -154,11 +154,27 @@ int ipts_convert_jump_option(struct jump_option_s * n, struct ir_rule_s * ir_rul
 
 int ipts_convert_option(struct option_s * n, struct ir_rule_s * ir_rule) {
   int res = 1;
+  /* holding variable for this expression */
+  struct ir_expr_s * e;
 
   eprint("converting option\n");
-  
+
+  e = ir_rule->expr;
+
+  if (!n->jump_option) {
+      e = ir_expr_new();
+      e->value = ir_value_new();
+      e->value->type = IR_VAL_OPERATOR;
+      e->value->u.operator = IR_OP_AND;
+
+      e->left = ir_rule->expr;
+      e->right = ir_expr_new();
+
+      e = e->right;
+  }
+
   if (n->in_interface_option) {
-      /*res = ipts_convert_in_interface_option(n->in_interface_option, ir_expr);*/
+      res = ipts_convert_in_interface_option(n->in_interface_option, e);
   } else if (n->jump_option) {
       res = ipts_convert_jump_option(n->jump_option, ir_rule);
   }
