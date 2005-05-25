@@ -115,6 +115,7 @@ filtergen_sources = ['filtergen.c',
 					 'fg-util.c',
 					 'icmpent.c',
 					 'factoriser.c',
+					 'ir/graphviz.c',
 					 ]
 filtergen  = env.Program('filtergen', filtergen_sources,
 						 LIBS=[#'in_filtergen',

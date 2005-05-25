@@ -154,29 +154,39 @@ int ipts_convert_jump_option(struct jump_option_s * n, struct ir_rule_s * ir_rul
 
 int ipts_convert_option(struct option_s * n, struct ir_rule_s * ir_rule) {
   int res = 1;
-  /* holding variable for this expression */
   struct ir_expr_s * e;
 
   eprint("converting option\n");
 
-  e = ir_rule->expr;
-
-  if (!n->jump_option) {
-      e = ir_expr_new();
-      e->value = ir_value_new();
-      e->value->type = IR_VAL_OPERATOR;
-      e->value->u.operator = IR_OP_AND;
-
-      e->left = ir_rule->expr;
-      e->right = ir_expr_new();
-
-      e = e->right;
-  }
-
-  if (n->in_interface_option) {
-      res = ipts_convert_in_interface_option(n->in_interface_option, e);
-  } else if (n->jump_option) {
+  if (n->jump_option) {
+      eprint("setting rule action\n");
       res = ipts_convert_jump_option(n->jump_option, ir_rule);
+  } else {
+      if (ir_rule->expr) {
+	  eprint("shifting expr with new root AND\n");
+	  e = ir_expr_new();
+	  e->value = ir_value_new();
+	  e->value->type = IR_VAL_OPERATOR;
+	  e->value->u.operator = IR_OP_AND;
+
+	  e->left = ir_rule->expr;
+	  e->right = ir_expr_new();
+	  ir_rule->expr = e;
+	  
+	  e = e->right;
+
+      } else {
+	  eprint("creating new root expr\n");
+	  ir_rule->expr = ir_expr_new();
+	  e = ir_rule->expr;
+      }
+
+      if (n->in_interface_option) {
+	  eprint("going to convert in_interface option\n");
+	  res = ipts_convert_in_interface_option(n->in_interface_option, e);
+      } else if (n->source_option) {
+	  eprint("going to convert source option\n");
+      }	  
   }
 
   return res;
@@ -185,13 +195,17 @@ int ipts_convert_option(struct option_s * n, struct ir_rule_s * ir_rule) {
 int ipts_convert_not_option(struct not_option_s * n, struct ir_rule_s * ir_rule) {
     int res = 1;
 
-  eprint("converting not_option\n");
+    eprint("converting not_option\n");
 
-  if (n->option) {
-      res = ipts_convert_option(n->option, ir_rule);
-  }
+    if (n->neg) {
+	/* create not operator */
+    }
 
-  return res;
+    if (n->option) {
+	res = ipts_convert_option(n->option, ir_rule);
+    }
+
+    return res;
 }
 
 int ipts_convert_option_list(struct option_list_s * n, struct ir_rule_s * ir_rule) {
@@ -228,7 +242,6 @@ int ipts_convert_rule(struct rule_s * n, struct ir_rule_s * ir_rule) {
     } else if (n->option_list) {
 	/* do something with the option list */
 	/* option list, and optionally pkt_count, are set */
-	ir_rule->expr = ir_expr_new();
 	res = ipts_convert_option_list(n->option_list, ir_rule);
     }
 

@@ -1,0 +1,90 @@
+#include "graphviz.h"
+#include "ir/ir.h"
+#include <assert.h>
+
+void * gv_emit_value(struct ir_value_s * ir_value, FILE * f) {
+    assert(ir_value);
+
+    fprintf(f, "\"%p\" [label=value];\n", ir_value);
+    
+    return ir_value;
+}
+
+void * gv_emit_expr(struct ir_expr_s * ir_expr, FILE * f) {
+    void * p;
+    
+    assert(ir_expr);
+    
+    fprintf(f, "\"%p\" [label=\"expr\"];\n", ir_expr);
+    
+    if (ir_expr->left) {
+	p = gv_emit_expr(ir_expr->left, f);
+	fprintf(f, "\"%p\" -> \"%p\" [label=left];\n", ir_expr, p);
+    }
+
+    if (ir_expr->value) {
+	p = gv_emit_value(ir_expr->value, f);
+	fprintf(f, "\"%p\" -> \"%p\" [label=value];\n", ir_expr, p);
+    }	
+
+    if (ir_expr->right) {
+	p = gv_emit_expr(ir_expr->right, f);
+	fprintf(f, "\"%p\" -> \"%p\" [label=right];\n", ir_expr, p);
+    }
+
+    return ir_expr;
+}
+
+void * gv_emit_action(struct ir_action_s * ir_action, FILE * f) {
+    assert(ir_action);
+    fprintf(f, "\"%p\" [label=action];\n", ir_action);
+    return ir_action;
+}
+
+void * gv_emit_rule(struct ir_rule_s * ir_rule, FILE * f) {
+    void * p;
+    assert(ir_rule);
+    fprintf(f, "\"%p\" [label=\"rule\"];\n", ir_rule);
+    if (ir_rule->expr) {
+	p = gv_emit_expr(ir_rule->expr, f);
+	fprintf(f, "\"%p\" -> \"%p\" [label=expr];\n", ir_rule, p);
+    }
+    if (ir_rule->action) {
+	p = gv_emit_action(ir_rule->action, f);
+	fprintf(f, "\"%p\" -> \"%p\" [label=action];\n", ir_rule, p);
+    }
+    if (ir_rule->next) {
+	p = gv_emit_rule(ir_rule->next, f);
+	fprintf(f, "\"%p\" -> \"%p\" [label=next];\n", ir_rule, p);
+    }
+    return ir_rule;
+}
+
+void gv_emit_ir(struct ir_s * ir, FILE * f) {
+    fprintf(f, "digraph ir {\n");
+
+    if (ir->filter) {
+	fprintf(f, "subgraph \"cluster filter\" {\nlabel=\"filter\";\n");
+	gv_emit_rule(ir->filter, f);
+	fprintf(f, "}\n");
+    }
+    
+    if (ir->nat) {
+	fprintf(f, "subgraph \"cluster nat\" {\nlabel=\"nat\";\n");
+	gv_emit_rule(ir->nat, f);
+	fprintf(f, "}\n");
+    }
+    
+    if (ir->mangle) {
+	fprintf(f, "subgraph \"cluster mangle\" {\nlabel=\"mangle\";\n");
+	gv_emit_rule(ir->mangle, f);
+	fprintf(f, "}\n");
+    }
+    
+    fprintf(f, "}\n");
+}
+
+int graphviz_emitter (struct ir_s * ir, FILE * f) {
+    gv_emit_ir(ir, f);
+    return 0;
+}
