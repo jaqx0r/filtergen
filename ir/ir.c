@@ -43,3 +43,6 @@ IR_FREE(ir_action);
 
 IR_NEW(ir_expr);
 IR_FREE(ir_expr);
+
+IR_NEW(ir_value);
+IR_FREE(ir_value);

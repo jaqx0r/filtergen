@@ -20,26 +20,33 @@
 #ifndef __FILTERGEN_IR_H__
 #define __FILTERGEN_IR_H__
 
-enum ir_expr_type { IR_EXPR_NONE, IR_EXPR_VALUE, IR_EXPR_UNARY, IR_EXPR_BINARY };
+enum ir_value_type { IR_VAL_OPERATOR, IR_VAL_PREDICATE, IR_VAL_LITERAL };
 
 enum ir_operator { IR_OP_NONE, IR_OP_AND, IR_OP_OR, IR_OP_NOT, IR_OP_PRED };
 
+struct ir_value_s {
+    /** type of this value */
+    enum ir_value_type type;
+
+    union {
+	/** operator */
+	enum ir_operator operator;
+	/** name of the predicate */
+	char * name;
+	/** value of the literal */
+	char * value;
+    } u;
+};
+    
 /** expression tree */
 struct ir_expr_s {
-  /** type of this expression node */
-  enum ir_expr_type type;
+    /** the left child, or first argument to this expression */
+    struct ir_expr_s * left;
+    /** the right child, or second argument, to this expression */
+    struct ir_expr_s * right;
 
-  /** the value of this expression node */
-  char * value;
-
-  /** the type of operator for this expression */
-  enum ir_operator operator;
-
-  /** the left child, or first argument to this expression */
-  struct ir_expr_s * left;
-
-  /** the right child, or second argument, to this expression */
-  struct ir_expr_s * right;
+    /** The keystone of this expression tree */
+    struct ir_value_s * value;
 };
 
 /** Actions that can be performed by packet filters. */
@@ -88,10 +95,12 @@ IR_NEW(ir);
 IR_NEW(ir_rule);
 IR_NEW(ir_action);
 IR_NEW(ir_expr);
+IR_NEW(ir_value);
 IR_FREE(ir);
 IR_FREE(ir_rule);
 IR_FREE(ir_action);
 IR_FREE(ir_expr);
+IR_FREE(ir_value);
 
 #undef IR_NEW
 #undef IR_FREE
