@@ -272,6 +272,16 @@ int ipts_convert_rule(struct rule_s * n, struct ir_rule_s * ir_rule) {
 	/* FIXME: somehow append the chain default policy to the end of the
 	 * rule list */
 	eprint("ignoring default chain policy\n");
+	ir_rule->action = ir_action_new();
+	if (!strcasecmp(n->policy, "drop"))
+	  ir_rule->action->type = IR_DROP;
+	else if (!strcasecmp(n->policy, "drop"))
+	  ir_rule->action->type = IR_DROP;
+	else if (!strcasecmp(n->policy, "reject"))
+	  ir_rule->action->type = IR_REJECT;
+	else
+	  fprintf(stderr, "warning: unknown policy %s\n", n->policy);
+
     } else if (n->option_list) {
 	/* do something with the option list */
 	/* option list, and optionally pkt_count, are set */

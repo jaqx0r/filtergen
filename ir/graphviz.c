@@ -64,7 +64,24 @@ void * gv_emit_expr(struct ir_expr_s * ir_expr, FILE * f) {
 
 void * gv_emit_action(struct ir_action_s * ir_action, FILE * f) {
     assert(ir_action);
-    fprintf(f, "\"%p\" [label=action];\n", ir_action);
+    fprintf(f, "\"%p\" [label=\"", ir_action);
+    switch (ir_action->type) {
+     case IR_ACCEPT:
+      fprintf(f, "ACCEPT");
+      break;
+     case IR_DROP:
+      fprintf(f, "DROP");
+      break;
+     case IR_REJECT:
+      fprintf(f, "REJECT");
+      break;
+     case IR_LOG:
+      fprintf(f, "LOG");
+      break;
+     default:
+      fprintf(stderr, "warning: unrecognised action type %d\n", ir_action->type);
+    }
+    fprintf(f, "\"];\n");
     return ir_action;
 }
 
