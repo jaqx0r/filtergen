@@ -30,6 +30,8 @@ milestones for version 0.13
 milestones for version 0.14
 --------------------------
 
+* Use talloc <http://talloc.samba.org/> for memory allocation.
+
 * Factoriser for intermediate representation.
   prior to conversion to target format.  Should be simple to create and
   quite effective.  boolean factorisation never involves polynomials.
