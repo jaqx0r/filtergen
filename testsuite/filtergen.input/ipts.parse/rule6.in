@@ -1,5 +1,5 @@
 *filter
 :INPUT DROP [0:0]
 [0:0] -A INPUT -i eth0 -s 127.0.0.1 -d 127.0.0.1 -j ACCEPT
-[0:0] -A INPUT -i eth1 -m tcp -p tcp --dport 22 --sport 1024: -j REJECT
+[0:0] -A INPUT -o eth1 -m tcp -p tcp --dport 22 --sport 1024: -j REJECT
 COMMIT
