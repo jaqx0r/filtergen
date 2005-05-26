@@ -1,4 +1,4 @@
-#include "graphviz.h"
+#include "output/output.h"
 #include "ir/ir.h"
 #include <assert.h>
 
@@ -128,7 +128,8 @@ void gv_emit_ir(struct ir_s * ir, FILE * f) {
     fprintf(f, "}\n");
 }
 
-int graphviz_emitter (struct ir_s * ir, FILE * f) {
+int graphviz_target_emitter(struct ir_s * ir, FILE * f) {
+    assert(ir);
     gv_emit_ir(ir, f);
     return 0;
 }

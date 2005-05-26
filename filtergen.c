@@ -37,8 +37,6 @@
 #include "ir/ir.h"
 #include "output/output.h"
 
-#include "ir/graphviz.h"
-
 static FILE *outfile;
 
 /** Print the program usage to stderr. */
@@ -143,6 +141,7 @@ struct target_emitter_s {
     { "cisco", fg_cisco },
     */
     { "filtergen", emit_filtergen },
+    { "graphviz", graphviz_target_emitter },
     { NULL, NULL }
 };
 
@@ -294,13 +293,6 @@ int main(int argc, char **argv) {
 	    file = stdin;
 	}
 	ir = sp->parser(file, resolve_names);
-	if (1) {
-	    FILE * graphfile;
-
-	    graphfile = fopen("filtergen.dot", "w");
-	    
-	    graphviz_emitter(ir, graphfile);
-	}
 	l = te->emitter(ir, outfile);
 	/*
     }

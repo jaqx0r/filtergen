@@ -1,0 +1,10 @@
+Import('env')
+
+sources = ['graphviz.c']
+
+env.Library('out_graphviz', source=sources, CPPPATH='../..')
+
+env.Distribute(env['DISTTREE'], ['SConscript',
+								 'graphviz.h',
+								 ] + sources)
+

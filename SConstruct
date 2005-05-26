@@ -115,7 +115,6 @@ filtergen_sources = ['filtergen.c',
 					 'fg-util.c',
 					 'icmpent.c',
 					 'factoriser.c',
-					 'ir/graphviz.c',
 					 ]
 filtergen  = env.Program('filtergen', filtergen_sources,
 						 LIBS=[#'in_filtergen',
@@ -126,6 +125,7 @@ filtergen  = env.Program('filtergen', filtergen_sources,
 							   #'out_ipfilter',
 							   #'out_cisco',
 							   'out_filtergen',
+							   'out_graphviz',
 							   ],
 						 LIBPATH=['input/filtergen',
 								  'input/iptables-save',
@@ -135,6 +135,7 @@ filtergen  = env.Program('filtergen', filtergen_sources,
 								  'output/ipfilter',
 								  'output/cisco',
 								  'output/filtergen',
+								  'output/graphviz'
 								  ]
 						 )
 Default(filtergen)
@@ -177,6 +178,7 @@ SConscript([
 	#'output/ipfilter/SConscript',
 	#'output/cisco/SConscript',
 	'output/filtergen/SConscript',
+	'output/graphviz/SConscript',
 	'examples/SConscript',
 	'doc/SConscript',
 	], 'env')

@@ -8,5 +8,6 @@
 typedef int target_emitter(struct ir_s * ir, FILE * file);
 
 target_emitter emit_filtergen;
+target_emitter graphviz_target_emitter;
 
 #endif /* FILTERGEN_OUTPUT_H */
