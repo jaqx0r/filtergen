@@ -111,6 +111,48 @@ int ipts_convert_not_range(struct not_range_s * n, struct ir_expr_s * ir_expr) {
 }
 #endif
 
+int ipts_convert_match_option(struct match_option_s * n, struct ir_expr_s * ir_expr) {
+  int res = 1;
+  eprint("converting match_option\n");
+  assert(ir_expr);
+  if (n->identifier) {
+    ir_expr->value = ir_value_new();
+    res = ipts_convert_identifier(n->identifier, ir_expr->value);
+  }
+  return res;
+}
+
+int ipts_convert_protocol_option(struct protocol_option_s * n, struct ir_expr_s * ir_expr) {
+  int res = 1;
+  eprint("converting protocol_option\n");
+  assert(ir_expr);
+  if (n->identifier) {
+    ir_expr->value = ir_value_new();
+    res = ipts_convert_identifier(n->identifier, ir_expr->value);
+  }
+  return res;
+}
+
+int ipts_convert_dport_option(struct dport_option_s * n, struct ir_expr_s * ir_expr) {
+  int res = 1;
+  eprint("converting dport_option\n");
+  assert(ir_expr);
+  if (n->not_identifier) {
+    res = ipts_convert_not_identifier(n->not_identifier, ir_expr);
+  }
+  return res;
+}
+
+int ipts_convert_sport_option(struct sport_option_s * n, struct ir_expr_s * ir_expr) {
+  int res = 1;
+  eprint("converting sport_option\n");
+  assert(ir_expr);
+  if (n->not_identifier) {
+    res = ipts_convert_not_identifier(n->not_identifier, ir_expr);
+  }
+  return res;
+}
+
 int ipts_convert_in_interface_option(struct in_interface_option_s * n, struct ir_expr_s * ir_expr) {
     int res = 1;
 
@@ -119,7 +161,7 @@ int ipts_convert_in_interface_option(struct in_interface_option_s * n, struct ir
     assert(ir_expr);
 
     if (n->not_identifier) {
-	ipts_convert_not_identifier(n->not_identifier, ir_expr);
+	res = ipts_convert_not_identifier(n->not_identifier, ir_expr);
     }
 
     return res;
@@ -161,6 +203,9 @@ int ipts_convert_jump_option(struct jump_option_s * n, struct ir_rule_s * ir_rul
     assert(ir_rule);
     assert(n->identifier);
 
+    if (ir_rule->action)
+      fprintf(stderr, "warning: rule already has an action\n");
+    
     ir_rule->action = ir_action_new();
 
     assert(n->identifier->string);
@@ -218,7 +263,19 @@ int ipts_convert_option(struct option_s * n, struct ir_rule_s * ir_rule) {
       } else if (n->destination_option) {
 	  eprint("going to convert destination option\n");
 	  res = ipts_convert_destination_option(n->destination_option, e);
-      }	  
+      } else if (n->protocol_option) {
+	  eprint("going to convert protocol option\n");
+	  res = ipts_convert_protocol_option(n->protocol_option, e);
+      } else if (n->match_option) {
+	  eprint("going to convert match option\n");
+	  res = ipts_convert_match_option(n->match_option, e);
+      } else if (n->dport_option) {
+	  eprint("going to convert dport option\n");
+	  res = ipts_convert_dport_option(n->dport_option, e);
+      } else if (n->sport_option) {
+	  eprint("going to convert sport option\n");
+	  res = ipts_convert_sport_option(n->sport_option, e);
+      }
   }
 
   return res;
@@ -301,8 +358,8 @@ int ipts_convert_rule_list(struct rule_list_s * n, struct ir_rule_s * ir_rule) {
     res = ipts_convert_rule(n->rule, ir_rule);
 
     if (n->list) {
-	ir_rule->next = ir_rule_new();
-	res = ipts_convert_rule_list(n->list, ir_rule->next);
+      ir_rule->next = ir_rule_new();
+      res = ipts_convert_rule_list(n->list, ir_rule->next);
     }
 
     return res;
