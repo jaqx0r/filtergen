@@ -23,7 +23,7 @@ void * gv_emit_value(struct ir_value_s * ir_value, FILE * f) {
 	}
 	break;
       case IR_VAL_PREDICATE:
-	fprintf(f, "%s", ir_value->u.name);
+	fprintf(f, "%s()", ir_value->u.name);
 	break;
       case IR_VAL_LITERAL:
 	fprintf(f, "%s", ir_value->u.value);

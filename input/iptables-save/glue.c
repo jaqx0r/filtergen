@@ -160,8 +160,15 @@ int ipts_convert_in_interface_option(struct in_interface_option_s * n, struct ir
 
     assert(ir_expr);
 
+    ir_expr->value = ir_value_new();
+    ir_expr->value->type = IR_VAL_PREDICATE;
+    ir_expr->value->u.name = strdup("in_interface");
+
+    ir_expr->left = ir_expr_new();
+    
+
     if (n->not_identifier) {
-	res = ipts_convert_not_identifier(n->not_identifier, ir_expr);
+	res = ipts_convert_not_identifier(n->not_identifier, ir_expr->left);
     }
 
     return res;
