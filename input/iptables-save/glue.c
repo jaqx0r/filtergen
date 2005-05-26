@@ -355,11 +355,18 @@ int ipts_convert_rule_list(struct rule_list_s * n, struct ir_rule_s * ir_rule) {
 
     assert(ir_rule);
 
-    res = ipts_convert_rule(n->rule, ir_rule);
-
     if (n->list) {
-      ir_rule->next = ir_rule_new();
-      res = ipts_convert_rule_list(n->list, ir_rule->next);
+      struct ir_rule_s * r, * i;
+      r = ir_rule_new();
+      res = ipts_convert_rule(n->rule, r);
+      res = ipts_convert_rule_list(n->list, ir_rule);
+
+      /* find the end of the ir_rule chain to place the next rule */
+      for (i = ir_rule; i->next != NULL; i = i->next);
+      i->next = r;
+
+    } else {
+      res = ipts_convert_rule(n->rule, ir_rule);
     }
 
     return res;
