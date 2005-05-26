@@ -115,9 +115,12 @@ int ipts_convert_match_option(struct match_option_s * n, struct ir_expr_s * ir_e
   int res = 1;
   eprint("converting match_option\n");
   assert(ir_expr);
+  assert(ir_expr->value);
+  assert(ir_expr->left);
+  ir_expr->value->u.name = strdup("match");
   if (n->identifier) {
-    ir_expr->value = ir_value_new();
-    res = ipts_convert_identifier(n->identifier, ir_expr->value);
+    ir_expr->left->value = ir_value_new();
+    res = ipts_convert_identifier(n->identifier, ir_expr->left->value);
   }
   return res;
 }
@@ -126,9 +129,12 @@ int ipts_convert_protocol_option(struct protocol_option_s * n, struct ir_expr_s 
   int res = 1;
   eprint("converting protocol_option\n");
   assert(ir_expr);
+  assert(ir_expr->value);
+  assert(ir_expr->left);
+  ir_expr->value->u.name = strdup("protocol");
   if (n->identifier) {
-    ir_expr->value = ir_value_new();
-    res = ipts_convert_identifier(n->identifier, ir_expr->value);
+    ir_expr->left->value = ir_value_new();
+    res = ipts_convert_identifier(n->identifier, ir_expr->left->value);
   }
   return res;
 }
@@ -137,8 +143,11 @@ int ipts_convert_dport_option(struct dport_option_s * n, struct ir_expr_s * ir_e
   int res = 1;
   eprint("converting dport_option\n");
   assert(ir_expr);
+  assert(ir_expr->value);
+  assert(ir_expr->left);
+  ir_expr->value->u.name = strdup("dport");
   if (n->not_identifier) {
-    res = ipts_convert_not_identifier(n->not_identifier, ir_expr);
+    res = ipts_convert_not_identifier(n->not_identifier, ir_expr->left);
   }
   return res;
 }
@@ -147,8 +156,11 @@ int ipts_convert_sport_option(struct sport_option_s * n, struct ir_expr_s * ir_e
   int res = 1;
   eprint("converting sport_option\n");
   assert(ir_expr);
+  assert(ir_expr->value);
+  assert(ir_expr->left);
+  ir_expr->value->u.name = strdup("sport");
   if (n->not_identifier) {
-    res = ipts_convert_not_identifier(n->not_identifier, ir_expr);
+    res = ipts_convert_not_identifier(n->not_identifier, ir_expr->left);
   }
   return res;
 }
@@ -159,13 +171,9 @@ int ipts_convert_in_interface_option(struct in_interface_option_s * n, struct ir
     eprint("converting in_interface_option\n");
 
     assert(ir_expr);
+    assert(ir_expr->left);
 
-    ir_expr->value = ir_value_new();
-    ir_expr->value->type = IR_VAL_PREDICATE;
     ir_expr->value->u.name = strdup("in_interface");
-
-    ir_expr->left = ir_expr_new();
-    
 
     if (n->not_identifier) {
 	res = ipts_convert_not_identifier(n->not_identifier, ir_expr->left);
@@ -180,9 +188,12 @@ int ipts_convert_source_option(struct source_option_s * n, struct ir_expr_s * ir
     eprint("converting source_option\n");
 
     assert(ir_expr);
+    assert(ir_expr->left);
+
+    ir_expr->value->u.name = strdup("source");
 
     if (n->not_identifier) {
-	ipts_convert_not_identifier(n->not_identifier, ir_expr);
+	ipts_convert_not_identifier(n->not_identifier, ir_expr->left);
     }
 
     return res;
@@ -194,9 +205,13 @@ int ipts_convert_destination_option(struct destination_option_s * n, struct ir_e
     eprint("converting destination_option\n");
 
     assert(ir_expr);
+    assert(ir_expr->value);
+    assert(ir_expr->left);
+
+    ir_expr->value->u.name = strdup("destination");
 
     if (n->not_identifier) {
-	ipts_convert_not_identifier(n->not_identifier, ir_expr);
+	ipts_convert_not_identifier(n->not_identifier, ir_expr->left);
     }
 
     return res;
@@ -260,6 +275,10 @@ int ipts_convert_option(struct option_s * n, struct ir_rule_s * ir_rule) {
 	  ir_rule->expr = ir_expr_new();
 	  e = ir_rule->expr;
       }
+
+      e->value = ir_value_new();
+      e->value->type = IR_VAL_PREDICATE;
+      e->left = ir_expr_new();
 
       if (n->in_interface_option) {
 	  eprint("going to convert in_interface option\n");

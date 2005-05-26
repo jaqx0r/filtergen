@@ -41,8 +41,22 @@ void * gv_emit_expr(struct ir_expr_s * ir_expr, FILE * f) {
     void * p;
     
     assert(ir_expr);
-    
-    fprintf(f, "\"%p\" [label=\"expr\"];\n", ir_expr);
+
+    fprintf(f, "\"%p\" [label=\"", ir_expr);
+    switch (ir_expr->value->type) {
+      case IR_VAL_OPERATOR:
+	fprintf(f, "operator");
+	break;
+      case IR_VAL_PREDICATE:
+	fprintf(f, "predicate");
+	break;
+      case IR_VAL_LITERAL:
+	fprintf(f, "literal");
+	break;
+      default:
+	fprintf(stderr, "warning: unknown expression value type\n");
+    }
+    fprintf(f, "\"];\n");
     
     if (ir_expr->left) {
 	p = gv_emit_expr(ir_expr->left, f);
