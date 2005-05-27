@@ -27,7 +27,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "ast.h"
-
+     
 #define YYPARSE_PARAM parm
 
 void ipts_error(const char * msg);
@@ -46,30 +46,6 @@ extern int ipts_lex(void);
     struct option_list_s * u_option_list;
     struct not_option_s * u_not_option;
     struct option_s * u_option;
-
-    struct in_interface_option_s * u_in_interface_option;
-    struct jump_option_s * u_jump_option;
-    struct destination_option_s * u_destination_option;
-    struct protocol_option_s * u_protocol_option;
-    struct match_option_s * u_match_option;
-    struct dport_option_s * u_dport_option;
-    struct to_ports_option_s * u_to_ports_option;
-    struct source_option_s * u_source_option;
-    struct out_interface_option_s * u_out_interface_option;
-    struct to_source_option_s * u_to_source_option;
-    struct state_option_s * u_state_option;
-    struct limit_option_s * u_limit_option;
-    struct log_prefix_option_s * u_log_prefix_option;
-    struct sport_option_s * u_sport_option;
-    struct uid_owner_option_s * u_uid_owner_option;
-    struct tcp_flags_option_s * u_tcp_flags_option;
-    struct reject_with_option_s * u_reject_with_option;
-    struct icmp_type_option_s * u_icmp_type_option;
-    struct fragment_option_s * u_fragment_option;
-    struct clamp_mss_to_pmtu_option_s * u_clamp_mss_to_pmtu_option;
-    struct helper_option_s * u_helper_option;
-    struct syn_option_s * u_syn_option;
-
     struct not_range_s * u_not_range;
     struct range_s * u_range;
     struct not_identifier_s * u_not_identifier;
@@ -85,30 +61,6 @@ extern int ipts_lex(void);
 %type <u_option_list> option_list
 %type <u_not_option> not_option
 %type <u_option> option
-
-%type <u_syn_option> syn_option
-%type <u_helper_option> helper_option
-%type <u_clamp_mss_to_pmtu_option> clamp_mss_to_pmtu_option
-%type <u_fragment_option> fragment_option
-%type <u_icmp_type_option> icmp_type_option
-%type <u_reject_with_option> reject_with_option
-%type <u_tcp_flags_option> tcp_flags_option
-%type <u_uid_owner_option> uid_owner_option
-%type <u_sport_option> sport_option
-%type <u_log_prefix_option> log_prefix_option
-%type <u_limit_option> limit_option
-%type <u_state_option> state_option
-%type <u_to_source_option> to_source_option
-%type <u_out_interface_option> out_interface_option
-%type <u_source_option> source_option
-%type <u_to_ports_option> to_ports_option
-%type <u_dport_option> dport_option
-%type <u_match_option> match_option
-%type <u_protocol_option> protocol_option
-%type <u_destination_option> destination_option
-%type <u_jump_option> jump_option
-%type <u_in_interface_option> in_interface_option
-
 %type <u_not_range> not_range
 %type <u_range> range
 %type <u_not_identifier> not_identifier
@@ -264,262 +216,147 @@ not_option: TOK_BANG option
     $$->option = $1;
 }
 
-option: in_interface_option
+option: TOK_IPTS_IN_INTERFACE not_identifier
 {
   $$ = malloc(sizeof(struct option_s));
-  $$->in_interface_option = $1;
+  $$->type = IPTS_OPT_IN_INTERFACE;
+  $$->not_identifier = $2;
 }
-| jump_option
+| TOK_IPTS_JUMP identifier
 {
   $$ = malloc(sizeof(struct option_s));
-  $$->jump_option = $1;
+  $$->type = IPTS_OPT_JUMP;
+  $$->identifier = $2;
 }
-| destination_option
+| TOK_IPTS_DESTINATION not_identifier
 {
     $$ = malloc(sizeof(struct option_s));
-    $$->destination_option = $1;
+    $$->type = IPTS_OPT_DESTINATION;
+    $$->not_identifier = $2;
 }
-| protocol_option
+| TOK_IPTS_PROTOCOL identifier
 {
     $$ = malloc(sizeof(struct option_s));
-    $$->protocol_option = $1;
-}
-| match_option
-{
-    $$ = malloc(sizeof(struct option_s));
-    $$->match_option = $1;
-}
-| dport_option
-{
-    $$ = malloc(sizeof(struct option_s));
-    $$->dport_option = $1;
-}
-| to_ports_option
-{
-    $$ = malloc(sizeof(struct option_s));
-    $$->to_ports_option = $1;
-}
-| source_option
-{
-    $$ = malloc(sizeof(struct option_s));
-    $$->source_option = $1;
-}
-| out_interface_option
-{
-    $$ = malloc(sizeof(struct option_s));
-    $$->out_interface_option = $1;
-}
-| to_source_option
-{
-    $$ = malloc(sizeof(struct option_s));
-    $$->to_source_option = $1;
-}
-| state_option
-{
-    $$ = malloc(sizeof(struct option_s));
-    $$->state_option = $1;
-}
-| limit_option
-{
-    $$ = malloc(sizeof(struct option_s));
-    $$->limit_option = $1;
-}
-| log_prefix_option
-{
-    $$ = malloc(sizeof(struct option_s));
-    $$->log_prefix_option = $1;
-}
-| sport_option
-{
-    $$ = malloc(sizeof(struct option_s));
-    $$->sport_option = $1;
-}
-| uid_owner_option
-{
-    $$ = malloc(sizeof(struct option_s));
-    $$->uid_owner_option = $1;
-}
-| tcp_flags_option
-{
-    $$ = malloc(sizeof(struct option_s));
-    $$->tcp_flags_option = $1;
-}
-| reject_with_option
-{
-    $$ = malloc(sizeof(struct option_s));
-    $$->reject_with_option = $1;
-}
-| icmp_type_option
-{
-    $$ = malloc(sizeof(struct option_s));
-    $$->icmp_type_option = $1;
-}
-| fragment_option
-{
-    $$ = malloc(sizeof(struct option_s));
-    $$->fragment_option = $1;
-}
-| clamp_mss_to_pmtu_option
-{
-    $$ = malloc(sizeof(struct option_s));
-    $$->clamp_mss_to_pmtu_option = $1;
-}
-| helper_option
-{
-    $$ = malloc(sizeof(struct option_s));
-    $$->helper_option = $1;
-}
-| syn_option
-{
-    $$ = malloc(sizeof(struct option_s));
-    $$->syn_option = $1;
-}
-
-syn_option: TOK_IPTS_SYN
-{
-    $$ = malloc(sizeof(struct syn_option_s));
-    $$->i = 1;
-}
-
-helper_option: TOK_IPTS_HELPER identifier
-{
-    $$ = malloc(sizeof(struct helper_option_s));
+    $$->type = IPTS_OPT_PROTOCOL;
     $$->identifier = $2;
 }
-
-clamp_mss_to_pmtu_option: TOK_IPTS_CLAMP_MSS_TO_PMTU
+| TOK_IPTS_MATCH identifier
 {
-    $$ = malloc(sizeof(struct clamp_mss_to_pmtu_option_s));
-    $$->i = 1;
-}
-
-fragment_option: TOK_IPTS_FRAGMENT
-{
-    $$ = malloc(sizeof(struct fragment_option_s));
-    $$->i = 1;
-}
-
-icmp_type_option: TOK_IPTS_ICMP_TYPE identifier
-{
-    $$ = malloc(sizeof(struct icmp_type_option_s));
+    $$ = malloc(sizeof(struct option_s));
+    $$->type = IPTS_OPT_MATCH;
     $$->identifier = $2;
 }
-
-reject_with_option: TOK_IPTS_REJECT_WITH identifier
+| TOK_IPTS_DPORT not_range
 {
-    $$ = malloc(sizeof(struct reject_with_option_s));
-    $$->identifier = $2;
-}
-
-tcp_flags_option: TOK_IPTS_TCP_FLAGS identifier identifier
-{
-    $$ = malloc(sizeof(struct tcp_flags_option_s));
-    $$->flags = $2;
-    $$->mask = $3;
-}
-
-uid_owner_option: TOK_IPTS_UID_OWNER identifier
-{
-    $$ = malloc(sizeof(struct uid_owner_option_s));
-    $$->identifier = $2;
-}
-
-sport_option: TOK_IPTS_SPORT not_range
-{
-    $$ = malloc(sizeof(struct sport_option_s));
+    $$ = malloc(sizeof(struct option_s));
+    $$->type = IPTS_OPT_DPORT;
     $$->not_range = $2;
-    $$->not_identifier = NULL;
-}
-| TOK_IPTS_SPORT not_identifier
-{
-    $$ = malloc(sizeof(struct sport_option_s));
-    $$->not_range = NULL;
-    $$->not_identifier = $2;
-}
-
-log_prefix_option: TOK_IPTS_LOG_PREFIX identifier
-{
-    $$ = malloc(sizeof(struct log_prefix_option_s));
-    $$->identifier = $2;
-}
-
-limit_option: TOK_IPTS_LIMIT identifier
-{
-    $$ = malloc(sizeof(struct limit_option_s));
-    $$->identifier = $2;
-}
-
-state_option: TOK_IPTS_STATE identifier
-{
-    $$ = malloc(sizeof(struct state_option_s));
-    $$->identifier = $2;
-}
-
-to_source_option: TOK_IPTS_TO_SOURCE identifier
-{
-    $$ = malloc(sizeof(struct to_source_option_s));
-    $$->identifier = $2;
-};
-
-out_interface_option: TOK_IPTS_OUT_INTERFACE not_identifier
-{
-    $$ = malloc(sizeof(struct out_interface_option_s));
-    $$->not_identifier = $2;
-}
-
-source_option: TOK_IPTS_SOURCE not_identifier
-{
-    $$ = malloc(sizeof(struct source_option_s));
-    $$->not_identifier = $2;
-}
-
-to_ports_option: TOK_IPTS_TO_PORTS identifier
-{
-    $$ = malloc(sizeof(struct to_ports_option_s));
-    $$->identifier = $2;
-}
-
-dport_option: TOK_IPTS_DPORT not_range
-{
-    $$ = malloc(sizeof(struct dport_option_s));
-    $$->not_range = $2;
-    $$->not_identifier = NULL;
 }
 | TOK_IPTS_DPORT not_identifier
 {
-    $$ = malloc(sizeof(struct dport_option_s));
-    $$->not_range = NULL;
+    $$ = malloc(sizeof(struct option_s));
+    $$->type = IPTS_OPT_DPORT;
     $$->not_identifier = $2;
 }
-
-match_option: TOK_IPTS_MATCH identifier
+| TOK_IPTS_TO_PORTS identifier
 {
-    $$ = malloc(sizeof(struct match_option_s));
+    $$ = malloc(sizeof(struct option_s));
+    $$->type = IPTS_OPT_TO_PORTS;
     $$->identifier = $2;
 }
-
-protocol_option: TOK_IPTS_PROTOCOL identifier
+| TOK_IPTS_SOURCE not_identifier
 {
-    $$ = malloc(sizeof(struct protocol_option_s));
-    $$->identifier = $2;
-}
-
-destination_option: TOK_IPTS_DESTINATION not_identifier
-{
-    $$ = malloc(sizeof(struct destination_option_s));
+    $$ = malloc(sizeof(struct option_s));
+    $$->type = IPTS_OPT_SOURCE;
     $$->not_identifier = $2;
 }
-
-jump_option: TOK_IPTS_JUMP identifier
+| TOK_IPTS_OUT_INTERFACE not_identifier
 {
-  $$ = malloc(sizeof(struct jump_option_s));
-  $$->identifier = $2;
+    $$ = malloc(sizeof(struct option_s));
+    $$->type = IPTS_OPT_OUT_INTERFACE;
+    $$->not_identifier = $2;
 }
-
-in_interface_option: TOK_IPTS_IN_INTERFACE not_identifier
+| TOK_IPTS_TO_SOURCE identifier
 {
-  $$ = malloc(sizeof(struct in_interface_option_s));
-  $$->not_identifier = $2;
+    $$ = malloc(sizeof(struct option_s));
+    $$->type = IPTS_OPT_TO_SOURCE;
+    $$->identifier = $2;
+}
+| TOK_IPTS_STATE identifier
+{
+    $$ = malloc(sizeof(struct option_s));
+    $$->type = IPTS_OPT_STATE;
+    $$->identifier = $2;
+}
+| TOK_IPTS_LIMIT identifier
+{
+    $$ = malloc(sizeof(struct option_s));
+    $$->type = IPTS_OPT_LIMIT;
+    $$->identifier = $2;
+}
+| TOK_IPTS_LOG_PREFIX identifier
+{
+    $$ = malloc(sizeof(struct option_s));
+    $$->type = IPTS_OPT_LOG_PREFIX;
+    $$->identifier = $2;
+}
+| TOK_IPTS_SPORT not_range
+{
+    $$ = malloc(sizeof(struct option_s));
+    $$->type = IPTS_OPT_SPORT;
+    $$->not_range = $2;
+}
+| TOK_IPTS_SPORT not_identifier
+{
+    $$ = malloc(sizeof(struct option_s));
+    $$->type = IPTS_OPT_SPORT;
+    $$->not_identifier = $2;
+}
+| TOK_IPTS_UID_OWNER identifier
+{
+    $$ = malloc(sizeof(struct option_s));
+    $$->type = IPTS_OPT_UID_OWNER;
+    $$->identifier = $2;
+}
+| TOK_IPTS_TCP_FLAGS identifier identifier
+{
+    $$ = malloc(sizeof(struct option_s));
+    $$->type = IPTS_OPT_TCP_FLAGS;
+    $$->flags = $2;
+    $$->mask = $3;
+}
+| TOK_IPTS_REJECT_WITH identifier
+{
+    $$ = malloc(sizeof(struct option_s));
+    $$->type = IPTS_OPT_REJECT_WITH;
+    $$->identifier = $2;
+}
+| TOK_IPTS_ICMP_TYPE identifier
+{
+    $$ = malloc(sizeof(struct option_s));
+    $$->type = IPTS_OPT_ICMP_TYPE;
+    $$->identifier = $2;
+}
+| TOK_IPTS_FRAGMENT
+{
+    $$ = malloc(sizeof(struct option_s));
+    $$->type = IPTS_OPT_FRAGMENT;
+}
+| TOK_IPTS_CLAMP_MSS_TO_PMTU
+{
+    $$ = malloc(sizeof(struct option_s));
+    $$->type = IPTS_OPT_CLAMP_MSS_TO_PMTU;
+}
+| TOK_IPTS_HELPER identifier
+{
+    $$ = malloc(sizeof(struct option_s));
+    $$->type = IPTS_OPT_HELPER;
+    $$->identifier = $2;
+}
+| TOK_IPTS_SYN
+{
+    $$ = malloc(sizeof(struct option_s));
+    $$->type = IPTS_OPT_SYN;
 }
 
 not_range: TOK_BANG range

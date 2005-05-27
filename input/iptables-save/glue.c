@@ -125,6 +125,7 @@ int ipts_convert_not_range(struct not_range_s * n, struct ir_expr_s * ir_expr) {
     return res;
 }
 
+#if 0
 int ipts_convert_tcp_flags_option(struct tcp_flags_option_s * n, struct ir_expr_s * ir_expr) {
     int res = 1;
     eprint("converting tcp_flags_option\n");
@@ -379,8 +380,9 @@ int ipts_convert_out_interface_option(struct out_interface_option_s * n, struct 
   }
   return res;
 }
+#endif
 
-int ipts_convert_in_interface_option(struct in_interface_option_s * n, struct ir_expr_s * ir_expr) {
+int ipts_convert_in_interface_option(struct option_s * n, struct ir_expr_s * ir_expr) {
     int res = 1;
 
     eprint("converting in_interface_option\n");
@@ -397,6 +399,7 @@ int ipts_convert_in_interface_option(struct in_interface_option_s * n, struct ir
     return res;
 }
 
+#if 0
 int ipts_convert_source_option(struct source_option_s * n, struct ir_expr_s * ir_expr) {
     int res = 1;
 
@@ -431,8 +434,9 @@ int ipts_convert_destination_option(struct destination_option_s * n, struct ir_e
 
     return res;
 }
+#endif
 
-int ipts_convert_jump_option(struct jump_option_s * n, struct ir_rule_s * ir_rule) {
+int ipts_convert_jump_option(struct option_s * n, struct ir_rule_s * ir_rule) {
     int res = 1;
 
     eprint("converting jump_option\n");
@@ -462,15 +466,22 @@ int ipts_convert_jump_option(struct jump_option_s * n, struct ir_rule_s * ir_rul
     return res;
 }
 
+/**
+ * convert an ipts option into an internal representation predicate
+ * @param n the ipts option struct
+ * @param ir_rule the internal represenation of the rule this option belongs to
+ */
 int ipts_convert_option(struct option_s * n, struct ir_rule_s * ir_rule) {
   int res = 1;
   struct ir_expr_s * e;
 
   eprint("converting option\n");
 
-  if (n->jump_option) {
+  assert(n);
+
+  if (n->type == IPTS_OPT_JUMP) {
       eprint("setting rule action\n");
-      res = ipts_convert_jump_option(n->jump_option, ir_rule);
+      res = ipts_convert_jump_option(n, ir_rule);
   } else {
       if (ir_rule->expr) {
 	  eprint("shifting expr with new root AND\n");
@@ -495,9 +506,15 @@ int ipts_convert_option(struct option_s * n, struct ir_rule_s * ir_rule) {
       e->value->type = IR_VAL_PREDICATE;
       e->left = ir_expr_new();
 
-      if (n->in_interface_option) {
+      switch(n->type) {
+	case IPTS_OPT_IN_INTERFACE:
 	  eprint("going to convert in_interface option\n");
-	  res = ipts_convert_in_interface_option(n->in_interface_option, e);
+	  res = ipts_convert_in_interface_option(n, e);
+	  break;
+	default:
+	  fprintf(stderr, "warning: unknown option type %d\n", n->type);
+      }
+      #if 0
       } else if (n->source_option) {
 	  eprint("going to convert source option\n");
 	  res = ipts_convert_source_option(n->source_option, e);
@@ -559,6 +576,7 @@ int ipts_convert_option(struct option_s * n, struct ir_rule_s * ir_rule) {
 	  eprint("going to convert syn option\n");
 	  res = ipts_convert_syn_option(n->syn_option, e);
       }
+      #endif
   }
 
   return res;
@@ -638,6 +656,7 @@ int ipts_convert_rule_list(struct rule_list_s * n, struct ir_rule_s * ir_rule) {
 
     assert(ir_rule);
 
+    
     if (n->list) {
       struct ir_rule_s * r, * i;
       r = ir_rule_new();
