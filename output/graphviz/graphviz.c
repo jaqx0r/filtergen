@@ -23,10 +23,13 @@ void * gv_emit_value(struct ir_value_s * ir_value, FILE * f) {
 	}
 	break;
       case IR_VAL_PREDICATE:
-	fprintf(f, "%s()", ir_value->u.name);
+	fprintf(f, "%s()", ir_value->u.predicate);
 	break;
       case IR_VAL_LITERAL:
-	fprintf(f, "%s", ir_value->u.value);
+	fprintf(f, "%s", ir_value->u.literal);
+	break;
+      case IR_VAL_RANGE:
+	fprintf(f, ":");
 	break;
       default:
 	fprintf(stderr, "warning: can't emit value type %d\n", ir_value->type);
@@ -53,6 +56,9 @@ void * gv_emit_expr(struct ir_expr_s * ir_expr, FILE * f) {
 	    break;
 	  case IR_VAL_LITERAL:
 	    fprintf(f, "literal");
+	    break;
+	  case IR_VAL_RANGE:
+	    fprintf(f, "range");
 	    break;
 	  default:
 	    fprintf(stderr, "warning: unknown expression value type\n");

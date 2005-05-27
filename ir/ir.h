@@ -20,7 +20,7 @@
 #ifndef __FILTERGEN_IR_H__
 #define __FILTERGEN_IR_H__
 
-enum ir_value_type { IR_VAL_OPERATOR, IR_VAL_PREDICATE, IR_VAL_LITERAL };
+enum ir_value_type { IR_VAL_OPERATOR, IR_VAL_PREDICATE, IR_VAL_LITERAL, IR_VAL_RANGE };
 
 enum ir_operator { IR_OP_NONE, IR_OP_AND, IR_OP_OR, IR_OP_NOT, IR_OP_PRED };
 
@@ -32,9 +32,9 @@ struct ir_value_s {
 	/** operator */
 	enum ir_operator operator;
 	/** name of the predicate */
-	char * name;
+	char * predicate;
 	/** value of the literal */
-	char * value;
+	char * literal;
     } u;
 };
     
