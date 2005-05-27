@@ -125,317 +125,6 @@ int ipts_convert_not_range(struct not_range_s * n, struct ir_expr_s * ir_expr) {
     return res;
 }
 
-#if 0
-int ipts_convert_tcp_flags_option(struct tcp_flags_option_s * n, struct ir_expr_s * ir_expr) {
-    int res = 1;
-    eprint("converting tcp_flags_option\n");
-    assert(ir_expr);
-    assert(ir_expr->value);
-    assert(ir_expr->left);
-    ir_expr->value->u.predicate = strdup("tcp_flags");
-    if (n->flags) {
-	ir_expr->left->value = ir_value_new();
-	res = ipts_convert_identifier(n->flags, ir_expr->left->value);
-    }
-    if (n->mask) {
-	ir_expr->right = ir_expr_new();
-	ir_expr->right->value = ir_value_new();
-	res = ipts_convert_identifier(n->mask, ir_expr->right->value);
-    }
-    return res;
-}
-
-int ipts_convert_fragment_option(struct fragment_option_s * n, struct ir_expr_s * ir_expr) {
-  int res = 1;
-  eprint("converting fragment_option\n");
-  assert(ir_expr);
-  assert(ir_expr->value);
-  assert(ir_expr->left);
-  ir_expr->value->u.predicate = strdup("fragment");
-  ir_expr->left->value = ir_value_new();
-  ir_expr->left->value->type = IR_VAL_LITERAL;
-  asprintf(&ir_expr->left->value->u.literal, "%d", n->i);
-  return res;
-}
-
-int ipts_convert_syn_option(struct syn_option_s * n, struct ir_expr_s * ir_expr) {
-  int res = 1;
-  eprint("converting syn_option\n");
-  assert(ir_expr);
-  assert(ir_expr->value);
-  assert(ir_expr->left);
-  ir_expr->value->u.predicate = strdup("syn");
-  ir_expr->left->value = ir_value_new();
-  ir_expr->left->value->type = IR_VAL_LITERAL;
-  asprintf(&ir_expr->left->value->u.literal, "%d", n->i);
-  return res;
-}
-
-int ipts_convert_clamp_mss_to_pmtu_option(struct clamp_mss_to_pmtu_option_s * n, struct ir_expr_s * ir_expr) {
-  int res = 1;
-  eprint("converting clamp_mss_to_pmtu_option\n");
-  assert(ir_expr);
-  assert(ir_expr->value);
-  assert(ir_expr->left);
-  ir_expr->value->u.predicate = strdup("clamp_mss_to_pmtu");
-  ir_expr->left->value = ir_value_new();
-  ir_expr->left->value->type = IR_VAL_LITERAL;
-  asprintf(&ir_expr->left->value->u.literal, "%d", n->i);
-  return res;
-}
-
-int ipts_convert_match_option(struct match_option_s * n, struct ir_expr_s * ir_expr) {
-  int res = 1;
-  eprint("converting match_option\n");
-  assert(ir_expr);
-  assert(ir_expr->value);
-  assert(ir_expr->left);
-  ir_expr->value->u.predicate = strdup("match");
-  if (n->identifier) {
-    ir_expr->left->value = ir_value_new();
-    res = ipts_convert_identifier(n->identifier, ir_expr->left->value);
-  }
-  return res;
-}
-
-int ipts_convert_helper_option(struct helper_option_s * n, struct ir_expr_s * ir_expr) {
-  int res = 1;
-  eprint("converting helper_option\n");
-  assert(ir_expr);
-  assert(ir_expr->value);
-  assert(ir_expr->left);
-  ir_expr->value->u.predicate = strdup("helper");
-  if (n->identifier) {
-    ir_expr->left->value = ir_value_new();
-    res = ipts_convert_identifier(n->identifier, ir_expr->left->value);
-  }
-  return res;
-}
-
-int ipts_convert_icmp_type_option(struct icmp_type_option_s * n, struct ir_expr_s * ir_expr) {
-  int res = 1;
-  eprint("converting icmp_type_option\n");
-  assert(ir_expr);
-  assert(ir_expr->value);
-  assert(ir_expr->left);
-  ir_expr->value->u.predicate = strdup("icmp_type");
-  if (n->identifier) {
-    ir_expr->left->value = ir_value_new();
-    res = ipts_convert_identifier(n->identifier, ir_expr->left->value);
-  }
-  return res;
-}
-
-int ipts_convert_reject_with_option(struct reject_with_option_s * n, struct ir_expr_s * ir_expr) {
-  int res = 1;
-  eprint("converting reject_with_option\n");
-  assert(ir_expr);
-  assert(ir_expr->value);
-  assert(ir_expr->left);
-  ir_expr->value->u.predicate = strdup("reject_with");
-  if (n->identifier) {
-    ir_expr->left->value = ir_value_new();
-    res = ipts_convert_identifier(n->identifier, ir_expr->left->value);
-  }
-  return res;
-}
-
-int ipts_convert_uid_owner_option(struct uid_owner_option_s * n, struct ir_expr_s * ir_expr) {
-  int res = 1;
-  eprint("converting uid_owner_option\n");
-  assert(ir_expr);
-  assert(ir_expr->value);
-  assert(ir_expr->left);
-  ir_expr->value->u.predicate = strdup("uid_owner");
-  if (n->identifier) {
-    ir_expr->left->value = ir_value_new();
-    res = ipts_convert_identifier(n->identifier, ir_expr->left->value);
-  }
-  return res;
-}
-
-int ipts_convert_log_prefix_option(struct log_prefix_option_s * n, struct ir_expr_s * ir_expr) {
-  int res = 1;
-  eprint("converting log_prefix_option\n");
-  assert(ir_expr);
-  assert(ir_expr->value);
-  assert(ir_expr->left);
-  ir_expr->value->u.predicate = strdup("log_prefix");
-  if (n->identifier) {
-    ir_expr->left->value = ir_value_new();
-    res = ipts_convert_identifier(n->identifier, ir_expr->left->value);
-  }
-  return res;
-}
-
-int ipts_convert_limit_option(struct limit_option_s * n, struct ir_expr_s * ir_expr) {
-  int res = 1;
-  eprint("converting limit_option\n");
-  assert(ir_expr);
-  assert(ir_expr->value);
-  assert(ir_expr->left);
-  ir_expr->value->u.predicate = strdup("limit");
-  if (n->identifier) {
-    ir_expr->left->value = ir_value_new();
-    res = ipts_convert_identifier(n->identifier, ir_expr->left->value);
-  }
-  return res;
-}
-
-int ipts_convert_state_option(struct state_option_s * n, struct ir_expr_s * ir_expr) {
-  int res = 1;
-  eprint("converting state_option\n");
-  assert(ir_expr);
-  assert(ir_expr->value);
-  assert(ir_expr->left);
-  ir_expr->value->u.predicate = strdup("state");
-  if (n->identifier) {
-    ir_expr->left->value = ir_value_new();
-    res = ipts_convert_identifier(n->identifier, ir_expr->left->value);
-  }
-  return res;
-}
-
-int ipts_convert_to_source_option(struct to_source_option_s * n, struct ir_expr_s * ir_expr) {
-  int res = 1;
-  eprint("converting to_source_option\n");
-  assert(ir_expr);
-  assert(ir_expr->value);
-  assert(ir_expr->left);
-  ir_expr->value->u.predicate = strdup("to_source");
-  if (n->identifier) {
-    ir_expr->left->value = ir_value_new();
-    res = ipts_convert_identifier(n->identifier, ir_expr->left->value);
-  }
-  return res;
-}
-
-int ipts_convert_to_ports_option(struct to_ports_option_s * n, struct ir_expr_s * ir_expr) {
-  int res = 1;
-  eprint("converting to_ports_option\n");
-  assert(ir_expr);
-  assert(ir_expr->value);
-  assert(ir_expr->left);
-  ir_expr->value->u.predicate = strdup("to_ports");
-  if (n->identifier) {
-    ir_expr->left->value = ir_value_new();
-    res = ipts_convert_identifier(n->identifier, ir_expr->left->value);
-  }
-  return res;
-}
-
-int ipts_convert_protocol_option(struct protocol_option_s * n, struct ir_expr_s * ir_expr) {
-  int res = 1;
-  eprint("converting protocol_option\n");
-  assert(ir_expr);
-  assert(ir_expr->value);
-  assert(ir_expr->left);
-  ir_expr->value->u.predicate = strdup("protocol");
-  if (n->identifier) {
-    ir_expr->left->value = ir_value_new();
-    res = ipts_convert_identifier(n->identifier, ir_expr->left->value);
-  }
-  return res;
-}
-
-int ipts_convert_dport_option(struct dport_option_s * n, struct ir_expr_s * ir_expr) {
-  int res = 1;
-  eprint("converting dport_option\n");
-  assert(ir_expr);
-  assert(ir_expr->value);
-  assert(ir_expr->left);
-  ir_expr->value->u.predicate = strdup("dport");
-  if (n->not_identifier) {
-    res = ipts_convert_not_identifier(n->not_identifier, ir_expr->left);
-  } else if (n->not_range) {
-      res = ipts_convert_not_range(n->not_range, ir_expr->left);
-  }
-  return res;
-}
-
-int ipts_convert_sport_option(struct sport_option_s * n, struct ir_expr_s * ir_expr) {
-  int res = 1;
-  eprint("converting sport_option\n");
-  assert(ir_expr);
-  assert(ir_expr->value);
-  assert(ir_expr->left);
-  ir_expr->value->u.predicate = strdup("sport");
-  if (n->not_identifier) {
-    res = ipts_convert_not_identifier(n->not_identifier, ir_expr->left);
-  } else if (n->not_range) {
-      res = ipts_convert_not_range(n->not_range, ir_expr->left);
-  }
-  return res;
-}
-
-int ipts_convert_out_interface_option(struct out_interface_option_s * n, struct ir_expr_s * ir_expr) {
-  int res = 1;
-  eprint("converting out_interface_option\n");
-  assert(ir_expr);
-  assert(ir_expr->value);
-  assert(ir_expr->left);
-  ir_expr->value->u.predicate = strdup("out_interface");
-  if (n->not_identifier) {
-    res = ipts_convert_not_identifier(n->not_identifier, ir_expr->left);
-  }
-  return res;
-}
-#endif
-
-int ipts_convert_in_interface_option(struct option_s * n, struct ir_expr_s * ir_expr) {
-    int res = 1;
-
-    eprint("converting in_interface_option\n");
-
-    assert(ir_expr);
-    assert(ir_expr->left);
-
-    ir_expr->value->u.predicate = strdup("in_interface");
-
-    if (n->not_identifier) {
-	res = ipts_convert_not_identifier(n->not_identifier, ir_expr->left);
-    }
-
-    return res;
-}
-
-#if 0
-int ipts_convert_source_option(struct source_option_s * n, struct ir_expr_s * ir_expr) {
-    int res = 1;
-
-    eprint("converting source_option\n");
-
-    assert(ir_expr);
-    assert(ir_expr->left);
-
-    ir_expr->value->u.predicate = strdup("source");
-
-    if (n->not_identifier) {
-	ipts_convert_not_identifier(n->not_identifier, ir_expr->left);
-    }
-
-    return res;
-}
-
-int ipts_convert_destination_option(struct destination_option_s * n, struct ir_expr_s * ir_expr) {
-    int res = 1;
-
-    eprint("converting destination_option\n");
-
-    assert(ir_expr);
-    assert(ir_expr->value);
-    assert(ir_expr->left);
-
-    ir_expr->value->u.predicate = strdup("destination");
-
-    if (n->not_identifier) {
-	ipts_convert_not_identifier(n->not_identifier, ir_expr->left);
-    }
-
-    return res;
-}
-#endif
-
 int ipts_convert_jump_option(struct option_s * n, struct ir_rule_s * ir_rule) {
     int res = 1;
 
@@ -509,74 +198,166 @@ int ipts_convert_option(struct option_s * n, struct ir_rule_s * ir_rule) {
       switch(n->type) {
 	case IPTS_OPT_IN_INTERFACE:
 	  eprint("going to convert in_interface option\n");
-	  res = ipts_convert_in_interface_option(n, e);
+	  e->value->u.predicate = strdup("in_interface");
+	  if (n->not_identifier)
+	      ipts_convert_not_identifier(n->not_identifier, e->left);
+	  break;
+	case IPTS_OPT_OUT_INTERFACE:
+	  eprint("going to convert out_interface option\n");
+	  e->value->u.predicate = strdup("out_interface");
+	  if (n->not_identifier)
+	      ipts_convert_not_identifier(n->not_identifier, e->left);
+	  break;
+	case IPTS_OPT_PROTOCOL:
+	  eprint("going to convert protocol option\n");
+	  e->value->u.predicate = strdup("protocol");
+	  if (n->identifier) {
+	      e->left->value = ir_value_new();
+	      ipts_convert_identifier(n->identifier, e->left->value);
+	  }
+	  break;
+	case IPTS_OPT_SOURCE:
+	  eprint("going to convert source option\n");
+	  e->value->u.predicate = strdup("source");
+	  if (n->not_identifier)
+	      ipts_convert_not_identifier(n->not_identifier, e->left);
+	  break;
+	case IPTS_OPT_DESTINATION:
+	  eprint("going to convert destination option\n");
+	  e->value->u.predicate = strdup("destination");
+	  if (n->not_identifier)
+	      ipts_convert_not_identifier(n->not_identifier, e->left);
+	  break;
+	case IPTS_OPT_MATCH:
+	  eprint("going to convert match option\n");
+	  e->value->u.predicate = strdup("match");
+	  if (n->identifier) {
+	      e->left->value = ir_value_new();
+	      ipts_convert_identifier(n->identifier, e->left->value);
+	  }
+	  break;
+	case IPTS_OPT_LIMIT:
+	  eprint("going to convert limit option\n");
+	  e->value->u.predicate = strdup("limit");
+	  if (n->identifier) {
+	      e->left->value = ir_value_new();
+	      ipts_convert_identifier(n->identifier, e->left->value);
+	  }
+	  break;
+	case IPTS_OPT_STATE:
+	  eprint("going to convert state option\n");
+	  e->value->u.predicate = strdup("state");
+	  if (n->identifier) {
+	      e->left->value = ir_value_new();
+	      ipts_convert_identifier(n->identifier, e->left->value);
+	  }
+	  break;
+	case IPTS_OPT_DPORT:
+	  eprint("going to convert dport option\n");
+	  e->value->u.predicate = strdup("dport");
+	  if (n->not_range) {
+	      ipts_convert_not_range(n->not_range, e->left);
+	  } else if (n->identifier) {
+	      ipts_convert_not_identifier(n->not_identifier, e->left);
+	  } else {
+	      fprintf(stderr, "warning: no argument to dport in conversion\n");
+	  }
+	  break;
+	case IPTS_OPT_SPORT:
+	  eprint("going to convert sport option\n");
+	  e->value->u.predicate = strdup("sport");
+	  if (n->not_range) {
+	      ipts_convert_not_range(n->not_range, e->left);
+	  } else if (n->identifier) {
+	      ipts_convert_not_identifier(n->not_identifier, e->left);
+	  } else {
+	      fprintf(stderr, "warning: no argument to sport in conversion\n");
+	  }
+	  break;
+	case IPTS_OPT_TO_SOURCE:
+	  eprint("going to convert to-source option\n");
+	  e->value->u.predicate = strdup("to-source");
+	  if (n->identifier) {
+	      e->left->value = ir_value_new();
+	      ipts_convert_identifier(n->identifier, e->left->value);
+	  }
+	  break;
+	case IPTS_OPT_TO_PORTS:
+	  eprint("going to convert to-ports option\n");
+	  e->value->u.predicate = strdup("to-ports");
+	  if (n->identifier) {
+	      e->left->value = ir_value_new();
+	      ipts_convert_identifier(n->identifier, e->left->value);
+	  }
+	  break;
+	case IPTS_OPT_ICMP_TYPE:
+	  eprint("going to convert icmp_type option\n");
+	  e->value->u.predicate = strdup("icmp_type");
+	  if (n->identifier) {
+	      e->left->value = ir_value_new();
+	      ipts_convert_identifier(n->identifier, e->left->value);
+	  }
+	  break;
+	case IPTS_OPT_UID_OWNER:
+	  eprint("going to convert uid-owner option\n");
+	  e->value->u.predicate = strdup("uid-owner");
+	  if (n->identifier) {
+	      e->left->value = ir_value_new();
+	      ipts_convert_identifier(n->identifier, e->left->value);
+	  }
+	  break;
+	case IPTS_OPT_HELPER:
+	  eprint("going to convert helper option\n");
+	  e->value->u.predicate = strdup("helper");
+	  if (n->identifier) {
+	      e->left->value = ir_value_new();
+	      ipts_convert_identifier(n->identifier, e->left->value);
+	  }
+	  break;
+	case IPTS_OPT_TCP_FLAGS:
+	  eprint("going to convert tcp_flags option\n");
+	  e->value->u.predicate = strdup("tcp_flags");
+	  if (n->flags) {
+	      e->left->value = ir_value_new();
+	      res = ipts_convert_identifier(n->flags, e->left->value);
+	  }
+	  if (n->mask) {
+	      e->right = ir_expr_new();
+	      e->right->value = ir_value_new();
+	      res = ipts_convert_identifier(n->mask, e->right->value);
+	  }
+	  break;
+	case IPTS_OPT_FRAGMENT:
+	  eprint("going to convert fragment option\n");
+	  e->value->u.predicate = strdup("fragment");
+	  break;
+	case IPTS_OPT_SYN:
+	  eprint("going to convert syn option\n");
+	  e->value->u.predicate = strdup("syn");
+	  break;
+	case IPTS_OPT_CLAMP_MSS_TO_PMTU:
+	  eprint("going to convert clamp_mss_to_pmtu option\n");
+	  e->value->u.predicate = strdup("clamp_mss_to_pmtu");
+	  break;
+	case IPTS_OPT_REJECT_WITH:
+	  eprint("going to convert reject-with option\n");
+	  e->value->u.predicate = strdup("reject-with");
+	  if (n->identifier) {
+	      e->left->value = ir_value_new();
+	      ipts_convert_identifier(n->identifier, e->left->value);
+	  }
+	  break;
+	case IPTS_OPT_LOG_PREFIX:
+	  eprint("going to convert log-prefix option\n");
+	  e->value->u.predicate = strdup("log-prefix");
+	  if (n->identifier) {
+	      e->left->value = ir_value_new();
+	      ipts_convert_identifier(n->identifier, e->left->value);
+	  }
 	  break;
 	default:
 	  fprintf(stderr, "warning: unknown option type %d\n", n->type);
       }
-      #if 0
-      } else if (n->source_option) {
-	  eprint("going to convert source option\n");
-	  res = ipts_convert_source_option(n->source_option, e);
-      } else if (n->destination_option) {
-	  eprint("going to convert destination option\n");
-	  res = ipts_convert_destination_option(n->destination_option, e);
-      } else if (n->protocol_option) {
-	  eprint("going to convert protocol option\n");
-	  res = ipts_convert_protocol_option(n->protocol_option, e);
-      } else if (n->match_option) {
-	  eprint("going to convert match option\n");
-	  res = ipts_convert_match_option(n->match_option, e);
-      } else if (n->dport_option) {
-	  eprint("going to convert dport option\n");
-	  res = ipts_convert_dport_option(n->dport_option, e);
-      } else if (n->sport_option) {
-	  eprint("going to convert sport option\n");
-	  res = ipts_convert_sport_option(n->sport_option, e);
-      } else if (n->to_ports_option) {
-	  eprint("going to convert to_ports option\n");
-	  res = ipts_convert_to_ports_option(n->to_ports_option, e);
-      } else if (n->out_interface_option) {
-	  eprint("going to convert out_interface option\n");
-	  res = ipts_convert_out_interface_option(n->out_interface_option, e);
-      } else if (n->to_source_option) {
-	  eprint("going to convert to_source option\n");
-	  res = ipts_convert_to_source_option(n->to_source_option, e);
-      } else if (n->state_option) {
-	  eprint("going to convert state option\n");
-	  res = ipts_convert_state_option(n->state_option, e);
-      } else if (n->limit_option) {
-	  eprint("going to convert limit option\n");
-	  res = ipts_convert_limit_option(n->limit_option, e);
-      } else if (n->log_prefix_option) {
-	  eprint("going to convert log_prefix option\n");
-	  res = ipts_convert_log_prefix_option(n->log_prefix_option, e);
-      } else if (n->uid_owner_option) {
-	  eprint("going to convert uid_owner option\n");
-	  res = ipts_convert_uid_owner_option(n->uid_owner_option, e);
-      } else if (n->tcp_flags_option) {
-	  eprint("going to convert tcp_flags option\n");
-	  res = ipts_convert_tcp_flags_option(n->tcp_flags_option, e);
-      } else if (n->reject_with_option) {
-	  eprint("going to convert reject_with option\n");
-	  res = ipts_convert_reject_with_option(n->reject_with_option, e);
-      } else if (n->icmp_type_option) {
-	  eprint("going to convert icmp_type option\n");
-	  res = ipts_convert_icmp_type_option(n->icmp_type_option, e);
-      } else if (n->fragment_option) {
-	  eprint("going to convert fragment option\n");
-	  res = ipts_convert_fragment_option(n->fragment_option, e);
-      } else if (n->clamp_mss_to_pmtu_option) {
-	  eprint("going to convert clamp_mss_to_pmtu option\n");
-	  res = ipts_convert_clamp_mss_to_pmtu_option(n->clamp_mss_to_pmtu_option, e);
-      } else if (n->helper_option) {
-	  eprint("going to convert helper option\n");
-	  res = ipts_convert_helper_option(n->helper_option, e);
-      } else if (n->syn_option) {
-	  eprint("going to convert syn option\n");
-	  res = ipts_convert_syn_option(n->syn_option, e);
-      }
-      #endif
   }
 
   return res;
