@@ -156,7 +156,7 @@ int ipts_convert_jump_option(struct option_s * n, struct ir_rule_s * ir_rule) {
 }
 
 /**
- * convert an ipts option into an internal representation predicate
+ * convert an ipts option into a predicate in the internal representation
  * @param n the ipts option struct
  * @param ir_rule the internal represenation of the rule this option belongs to
  */
