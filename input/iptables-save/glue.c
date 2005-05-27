@@ -32,8 +32,6 @@ int ipts_convtrace = 1;
 
 #define eprint(x) if (ipts_convtrace) fprintf(stderr, x)
 
-#define CONVERT(x) int ipts_convert_##x(struct x##_s * n)
-
 int ipts_convert_identifier(struct identifier_s * n, struct ir_value_s * ir_value) {
     int res = 0;
     
