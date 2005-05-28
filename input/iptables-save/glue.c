@@ -400,9 +400,7 @@ int ipts_convert_option_list(struct option_list_s * n, struct ir_rule_s * ir_rul
     return res;
 }
 
-/* FIXME: this function doesn't cope with non-standard chain names
- * and the filter structure can't cope with default chain policies without
- * a device */
+/* FIXME: this function doesn't cope with chain names */
 int ipts_convert_rule(struct rule_s * n, struct ir_rule_s * ir_rule) {
     int res = 1;
 
@@ -413,9 +411,6 @@ int ipts_convert_rule(struct rule_s * n, struct ir_rule_s * ir_rule) {
     if (n->policy) {
 	/* do something with the chain declaration */
 	/* chain, policy, pkt_count are set */
-	/* FIXME: somehow append the chain default policy to the end of the
-	 * rule list */
-	eprint("ignoring default chain policy\n");
 	ir_rule->action = ir_action_new();
 	if (!strcasecmp(n->policy, "drop"))
 	  ir_rule->action->type = IR_DROP;
