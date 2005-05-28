@@ -143,22 +143,21 @@ void gv_emit_ir(struct ir_s * ir, FILE * f) {
   
     fprintf(f, "digraph ir {\n");
 
+    fprintf(f, "ir;\n");
+    
     if (ir->filter) {
-      fprintf(f, "\"filter\";\n");
       p = gv_emit_rule(ir->filter, f);
-      fprintf (f, "\"filter\" -> \"%p\";\n", p);
+      fprintf(f, "\"ir\" -> \"%p\" [label=filter];\n", p);
     }
     
     if (ir->nat) {
-      fprintf(f, "\"nat\";\n");
       p = gv_emit_rule(ir->nat, f);
-      fprintf (f, "\"nat\" -> \"%p\";\n", p);
+      fprintf(f, "\"ir\" -> \"%p\" [label=nat];\n", p);
     }
     
     if (ir->mangle) {
-      fprintf(f, "\"mangle\";\n");
       p = gv_emit_rule(ir->mangle, f);
-      fprintf (f, "\"mangle\" -> \"%p\";\n", p);
+      fprintf(f, "\"mangle\" -> \"%p\" [label=mangle];\n", p);
     }
     
     fprintf(f, "}\n");
