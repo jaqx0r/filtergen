@@ -108,6 +108,14 @@ void * gv_emit_action(struct ir_action_s * ir_action, FILE * f) {
       fprintf(stderr, "warning: unrecognised action type %d\n", ir_action->type);
     }
     fprintf(f, "\"];\n");
+
+    if (ir_action->option) {
+      struct ir_expr_s * p;
+      
+      p = gv_emit_expr(ir_action->option, f);
+      fprintf(f, "\"%p\" -> \"%p\" [label=option];\n", ir_action, p);
+    }
+      
     return ir_action;
 }
 

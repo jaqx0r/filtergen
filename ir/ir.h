@@ -60,7 +60,7 @@ struct ir_action_s {
      * e.g. --reject-with icmp-host-unreachable .
      * TODO: change the char * into some enumeration to make it pf agnostic
      */
-    char * options;
+  struct ir_expr_s * option;
 };
 
 /** Represents a rule in a packet filter.

@@ -169,6 +169,29 @@ int ipts_convert_option(struct option_s * n, struct ir_rule_s * ir_rule) {
   if (n->type == IPTS_OPT_JUMP) {
       eprint("setting rule action\n");
       res = ipts_convert_jump_option(n, ir_rule);
+  } else if (n->type == IPTS_OPT_LOG_PREFIX) {
+    if (!ir_rule->action)
+      ir_rule->action = ir_action_new();
+    ir_rule->action->option = ir_expr_new();
+    ir_rule->action->option->value = ir_value_new();
+    ir_rule->action->option->value->type = IR_VAL_PREDICATE;
+    ir_rule->action->option->value->u.predicate = strdup("log-prefix");
+    ir_rule->action->option->left = ir_expr_new();
+    ir_rule->action->option->left->value = ir_value_new();
+    
+    res = ipts_convert_identifier(n->identifier, ir_rule->action->option->left->value);
+
+  } else if (n->type == IPTS_OPT_REJECT_WITH) {
+    if (!ir_rule->action)
+      ir_rule->action = ir_action_new();
+    ir_rule->action->option = ir_expr_new();
+    ir_rule->action->option->value = ir_value_new();
+    ir_rule->action->option->value->type = IR_VAL_PREDICATE;
+    ir_rule->action->option->value->u.predicate = strdup("reject-with");
+    ir_rule->action->option->left = ir_expr_new();
+    ir_rule->action->option->left->value = ir_value_new();
+    
+    res = ipts_convert_identifier(n->identifier, ir_rule->action->option->left->value);
   } else {
       if (ir_rule->expr) {
 	  eprint("shifting expr with new root AND\n");
@@ -336,22 +359,6 @@ int ipts_convert_option(struct option_s * n, struct ir_rule_s * ir_rule) {
 	case IPTS_OPT_CLAMP_MSS_TO_PMTU:
 	  eprint("going to convert clamp_mss_to_pmtu option\n");
 	  e->value->u.predicate = strdup("clamp_mss_to_pmtu");
-	  break;
-	case IPTS_OPT_REJECT_WITH:
-	  eprint("going to convert reject-with option\n");
-	  e->value->u.predicate = strdup("reject-with");
-	  if (n->identifier) {
-	      e->left->value = ir_value_new();
-	      ipts_convert_identifier(n->identifier, e->left->value);
-	  }
-	  break;
-	case IPTS_OPT_LOG_PREFIX:
-	  eprint("going to convert log-prefix option\n");
-	  e->value->u.predicate = strdup("log-prefix");
-	  if (n->identifier) {
-	      e->left->value = ir_value_new();
-	      ipts_convert_identifier(n->identifier, e->left->value);
-	  }
 	  break;
 	default:
 	  fprintf(stderr, "warning: unknown option type %d\n", n->type);
