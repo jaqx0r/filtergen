@@ -139,24 +139,26 @@ void * gv_emit_rule(struct ir_rule_s * ir_rule, FILE * f) {
 }
 
 void gv_emit_ir(struct ir_s * ir, FILE * f) {
+  struct ir_rule_s * p;
+  
     fprintf(f, "digraph ir {\n");
 
     if (ir->filter) {
-	fprintf(f, "subgraph \"filter\" {\nlabel=\"filter\";\n");
-	gv_emit_rule(ir->filter, f);
-	fprintf(f, "}\n");
+      fprintf(f, "\"filter\";\n");
+      p = gv_emit_rule(ir->filter, f);
+      fprintf (f, "\"filter\" -> \"%p\";\n", p);
     }
     
     if (ir->nat) {
-	fprintf(f, "subgraph \"cluster nat\" {\nlabel=\"nat\";\n");
-	gv_emit_rule(ir->nat, f);
-	fprintf(f, "}\n");
+      fprintf(f, "\"nat\";\n");
+      p = gv_emit_rule(ir->nat, f);
+      fprintf (f, "\"nat\" -> \"%p\";\n", p);
     }
     
     if (ir->mangle) {
-	fprintf(f, "subgraph \"cluster mangle\" {\nlabel=\"mangle\";\n");
-	gv_emit_rule(ir->mangle, f);
-	fprintf(f, "}\n");
+      fprintf(f, "\"mangle\";\n");
+      p = gv_emit_rule(ir->mangle, f);
+      fprintf (f, "\"mangle\" -> \"%p\";\n", p);
     }
     
     fprintf(f, "}\n");

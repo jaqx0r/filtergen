@@ -435,29 +435,42 @@ int ipts_convert_rule(struct rule_s * n, struct ir_rule_s * ir_rule) {
     return res;
 }
 
-int ipts_convert_rule_list(struct rule_list_s * n, struct ir_rule_s * ir_rule) {
-    int res = 1;
+struct ir_rule_s * ipts_convert_rule_list(struct rule_list_s * n) {
+  /* the return value */
+  struct ir_rule_s * ir_rule = NULL, * r;
+  struct rule_list_s * rl;
+  /* this is the default policy rule */
+  struct rule_s * def = NULL;
+  
 
-    eprint("converting rule list\n");
-
-    assert(ir_rule);
-
+  eprint("converting rule list\n");
     
-    if (n->list) {
-      struct ir_rule_s * r, * i;
-      r = ir_rule_new();
-      res = ipts_convert_rule(n->rule, r);
-      res = ipts_convert_rule_list(n->list, ir_rule);
-
-      /* find the end of the ir_rule chain to place the next rule */
-      for (i = ir_rule; i->next != NULL; i = i->next);
-      i->next = r;
-
+  for (rl = n; rl != NULL; rl = rl->list) {
+    if (rl->rule->policy) {
+      /* this rule is the default policy and should go at the end of the IR
+       * rule chain */
+      def = rl->rule;
     } else {
-      res = ipts_convert_rule(n->rule, ir_rule);
-    }
+      r = ir_rule_new();
+      ipts_convert_rule(rl->rule, r);
 
-    return res;
+      r->next = ir_rule;
+
+      ir_rule = r;
+    }
+  }
+
+  if (def) {
+    /* put the default policy at the end of the chain */
+    for (r = ir_rule; r->next != NULL; r = r->next);
+    if (r != ir_rule) {
+      r->next = ir_rule_new();
+      r = r->next;
+    }
+    ipts_convert_rule(def, r);
+  }
+
+  return ir_rule;
 }
 
 int ipts_convert_table(struct table_s * n, struct ir_s * ir) {
@@ -468,8 +481,7 @@ int ipts_convert_table(struct table_s * n, struct ir_s * ir) {
   assert(ir);
 
   if (!strcasecmp(n->name, "filter")) {
-      ir->filter = ir_rule_new();
-      res = ipts_convert_rule_list(n->rule_list, ir->filter);
+    ir->filter = ipts_convert_rule_list(n->rule_list);
   } else {
       fprintf(stderr, "warning: not handling table name %s\n", n->name);
   }
