@@ -122,7 +122,7 @@ struct source_parser_s {
     source_parser * parser;
 } source_parsers[] = {
     /*
-    { "filtergen", filtergen_source_parser },
+      { "filtergen", filtergen_source_parser },
     */
     { "iptables-save", ipts_source_parser },
     { NULL, NULL }
@@ -135,10 +135,10 @@ struct target_emitter_s {
     target_emitter * emitter;
 } target_emitters[] = {
     /*
-    { "iptables", fg_iptables },
-    { "ipchains", fg_ipchains },
-    { "ipfilter", fg_ipfilter },
-    { "cisco", fg_cisco },
+      { "iptables", fg_iptables },
+      { "ipchains", fg_ipchains },
+      { "ipfilter", fg_ipfilter },
+      { "cisco", fg_cisco },
     */
     { "filtergen", emit_filtergen },
     { "graphviz", graphviz_target_emitter },
@@ -199,20 +199,20 @@ int main(int argc, char **argv) {
 	    ftn = strdup(optarg);
 	    break;
 	    /*
-	  case 'F':
-	    flags |= FF_FLUSH;
-	    if (!strcasecmp(optarg, "accept")) {
-		flushpol = T_ACCEPT;
-	    } else if (!strcasecmp(optarg, "drop")) {
-		flushpol = DROP;
-	    } else if (!strcasecmp(optarg, "reject")) {
-		flushpol = T_REJECT;
-	    } else {
-		fprintf(stderr, "%s: flush policy unrecofgnised: %s\n", progname, optarg);
-		usage(progname);
-		exit(1);
-	    }
-	    break;
+	      case 'F':
+	      flags |= FF_FLUSH;
+	      if (!strcasecmp(optarg, "accept")) {
+	      flushpol = T_ACCEPT;
+	      } else if (!strcasecmp(optarg, "drop")) {
+	      flushpol = DROP;
+	      } else if (!strcasecmp(optarg, "reject")) {
+	      flushpol = T_REJECT;
+	      } else {
+	      fprintf(stderr, "%s: flush policy unrecofgnised: %s\n", progname, optarg);
+	      usage(progname);
+	      exit(1);
+	      }
+	      break;
 	    */
 	  case 'V':
 	    printf("filtergen " VERSION "\n");
@@ -226,15 +226,15 @@ int main(int argc, char **argv) {
 	}
     }
     /*
-    if (!(flags & FF_FLUSH)) {
+      if (!(flags & FF_FLUSH)) {
     */
-	if (optind >= argc) {
-	    usage(progname);
-	    exit(1);
-	} else
-	    filename = argv[optind++];
-	/*
-    }
+    if (optind >= argc) {
+	usage(progname);
+	exit(1);
+    } else
+	filename = argv[optind++];
+    /*
+      }
     */
 
     if (ofn) {
@@ -274,29 +274,29 @@ int main(int argc, char **argv) {
 
     /* What to do, then? */
     /*
-    if(flags & FF_FLUSH) {
-	/ * Just flush it * /
-	l = ft->flusher(flushpol);
-    } else {
+      if(flags & FF_FLUSH) {
+      / * Just flush it * /
+      l = ft->flusher(flushpol);
+      } else {
     */
-	FILE * file;
+    FILE * file;
 
-	/* Compile from a file */
-	if(filename && !strcmp(filename, "-")) filename = NULL;
+    /* Compile from a file */
+    if(filename && !strcmp(filename, "-")) filename = NULL;
 
-	if (filename) {
-	    /** FIXME: make more effort to find the file */
-	    if (!(file = fopen(filename, "r"))) {
-		fprintf(stderr, "can't open file \"%s\"", filename);
-	    }
-	} else {
-	    file = stdin;
+    if (filename) {
+	/** FIXME: make more effort to find the file */
+	if (!(file = fopen(filename, "r"))) {
+	    fprintf(stderr, "can't open file \"%s\"", filename);
 	}
-	ir = sp->parser(file, resolve_names);
-	l = te->emitter(ir, outfile);
-	/*
+    } else {
+	file = stdin;
     }
-	*/
+    ir = sp->parser(file, resolve_names);
+    l = te->emitter(ir, outfile);
+    /*
+      }
+    */
 
     if(ofn) fclose(outfile);
 
