@@ -408,6 +408,34 @@ int ipts_convert_rule(struct rule_s * n, struct ir_rule_s * ir_rule) {
 
     assert(ir_rule);
 
+    /* create an expression matching the chain name, aka direction of travel.
+     * this is obviously incorrect for nonstandard chain names. */
+    if (n->chain) {
+	struct ir_expr_s * e;
+
+	e = ir_expr_new();
+	e->value = ir_value_new();
+	e->value->type = IR_VAL_PREDICATE;
+	e->value->u.predicate = strdup("direction");
+	e->left = ir_expr_new();
+	e->left->value = ir_value_new();
+	e->left->value->type = IR_VAL_LITERAL;
+	e->left->value->u.literal = strdup(n->chain);
+
+	if (ir_rule->expr) {
+	    struct ir_expr_s * a;
+	    a = ir_expr_new();
+	    a->value = ir_value_new();
+	    a->value->type = IR_VAL_OPERATOR;
+	    a->value->u.operator = IR_OP_AND;
+	    a->left = ir_rule->expr;
+	    a->right = e;
+	    ir_rule->expr = a;
+	} else {
+	    ir_rule->expr = e;
+	}
+    }	    
+
     if (n->policy) {
 	/* do something with the chain declaration */
 	/* chain, policy, pkt_count are set */
