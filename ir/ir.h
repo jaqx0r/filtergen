@@ -70,7 +70,7 @@ struct ir_rule_s {
     struct ir_expr_s * expr;
     struct ir_action_s * action;
 
-  struct ir_rule_s * next;
+    struct ir_rule_s * next;
 };
 
 /** Top level container for the internal representation.  The names reflect

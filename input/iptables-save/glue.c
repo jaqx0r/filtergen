@@ -132,7 +132,7 @@ int ipts_convert_jump_option(struct option_s * n, struct ir_rule_s * ir_rule) {
     assert(n->identifier);
 
     if (ir_rule->action)
-      fprintf(stderr, "warning: rule already has an action\n");
+	fprintf(stderr, "warning: rule already has an action\n");
     
     ir_rule->action = ir_action_new();
 
@@ -159,213 +159,213 @@ int ipts_convert_jump_option(struct option_s * n, struct ir_rule_s * ir_rule) {
  * @param ir_rule the internal represenation of the rule this option belongs to
  */
 int ipts_convert_option(struct option_s * n, struct ir_rule_s * ir_rule) {
-  int res = 1;
-  struct ir_expr_s * e;
+    int res = 1;
+    struct ir_expr_s * e;
 
-  eprint("converting option\n");
+    eprint("converting option\n");
 
-  assert(n);
+    assert(n);
 
-  if (n->type == IPTS_OPT_JUMP) {
-      eprint("setting rule action\n");
-      res = ipts_convert_jump_option(n, ir_rule);
-  } else if (n->type == IPTS_OPT_LOG_PREFIX) {
-    if (!ir_rule->action)
-      ir_rule->action = ir_action_new();
-    ir_rule->action->option = ir_expr_new();
-    ir_rule->action->option->value = ir_value_new();
-    ir_rule->action->option->value->type = IR_VAL_PREDICATE;
-    ir_rule->action->option->value->u.predicate = strdup("log-prefix");
-    ir_rule->action->option->left = ir_expr_new();
-    ir_rule->action->option->left->value = ir_value_new();
+    if (n->type == IPTS_OPT_JUMP) {
+	eprint("setting rule action\n");
+	res = ipts_convert_jump_option(n, ir_rule);
+    } else if (n->type == IPTS_OPT_LOG_PREFIX) {
+	if (!ir_rule->action)
+	    ir_rule->action = ir_action_new();
+	ir_rule->action->option = ir_expr_new();
+	ir_rule->action->option->value = ir_value_new();
+	ir_rule->action->option->value->type = IR_VAL_PREDICATE;
+	ir_rule->action->option->value->u.predicate = strdup("log-prefix");
+	ir_rule->action->option->left = ir_expr_new();
+	ir_rule->action->option->left->value = ir_value_new();
     
-    res = ipts_convert_identifier(n->identifier, ir_rule->action->option->left->value);
+	res = ipts_convert_identifier(n->identifier, ir_rule->action->option->left->value);
 
-  } else if (n->type == IPTS_OPT_REJECT_WITH) {
-    if (!ir_rule->action)
-      ir_rule->action = ir_action_new();
-    ir_rule->action->option = ir_expr_new();
-    ir_rule->action->option->value = ir_value_new();
-    ir_rule->action->option->value->type = IR_VAL_PREDICATE;
-    ir_rule->action->option->value->u.predicate = strdup("reject-with");
-    ir_rule->action->option->left = ir_expr_new();
-    ir_rule->action->option->left->value = ir_value_new();
+    } else if (n->type == IPTS_OPT_REJECT_WITH) {
+	if (!ir_rule->action)
+	    ir_rule->action = ir_action_new();
+	ir_rule->action->option = ir_expr_new();
+	ir_rule->action->option->value = ir_value_new();
+	ir_rule->action->option->value->type = IR_VAL_PREDICATE;
+	ir_rule->action->option->value->u.predicate = strdup("reject-with");
+	ir_rule->action->option->left = ir_expr_new();
+	ir_rule->action->option->left->value = ir_value_new();
     
-    res = ipts_convert_identifier(n->identifier, ir_rule->action->option->left->value);
-  } else {
-      if (ir_rule->expr) {
-	  eprint("shifting expr with new root AND\n");
-	  e = ir_expr_new();
-	  e->value = ir_value_new();
-	  e->value->type = IR_VAL_OPERATOR;
-	  e->value->u.operator = IR_OP_AND;
+	res = ipts_convert_identifier(n->identifier, ir_rule->action->option->left->value);
+    } else {
+	if (ir_rule->expr) {
+	    eprint("shifting expr with new root AND\n");
+	    e = ir_expr_new();
+	    e->value = ir_value_new();
+	    e->value->type = IR_VAL_OPERATOR;
+	    e->value->u.operator = IR_OP_AND;
 
-	  e->left = ir_rule->expr;
-	  e->right = ir_expr_new();
-	  ir_rule->expr = e;
+	    e->left = ir_rule->expr;
+	    e->right = ir_expr_new();
+	    ir_rule->expr = e;
 	  
-	  e = e->right;
+	    e = e->right;
 
-      } else {
-	  eprint("creating new root expr\n");
-	  ir_rule->expr = ir_expr_new();
-	  e = ir_rule->expr;
-      }
+	} else {
+	    eprint("creating new root expr\n");
+	    ir_rule->expr = ir_expr_new();
+	    e = ir_rule->expr;
+	}
 
-      e->value = ir_value_new();
-      e->value->type = IR_VAL_PREDICATE;
-      e->left = ir_expr_new();
+	e->value = ir_value_new();
+	e->value->type = IR_VAL_PREDICATE;
+	e->left = ir_expr_new();
 
-      switch(n->type) {
-	case IPTS_OPT_IN_INTERFACE:
-	  eprint("going to convert in_interface option\n");
-	  e->value->u.predicate = strdup("in_interface");
-	  if (n->not_identifier)
-	      ipts_convert_not_identifier(n->not_identifier, e->left);
-	  break;
-	case IPTS_OPT_OUT_INTERFACE:
-	  eprint("going to convert out_interface option\n");
-	  e->value->u.predicate = strdup("out_interface");
-	  if (n->not_identifier)
-	      ipts_convert_not_identifier(n->not_identifier, e->left);
-	  break;
-	case IPTS_OPT_PROTOCOL:
-	  eprint("going to convert protocol option\n");
-	  e->value->u.predicate = strdup("protocol");
-	  if (n->identifier) {
-	      e->left->value = ir_value_new();
-	      ipts_convert_identifier(n->identifier, e->left->value);
-	  }
-	  break;
-	case IPTS_OPT_SOURCE:
-	  eprint("going to convert source option\n");
-	  e->value->u.predicate = strdup("source");
-	  if (n->not_identifier)
-	      ipts_convert_not_identifier(n->not_identifier, e->left);
-	  break;
-	case IPTS_OPT_DESTINATION:
-	  eprint("going to convert destination option\n");
-	  e->value->u.predicate = strdup("destination");
-	  if (n->not_identifier)
-	      ipts_convert_not_identifier(n->not_identifier, e->left);
-	  break;
-	case IPTS_OPT_MATCH:
-	  eprint("going to convert match option\n");
-	  e->value->u.predicate = strdup("match");
-	  if (n->identifier) {
-	      e->left->value = ir_value_new();
-	      ipts_convert_identifier(n->identifier, e->left->value);
-	  }
-	  break;
-	case IPTS_OPT_LIMIT:
-	  eprint("going to convert limit option\n");
-	  e->value->u.predicate = strdup("limit");
-	  if (n->identifier) {
-	      e->left->value = ir_value_new();
-	      ipts_convert_identifier(n->identifier, e->left->value);
-	  }
-	  break;
-	case IPTS_OPT_STATE:
-	  eprint("going to convert state option\n");
-	  e->value->u.predicate = strdup("state");
-	  if (n->identifier) {
-	      e->left->value = ir_value_new();
-	      ipts_convert_identifier(n->identifier, e->left->value);
-	  }
-	  break;
-	case IPTS_OPT_DPORT:
-	  eprint("going to convert dport option\n");
-	  e->value->u.predicate = strdup("dport");
-	  if (n->not_range) {
-	      ipts_convert_not_range(n->not_range, e->left);
-	  } else if (n->identifier) {
-	      ipts_convert_not_identifier(n->not_identifier, e->left);
-	  } else {
-	      fprintf(stderr, "warning: no argument to dport in conversion\n");
-	  }
-	  break;
-	case IPTS_OPT_SPORT:
-	  eprint("going to convert sport option\n");
-	  e->value->u.predicate = strdup("sport");
-	  if (n->not_range) {
-	      ipts_convert_not_range(n->not_range, e->left);
-	  } else if (n->identifier) {
-	      ipts_convert_not_identifier(n->not_identifier, e->left);
-	  } else {
-	      fprintf(stderr, "warning: no argument to sport in conversion\n");
-	  }
-	  break;
-	case IPTS_OPT_TO_SOURCE:
-	  eprint("going to convert to-source option\n");
-	  e->value->u.predicate = strdup("to-source");
-	  if (n->identifier) {
-	      e->left->value = ir_value_new();
-	      ipts_convert_identifier(n->identifier, e->left->value);
-	  }
-	  break;
-	case IPTS_OPT_TO_PORTS:
-	  eprint("going to convert to-ports option\n");
-	  e->value->u.predicate = strdup("to-ports");
-	  if (n->identifier) {
-	      e->left->value = ir_value_new();
-	      ipts_convert_identifier(n->identifier, e->left->value);
-	  }
-	  break;
-	case IPTS_OPT_ICMP_TYPE:
-	  eprint("going to convert icmp_type option\n");
-	  e->value->u.predicate = strdup("icmp_type");
-	  if (n->identifier) {
-	      e->left->value = ir_value_new();
-	      ipts_convert_identifier(n->identifier, e->left->value);
-	  }
-	  break;
-	case IPTS_OPT_UID_OWNER:
-	  eprint("going to convert uid-owner option\n");
-	  e->value->u.predicate = strdup("uid-owner");
-	  if (n->identifier) {
-	      e->left->value = ir_value_new();
-	      ipts_convert_identifier(n->identifier, e->left->value);
-	  }
-	  break;
-	case IPTS_OPT_HELPER:
-	  eprint("going to convert helper option\n");
-	  e->value->u.predicate = strdup("helper");
-	  if (n->identifier) {
-	      e->left->value = ir_value_new();
-	      ipts_convert_identifier(n->identifier, e->left->value);
-	  }
-	  break;
-	case IPTS_OPT_TCP_FLAGS:
-	  eprint("going to convert tcp_flags option\n");
-	  e->value->u.predicate = strdup("tcp_flags");
-	  if (n->flags) {
-	      e->left->value = ir_value_new();
-	      res = ipts_convert_identifier(n->flags, e->left->value);
-	  }
-	  if (n->mask) {
-	      e->right = ir_expr_new();
-	      e->right->value = ir_value_new();
-	      res = ipts_convert_identifier(n->mask, e->right->value);
-	  }
-	  break;
-	case IPTS_OPT_FRAGMENT:
-	  eprint("going to convert fragment option\n");
-	  e->value->u.predicate = strdup("fragment");
-	  break;
-	case IPTS_OPT_SYN:
-	  eprint("going to convert syn option\n");
-	  e->value->u.predicate = strdup("syn");
-	  break;
-	case IPTS_OPT_CLAMP_MSS_TO_PMTU:
-	  eprint("going to convert clamp_mss_to_pmtu option\n");
-	  e->value->u.predicate = strdup("clamp_mss_to_pmtu");
-	  break;
-	default:
-	  fprintf(stderr, "warning: unknown option type %d\n", n->type);
-      }
-  }
+	switch(n->type) {
+	  case IPTS_OPT_IN_INTERFACE:
+	    eprint("going to convert in_interface option\n");
+	    e->value->u.predicate = strdup("in_interface");
+	    if (n->not_identifier)
+		ipts_convert_not_identifier(n->not_identifier, e->left);
+	    break;
+	  case IPTS_OPT_OUT_INTERFACE:
+	    eprint("going to convert out_interface option\n");
+	    e->value->u.predicate = strdup("out_interface");
+	    if (n->not_identifier)
+		ipts_convert_not_identifier(n->not_identifier, e->left);
+	    break;
+	  case IPTS_OPT_PROTOCOL:
+	    eprint("going to convert protocol option\n");
+	    e->value->u.predicate = strdup("protocol");
+	    if (n->identifier) {
+		e->left->value = ir_value_new();
+		ipts_convert_identifier(n->identifier, e->left->value);
+	    }
+	    break;
+	  case IPTS_OPT_SOURCE:
+	    eprint("going to convert source option\n");
+	    e->value->u.predicate = strdup("source");
+	    if (n->not_identifier)
+		ipts_convert_not_identifier(n->not_identifier, e->left);
+	    break;
+	  case IPTS_OPT_DESTINATION:
+	    eprint("going to convert destination option\n");
+	    e->value->u.predicate = strdup("destination");
+	    if (n->not_identifier)
+		ipts_convert_not_identifier(n->not_identifier, e->left);
+	    break;
+	  case IPTS_OPT_MATCH:
+	    eprint("going to convert match option\n");
+	    e->value->u.predicate = strdup("match");
+	    if (n->identifier) {
+		e->left->value = ir_value_new();
+		ipts_convert_identifier(n->identifier, e->left->value);
+	    }
+	    break;
+	  case IPTS_OPT_LIMIT:
+	    eprint("going to convert limit option\n");
+	    e->value->u.predicate = strdup("limit");
+	    if (n->identifier) {
+		e->left->value = ir_value_new();
+		ipts_convert_identifier(n->identifier, e->left->value);
+	    }
+	    break;
+	  case IPTS_OPT_STATE:
+	    eprint("going to convert state option\n");
+	    e->value->u.predicate = strdup("state");
+	    if (n->identifier) {
+		e->left->value = ir_value_new();
+		ipts_convert_identifier(n->identifier, e->left->value);
+	    }
+	    break;
+	  case IPTS_OPT_DPORT:
+	    eprint("going to convert dport option\n");
+	    e->value->u.predicate = strdup("dport");
+	    if (n->not_range) {
+		ipts_convert_not_range(n->not_range, e->left);
+	    } else if (n->identifier) {
+		ipts_convert_not_identifier(n->not_identifier, e->left);
+	    } else {
+		fprintf(stderr, "warning: no argument to dport in conversion\n");
+	    }
+	    break;
+	  case IPTS_OPT_SPORT:
+	    eprint("going to convert sport option\n");
+	    e->value->u.predicate = strdup("sport");
+	    if (n->not_range) {
+		ipts_convert_not_range(n->not_range, e->left);
+	    } else if (n->identifier) {
+		ipts_convert_not_identifier(n->not_identifier, e->left);
+	    } else {
+		fprintf(stderr, "warning: no argument to sport in conversion\n");
+	    }
+	    break;
+	  case IPTS_OPT_TO_SOURCE:
+	    eprint("going to convert to-source option\n");
+	    e->value->u.predicate = strdup("to-source");
+	    if (n->identifier) {
+		e->left->value = ir_value_new();
+		ipts_convert_identifier(n->identifier, e->left->value);
+	    }
+	    break;
+	  case IPTS_OPT_TO_PORTS:
+	    eprint("going to convert to-ports option\n");
+	    e->value->u.predicate = strdup("to-ports");
+	    if (n->identifier) {
+		e->left->value = ir_value_new();
+		ipts_convert_identifier(n->identifier, e->left->value);
+	    }
+	    break;
+	  case IPTS_OPT_ICMP_TYPE:
+	    eprint("going to convert icmp_type option\n");
+	    e->value->u.predicate = strdup("icmp_type");
+	    if (n->identifier) {
+		e->left->value = ir_value_new();
+		ipts_convert_identifier(n->identifier, e->left->value);
+	    }
+	    break;
+	  case IPTS_OPT_UID_OWNER:
+	    eprint("going to convert uid-owner option\n");
+	    e->value->u.predicate = strdup("uid-owner");
+	    if (n->identifier) {
+		e->left->value = ir_value_new();
+		ipts_convert_identifier(n->identifier, e->left->value);
+	    }
+	    break;
+	  case IPTS_OPT_HELPER:
+	    eprint("going to convert helper option\n");
+	    e->value->u.predicate = strdup("helper");
+	    if (n->identifier) {
+		e->left->value = ir_value_new();
+		ipts_convert_identifier(n->identifier, e->left->value);
+	    }
+	    break;
+	  case IPTS_OPT_TCP_FLAGS:
+	    eprint("going to convert tcp_flags option\n");
+	    e->value->u.predicate = strdup("tcp_flags");
+	    if (n->flags) {
+		e->left->value = ir_value_new();
+		res = ipts_convert_identifier(n->flags, e->left->value);
+	    }
+	    if (n->mask) {
+		e->right = ir_expr_new();
+		e->right->value = ir_value_new();
+		res = ipts_convert_identifier(n->mask, e->right->value);
+	    }
+	    break;
+	  case IPTS_OPT_FRAGMENT:
+	    eprint("going to convert fragment option\n");
+	    e->value->u.predicate = strdup("fragment");
+	    break;
+	  case IPTS_OPT_SYN:
+	    eprint("going to convert syn option\n");
+	    e->value->u.predicate = strdup("syn");
+	    break;
+	  case IPTS_OPT_CLAMP_MSS_TO_PMTU:
+	    eprint("going to convert clamp_mss_to_pmtu option\n");
+	    e->value->u.predicate = strdup("clamp_mss_to_pmtu");
+	    break;
+	  default:
+	    fprintf(stderr, "warning: unknown option type %d\n", n->type);
+	}
+    }
 
-  return res;
+    return res;
 }
 
 int ipts_convert_not_option(struct not_option_s * n, struct ir_rule_s * ir_rule) {
@@ -413,13 +413,13 @@ int ipts_convert_rule(struct rule_s * n, struct ir_rule_s * ir_rule) {
 	/* chain, policy, pkt_count are set */
 	ir_rule->action = ir_action_new();
 	if (!strcasecmp(n->policy, "drop"))
-	  ir_rule->action->type = IR_DROP;
+	    ir_rule->action->type = IR_DROP;
 	else if (!strcasecmp(n->policy, "drop"))
-	  ir_rule->action->type = IR_DROP;
+	    ir_rule->action->type = IR_DROP;
 	else if (!strcasecmp(n->policy, "reject"))
-	  ir_rule->action->type = IR_REJECT;
+	    ir_rule->action->type = IR_REJECT;
 	else
-	  fprintf(stderr, "warning: unknown policy %s\n", n->policy);
+	    fprintf(stderr, "warning: unknown policy %s\n", n->policy);
 
     } else if (n->option_list) {
 	/* do something with the option list */
@@ -431,57 +431,57 @@ int ipts_convert_rule(struct rule_s * n, struct ir_rule_s * ir_rule) {
 }
 
 struct ir_rule_s * ipts_convert_rule_list(struct rule_list_s * n) {
-  /* the return value */
-  struct ir_rule_s * ir_rule = NULL, * r;
-  struct rule_list_s * rl;
-  /* this is the default policy rule */
-  struct rule_s * def = NULL;
+    /* the return value */
+    struct ir_rule_s * ir_rule = NULL, * r;
+    struct rule_list_s * rl;
+    /* this is the default policy rule */
+    struct rule_s * def = NULL;
   
 
-  eprint("converting rule list\n");
+    eprint("converting rule list\n");
     
-  for (rl = n; rl != NULL; rl = rl->list) {
-    if (rl->rule->policy) {
-      /* this rule is the default policy and should go at the end of the IR
-       * rule chain */
-      def = rl->rule;
-    } else {
-      r = ir_rule_new();
-      ipts_convert_rule(rl->rule, r);
+    for (rl = n; rl != NULL; rl = rl->list) {
+	if (rl->rule->policy) {
+	    /* this rule is the default policy and should go at the end of the IR
+	     * rule chain */
+	    def = rl->rule;
+	} else {
+	    r = ir_rule_new();
+	    ipts_convert_rule(rl->rule, r);
 
-      r->next = ir_rule;
+	    r->next = ir_rule;
 
-      ir_rule = r;
+	    ir_rule = r;
+	}
     }
-  }
 
-  if (def) {
-    /* put the default policy at the end of the chain */
-    for (r = ir_rule; r->next != NULL; r = r->next);
-    if (r != ir_rule) {
-      r->next = ir_rule_new();
-      r = r->next;
+    if (def) {
+	/* put the default policy at the end of the chain */
+	for (r = ir_rule; r->next != NULL; r = r->next);
+	if (r != ir_rule) {
+	    r->next = ir_rule_new();
+	    r = r->next;
+	}
+	ipts_convert_rule(def, r);
     }
-    ipts_convert_rule(def, r);
-  }
 
-  return ir_rule;
+    return ir_rule;
 }
 
 int ipts_convert_table(struct table_s * n, struct ir_s * ir) {
-  int res = 1;
+    int res = 1;
 
-  eprint("converting table\n");
+    eprint("converting table\n");
 
-  assert(ir);
+    assert(ir);
 
-  if (!strcasecmp(n->name, "filter")) {
-    ir->filter = ipts_convert_rule_list(n->rule_list);
-  } else {
-      fprintf(stderr, "warning: not handling table name %s\n", n->name);
-  }
+    if (!strcasecmp(n->name, "filter")) {
+	ir->filter = ipts_convert_rule_list(n->rule_list);
+    } else {
+	fprintf(stderr, "warning: not handling table name %s\n", n->name);
+    }
 
-  return res;
+    return res;
 }
 
 int ipts_convert_table_list(struct table_list_s * n, struct ir_s * ir) {
