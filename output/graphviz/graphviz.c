@@ -92,28 +92,28 @@ void * gv_emit_action(struct ir_action_s * ir_action, FILE * f) {
     assert(ir_action);
     fprintf(f, "\"%p\" [label=\"", ir_action);
     switch (ir_action->type) {
-     case IR_ACCEPT:
-      fprintf(f, "ACCEPT");
-      break;
-     case IR_DROP:
-      fprintf(f, "DROP");
-      break;
-     case IR_REJECT:
-      fprintf(f, "REJECT");
-      break;
-     case IR_LOG:
-      fprintf(f, "LOG");
-      break;
-     default:
-      fprintf(stderr, "warning: unrecognised action type %d\n", ir_action->type);
+      case IR_ACCEPT:
+	fprintf(f, "ACCEPT");
+	break;
+      case IR_DROP:
+	fprintf(f, "DROP");
+	break;
+      case IR_REJECT:
+	fprintf(f, "REJECT");
+	break;
+      case IR_LOG:
+	fprintf(f, "LOG");
+	break;
+      default:
+	fprintf(stderr, "warning: unrecognised action type %d\n", ir_action->type);
     }
     fprintf(f, "\"];\n");
 
     if (ir_action->option) {
-      struct ir_expr_s * p;
+	struct ir_expr_s * p;
       
-      p = gv_emit_expr(ir_action->option, f);
-      fprintf(f, "\"%p\" -> \"%p\" [label=option];\n", ir_action, p);
+	p = gv_emit_expr(ir_action->option, f);
+	fprintf(f, "\"%p\" -> \"%p\" [label=option];\n", ir_action, p);
     }
       
     return ir_action;
@@ -139,25 +139,25 @@ void * gv_emit_rule(struct ir_rule_s * ir_rule, FILE * f) {
 }
 
 void gv_emit_ir(struct ir_s * ir, FILE * f) {
-  struct ir_rule_s * p;
+    struct ir_rule_s * p;
   
     fprintf(f, "digraph ir {\n");
 
     fprintf(f, "ir;\n");
     
     if (ir->filter) {
-      p = gv_emit_rule(ir->filter, f);
-      fprintf(f, "\"ir\" -> \"%p\" [label=filter];\n", p);
+	p = gv_emit_rule(ir->filter, f);
+	fprintf(f, "\"ir\" -> \"%p\" [label=filter];\n", p);
     }
     
     if (ir->nat) {
-      p = gv_emit_rule(ir->nat, f);
-      fprintf(f, "\"ir\" -> \"%p\" [label=nat];\n", p);
+	p = gv_emit_rule(ir->nat, f);
+	fprintf(f, "\"ir\" -> \"%p\" [label=nat];\n", p);
     }
     
     if (ir->mangle) {
-      p = gv_emit_rule(ir->mangle, f);
-      fprintf(f, "\"mangle\" -> \"%p\" [label=mangle];\n", p);
+	p = gv_emit_rule(ir->mangle, f);
+	fprintf(f, "\"mangle\" -> \"%p\" [label=mangle];\n", p);
     }
     
     fprintf(f, "}\n");
