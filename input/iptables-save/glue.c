@@ -400,7 +400,6 @@ int ipts_convert_option_list(struct option_list_s * n, struct ir_rule_s * ir_rul
     return res;
 }
 
-/* FIXME: this function doesn't cope with chain names */
 int ipts_convert_rule(struct rule_s * n, struct ir_rule_s * ir_rule) {
     int res = 1;
 
