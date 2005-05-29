@@ -40,7 +40,6 @@ int ipts_convert_identifier(struct identifier_s * n, struct ir_value_s * ir_valu
     assert(ir_value);
 
     if (n->string) {
-	/*printf("%s\n", n->string);*/
 	ir_value->type = IR_VAL_LITERAL;
 	ir_value->u.literal = n->string;
 	res = 1;
