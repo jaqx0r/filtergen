@@ -100,3 +100,5 @@ other items
   back?
 
 * scons distcheck to emulate make distcheck
+
+* standardise warning and error message output
