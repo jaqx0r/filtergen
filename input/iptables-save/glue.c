@@ -28,7 +28,7 @@
 int ipts_parse(void *);
 int ipts_restart(FILE *);
 
-int ipts_convtrace = 1;
+int ipts_convtrace = 0;
 
 #define eprint(x) if (ipts_convtrace) fprintf(stderr, x)
 
@@ -369,18 +369,29 @@ struct ir_expr_s * ipts_convert_option_list(struct option_list_s * n, struct ir_
     if (n->option_list) {
 	e = ipts_convert_option_list(n->option_list, ir_rule);
     }
+
     if (n->not_option) {
-	struct ir_expr_s * o = NULL;
+	if (e) {
+	    struct ir_expr_s * o = NULL;
 
-	o = ir_expr_new();
-	o->value = ir_value_new();
-	o->value->type = IR_VAL_OPERATOR;
-	o->value->u.operator = IR_OP_AND;
+	    o = ir_expr_new();
+	    o->value = ir_value_new();
+	    o->value->type = IR_VAL_OPERATOR;
+	    o->value->u.operator = IR_OP_AND;
 
-	o->left = e;
-	o->right = ipts_convert_not_option(n->not_option, ir_rule);
+	    o->left = e;
+	    o->right = ipts_convert_not_option(n->not_option, ir_rule);
 
-	e = o;
+	    if (o->right) {
+		e = o;
+	    } else {
+		fprintf(stderr, "warning: not_option returned NULL\n");
+		ir_value_free(o->value);
+		ir_expr_free(o);
+	    }
+	} else {
+	    e = ipts_convert_not_option(n->not_option, ir_rule);
+	}
     }
 
     return e;
@@ -415,6 +426,7 @@ int ipts_convert_rule(struct rule_s * n, struct ir_rule_s * ir_rule) {
 	    a->value->u.operator = IR_OP_AND;
 	    a->left = ir_rule->expr;
 	    a->right = e;
+	    
 	    ir_rule->expr = a;
 	} else {
 	    ir_rule->expr = e;
@@ -440,19 +452,23 @@ int ipts_convert_rule(struct rule_s * n, struct ir_rule_s * ir_rule) {
 	/* option list, and optionally pkt_count, are set */
 	e = ipts_convert_option_list(n->option_list, ir_rule);
 
-	if (ir_rule->expr) {
-	    struct ir_expr_s * o;
-	    o = ir_expr_new();
-	    o->value = ir_value_new();
-	    o->value->type = IR_VAL_OPERATOR;
-	    o->value->u.operator = IR_OP_AND;
+	if (e != NULL) {
+	    if (ir_rule->expr) {
+		struct ir_expr_s * o;
+		o = ir_expr_new();
+		o->value = ir_value_new();
+		o->value->type = IR_VAL_OPERATOR;
+		o->value->u.operator = IR_OP_AND;
 
-	    o->left = ir_rule->expr;
-	    o->right = e;
+		o->left = ir_rule->expr;
+		o->right = e;
 
-	    ir_rule->expr = o;
+		ir_rule->expr = o;
+	    } else {
+		ir_rule->expr = e;
+	    }
 	} else {
-	    ir_rule->expr = e;
+	    fprintf(stderr, "warning: option_list returned null\n");
 	}
     }
 
