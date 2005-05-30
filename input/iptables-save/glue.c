@@ -51,9 +51,8 @@ struct ir_expr_s * ipts_convert_not_identifier(struct not_identifier_s * n) {
     
     eprint("converting not_identifier\n");
 
-    e = ir_expr_new();
-
     if (n->identifier) {
+	e = ir_expr_new();
 	e->value = ipts_convert_identifier(n->identifier);
     }
 
@@ -71,48 +70,49 @@ struct ir_expr_s * ipts_convert_not_identifier(struct not_identifier_s * n) {
     return e;
 }
 
-int ipts_convert_range(struct range_s * n, struct ir_expr_s * ir_expr) {
-    int res = 1;
+struct ir_expr_s * ipts_convert_range(struct range_s * n) {
+    struct ir_expr_s * e = NULL;
+
     eprint("converting range\n");
 
-    assert(ir_expr);
-
-    ir_expr->value = ir_value_new();
-    ir_expr->value->type = IR_VAL_RANGE;
+    e = ir_expr_new();
+    e->value = ir_value_new();
+    e->value->type = IR_VAL_RANGE;
 
     if (n->start) {
-	ir_expr->left = ir_expr_new();
-	ir_expr->left->value = ipts_convert_identifier(n->start);
+	e->left = ir_expr_new();
+	e->left->value = ipts_convert_identifier(n->start);
     }
     if (n->end) {
-	ir_expr->right = ir_expr_new();
-	ir_expr->right->value = ipts_convert_identifier(n->end);
+	e->right = ir_expr_new();
+	e->right->value = ipts_convert_identifier(n->end);
     }
 
-    return res;
+    return e;
 }
 
-int ipts_convert_not_range(struct not_range_s * n, struct ir_expr_s * ir_expr) {
-    int res = 1;
-    struct ir_expr_s * e;
+struct ir_expr_s * ipts_convert_not_range(struct not_range_s * n) {
+    struct ir_expr_s * e = NULL;
     
     eprint("converting not_range\n");
 
-    assert(ir_expr);
-    e = ir_expr;
+    if (n->range) {
+	e = ipts_convert_range(n->range);
+    }
 
     if (n->neg) {
-	ir_expr->value = ir_value_new();
-	ir_expr->value->type = IR_VAL_OPERATOR;
-	ir_expr->value->u.operator = IR_OP_NOT;
-	ir_expr->left = ir_expr_new();
-	e = ir_expr->left;
-    }
-    if (n->range) {
-	res = ipts_convert_range(n->range, e);
-    }
+	struct ir_expr_s * neg;
+	neg = ir_expr_new();
+	
+	neg->value = ir_value_new();
+	neg->value->type = IR_VAL_OPERATOR;
+	neg->value->u.operator = IR_OP_NOT;
+	neg->left = e;
 
-    return res;
+	e = neg;
+    }
+    
+    return e;
 }
 
 int ipts_convert_jump_option(struct option_s * n, struct ir_rule_s * ir_rule) {
@@ -246,8 +246,7 @@ struct ir_expr_s * ipts_convert_option(struct option_s * n, struct ir_rule_s * i
 	    eprint("going to convert dport option\n");
 	    e->value->u.predicate = strdup("dport");
 	    if (n->not_range) {
-		e->left = ir_expr_new();
-		ipts_convert_not_range(n->not_range, e->left);
+		e->left = ipts_convert_not_range(n->not_range);
 	    } else if (n->identifier) {
 		e->left = ipts_convert_not_identifier(n->not_identifier);
 	    } else {
@@ -258,8 +257,7 @@ struct ir_expr_s * ipts_convert_option(struct option_s * n, struct ir_rule_s * i
 	    eprint("going to convert sport option\n");
 	    e->value->u.predicate = strdup("sport");
 	    if (n->not_range) {
-		e->left = ir_expr_new();
-		ipts_convert_not_range(n->not_range, e->left);
+		e->left = ipts_convert_not_range(n->not_range);
 	    } else if (n->identifier) {
 		e->left = ipts_convert_not_identifier(n->not_identifier);
 	    } else {
