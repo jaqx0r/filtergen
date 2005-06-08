@@ -84,3 +84,13 @@ struct ir_expr_s * ir_expr_new_literal(const char * literal) {
     return ir_expr;
 }
 	
+inline
+struct ir_expr_s * ir_expr_new_range() {
+    struct ir_expr_s * ir_expr;
+
+    ir_expr = ir_expr_new();
+    ir_expr->value = ir_value_new();
+    ir_expr->value->type = IR_VAL_RANGE;
+
+    return ir_expr;
+}

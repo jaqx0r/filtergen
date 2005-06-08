@@ -302,78 +302,97 @@ struct ir_expr_s * filtergen_convert_protocol_specifier(struct protocol_specifie
     return ir_expr;
 }
 
-#if 0
-struct ir_s * filtergen_convert_port_argument(struct port_argument_s * n, int type) {
-    struct ir_s * res = NULL;
-    char * p;
+struct ir_expr_s * filtergen_convert_port_argument(struct port_argument_s * n, const char * predicate) {
+    struct ir_expr_s * ir_expr = NULL;
 
     eprint("filtergen_converting port argument\n");
 
+    assert(n);
+
     if (n->port_min) {
+	ir_expr = ir_expr_new_predicate(predicate);
+
+	ir_expr->left = ir_expr_new_literal(n->port_min);
+
         if (n->port_max) {
-            asprintf(&p, "%s:%s", n->port_min, n->port_max);
-            res = new_filter_ports(type, p);
-        } else {
-            res = new_filter_ports(type, n->port_min);
+	    struct ir_expr_s * e;
+
+	    e = ir_expr_new_range();
+
+	    e->left = ir_expr->left;
+	    e->right = ir_expr_new_literal(n->port_max);
+
+	    ir_expr->left = e;
         }
     } else {
         printf("error: no port argument contents\n");
     }
 
-    return res;
+    return ir_expr;
 }
 
-struct ir_s * filtergen_convert_port_argument_list(struct port_argument_list_s * n, int type) {
-    struct ir_s * res = NULL, * end = NULL;
+struct ir_expr_s * filtergen_convert_port_argument_list(struct port_argument_list_s * n, const char * predicate) {
+    struct ir_expr_s * ir_expr = NULL;
 
     eprint("filtergen_converting port argument list\n");
 
-    if (n->list) {
-        res = filtergen_convert_port_argument_list(n->list, type);
-        if (res) {
-            end = res;
-            while (end->next) {
-                end = end->next;
-            }
-            if (n->arg) {
-                end->next = filtergen_convert_port_argument(n->arg, type);
-            }
-        } else {
-            printf("warning: filtergen_convert_port_argument_list returned NULL\n");
-        }
-    } else {
-        res = filtergen_convert_port_argument(n->arg, type);
+    assert(n);
+
+    if (n->arg) {
+	ir_expr = filtergen_convert_port_argument(n->arg, predicate);
     }
 
-    return res;
+    if (n->list) {
+	struct ir_expr_s * e;
+
+	e = filtergen_convert_port_argument_list(n->list, predicate);
+
+	if (ir_expr) {
+	    struct ir_expr_s * o;
+
+	    o = ir_expr_new_operator(IR_OP_OR);
+	    o->left = ir_expr;
+	    o->right = e;
+
+	    ir_expr = o;
+	} else {
+	    ir_expr = e;
+	}
+    }
+
+    return ir_expr;
 }
 
-struct ir_s * filtergen_convert_port_specifier(struct port_specifier_s * n) {
-    struct ir_s * res = NULL;
-    enum filtertype type;
+struct ir_expr_s * filtergen_convert_port_specifier(struct port_specifier_s * n) {
+    struct ir_expr_s * ir_expr = NULL;
+    char * predicate = NULL;
 	
     eprint("filtergen_converting port specifier\n");
 
+    assert(n);
+
     switch (n->type) {
       case TOK_SPORT:
-        type = F_SPORT;
+	predicate = strdup("sport");
         break;
       case TOK_DPORT:
-        type = F_DPORT;
+	predicate = strdup("dport");
         break;
       default:
         printf("error: incorrect port type encountered\n");
-        type = YYEOF;
         break;
     }
+
     if (n->list) {
-	res = new_filter_sibs(filtergen_convert_port_argument_list(n->list, type));
+	ir_expr = filtergen_convert_port_argument_list(n->list, predicate);
     } else {
 	printf("error: no port argument list\n");
     }
 
-    return res;        
+    return ir_expr;
 }
+
+#if 0
 
 struct ir_s * filtergen_convert_icmptype_argument(struct icmptype_argument_s * n) {
     struct ir_s * res = NULL;
@@ -527,9 +546,7 @@ struct ir_expr_s * filtergen_convert_specifier(struct specifier_s * r, struct ir
     } else if (r->protocol) {
         ir_expr = filtergen_convert_protocol_specifier(r->protocol);
     } else if (r->port) {
-	/*
-        res = filtergen_convert_port_specifier(r->port);
-	*/
+        ir_expr = filtergen_convert_port_specifier(r->port);
     } else if (r->icmptype) {
 	/*
         res = filtergen_convert_icmptype_specifier(r->icmptype);
