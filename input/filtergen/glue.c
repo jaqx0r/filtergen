@@ -18,6 +18,7 @@
  */
 
 #include <stdio.h>
+#include <string.h>
 #include <assert.h>
 #include "input/input.h"
 #include "ir/ir.h"
@@ -100,15 +101,23 @@ struct ir_expr_s * filtergen_convert_direction_argument_list(struct direction_ar
     ir_expr = filtergen_convert_direction_argument(n->arg);
 
     if (n->list) {
-	struct ir_expr_s * o;
+	struct ir_expr_s * e;
 
-	o = ir_expr_new_operator(IR_OP_OR);
+	e = filtergen_convert_direction_argument_list(n->list);
 
-	o->left = ir_expr;
+	if (ir_expr) {
+	    struct ir_expr_s * o;
 
-	o->right = filtergen_convert_direction_argument_list(n->list);
+	    o = ir_expr_new_operator(IR_OP_OR);
 
-	ir_expr = o;
+	    o->left = ir_expr;
+
+	    o->right = e;
+
+	    ir_expr = o;
+	} else {
+	    ir_expr = e;
+	}
     }
 
     return ir_expr;
@@ -145,79 +154,89 @@ struct ir_expr_s * filtergen_convert_direction(struct direction_specifier_s * n)
     return ir_expr;
 }
 
-#if 0
-struct ir_s * filtergen_convert_host_argument(struct host_argument_s * n, int type) {
-    struct ir_s * res = NULL;
+struct ir_expr_s * filtergen_convert_host_argument(struct host_argument_s * n, const char * predicate) {
+    struct ir_expr_s * ir_expr = NULL;
     char * h;
 
     eprint("filtergen_converting host_argument\n");
 
+    assert(n);
+
     if (n->host) {
+	ir_expr = ir_expr_new_predicate(predicate);
+	
         if (n->mask) {
 	    asprintf(&h, "%s/%s", n->host, n->mask);
-	    res = new_filter_host(type, h);
+	    ir_expr->left = ir_expr_new_literal(h);
 	} else {
-	    res = new_filter_host(type, n->host);
+	    ir_expr->left = ir_expr_new_literal(n->host);
 	}
     } else {
         printf("error: no host part\n");
     }
 
-    return res;
+    return ir_expr;
 }
 
-struct ir_s * filtergen_convert_host_argument_list(struct host_argument_list_s * n, int type) {
-    struct ir_s * res = NULL, * end = NULL;
+struct ir_expr_s * filtergen_convert_host_argument_list(struct host_argument_list_s * n, const char * predicate) {
+    struct ir_expr_s * ir_expr = NULL;
 
     eprint("filtergen_converting host argument list\n");
 
+    assert(n);
+
+    ir_expr = filtergen_convert_host_argument(n->arg, predicate);
+
     if (n->list) {
-        res = filtergen_convert_host_argument_list(n->list, type);
-        if (res) {
-            end = res;
-            while (end->next) {
-                end = end->next;
-            }
-            if (n->arg) {
-                end->next = filtergen_convert_host_argument(n->arg, type);
-            }
-        } else {
-            printf("warning: filtergen_convert_host_argument_list returned NULL\n");
-        }
-    } else {
-        res = filtergen_convert_host_argument(n->arg, type);
+	if (ir_expr) {
+	    struct ir_expr_s * o;
+
+	    o = ir_expr_new_operator(IR_OP_OR);
+
+	    o->left = ir_expr;
+
+	    o->right = filtergen_convert_host_argument_list(n->list, predicate);
+
+	    ir_expr = o;
+	} else {
+	    ir_expr = filtergen_convert_host_argument_list(n->list, predicate);
+	}
     }
 
-    return res;
+    return ir_expr;
 }
 
-struct ir_s * filtergen_convert_host_specifier(struct host_specifier_s * n) {
-    struct ir_s * res = NULL;
-    enum filtertype type;
+struct ir_expr_s * filtergen_convert_host_specifier(struct host_specifier_s * n) {
+    struct ir_expr_s * ir_expr = NULL;
+    char * predicate = NULL;
 	
     eprint("filtergen_converting host specifier\n");
 
+    assert(n);
+
     switch (n->type) {
       case TOK_SOURCE:
-        type = F_SOURCE;
+	predicate = strdup("source");
         break;
       case TOK_DEST:
-        type = F_DEST;
+	predicate = strdup("destination");
         break;
       default:
-        printf("error: incorrect host type encountered\n");
-        type = YYEOF;
+        fprintf(stderr, "error: incorrect host type encountered\n");
         break;
     }
+    
     if (n->list) {
-	res = new_filter_sibs(filtergen_convert_host_argument_list(n->list, type));
+	if (predicate)
+	    ir_expr = filtergen_convert_host_argument_list(n->list, predicate);
     } else {
-	printf("error: no host argument list\n");
+	fprintf(stderr, "error: no host argument list\n");
     }
 
-    return res;        
+    return ir_expr;
 }
 
+#if 0
 struct ir_s * filtergen_convert_protocol_argument(struct protocol_argument_s * n) {
     struct ir_s * res = NULL;
 
@@ -490,9 +509,7 @@ struct ir_expr_s * filtergen_convert_specifier(struct specifier_s * r, struct ir
 	    break;
 	}
     } else if (r->host) {
-	/*
-        res = filtergen_convert_host_specifier(r->host);
-	*/
+        /*ir_expr = filtergen_convert_host_specifier(r->host);*/
     } else if (r->protocol) {
 	/*
         res = filtergen_convert_protocol_specifier(r->protocol);
@@ -533,10 +550,7 @@ struct ir_expr_s * filtergen_convert_negated_specifier(struct negated_specifier_
 	if (ir_expr && r->negated) {
 	    struct ir_expr_s * n;
 
-	    n = ir_expr_new();
-	    n->value = ir_value_new();
-	    n->value->type = IR_VAL_OPERATOR;
-	    n->value->u.operator = IR_OP_NOT;
+	    n = ir_expr_new_operator(IR_OP_NOT);
 
 	    n->left = ir_expr;
 
@@ -548,29 +562,26 @@ struct ir_expr_s * filtergen_convert_negated_specifier(struct negated_specifier_
 }
 
 struct ir_expr_s * filtergen_convert_specifier_list(struct specifier_list_s * n, struct ir_rule_s * ir_rule) {
-    struct ir_expr_s * ir_expr = NULL, * e = NULL;
+    struct ir_expr_s * ir_expr = NULL;
 
     eprint("filtergen_converting specifier_list\n");
 
     assert(n);
     assert(ir_rule);
 
-    ir_expr = ir_expr_new();
-
     if (n->spec) {
 	ir_expr = filtergen_convert_negated_specifier(n->spec, ir_rule);
     }
 
     if (n->list) {
+	struct ir_expr_s * e = NULL;
+	
 	e = filtergen_convert_specifier_list(n->list, ir_rule);
 
 	if (ir_expr) {
 	    struct ir_expr_s * a;
 
-	    a = ir_expr_new();
-	    a->value = ir_value_new();
-	    a->value->type = IR_VAL_OPERATOR;
-	    a->value->u.operator = IR_OP_AND;
+	    a = ir_expr_new_operator(IR_OP_AND);
 
 	    a->left = ir_expr;
 

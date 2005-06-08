@@ -21,13 +21,13 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define IR_NEW(x) struct x##_s * x##_new() { \
+#define IR_NEW(x) inline struct x##_s * x##_new() { \
 	struct x##_s * x; \
 	x = malloc(sizeof(struct x##_s)); \
 	return x; \
     }
 
-#define IR_FREE(x) void x##_free(struct x##_s * x) { \
+#define IR_FREE(x) inline void x##_free(struct x##_s * x) { \
 	free(x); \
 	/* FIXME: probably broken */ \
 	x = 0; \

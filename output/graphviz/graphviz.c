@@ -1,6 +1,7 @@
 #include "output/output.h"
 #include "ir/ir.h"
 #include <assert.h>
+#include <stdlib.h>
 
 void * gv_emit_value(struct ir_value_s * ir_value, FILE * f) {
     assert(ir_value);
@@ -20,6 +21,7 @@ void * gv_emit_value(struct ir_value_s * ir_value, FILE * f) {
 	    break;
 	  default:
 	    fprintf(stderr, "warning: can't handle operator type %d\n", ir_value->u.operator);
+	    abort();
 	}
 	break;
       case IR_VAL_PREDICATE:
@@ -33,6 +35,7 @@ void * gv_emit_value(struct ir_value_s * ir_value, FILE * f) {
 	break;
       default:
 	fprintf(stderr, "warning: can't emit value type %d\n", ir_value->type);
+	abort();
     }
 
     fprintf(f, "\"];\n");
@@ -106,6 +109,7 @@ void * gv_emit_action(struct ir_action_s * ir_action, FILE * f) {
 	break;
       default:
 	fprintf(stderr, "warning: unrecognised action type %d\n", ir_action->type);
+	abort();
     }
     fprintf(f, "\"];\n");
 
