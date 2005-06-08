@@ -472,7 +472,6 @@ struct ir_expr_s * filtergen_convert_specifier(struct specifier_s * r, struct ir
     eprint("filtergen_converting specifier\n");
 
     assert(r);
-    assert(ir_rule);
     
     if (r->compound) {
         eprint("filtergen_converting compound specifier\n");
@@ -482,6 +481,8 @@ struct ir_expr_s * filtergen_convert_specifier(struct specifier_s * r, struct ir
     } else if (r->target) {
 
 	eprint("filtergen_converting target specifier\n");
+	
+	assert(ir_rule);
 
 	ir_rule->action = ir_action_new();
 
