@@ -73,71 +73,79 @@ struct ir_s * filtergen_convert_compound_specifier(struct compound_specifier_s *
     }
     return res;
 }
+#endif
 
-struct ir_s * filtergen_convert_direction_argument(struct direction_argument_s * n, int type) {
-    struct ir_s * res = NULL;
+struct ir_expr_s * filtergen_convert_direction_argument(struct direction_argument_s * n) {
+    struct ir_expr_s * ir_expr = NULL;
+
+    assert(n);
 
     if (n->direction) {
-        res = new_filter_device(type, n->direction);
+	ir_expr = ir_expr_new_predicate("interface");
+	ir_expr->left = ir_expr_new_literal(n->direction);
     } else {
         printf("error: no direction argument contents\n");
     }
 
-    return res;
+    return ir_expr;
 }
 
-struct ir_s * filtergen_convert_direction_argument_list(struct direction_argument_list_s * n, int type) {
-    struct ir_s * res = NULL, * end = NULL;
+struct ir_expr_s * filtergen_convert_direction_argument_list(struct direction_argument_list_s * n) {
+    struct ir_expr_s * ir_expr = NULL;
 
     eprint("filtergen_converting direction argument list\n");
 
+    assert(n);
+
+    ir_expr = filtergen_convert_direction_argument(n->arg);
+
     if (n->list) {
-        res = filtergen_convert_direction_argument_list(n->list, type);
-        if (res) {
-            end = res;
-            while (end->next) {
-                end = end->next;
-            }
-            if (n->arg) {
-                end->next = filtergen_convert_direction_argument(n->arg, type);
-            }
-        } else {
-            printf("warning: filtergen_convert_direction_argument_list returned NULL\n");
-        }
-    } else {
-        res = filtergen_convert_direction_argument(n->arg, type);
+	struct ir_expr_s * o;
+
+	o = ir_expr_new_operator(IR_OP_OR);
+
+	o->left = ir_expr;
+
+	o->right = filtergen_convert_direction_argument_list(n->list);
+
+	ir_expr = o;
     }
 
-    return res;
+    return ir_expr;
 }
     
-struct ir_s * filtergen_convert_direction(struct direction_specifier_s * n) {
-    struct ir_s * res = NULL;
-    int type;
-
+struct ir_expr_s * filtergen_convert_direction(struct direction_specifier_s * n) {
+    struct ir_expr_s * ir_expr = NULL;
+    
     eprint("filtergen_converting direction specifier\n");
-        
+
+    assert(n);
+
+    ir_expr = ir_expr_new_operator(IR_OP_AND);
+    ir_expr->left = ir_expr_new_predicate("direction");
+
     switch (n->type) {
       case TOK_INPUT:
-	type = INPUT;
+	ir_expr->left->left = ir_expr_new_literal("INPUT");
 	break;
       case TOK_OUTPUT:
-	type = OUTPUT;
+	ir_expr->left->left = ir_expr_new_literal("OUTPUT");
 	break;
       default:
 	printf("error: incorrect direction type encountered\n");
-	type = YYEOF;
 	break;
     }
+
     if (n->list) {
-	res = new_filter_sibs(filtergen_convert_direction_argument_list(n->list, type));
+	ir_expr->right = filtergen_convert_direction_argument_list(n->list);
     } else {
 	printf("error: no direction argument list\n");
     }
 
-    return res;
+    return ir_expr;
 }
 
+#if 0
 struct ir_s * filtergen_convert_host_argument(struct host_argument_s * n, int type) {
     struct ir_s * res = NULL;
     char * h;
@@ -437,64 +445,79 @@ struct ir_s * filtergen_convert_chaingroup_specifier(struct chaingroup_specifier
 
     return res;
 }
+#endif
 
-struct ir_s * filtergen_convert_specifier(struct specifier_s * r) {
-    struct ir_s * res = NULL;
+struct ir_expr_s * filtergen_convert_specifier(struct specifier_s * r, struct ir_rule_s * ir_rule) {
+    struct ir_expr_s * ir_expr = NULL;
+    
     eprint("filtergen_converting specifier\n");
+
+    assert(r);
+    assert(ir_rule);
     
     if (r->compound) {
         eprint("filtergen_converting compound specifier\n");
-	res = filtergen_convert_compound_specifier(r->compound);
+	/*res = filtergen_convert_compound_specifier(r->compound);*/
     } else if (r->direction) {
-        res = filtergen_convert_direction(r->direction);
+        ir_expr = filtergen_convert_direction(r->direction);
     } else if (r->target) {
-	enum filtertype type;
 
 	eprint("filtergen_converting target specifier\n");
 
+	ir_rule->action = ir_action_new();
+
 	switch (r->target->type) {
 	  case TOK_ACCEPT:
-	    type = T_ACCEPT;
+	    ir_rule->action->type = IR_ACCEPT;
 	    break;
 	  case TOK_REJECT:
-	    type = T_REJECT;
+	    ir_rule->action->type = IR_REJECT;
 	    break;
 	  case TOK_DROP:
-	    type = DROP;
+	    ir_rule->action->type = IR_DROP;
 	    break;
 	  case TOK_MASQ:
-	    type = MASQ;
+	    ir_rule->action->type = IR_ACCEPT;
 	    break;
 	  case TOK_PROXY:
-	    type = REDIRECT;
+	    ir_rule->action->type = IR_ACCEPT;
 	    break;
 	  case TOK_REDIRECT:
-	    type = REDIRECT;
+	    ir_rule->action->type = IR_ACCEPT;
 	    break;
 	  default:
 	    printf("error: incorrect target type encountered\n");
-	    type = YYEOF;
 	    break;
 	}
-	res = new_filter_target(type);
     } else if (r->host) {
+	/*
         res = filtergen_convert_host_specifier(r->host);
+	*/
     } else if (r->protocol) {
+	/*
         res = filtergen_convert_protocol_specifier(r->protocol);
+	*/
     } else if (r->port) {
+	/*
         res = filtergen_convert_port_specifier(r->port);
+	*/
     } else if (r->icmptype) {
+	/*
         res = filtergen_convert_icmptype_specifier(r->icmptype);
+	*/
     } else if (r->option) {
+	/*
 	res = filtergen_convert_option_specifier(r->option);
+	*/
     } else if (r->chaingroup) {
+	/*
 	res = filtergen_convert_chaingroup_specifier(r->chaingroup);
+	*/
     } else
 	printf("error: no specifiers\n");
     
-    return res;
+    return ir_expr;
 }
-#endif
 
 struct ir_expr_s * filtergen_convert_negated_specifier(struct negated_specifier_s * r, struct ir_rule_s * ir_rule) {
     struct ir_expr_s * ir_expr = NULL;
@@ -505,8 +528,7 @@ struct ir_expr_s * filtergen_convert_negated_specifier(struct negated_specifier_
     assert(ir_rule);
 
     if (r->spec) {
-	/*ir_expr = filtergen_convert_specifier(r->spec, ir_rule);*/
-	ir_expr = ir_expr_new();
+	ir_expr = filtergen_convert_specifier(r->spec, ir_rule);
 
 	if (ir_expr && r->negated) {
 	    struct ir_expr_s * n;

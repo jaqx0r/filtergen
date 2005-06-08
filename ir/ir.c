@@ -19,6 +19,7 @@
 
 #include "ir.h"
 #include <stdlib.h>
+#include <string.h>
 
 #define IR_NEW(x) struct x##_s * x##_new() { \
 	struct x##_s * x; \
@@ -46,3 +47,40 @@ IR_FREE(ir_expr);
 
 IR_NEW(ir_value);
 IR_FREE(ir_value);
+
+inline
+struct ir_expr_s * ir_expr_new_operator(enum ir_operator operator) {
+    struct ir_expr_s * ir_expr;
+
+    ir_expr = ir_expr_new();
+    ir_expr->value = ir_value_new();
+    ir_expr->value->type = IR_VAL_OPERATOR;
+    ir_expr->value->u.operator = operator;
+
+    return ir_expr;
+}
+
+inline
+struct ir_expr_s * ir_expr_new_predicate(const char * predicate) {
+    struct ir_expr_s * ir_expr;
+
+    ir_expr = ir_expr_new();
+    ir_expr->value = ir_value_new();
+    ir_expr->value->type = IR_VAL_PREDICATE;
+    ir_expr->value->u.predicate = strdup(predicate);
+
+    return ir_expr;
+}
+
+inline
+struct ir_expr_s * ir_expr_new_literal(const char * literal) {
+    struct ir_expr_s * ir_expr;
+
+    ir_expr = ir_expr_new();
+    ir_expr->value = ir_value_new();
+    ir_expr->value->type = IR_VAL_LITERAL;
+    ir_expr->value->u.literal = strdup(literal);
+
+    return ir_expr;
+}
+	

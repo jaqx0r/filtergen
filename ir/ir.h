@@ -105,4 +105,8 @@ IR_FREE(ir_value);
 #undef IR_NEW
 #undef IR_FREE
 
+struct ir_expr_s * ir_expr_new_operator(enum ir_operator);
+struct ir_expr_s * ir_expr_new_predicate(const char *);
+struct ir_expr_s * ir_expr_new_literal(const char *);
+
 #endif /* __FILTERGEN_IR_H__ */
