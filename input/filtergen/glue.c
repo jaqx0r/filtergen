@@ -457,33 +457,36 @@ struct ir_expr_s * filtergen_convert_icmptype_specifier(struct icmptype_specifie
     return ir_expr;
 }
 
-#if 0
-struct ir_s * filtergen_convert_option_specifier(struct option_specifier_s * n) {
-    struct ir_s * res = NULL;
+struct ir_expr_s * filtergen_convert_option_specifier(struct option_specifier_s * n) {
+    struct ir_expr_s * ir_expr = NULL;
 	
     eprint("filtergen_converting option specifier\n");
 
+    assert(n);
+
     switch (n->type) {
       case TOK_LOCAL:
-	res = new_filter_rtype(LOCALONLY);
+	ir_expr = ir_expr_new_predicate("localonly");
 	break;
       case TOK_FORWARD:
-	res = new_filter_rtype(ROUTEDONLY);
+	ir_expr = ir_expr_new_predicate("forward");
 	break;
       case TOK_ONEWAY:
-	res = new_filter_rtype(F_ONEWAY);
+	ir_expr = ir_expr_new_predicate("oneway");
 	break;
       case TOK_LOG:
-	res = new_filter_log(F_LOG, n->logmsg);
+	ir_expr = ir_expr_new_predicate("log");
+	ir_expr->left = ir_expr_new_literal(n->logmsg);
 	break;
       default:
 	printf("error: incorrect option type encountered\n");
 	break;
     }
 
-    return res;        
+    return ir_expr;
 }
 
+#if 0
 struct ir_s * filtergen_convert_chaingroup_specifier(struct chaingroup_specifier_s * n) {
     struct ir_s * res = NULL, * sub = NULL;
     char * name = NULL;
@@ -561,9 +564,7 @@ struct ir_expr_s * filtergen_convert_specifier(struct specifier_s * r, struct ir
     } else if (r->icmptype) {
         ir_expr = filtergen_convert_icmptype_specifier(r->icmptype);
     } else if (r->option) {
-	/*
-	res = filtergen_convert_option_specifier(r->option);
-	*/
+	ir_expr = filtergen_convert_option_specifier(r->option);
     } else if (r->chaingroup) {
 	/*
 	res = filtergen_convert_chaingroup_specifier(r->chaingroup);
