@@ -494,28 +494,39 @@ struct ir_s * filtergen_convert_specifier(struct specifier_s * r) {
     
     return res;
 }
+#endif
 
-struct ir_s * filtergen_convert_negated_specifier(struct negated_specifier_s * r) {
-    struct ir_s * spec = NULL;
-    struct ir_s * res = NULL;
+struct ir_expr_s * filtergen_convert_negated_specifier(struct negated_specifier_s * r, struct ir_rule_s * ir_rule) {
+    struct ir_expr_s * ir_expr = NULL;
 
     eprint("filtergen_converting negated specifier\n");
 
+    assert(r);
+    assert(ir_rule);
+
     if (r->spec) {
-	spec = filtergen_convert_specifier(r->spec);
-	if (spec && r->negated) {
-	    eprint("negating\n");
-	    res = new_filter_neg(spec);
-	} else {
-	    res = spec;
+	/*ir_expr = filtergen_convert_specifier(r->spec, ir_rule);*/
+	ir_expr = ir_expr_new();
+
+	if (ir_expr && r->negated) {
+	    struct ir_expr_s * n;
+
+	    n = ir_expr_new();
+	    n->value = ir_value_new();
+	    n->value->type = IR_VAL_OPERATOR;
+	    n->value->u.operator = IR_OP_NOT;
+
+	    n->left = ir_expr;
+
+	    ir_expr = n;
 	}
     }
-    return res;
+
+    return ir_expr;
 }
-#endif
 
 struct ir_expr_s * filtergen_convert_specifier_list(struct specifier_list_s * n, struct ir_rule_s * ir_rule) {
-    struct ir_expr_s * ir_expr;
+    struct ir_expr_s * ir_expr = NULL, * e = NULL;
 
     eprint("filtergen_converting specifier_list\n");
 
@@ -524,24 +535,30 @@ struct ir_expr_s * filtergen_convert_specifier_list(struct specifier_list_s * n,
 
     ir_expr = ir_expr_new();
 
-    /*
-    if (n->list) {
-	res = filtergen_convert_specifier_list(n->list);
-	if (res) {
-	    end = res;
-	    while (end->child) {
-		end = end->child;
-	    }
-	    if (n->spec) {
-		end->child = filtergen_convert_negated_specifier(n->spec);
-	    }
-	} else {
-	    printf("warning: filtergen_convert_specifier_list returned NULL\n");
-	}
-    } else {
-	res = filtergen_convert_negated_specifier(n->spec);
+    if (n->spec) {
+	ir_expr = filtergen_convert_negated_specifier(n->spec, ir_rule);
     }
-    */
+
+    if (n->list) {
+	e = filtergen_convert_specifier_list(n->list, ir_rule);
+
+	if (ir_expr) {
+	    struct ir_expr_s * a;
+
+	    a = ir_expr_new();
+	    a->value = ir_value_new();
+	    a->value->type = IR_VAL_OPERATOR;
+	    a->value->u.operator = IR_OP_AND;
+
+	    a->left = ir_expr;
+
+	    a->right = e;
+
+	    ir_expr = a;
+	} else {
+	    ir_expr = e;
+	}
+    }
 
     return ir_expr;
 }
