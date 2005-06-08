@@ -512,12 +512,19 @@ struct ir_s * filtergen_convert_negated_specifier(struct negated_specifier_s * r
     }
     return res;
 }
+#endif
 
-struct ir_s * filtergen_convert_specifier_list(struct specifier_list_s * n) {
-    struct ir_s * res = NULL, * end = NULL;
+struct ir_expr_s * filtergen_convert_specifier_list(struct specifier_list_s * n, struct ir_rule_s * ir_rule) {
+    struct ir_expr_s * ir_expr;
 
     eprint("filtergen_converting specifier_list\n");
 
+    assert(n);
+    assert(ir_rule);
+
+    ir_expr = ir_expr_new();
+
+    /*
     if (n->list) {
 	res = filtergen_convert_specifier_list(n->list);
 	if (res) {
@@ -534,10 +541,10 @@ struct ir_s * filtergen_convert_specifier_list(struct specifier_list_s * n) {
     } else {
 	res = filtergen_convert_negated_specifier(n->spec);
     }
+    */
 
-    return res;
+    return ir_expr;
 }
-#endif
 
 struct ir_rule_s * filtergen_convert_rule(struct rule_s * r) {
     struct ir_rule_s * ir_rule = NULL;
@@ -548,11 +555,10 @@ struct ir_rule_s * filtergen_convert_rule(struct rule_s * r) {
 
     ir_rule = ir_rule_new();
 
-    /*
-    if (r->list)
-	res = filtergen_convert_specifier_list(r->list);
-    */
-    
+    if (r->list) {
+	ir_rule->expr = filtergen_convert_specifier_list(r->list, ir_rule);
+    }
+
     return ir_rule;
 }
 
