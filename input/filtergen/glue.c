@@ -18,6 +18,7 @@
  */
 
 #include <stdio.h>
+#include <assert.h>
 #include "input/input.h"
 #include "ir/ir.h"
 #include "ast.h"
@@ -27,32 +28,34 @@
 int filtergen_parse(void *);
 int filtergen_restart(FILE *);
 
-int convtrace = 0;
+int convtrace = 1;
 
 #define eprint(x) if (convtrace) fprintf(stderr, x)
 
-struct filter * convert_specifier_list(struct specifier_list_s * n);
+#if 0
 
-struct filter * convert_subrule_list(struct subrule_list_s * n) {
-    struct filter * res = NULL, * end = NULL;
+struct ir_s * filtergen_convert_specifier_list(struct specifier_list_s * n);
 
-    eprint("converting subrule_list\n");
+struct ir_s * filtergen_convert_subrule_list(struct subrule_list_s * n) {
+    struct ir_s * res = NULL, * end = NULL;
+
+    eprint("filtergen_converting subrule_list\n");
 
     if (n->subrule_list) {
-	res = convert_subrule_list(n->subrule_list);
+	res = filtergen_convert_subrule_list(n->subrule_list);
 	if (res) {
 	    end = res;
 	    while (end->next) {
 		end = end->next;
 	    }
 	    if (n->specifier_list) {
-		end->next = convert_specifier_list(n->specifier_list);
+		end->next = filtergen_convert_specifier_list(n->specifier_list);
 	    }
 	} else {
-	    printf("warning: convert_subrule_list returned NULL\n");
+	    printf("warning: filtergen_convert_subrule_list returned NULL\n");
 	}
     } else if (n->specifier_list) {
-        res = convert_specifier_list(n->specifier_list);
+        res = filtergen_convert_specifier_list(n->specifier_list);
     } else {
         printf("error: no content in subrule_list\n");
     }
@@ -60,19 +63,19 @@ struct filter * convert_subrule_list(struct subrule_list_s * n) {
     return res;
 }
 
-struct filter * convert_compound_specifier(struct compound_specifier_s * r) {
-    struct filter * res = NULL;
+struct ir_s * filtergen_convert_compound_specifier(struct compound_specifier_s * r) {
+    struct ir_s * res = NULL;
 
-    eprint("converting compound_specifier\n");
+    eprint("filtergen_converting compound_specifier\n");
 
     if (r->list) {
-	res = new_filter_sibs(convert_subrule_list(r->list));
+	res = new_filter_sibs(filtergen_convert_subrule_list(r->list));
     }
     return res;
 }
 
-struct filter * convert_direction_argument(struct direction_argument_s * n, int type) {
-    struct filter * res = NULL;
+struct ir_s * filtergen_convert_direction_argument(struct direction_argument_s * n, int type) {
+    struct ir_s * res = NULL;
 
     if (n->direction) {
         res = new_filter_device(type, n->direction);
@@ -83,36 +86,36 @@ struct filter * convert_direction_argument(struct direction_argument_s * n, int 
     return res;
 }
 
-struct filter * convert_direction_argument_list(struct direction_argument_list_s * n, int type) {
-    struct filter * res = NULL, * end = NULL;
+struct ir_s * filtergen_convert_direction_argument_list(struct direction_argument_list_s * n, int type) {
+    struct ir_s * res = NULL, * end = NULL;
 
-    eprint("converting direction argument list\n");
+    eprint("filtergen_converting direction argument list\n");
 
     if (n->list) {
-        res = convert_direction_argument_list(n->list, type);
+        res = filtergen_convert_direction_argument_list(n->list, type);
         if (res) {
             end = res;
             while (end->next) {
                 end = end->next;
             }
             if (n->arg) {
-                end->next = convert_direction_argument(n->arg, type);
+                end->next = filtergen_convert_direction_argument(n->arg, type);
             }
         } else {
-            printf("warning: convert_direction_argument_list returned NULL\n");
+            printf("warning: filtergen_convert_direction_argument_list returned NULL\n");
         }
     } else {
-        res = convert_direction_argument(n->arg, type);
+        res = filtergen_convert_direction_argument(n->arg, type);
     }
 
     return res;
 }
     
-struct filter * convert_direction(struct direction_specifier_s * n) {
-    struct filter * res = NULL;
+struct ir_s * filtergen_convert_direction(struct direction_specifier_s * n) {
+    struct ir_s * res = NULL;
     int type;
 
-    eprint("converting direction specifier\n");
+    eprint("filtergen_converting direction specifier\n");
         
     switch (n->type) {
       case TOK_INPUT:
@@ -127,7 +130,7 @@ struct filter * convert_direction(struct direction_specifier_s * n) {
 	break;
     }
     if (n->list) {
-	res = new_filter_sibs(convert_direction_argument_list(n->list, type));
+	res = new_filter_sibs(filtergen_convert_direction_argument_list(n->list, type));
     } else {
 	printf("error: no direction argument list\n");
     }
@@ -135,11 +138,11 @@ struct filter * convert_direction(struct direction_specifier_s * n) {
     return res;
 }
 
-struct filter * convert_host_argument(struct host_argument_s * n, int type) {
-    struct filter * res = NULL;
+struct ir_s * filtergen_convert_host_argument(struct host_argument_s * n, int type) {
+    struct ir_s * res = NULL;
     char * h;
 
-    eprint("converting host_argument\n");
+    eprint("filtergen_converting host_argument\n");
 
     if (n->host) {
         if (n->mask) {
@@ -155,36 +158,36 @@ struct filter * convert_host_argument(struct host_argument_s * n, int type) {
     return res;
 }
 
-struct filter * convert_host_argument_list(struct host_argument_list_s * n, int type) {
-    struct filter * res = NULL, * end = NULL;
+struct ir_s * filtergen_convert_host_argument_list(struct host_argument_list_s * n, int type) {
+    struct ir_s * res = NULL, * end = NULL;
 
-    eprint("converting host argument list\n");
+    eprint("filtergen_converting host argument list\n");
 
     if (n->list) {
-        res = convert_host_argument_list(n->list, type);
+        res = filtergen_convert_host_argument_list(n->list, type);
         if (res) {
             end = res;
             while (end->next) {
                 end = end->next;
             }
             if (n->arg) {
-                end->next = convert_host_argument(n->arg, type);
+                end->next = filtergen_convert_host_argument(n->arg, type);
             }
         } else {
-            printf("warning: convert_host_argument_list returned NULL\n");
+            printf("warning: filtergen_convert_host_argument_list returned NULL\n");
         }
     } else {
-        res = convert_host_argument(n->arg, type);
+        res = filtergen_convert_host_argument(n->arg, type);
     }
 
     return res;
 }
 
-struct filter * convert_host_specifier(struct host_specifier_s * n) {
-    struct filter * res = NULL;
+struct ir_s * filtergen_convert_host_specifier(struct host_specifier_s * n) {
+    struct ir_s * res = NULL;
     enum filtertype type;
 	
-    eprint("converting host specifier\n");
+    eprint("filtergen_converting host specifier\n");
 
     switch (n->type) {
       case TOK_SOURCE:
@@ -199,7 +202,7 @@ struct filter * convert_host_specifier(struct host_specifier_s * n) {
         break;
     }
     if (n->list) {
-	res = new_filter_sibs(convert_host_argument_list(n->list, type));
+	res = new_filter_sibs(filtergen_convert_host_argument_list(n->list, type));
     } else {
 	printf("error: no host argument list\n");
     }
@@ -207,10 +210,10 @@ struct filter * convert_host_specifier(struct host_specifier_s * n) {
     return res;        
 }
 
-struct filter * convert_protocol_argument(struct protocol_argument_s * n) {
-    struct filter * res = NULL;
+struct ir_s * filtergen_convert_protocol_argument(struct protocol_argument_s * n) {
+    struct ir_s * res = NULL;
 
-    eprint("converting protocol argument\n");
+    eprint("filtergen_converting protocol argument\n");
 
     if (n->proto) {
         res = new_filter_proto(F_PROTO, n->proto);
@@ -221,38 +224,38 @@ struct filter * convert_protocol_argument(struct protocol_argument_s * n) {
     return res;
 }
 
-struct filter * convert_protocol_argument_list(struct protocol_argument_list_s * n) {
-    struct filter * res = NULL, * end = NULL;
+struct ir_s * filtergen_convert_protocol_argument_list(struct protocol_argument_list_s * n) {
+    struct ir_s * res = NULL, * end = NULL;
 
-    eprint("converting protocol argument list\n");
+    eprint("filtergen_converting protocol argument list\n");
 
     if (n->list) {
-        res = convert_protocol_argument_list(n->list);
+        res = filtergen_convert_protocol_argument_list(n->list);
         if (res) {
             end = res;
             while (end->next) {
                 end = end->next;
             }
             if (n->arg) {
-                end->next = convert_protocol_argument(n->arg);
+                end->next = filtergen_convert_protocol_argument(n->arg);
             }
         } else {
-            printf("warning: convert_protocol_argument_list returned NULL\n");
+            printf("warning: filtergen_convert_protocol_argument_list returned NULL\n");
         }
     } else {
-        res = convert_protocol_argument(n->arg);
+        res = filtergen_convert_protocol_argument(n->arg);
     }
 
     return res;
 }
 
-struct filter * convert_protocol_specifier(struct protocol_specifier_s * n) {
-    struct filter * res = NULL;
+struct ir_s * filtergen_convert_protocol_specifier(struct protocol_specifier_s * n) {
+    struct ir_s * res = NULL;
 	
-    eprint("converting protocol specifier\n");
+    eprint("filtergen_converting protocol specifier\n");
 
     if (n->list) {
-	res = new_filter_sibs(convert_protocol_argument_list(n->list));
+	res = new_filter_sibs(filtergen_convert_protocol_argument_list(n->list));
     } else {
 	printf("error: no protocol argument list\n");
     }
@@ -260,11 +263,11 @@ struct filter * convert_protocol_specifier(struct protocol_specifier_s * n) {
     return res;        
 }
 
-struct filter * convert_port_argument(struct port_argument_s * n, int type) {
-    struct filter * res = NULL;
+struct ir_s * filtergen_convert_port_argument(struct port_argument_s * n, int type) {
+    struct ir_s * res = NULL;
     char * p;
 
-    eprint("converting port argument\n");
+    eprint("filtergen_converting port argument\n");
 
     if (n->port_min) {
         if (n->port_max) {
@@ -280,36 +283,36 @@ struct filter * convert_port_argument(struct port_argument_s * n, int type) {
     return res;
 }
 
-struct filter * convert_port_argument_list(struct port_argument_list_s * n, int type) {
-    struct filter * res = NULL, * end = NULL;
+struct ir_s * filtergen_convert_port_argument_list(struct port_argument_list_s * n, int type) {
+    struct ir_s * res = NULL, * end = NULL;
 
-    eprint("converting port argument list\n");
+    eprint("filtergen_converting port argument list\n");
 
     if (n->list) {
-        res = convert_port_argument_list(n->list, type);
+        res = filtergen_convert_port_argument_list(n->list, type);
         if (res) {
             end = res;
             while (end->next) {
                 end = end->next;
             }
             if (n->arg) {
-                end->next = convert_port_argument(n->arg, type);
+                end->next = filtergen_convert_port_argument(n->arg, type);
             }
         } else {
-            printf("warning: convert_port_argument_list returned NULL\n");
+            printf("warning: filtergen_convert_port_argument_list returned NULL\n");
         }
     } else {
-        res = convert_port_argument(n->arg, type);
+        res = filtergen_convert_port_argument(n->arg, type);
     }
 
     return res;
 }
 
-struct filter * convert_port_specifier(struct port_specifier_s * n) {
-    struct filter * res = NULL;
+struct ir_s * filtergen_convert_port_specifier(struct port_specifier_s * n) {
+    struct ir_s * res = NULL;
     enum filtertype type;
 	
-    eprint("converting port specifier\n");
+    eprint("filtergen_converting port specifier\n");
 
     switch (n->type) {
       case TOK_SPORT:
@@ -324,7 +327,7 @@ struct filter * convert_port_specifier(struct port_specifier_s * n) {
         break;
     }
     if (n->list) {
-	res = new_filter_sibs(convert_port_argument_list(n->list, type));
+	res = new_filter_sibs(filtergen_convert_port_argument_list(n->list, type));
     } else {
 	printf("error: no port argument list\n");
     }
@@ -332,10 +335,10 @@ struct filter * convert_port_specifier(struct port_specifier_s * n) {
     return res;        
 }
 
-struct filter * convert_icmptype_argument(struct icmptype_argument_s * n) {
-    struct filter * res = NULL;
+struct ir_s * filtergen_convert_icmptype_argument(struct icmptype_argument_s * n) {
+    struct ir_s * res = NULL;
 
-    eprint("converting icmptype_argument\n");
+    eprint("filtergen_converting icmptype_argument\n");
 
     if (n->icmptype) {
         res = new_filter_icmp(F_ICMPTYPE, n->icmptype);
@@ -346,38 +349,38 @@ struct filter * convert_icmptype_argument(struct icmptype_argument_s * n) {
     return res;
 }
 
-struct filter * convert_icmptype_argument_list(struct icmptype_argument_list_s * n) {
-    struct filter * res = NULL, * end = NULL;
+struct ir_s * filtergen_convert_icmptype_argument_list(struct icmptype_argument_list_s * n) {
+    struct ir_s * res = NULL, * end = NULL;
 
-    eprint("converting icmptype argument list\n");
+    eprint("filtergen_converting icmptype argument list\n");
 
     if (n->list) {
-        res = convert_icmptype_argument_list(n->list);
+        res = filtergen_convert_icmptype_argument_list(n->list);
         if (res) {
             end = res;
             while (end->next) {
                 end = end->next;
             }
             if (n->arg) {
-                end->next = convert_icmptype_argument(n->arg);
+                end->next = filtergen_convert_icmptype_argument(n->arg);
             }
         } else {
-            printf("warning: convert_icmptype_argument_list returned NULL\n");
+            printf("warning: filtergen_convert_icmptype_argument_list returned NULL\n");
         }
     } else {
-        res = convert_icmptype_argument(n->arg);
+        res = filtergen_convert_icmptype_argument(n->arg);
     }
 
     return res;
 }
 
-struct filter * convert_icmptype_specifier(struct icmptype_specifier_s * n) {
-    struct filter * res = NULL;
+struct ir_s * filtergen_convert_icmptype_specifier(struct icmptype_specifier_s * n) {
+    struct ir_s * res = NULL;
 	
-    eprint("converting icmptype specifier\n");
+    eprint("filtergen_converting icmptype specifier\n");
 
     if (n->list) {
-	res = new_filter_sibs(convert_icmptype_argument_list(n->list));
+	res = new_filter_sibs(filtergen_convert_icmptype_argument_list(n->list));
     } else {
 	printf("error: no icmptype argument list\n");
     }
@@ -385,10 +388,10 @@ struct filter * convert_icmptype_specifier(struct icmptype_specifier_s * n) {
     return res;        
 }
 
-struct filter * convert_option_specifier(struct option_specifier_s * n) {
-    struct filter * res = NULL;
+struct ir_s * filtergen_convert_option_specifier(struct option_specifier_s * n) {
+    struct ir_s * res = NULL;
 	
-    eprint("converting option specifier\n");
+    eprint("filtergen_converting option specifier\n");
 
     switch (n->type) {
       case TOK_LOCAL:
@@ -411,8 +414,8 @@ struct filter * convert_option_specifier(struct option_specifier_s * n) {
     return res;        
 }
 
-struct filter * convert_chaingroup_specifier(struct chaingroup_specifier_s * n) {
-    struct filter * res = NULL, * sub = NULL;
+struct ir_s * filtergen_convert_chaingroup_specifier(struct chaingroup_specifier_s * n) {
+    struct ir_s * res = NULL, * sub = NULL;
     char * name = NULL;
 
     if (n->name) {
@@ -425,7 +428,7 @@ struct filter * convert_chaingroup_specifier(struct chaingroup_specifier_s * n) 
     }
   
     if (n->list) {
-	sub = convert_subrule_list(n->list);
+	sub = filtergen_convert_subrule_list(n->list);
 
 	res = new_filter_subgroup(name, sub);
     } else {
@@ -435,19 +438,19 @@ struct filter * convert_chaingroup_specifier(struct chaingroup_specifier_s * n) 
     return res;
 }
 
-struct filter * convert_specifier(struct specifier_s * r) {
-    struct filter * res = NULL;
-    eprint("converting specifier\n");
+struct ir_s * filtergen_convert_specifier(struct specifier_s * r) {
+    struct ir_s * res = NULL;
+    eprint("filtergen_converting specifier\n");
     
     if (r->compound) {
-        eprint("converting compound specifier\n");
-	res = convert_compound_specifier(r->compound);
+        eprint("filtergen_converting compound specifier\n");
+	res = filtergen_convert_compound_specifier(r->compound);
     } else if (r->direction) {
-        res = convert_direction(r->direction);
+        res = filtergen_convert_direction(r->direction);
     } else if (r->target) {
 	enum filtertype type;
 
-	eprint("converting target specifier\n");
+	eprint("filtergen_converting target specifier\n");
 
 	switch (r->target->type) {
 	  case TOK_ACCEPT:
@@ -475,31 +478,31 @@ struct filter * convert_specifier(struct specifier_s * r) {
 	}
 	res = new_filter_target(type);
     } else if (r->host) {
-        res = convert_host_specifier(r->host);
+        res = filtergen_convert_host_specifier(r->host);
     } else if (r->protocol) {
-        res = convert_protocol_specifier(r->protocol);
+        res = filtergen_convert_protocol_specifier(r->protocol);
     } else if (r->port) {
-        res = convert_port_specifier(r->port);
+        res = filtergen_convert_port_specifier(r->port);
     } else if (r->icmptype) {
-        res = convert_icmptype_specifier(r->icmptype);
+        res = filtergen_convert_icmptype_specifier(r->icmptype);
     } else if (r->option) {
-	res = convert_option_specifier(r->option);
+	res = filtergen_convert_option_specifier(r->option);
     } else if (r->chaingroup) {
-	res = convert_chaingroup_specifier(r->chaingroup);
+	res = filtergen_convert_chaingroup_specifier(r->chaingroup);
     } else
 	printf("error: no specifiers\n");
     
     return res;
 }
 
-struct filter * convert_negated_specifier(struct negated_specifier_s * r) {
-    struct filter * spec = NULL;
-    struct filter * res = NULL;
+struct ir_s * filtergen_convert_negated_specifier(struct negated_specifier_s * r) {
+    struct ir_s * spec = NULL;
+    struct ir_s * res = NULL;
 
-    eprint("converting negated specifier\n");
+    eprint("filtergen_converting negated specifier\n");
 
     if (r->spec) {
-	spec = convert_specifier(r->spec);
+	spec = filtergen_convert_specifier(r->spec);
 	if (spec && r->negated) {
 	    eprint("negating\n");
 	    res = new_filter_neg(spec);
@@ -510,88 +513,97 @@ struct filter * convert_negated_specifier(struct negated_specifier_s * r) {
     return res;
 }
 
-struct filter * convert_specifier_list(struct specifier_list_s * n) {
-    struct filter * res = NULL, * end = NULL;
+struct ir_s * filtergen_convert_specifier_list(struct specifier_list_s * n) {
+    struct ir_s * res = NULL, * end = NULL;
 
-    eprint("converting specifier_list\n");
+    eprint("filtergen_converting specifier_list\n");
 
     if (n->list) {
-	res = convert_specifier_list(n->list);
+	res = filtergen_convert_specifier_list(n->list);
 	if (res) {
 	    end = res;
 	    while (end->child) {
 		end = end->child;
 	    }
 	    if (n->spec) {
-		end->child = convert_negated_specifier(n->spec);
+		end->child = filtergen_convert_negated_specifier(n->spec);
 	    }
 	} else {
-	    printf("warning: convert_specifier_list returned NULL\n");
+	    printf("warning: filtergen_convert_specifier_list returned NULL\n");
 	}
     } else {
-	res = convert_negated_specifier(n->spec);
+	res = filtergen_convert_negated_specifier(n->spec);
     }
 
     return res;
 }
 
-struct filter * convert_rule(struct rule_s * r) {
-    struct filter * res = NULL;
+struct ir_s * filtergen_convert_rule(struct rule_s * r) {
+    struct ir_s * res = NULL;
 
-    eprint("converting rule\n");
+    eprint("filtergen_converting rule\n");
 
     if (r->list)
-	res = convert_specifier_list(r->list);
+	res = filtergen_convert_specifier_list(r->list);
     return res;
 }
 
-struct filter * convert_rule_list(struct rule_list_s * n) {
-    struct filter * res = NULL, * end = NULL;
+struct ir_s * filtergen_convert_rule_list(struct rule_list_s * n) {
+    struct ir_s * res = NULL, * end = NULL;
 
-    eprint("converting rule_list\n");
+    eprint("filtergen_converting rule_list\n");
 
     if (n->list) {
-	res = convert_rule_list(n->list);
+	res = filtergen_convert_rule_list(n->list);
 	end = res;
 	while (end->next) {
 	    end = end->next;
 	}
 	if (n->rule) {
-	    end->next = convert_rule(n->rule);
+	    end->next = filtergen_convert_rule(n->rule);
 	}
     } else {
-	res = convert_rule(n->rule);
+	res = filtergen_convert_rule(n->rule);
     }
 
     return res;
 }
+#endif
 
-struct filter * convert(struct ast_s * ast) {
-    struct filter * res = NULL;
-    
-    eprint("converting ast\n");
+struct ir_s * filtergen_convert(struct ast_s * ast) {
+    struct ir_s * ir = NULL;
 
+    eprint("filtergen_converting ast\n");
+
+    assert(ast);
+
+    ir = ir_new();
+
+    /*
     if (ast->list)
-	res = convert_rule_list(ast->list);
-    return res;
+	res = filtergen_convert_rule_list(ast->list);
+    */
+    
+    return ir;
 }
 
-struct filter * filtergen_source_parser(FILE * file, int resolve_names) {
+struct ir_s * filtergen_source_parser(FILE * file, int resolve_names) {
     struct ast_s ast;
-    struct filter * f;
+    struct ir_s * ir;
 
     filtergen_restart(file);
-    if (filtergen_parse((void *) &ast) == 0) {
+    
+    if (filtergen_parse((void *) &ast) != 0) {
+	fprintf(stderr, "filtergen parse failed\n");
+    } else {
+	
 	if (resolve_names)
 	    resolve(&ast);
-	f = convert(&ast);
-	if (!f) {
-	    fprintf(stderr, "couldn't convert file to IR\n");
-	    return NULL;
+	
+	if (!(ir = filtergen_convert(&ast))) {
+	    fprintf(stderr, "filtergen IR conversion failed\n");
 	}
-    } else {
-	fprintf(stderr, "couldn't parse file\n");
-	return NULL;
     }
-    return f;
+
+    return ir;
 }

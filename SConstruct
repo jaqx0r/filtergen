@@ -117,7 +117,7 @@ filtergen_sources = ['filtergen.c',
 					 'factoriser.c',
 					 ]
 filtergen  = env.Program('filtergen', filtergen_sources,
-						 LIBS=[#'in_filtergen',
+						 LIBS=['in_filtergen',
 							   'in_iptables_save',
 							   'ir',
 							   #'out_iptables',
@@ -170,7 +170,7 @@ Default(fgadm)
 env.Distribute(env['DISTTREE'], ['fgadm.in', 'rules.filter.in', 'fgadm.conf.in'])
 
 SConscript([
-	#'input/filtergen/SConscript',
+	'input/filtergen/SConscript',
 	'input/iptables-save/SConscript',
 	'ir/SConscript',
 	#'output/iptables/SConscript',

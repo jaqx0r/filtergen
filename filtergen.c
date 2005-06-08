@@ -121,9 +121,7 @@ struct source_parser_s {
     const char * name;
     source_parser * parser;
 } source_parsers[] = {
-    /*
-      { "filtergen", filtergen_source_parser },
-    */
+    { "filtergen", filtergen_source_parser },
     { "iptables-save", ipts_source_parser },
     { NULL, NULL }
 };
@@ -248,8 +246,7 @@ int main(int argc, char **argv) {
 	outfile = stdout;
 
     /* work out which source parser to use */
-    /*if (!source_name || !*source_name) source_name = strdup("filtergen");*/
-    if (!source_name || !*source_name) source_name = strdup("iptables-save");
+    if (!source_name || !*source_name) source_name = strdup("filtergen");
     for (sp = source_parsers; sp->name; ++sp) {
 	if (!strcmp(source_name, sp->name))
 	    break;
