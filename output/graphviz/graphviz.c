@@ -121,7 +121,9 @@ void * gv_emit_action(struct ir_action_s * ir_action, FILE * f) {
 
 void * gv_emit_rule(struct ir_rule_s * ir_rule, FILE * f) {
     void * p;
+    
     assert(ir_rule);
+    
     fprintf(f, "\"%p\" [label=\"rule\"];\n", ir_rule);
     if (ir_rule->expr) {
 	p = gv_emit_expr(ir_rule->expr, f);

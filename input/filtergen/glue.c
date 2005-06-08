@@ -537,38 +537,48 @@ struct ir_s * filtergen_convert_specifier_list(struct specifier_list_s * n) {
 
     return res;
 }
+#endif
 
-struct ir_s * filtergen_convert_rule(struct rule_s * r) {
-    struct ir_s * res = NULL;
+struct ir_rule_s * filtergen_convert_rule(struct rule_s * r) {
+    struct ir_rule_s * ir_rule = NULL;
 
     eprint("filtergen_converting rule\n");
 
+    assert(r);
+
+    ir_rule = ir_rule_new();
+
+    /*
     if (r->list)
 	res = filtergen_convert_specifier_list(r->list);
-    return res;
+    */
+    
+    return ir_rule;
 }
 
-struct ir_s * filtergen_convert_rule_list(struct rule_list_s * n) {
-    struct ir_s * res = NULL, * end = NULL;
+struct ir_rule_s * filtergen_convert_rule_list(struct rule_list_s * n) {
+    struct ir_rule_s * ir_rule = NULL, * r = NULL;
 
     eprint("filtergen_converting rule_list\n");
 
-    if (n->list) {
-	res = filtergen_convert_rule_list(n->list);
-	end = res;
-	while (end->next) {
-	    end = end->next;
-	}
-	if (n->rule) {
-	    end->next = filtergen_convert_rule(n->rule);
-	}
-    } else {
-	res = filtergen_convert_rule(n->rule);
+    assert(n);
+
+    if (n->rule) {
+	ir_rule = filtergen_convert_rule(n->rule);
     }
 
-    return res;
+    if (n->list) {
+	r = filtergen_convert_rule_list(n->list);
+
+	if (ir_rule) {
+	    ir_rule->next = r;
+	} else {
+	    ir_rule = r;
+	}
+    }
+
+    return ir_rule;
 }
-#endif
 
 struct ir_s * filtergen_convert(struct ast_s * ast) {
     struct ir_s * ir = NULL;
@@ -579,10 +589,9 @@ struct ir_s * filtergen_convert(struct ast_s * ast) {
 
     ir = ir_new();
 
-    /*
-    if (ast->list)
-	res = filtergen_convert_rule_list(ast->list);
-    */
+    if (ast->list) {
+	ir->filter = filtergen_convert_rule_list(ast->list);
+    }
     
     return ir;
 }
