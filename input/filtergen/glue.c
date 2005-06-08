@@ -392,61 +392,72 @@ struct ir_expr_s * filtergen_convert_port_specifier(struct port_specifier_s * n)
     return ir_expr;
 }
 
-#if 0
-
-struct ir_s * filtergen_convert_icmptype_argument(struct icmptype_argument_s * n) {
-    struct ir_s * res = NULL;
+struct ir_expr_s * filtergen_convert_icmptype_argument(struct icmptype_argument_s * n) {
+    struct ir_expr_s * ir_expr = NULL;
 
     eprint("filtergen_converting icmptype_argument\n");
 
+    assert(n);
+
     if (n->icmptype) {
-        res = new_filter_icmp(F_ICMPTYPE, n->icmptype);
+	ir_expr = ir_expr_new_predicate("icmptype");
+	ir_expr->left = ir_expr_new_literal(n->icmptype);
     } else {
         printf("error: no icmptype argument contents\n");
     }
 
-    return res;
+    return ir_expr;
 }
 
-struct ir_s * filtergen_convert_icmptype_argument_list(struct icmptype_argument_list_s * n) {
-    struct ir_s * res = NULL, * end = NULL;
+struct ir_expr_s * filtergen_convert_icmptype_argument_list(struct icmptype_argument_list_s * n) {
+    struct ir_expr_s * ir_expr = NULL;
 
     eprint("filtergen_converting icmptype argument list\n");
 
-    if (n->list) {
-        res = filtergen_convert_icmptype_argument_list(n->list);
-        if (res) {
-            end = res;
-            while (end->next) {
-                end = end->next;
-            }
-            if (n->arg) {
-                end->next = filtergen_convert_icmptype_argument(n->arg);
-            }
-        } else {
-            printf("warning: filtergen_convert_icmptype_argument_list returned NULL\n");
-        }
-    } else {
-        res = filtergen_convert_icmptype_argument(n->arg);
+    assert(n);
+
+    if (n->arg) {
+	ir_expr = filtergen_convert_icmptype_argument(n->arg);
     }
 
-    return res;
+    if (n->list) {
+	struct ir_expr_s * e;
+
+	e = filtergen_convert_icmptype_argument_list(n->list);
+
+	if (ir_expr) {
+	    struct ir_expr_s * o;
+
+	    o = ir_expr_new_operator(IR_OP_OR);
+	    o->left = ir_expr;
+	    o->right = e;
+
+	    ir_expr = o;
+	} else {
+	    ir_expr = e;
+	}
+    }
+
+    return ir_expr;
 }
 
-struct ir_s * filtergen_convert_icmptype_specifier(struct icmptype_specifier_s * n) {
-    struct ir_s * res = NULL;
+struct ir_expr_s * filtergen_convert_icmptype_specifier(struct icmptype_specifier_s * n) {
+    struct ir_expr_s * ir_expr = NULL;
 	
     eprint("filtergen_converting icmptype specifier\n");
 
+    assert(n);
+
     if (n->list) {
-	res = new_filter_sibs(filtergen_convert_icmptype_argument_list(n->list));
+	ir_expr = filtergen_convert_icmptype_argument_list(n->list);
     } else {
 	printf("error: no icmptype argument list\n");
     }
 
-    return res;        
+    return ir_expr;
 }
 
+#if 0
 struct ir_s * filtergen_convert_option_specifier(struct option_specifier_s * n) {
     struct ir_s * res = NULL;
 	
@@ -548,9 +559,7 @@ struct ir_expr_s * filtergen_convert_specifier(struct specifier_s * r, struct ir
     } else if (r->port) {
         ir_expr = filtergen_convert_port_specifier(r->port);
     } else if (r->icmptype) {
-	/*
-        res = filtergen_convert_icmptype_specifier(r->icmptype);
-	*/
+        ir_expr = filtergen_convert_icmptype_specifier(r->icmptype);
     } else if (r->option) {
 	/*
 	res = filtergen_convert_option_specifier(r->option);
