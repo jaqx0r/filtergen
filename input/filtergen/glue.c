@@ -492,10 +492,12 @@ struct ir_expr_s * filtergen_convert_option_specifier(struct option_specifier_s 
 }
 
 #if 0
-struct ir_s * filtergen_convert_chaingroup_specifier(struct chaingroup_specifier_s * n) {
-    struct ir_s * res = NULL, * sub = NULL;
-    char * name = NULL;
+struct ir_expr_s * filtergen_convert_chaingroup_specifier(struct chaingroup_specifier_s * n, struct ir_rule_s * ir_rule) {
+    struct ir_expr_s * ir_expr = NULL;
 
+    /* FIXME: This function should store the chain group as a separate chain in the
+       structure */
+    #if 0
     if (n->name) {
 	name = n->name;
     } else {
@@ -504,16 +506,11 @@ struct ir_s * filtergen_convert_chaingroup_specifier(struct chaingroup_specifier
 
 	asprintf(&name, "chain_%d", ccount++);
     }
-  
-    if (n->list) {
-	sub = filtergen_convert_subrule_list(n->list);
+    #endif
 
-	res = new_filter_subgroup(name, sub);
-    } else {
-	printf("error: no list in chaingroup\n");
-    }
+    ir_expr = filtergen_convert_subrule_list(n->list, ir_rule);
 
-    return res;
+    return ir_expr;
 }
 #endif
 
@@ -572,7 +569,7 @@ struct ir_expr_s * filtergen_convert_specifier(struct specifier_s * r, struct ir
 	ir_expr = filtergen_convert_option_specifier(r->option);
     } else if (r->chaingroup) {
 	/*
-	res = filtergen_convert_chaingroup_specifier(r->chaingroup);
+	ir_expr = filtergen_convert_chaingroup_specifier(r->chaingroup, ir_rule);
 	*/
     } else
 	printf("error: no specifiers\n");
