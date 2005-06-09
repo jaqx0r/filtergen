@@ -668,10 +668,16 @@ struct ir_rule_s * filtergen_convert_rule_list(struct rule_list_s * n) {
 	r = filtergen_convert_rule_list(n->list);
 
 	if (ir_rule) {
-	    ir_rule->next = r;
-	} else {
-	    ir_rule = r;
+	    /* invert the order of the list, because the parser puts the first rule
+	     * at the end of the rule_list structure */
+	    struct ir_rule_s * i;
+	    i = r;
+	    while (i->next != NULL)
+		i = i->next;
+	    i->next = ir_rule;
 	}
+
+	ir_rule = r;
     }
 
     return ir_rule;
