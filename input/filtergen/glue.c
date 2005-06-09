@@ -33,48 +33,53 @@ int convtrace = 1;
 
 #define eprint(x) if (convtrace) fprintf(stderr, x)
 
-#if 0
+struct ir_expr_s * filtergen_convert_specifier_list(struct specifier_list_s * n, struct ir_rule_s * ir_rule);
 
-struct ir_s * filtergen_convert_specifier_list(struct specifier_list_s * n);
-
-struct ir_s * filtergen_convert_subrule_list(struct subrule_list_s * n) {
-    struct ir_s * res = NULL, * end = NULL;
+struct ir_expr_s * filtergen_convert_subrule_list(struct subrule_list_s * n, struct ir_rule_s * ir_rule) {
+    struct ir_expr_s * ir_expr = NULL;
 
     eprint("filtergen_converting subrule_list\n");
 
-    if (n->subrule_list) {
-	res = filtergen_convert_subrule_list(n->subrule_list);
-	if (res) {
-	    end = res;
-	    while (end->next) {
-		end = end->next;
-	    }
-	    if (n->specifier_list) {
-		end->next = filtergen_convert_specifier_list(n->specifier_list);
-	    }
-	} else {
-	    printf("warning: filtergen_convert_subrule_list returned NULL\n");
-	}
-    } else if (n->specifier_list) {
-        res = filtergen_convert_specifier_list(n->specifier_list);
-    } else {
-        printf("error: no content in subrule_list\n");
+    assert(n);
+
+    if (n->specifier_list) {
+	ir_expr = filtergen_convert_specifier_list(n->specifier_list, ir_rule);
     }
 
-    return res;
+    if (n->subrule_list) {
+	struct ir_expr_s * e;
+
+	e = filtergen_convert_subrule_list(n->subrule_list, ir_rule);
+
+	if (ir_expr) {
+	    struct ir_expr_s * o;
+
+	    o = ir_expr_new_operator(IR_OP_OR);
+	    o->left = ir_expr;
+	    o->right = e;
+
+	    ir_expr = o;
+	} else {
+	    ir_expr = e;
+	}
+    }
+
+    return ir_expr;
 }
 
-struct ir_s * filtergen_convert_compound_specifier(struct compound_specifier_s * r) {
-    struct ir_s * res = NULL;
+struct ir_expr_s * filtergen_convert_compound_specifier(struct compound_specifier_s * r, struct ir_rule_s * ir_rule) {
+    struct ir_expr_s * ir_expr = NULL;
 
     eprint("filtergen_converting compound_specifier\n");
 
+    assert(r);
+
     if (r->list) {
-	res = new_filter_sibs(filtergen_convert_subrule_list(r->list));
+	ir_expr = filtergen_convert_subrule_list(r->list, ir_rule);
     }
-    return res;
+
+    return ir_expr;
 }
-#endif
 
 struct ir_expr_s * filtergen_convert_direction_argument(struct direction_argument_s * n) {
     struct ir_expr_s * ir_expr = NULL;
@@ -521,7 +526,7 @@ struct ir_expr_s * filtergen_convert_specifier(struct specifier_s * r, struct ir
     
     if (r->compound) {
         eprint("filtergen_converting compound specifier\n");
-	/*res = filtergen_convert_compound_specifier(r->compound);*/
+	ir_expr = filtergen_convert_compound_specifier(r->compound, ir_rule);
     } else if (r->direction) {
         ir_expr = filtergen_convert_direction(r->direction);
     } else if (r->target) {
