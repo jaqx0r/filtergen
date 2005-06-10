@@ -36,6 +36,9 @@
 IR_NEW(ir);
 IR_FREE(ir);
 
+IR_NEW(ir_chain);
+IR_FREE(ir_chain);
+
 IR_NEW(ir_rule);
 IR_FREE(ir_rule);
 
