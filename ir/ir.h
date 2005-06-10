@@ -20,9 +20,16 @@
 #ifndef __FILTERGEN_IR_H__
 #define __FILTERGEN_IR_H__
 
-enum ir_value_type { IR_VAL_OPERATOR, IR_VAL_PREDICATE, IR_VAL_LITERAL, IR_VAL_RANGE };
-
 enum ir_operator { IR_OP_NONE, IR_OP_AND, IR_OP_OR, IR_OP_NOT, IR_OP_PRED };
+
+enum ir_value_type { IR_VAL_OPERATOR,
+		     IR_VAL_PREDICATE,
+		     IR_VAL_LITERAL,
+		     IR_VAL_RANGE,
+		     IR_VAL_CHAIN
+};
+
+struct ir_chain_s;
 
 struct ir_value_s {
     /** type of this value */
@@ -35,6 +42,8 @@ struct ir_value_s {
 	char * predicate;
 	/** value of the literal */
 	char * literal;
+	/** subrule chain */
+	struct ir_chain_s * chain;
     } u;
 };
     
@@ -123,5 +132,6 @@ struct ir_expr_s * ir_expr_new_operator(enum ir_operator);
 struct ir_expr_s * ir_expr_new_predicate(const char *);
 struct ir_expr_s * ir_expr_new_literal(const char *);
 struct ir_expr_s * ir_expr_new_range();
+struct ir_expr_s * ir_expr_new_chain(struct ir_chain_s *);
 
 #endif /* __FILTERGEN_IR_H__ */

@@ -3,65 +3,41 @@
 #include <assert.h>
 #include <stdlib.h>
 
-void * gv_emit_value(struct ir_value_s * ir_value, FILE * f) {
-    assert(ir_value);
-
-    fprintf(f, "\"%p\" [label=\"", ir_value);
-    switch (ir_value->type) {
-      case IR_VAL_OPERATOR:
-	switch (ir_value->u.operator) {
-	  case IR_OP_AND:
-	    fprintf(f, "AND");
-	    break;
-	  case IR_OP_OR:
-	    fprintf(f, "OR");
-	    break;
-	  case IR_OP_NOT:
-	    fprintf(f, "NOT");
-	    break;
-	  default:
-	    fprintf(stderr, "warning: can't handle operator type %d\n", ir_value->u.operator);
-	    abort();
-	}
-	break;
-      case IR_VAL_PREDICATE:
-	fprintf(f, "%s()", ir_value->u.predicate);
-	break;
-      case IR_VAL_LITERAL:
-	fprintf(f, "%s", ir_value->u.literal);
-	break;
-      case IR_VAL_RANGE:
-	fprintf(f, ":");
-	break;
-      default:
-	fprintf(stderr, "warning: can't emit value type %d\n", ir_value->type);
-	abort();
-    }
-
-    fprintf(f, "\"];\n");
-
-    return ir_value;
-}
-
 void * gv_emit_expr(struct ir_expr_s * ir_expr, FILE * f) {
     void * p;
     
     assert(ir_expr);
 
-    fprintf(f, "\"%p\" [label=\"", ir_expr);
     if (ir_expr->value) {
 	switch (ir_expr->value->type) {
 	  case IR_VAL_OPERATOR:
-	    fprintf(f, "operator");
+	    switch (ir_expr->value->u.operator) {
+	      case IR_OP_AND:
+		fprintf(f, "\"%p\" [label=AND];", ir_expr);
+		break;
+	      case IR_OP_OR:
+		fprintf(f, "\"%p\" [label=OR];", ir_expr);
+		break;
+	      case IR_OP_NOT:
+		fprintf(f, "\"%p\" [label=NOT];", ir_expr);
+		break;
+	      default:
+		fprintf(stderr, "warning: can't handle operator type %d\n", ir_expr->value->u.operator);
+		abort();
+	    }
 	    break;
 	  case IR_VAL_PREDICATE:
-	    fprintf(f, "predicate");
+	    fprintf(f, "\"%p\" [label=\"%s()\"];", ir_expr, ir_expr->value->u.predicate);
 	    break;
 	  case IR_VAL_LITERAL:
-	    fprintf(f, "literal");
+	    fprintf(f, "\"%p\" [label=\"%s\"];", ir_expr, ir_expr->value->u.literal);
 	    break;
 	  case IR_VAL_RANGE:
-	    fprintf(f, "range");
+	    fprintf(f, "\"%p\" [label=range];", ir_expr);
+	    break;
+	  case IR_VAL_CHAIN:
+	    fprintf(f, "\"%p\" [label=\"chain expr\"];", ir_expr);
+	    fprintf(f, "\"%p\" -> \"%p\" [label=chain];", ir_expr, ir_expr->value->u.chain);
 	    break;
 	  default:
 	    fprintf(stderr, "warning: unknown expression value type\n");
@@ -71,17 +47,11 @@ void * gv_emit_expr(struct ir_expr_s * ir_expr, FILE * f) {
 	fprintf(stderr, "warning: value undefined in current expression node\n");
 	fprintf(f, "undef");
     }
-    fprintf(f, "\"];\n");
     
     if (ir_expr->left) {
 	p = gv_emit_expr(ir_expr->left, f);
 	fprintf(f, "\"%p\" -> \"%p\" [label=left];\n", ir_expr, p);
     }
-
-    if (ir_expr->value) {
-	p = gv_emit_value(ir_expr->value, f);
-	fprintf(f, "\"%p\" -> \"%p\" [label=value];\n", ir_expr, p);
-    }	
 
     if (ir_expr->right) {
 	p = gv_emit_expr(ir_expr->right, f);
@@ -151,7 +121,7 @@ struct ir_chain_s * gv_emit_chain(struct ir_chain_s * ir_chain, FILE * f) {
     if (ir_chain->name)
 	fprintf(f, "%s", ir_chain->name);
     else
-	fprintf(f, "(chain)");
+	fprintf(f, "(nameless)");
     fprintf(f, "\"];\n");
     if (ir_chain->rule) {
 	p = gv_emit_rule(ir_chain->rule, f);

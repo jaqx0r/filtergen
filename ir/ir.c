@@ -97,3 +97,15 @@ struct ir_expr_s * ir_expr_new_range() {
 
     return ir_expr;
 }
+
+inline
+struct ir_expr_s * ir_expr_new_chain(struct ir_chain_s * ir_chain) {
+    struct ir_expr_s * ir_expr;
+
+    ir_expr = ir_expr_new();
+    ir_expr->value = ir_value_new();
+    ir_expr->value->type = IR_VAL_CHAIN;
+    ir_expr->value->u.chain = ir_chain;
+
+    return ir_expr;
+}

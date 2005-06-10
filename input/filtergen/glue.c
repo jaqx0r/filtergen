@@ -33,9 +33,9 @@ int convtrace = 1;
 
 #define eprint(x) if (convtrace) fprintf(stderr, x)
 
-struct ir_expr_s * filtergen_convert_specifier_list(struct specifier_list_s * n, struct ir_rule_s * ir_rule);
+struct ir_expr_s * filtergen_convert_specifier_list(struct specifier_list_s * n, struct ir_chain_s * ir_chain, struct ir_rule_s * ir_rule);
 
-struct ir_expr_s * filtergen_convert_subrule_list(struct subrule_list_s * n, struct ir_rule_s * ir_rule) {
+struct ir_expr_s * filtergen_convert_subrule_list(struct subrule_list_s * n, struct ir_chain_s * ir_chain, struct ir_rule_s * ir_rule) {
     struct ir_expr_s * ir_expr = NULL;
 
     eprint("filtergen_converting subrule_list\n");
@@ -43,13 +43,13 @@ struct ir_expr_s * filtergen_convert_subrule_list(struct subrule_list_s * n, str
     assert(n);
 
     if (n->specifier_list) {
-	ir_expr = filtergen_convert_specifier_list(n->specifier_list, ir_rule);
+	ir_expr = filtergen_convert_specifier_list(n->specifier_list, ir_chain, ir_rule);
     }
 
     if (n->subrule_list) {
 	struct ir_expr_s * e;
 
-	e = filtergen_convert_subrule_list(n->subrule_list, ir_rule);
+	e = filtergen_convert_subrule_list(n->subrule_list, ir_chain, ir_rule);
 
 	if (ir_expr) {
 	    struct ir_expr_s * o;
@@ -67,7 +67,7 @@ struct ir_expr_s * filtergen_convert_subrule_list(struct subrule_list_s * n, str
     return ir_expr;
 }
 
-struct ir_expr_s * filtergen_convert_compound_specifier(struct compound_specifier_s * r, struct ir_rule_s * ir_rule) {
+struct ir_expr_s * filtergen_convert_compound_specifier(struct compound_specifier_s * r, struct ir_chain_s * ir_chain, struct ir_rule_s * ir_rule) {
     struct ir_expr_s * ir_expr = NULL;
 
     eprint("filtergen_converting compound_specifier\n");
@@ -75,7 +75,7 @@ struct ir_expr_s * filtergen_convert_compound_specifier(struct compound_specifie
     assert(r);
 
     if (r->list) {
-	ir_expr = filtergen_convert_subrule_list(r->list, ir_rule);
+	ir_expr = filtergen_convert_subrule_list(r->list, ir_chain, ir_rule);
     }
 
     return ir_expr;
@@ -491,30 +491,44 @@ struct ir_expr_s * filtergen_convert_option_specifier(struct option_specifier_s 
     return ir_expr;
 }
 
-#if 0
-struct ir_expr_s * filtergen_convert_chaingroup_specifier(struct chaingroup_specifier_s * n, struct ir_rule_s * ir_rule) {
+struct ir_expr_s * filtergen_convert_chaingroup_specifier(struct chaingroup_specifier_s * n, struct ir_chain_s * ir_chain) {
     struct ir_expr_s * ir_expr = NULL;
+    struct ir_chain_s * c = NULL;
 
-    /* FIXME: This function should store the chain group as a separate chain in the
-       structure */
-    #if 0
+    eprint("converting chain group\n");
+    
+    assert(n);
+    assert(ir_chain);
+
+    c = ir_chain_new();
+    
     if (n->name) {
-	name = n->name;
+	c->name = strdup(n->name);
     } else {
-	/* Allocate a filter name */
-	static int ccount = 0;
-
-	asprintf(&name, "chain_%d", ccount++);
+	c->name = NULL;
     }
-    #endif
 
-    ir_expr = filtergen_convert_subrule_list(n->list, ir_rule);
+    /* put the chain at the end of the chain chain */
+    {
+	struct ir_chain_s * i;
+
+	eprint("putting chain into chain chain\n");
+	
+	i = ir_chain;
+	while (i->next != NULL)
+	    i = i->next;
+	i->next = c;
+    }
+
+    c->rule = ir_rule_new();
+    c->rule->expr = filtergen_convert_subrule_list(n->list, c, c->rule);
+
+    ir_expr = ir_expr_new_chain(c);
 
     return ir_expr;
 }
-#endif
 
-struct ir_expr_s * filtergen_convert_specifier(struct specifier_s * r, struct ir_rule_s * ir_rule) {
+struct ir_expr_s * filtergen_convert_specifier(struct specifier_s * r, struct ir_chain_s * ir_chain, struct ir_rule_s * ir_rule) {
     struct ir_expr_s * ir_expr = NULL;
     
     eprint("filtergen_converting specifier\n");
@@ -523,7 +537,7 @@ struct ir_expr_s * filtergen_convert_specifier(struct specifier_s * r, struct ir
     
     if (r->compound) {
         eprint("filtergen_converting compound specifier\n");
-	ir_expr = filtergen_convert_compound_specifier(r->compound, ir_rule);
+	ir_expr = filtergen_convert_compound_specifier(r->compound, ir_chain, ir_rule);
     } else if (r->direction) {
         ir_expr = filtergen_convert_direction(r->direction);
     } else if (r->target) {
@@ -568,16 +582,14 @@ struct ir_expr_s * filtergen_convert_specifier(struct specifier_s * r, struct ir
     } else if (r->option) {
 	ir_expr = filtergen_convert_option_specifier(r->option);
     } else if (r->chaingroup) {
-	/*
-	ir_expr = filtergen_convert_chaingroup_specifier(r->chaingroup, ir_rule);
-	*/
+	ir_expr = filtergen_convert_chaingroup_specifier(r->chaingroup, ir_chain);
     } else
 	printf("error: no specifiers\n");
     
     return ir_expr;
 }
 
-struct ir_expr_s * filtergen_convert_negated_specifier(struct negated_specifier_s * r, struct ir_rule_s * ir_rule) {
+struct ir_expr_s * filtergen_convert_negated_specifier(struct negated_specifier_s * r, struct ir_chain_s * ir_chain, struct ir_rule_s * ir_rule) {
     struct ir_expr_s * ir_expr = NULL;
 
     eprint("filtergen_converting negated specifier\n");
@@ -586,7 +598,7 @@ struct ir_expr_s * filtergen_convert_negated_specifier(struct negated_specifier_
     assert(ir_rule);
 
     if (r->spec) {
-	ir_expr = filtergen_convert_specifier(r->spec, ir_rule);
+	ir_expr = filtergen_convert_specifier(r->spec, ir_chain, ir_rule);
 
 	if (ir_expr && r->negated) {
 	    struct ir_expr_s * n;
@@ -602,7 +614,7 @@ struct ir_expr_s * filtergen_convert_negated_specifier(struct negated_specifier_
     return ir_expr;
 }
 
-struct ir_expr_s * filtergen_convert_specifier_list(struct specifier_list_s * n, struct ir_rule_s * ir_rule) {
+struct ir_expr_s * filtergen_convert_specifier_list(struct specifier_list_s * n, struct ir_chain_s * ir_chain, struct ir_rule_s * ir_rule) {
     struct ir_expr_s * ir_expr = NULL;
 
     eprint("filtergen_converting specifier_list\n");
@@ -611,13 +623,13 @@ struct ir_expr_s * filtergen_convert_specifier_list(struct specifier_list_s * n,
     assert(ir_rule);
 
     if (n->spec) {
-	ir_expr = filtergen_convert_negated_specifier(n->spec, ir_rule);
+	ir_expr = filtergen_convert_negated_specifier(n->spec, ir_chain, ir_rule);
     }
 
     if (n->list) {
 	struct ir_expr_s * e = NULL;
 	
-	e = filtergen_convert_specifier_list(n->list, ir_rule);
+	e = filtergen_convert_specifier_list(n->list, ir_chain, ir_rule);
 
 	if (ir_expr) {
 	    struct ir_expr_s * a;
@@ -637,7 +649,7 @@ struct ir_expr_s * filtergen_convert_specifier_list(struct specifier_list_s * n,
     return ir_expr;
 }
 
-struct ir_rule_s * filtergen_convert_rule(struct rule_s * r) {
+struct ir_rule_s * filtergen_convert_rule(struct rule_s * r, struct ir_chain_s * ir_chain) {
     struct ir_rule_s * ir_rule = NULL;
 
     eprint("filtergen_converting rule\n");
@@ -647,13 +659,13 @@ struct ir_rule_s * filtergen_convert_rule(struct rule_s * r) {
     ir_rule = ir_rule_new();
 
     if (r->list) {
-	ir_rule->expr = filtergen_convert_specifier_list(r->list, ir_rule);
+	ir_rule->expr = filtergen_convert_specifier_list(r->list, ir_chain, ir_rule);
     }
 
     return ir_rule;
 }
 
-struct ir_rule_s * filtergen_convert_rule_list(struct rule_list_s * n) {
+struct ir_rule_s * filtergen_convert_rule_list(struct rule_list_s * n, struct ir_chain_s * ir_chain) {
     struct ir_rule_s * ir_rule = NULL, * r = NULL;
 
     eprint("filtergen_converting rule_list\n");
@@ -661,11 +673,11 @@ struct ir_rule_s * filtergen_convert_rule_list(struct rule_list_s * n) {
     assert(n);
 
     if (n->rule) {
-	ir_rule = filtergen_convert_rule(n->rule);
+	ir_rule = filtergen_convert_rule(n->rule, ir_chain);
     }
 
     if (n->list) {
-	r = filtergen_convert_rule_list(n->list);
+	r = filtergen_convert_rule_list(n->list, ir_chain);
 
 	if (ir_rule) {
 	    /* invert the order of the list, because the parser puts the first rule
@@ -694,7 +706,7 @@ struct ir_s * filtergen_convert(struct ast_s * ast) {
 
     if (ast->list) {
 	ir->filter = ir_chain_new();
-	ir->filter->rule = filtergen_convert_rule_list(ast->list);
+	ir->filter->rule = filtergen_convert_rule_list(ast->list, ir->filter);
     }
     
     return ir;

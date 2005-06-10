@@ -1,0 +1,4 @@
+input eth0 [
+	dport http accept;
+	drop;
+];
