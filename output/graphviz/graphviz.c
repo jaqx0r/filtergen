@@ -144,25 +144,45 @@ void * gv_emit_rule(struct ir_rule_s * ir_rule, FILE * f) {
     return ir_rule;
 }
 
+struct ir_chain_s * gv_emit_chain(struct ir_chain_s * ir_chain, FILE * f) {
+    void * p;
+
+    fprintf(f, "\"%p\" [label=\"", ir_chain);
+    if (ir_chain->name)
+	fprintf(f, "%s", ir_chain->name);
+    else
+	fprintf(f, "(chain)");
+    fprintf(f, "\"];\n");
+    if (ir_chain->rule) {
+	p = gv_emit_rule(ir_chain->rule, f);
+	fprintf(f, "\"%p\" -> \"%p\" [label=\"rule\"];\n", ir_chain, p);
+    }
+    if (ir_chain->next) {
+	p = gv_emit_chain(ir_chain->next, f);
+	fprintf(f, "\"%p\" -> \"%p\" [label=\"next\"];\n", ir_chain, p);
+    }
+    return ir_chain;
+}
+
 void gv_emit_ir(struct ir_s * ir, FILE * f) {
-    struct ir_rule_s * p;
+    void * p;
   
     fprintf(f, "digraph ir {\n");
 
     fprintf(f, "ir;\n");
     
     if (ir->filter) {
-	p = gv_emit_rule(ir->filter, f);
+	p = gv_emit_chain(ir->filter, f);
 	fprintf(f, "\"ir\" -> \"%p\" [label=filter];\n", p);
     }
     
     if (ir->nat) {
-	p = gv_emit_rule(ir->nat, f);
+	p = gv_emit_chain(ir->nat, f);
 	fprintf(f, "\"ir\" -> \"%p\" [label=nat];\n", p);
     }
     
     if (ir->mangle) {
-	p = gv_emit_rule(ir->mangle, f);
+	p = gv_emit_chain(ir->mangle, f);
 	fprintf(f, "\"mangle\" -> \"%p\" [label=mangle];\n", p);
     }
     

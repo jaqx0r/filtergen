@@ -521,7 +521,8 @@ int ipts_convert_table(struct table_s * n, struct ir_s * ir) {
     assert(ir);
 
     if (!strcasecmp(n->name, "filter")) {
-	ir->filter = ipts_convert_rule_list(n->rule_list);
+	ir->filter = ir_chain_new();
+	ir->filter->rule = ipts_convert_rule_list(n->rule_list);
     } else {
 	fprintf(stderr, "warning: not handling table name %s\n", n->name);
     }

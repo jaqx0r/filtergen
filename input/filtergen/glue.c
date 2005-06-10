@@ -693,7 +693,8 @@ struct ir_s * filtergen_convert(struct ast_s * ast) {
     ir = ir_new();
 
     if (ast->list) {
-	ir->filter = filtergen_convert_rule_list(ast->list);
+	ir->filter = ir_chain_new();
+	ir->filter->rule = filtergen_convert_rule_list(ast->list);
     }
     
     return ir;

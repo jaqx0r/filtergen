@@ -75,7 +75,7 @@ struct ir_rule_s {
 
 /** Represents a rule chain, which is a named block of rules that can be
  *  called by other blocks as the target. */
-struct ir_chain_s * {
+struct ir_chain_s {
     /** The name of the chain. */
     char * name;
     /** The list of rules in this chain. */
@@ -104,11 +104,13 @@ struct ir_s {
 #define IR_FREE(x) void x##_free(struct x##_s *)
 
 IR_NEW(ir);
+IR_NEW(ir_chain);
 IR_NEW(ir_rule);
 IR_NEW(ir_action);
 IR_NEW(ir_expr);
 IR_NEW(ir_value);
 IR_FREE(ir);
+IR_FREE(ir_chain);
 IR_FREE(ir_rule);
 IR_FREE(ir_action);
 IR_FREE(ir_expr);
