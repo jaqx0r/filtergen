@@ -73,17 +73,29 @@ struct ir_rule_s {
     struct ir_rule_s * next;
 };
 
+/** Represents a rule chain, which is a named block of rules that can be
+ *  called by other blocks as the target. */
+struct ir_chain_s * {
+    /** The name of the chain. */
+    char * name;
+    /** The list of rules in this chain. */
+    struct ir_rule_s * rule;
+
+    /** The next chain in the chain chain. */
+    struct ir_chain_s * next;
+};
+
 /** Top level container for the internal representation.  The names reflect
  * those used in iptables, but have analogies with other packet filters.
  */
 struct ir_s {
     /** list of rules for the main packet filter */
-    struct ir_rule_s * filter;
+    struct ir_chain_s * filter;
     /** list of rules for Network Address Translation */
-    struct ir_rule_s * nat;
+    struct ir_chain_s * nat;
     /** list of rules for packet modification.
 	c.f. pf's "options: scrub" */
-    struct ir_rule_s * mangle;
+    struct ir_chain_s * mangle;
     /* TODO: add "conf" section, correlating to pf's "options: set",
        and for modifying kernel sysctl parameters */
 };
