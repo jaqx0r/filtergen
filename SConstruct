@@ -22,6 +22,7 @@ def UnitTest(env, source, **kwargs):
 	env.AddPostAction(test, testcmd)
 	env.Alias('check', test)
 	env.AlwaysBuild(test)
+	return test
 
 SConsEnvironment.UnitTest = UnitTest
 ### unit testing
