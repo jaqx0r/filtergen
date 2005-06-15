@@ -6,15 +6,19 @@ env.Distribute(env['DISTTREE'], ['SConscript',
 								'emit.c',
 								])
 
-env = env.Copy()
-env.AppendUnique(CPPPATH=['../../..', '..'],
-				 LIBPATH=['..'],
-				 LIBS=['in_filtergen'],
-				 CPPFLAGS=['-Dyyparse=filtergen_parse',
-						   '-Dyydebug=filtergen_debug',
-						   ])
+testcpppath = ['../../..', '..']
+testlibpath = ['..']
+testlibs = ['in_filtergen']
+testcppflags= ['-Dyyparse=filtergen_parse',
+			   '-Dyydebug=filtergen_debug',
+			   ]
 
-env.Program('scan.c')
-env.Program('parse.c')
-env.Program('emit.c')
+scan = env.UnitTest('scan.c',
+					CPPPATH=testcpppath,
+					LIBPATH=testlibpath,
+					LIBS=testlibs,
+					CPPFLAGS=testcppflags)
+
+#test.Test('parse.c')
+#test.Test('emit.c')
 #env.Program('convert', source=['#t/convert.c', '#filter.o', '#fg-util.o'])
