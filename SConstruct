@@ -75,7 +75,7 @@ else:
 # set warning flags
 warnings = ['',
 			'all',
-			'error',
+#			'error',
 			'aggregate-return',
 			'cast-align',
 			'cast-qual',
