@@ -558,6 +558,7 @@ chaingroup_specifier: TOK_LSQUARE TOK_IDENTIFIER subrule_list TOK_RSQUARE
 	;
 
 %%
+
 char * filtergen_filename();
 /*long int filtergen_linenumber();*/
 int filtergen_get_lineno();
