@@ -99,9 +99,9 @@ text         return TOK_TEXT;
 "!"          return TOK_BANG;
 
 {id}(\.{id})*	{
-			filtergen_lval.u_str = strndup(filtergen_text, filtergen_leng);
-			return TOK_IDENTIFIER;
-		}
+    filtergen_lval.u_str = strndup(filtergen_text, filtergen_leng);
+    return TOK_IDENTIFIER;
+}
 
 "/"          return TOK_SLASH;
 
@@ -120,13 +120,14 @@ text         return TOK_TEXT;
 }
 
 <<EOF>>                {
-                          scan_err("eof! popping state");
-                           yypop_buffer_state();
+    scan_err("eof! popping state");
+    yypop_buffer_state();
 
-                           if (!YY_CURRENT_BUFFER) {
-                              yyterminate();
-                           }
-                       }
+    if (!YY_CURRENT_BUFFER) {
+	yyterminate();
+    }
+}
+
 %%
 
 /* FIXME: make this return an immutable string */
@@ -148,38 +149,38 @@ static void scan_err(const char * fmt, ...) {
 
 /* include a file or directory */
 void include_file(const char * name) {
-	struct stat st;
-	DIR * d;
-	struct dirent * r;
-	char * fn;
+    struct stat st;
+    DIR * d;
+    struct dirent * r;
+    char * fn;
 
-	if (stat(name, &st)) {
-		scan_err("warning: stat failed on \"%s\": %s", name, strerror(errno));
+    if (stat(name, &st)) {
+	scan_err("warning: stat failed on \"%s\": %s", name, strerror(errno));
+    } else {
+	if (S_ISDIR(st.st_mode)) {
+	    if ((d = opendir(name)) == NULL) {
+		scan_err("warning: opendir failed on %s: %s", name, strerror(errno));
+	    } else {
+		while ((r = readdir(d)) != NULL) {
+		    /* FIXME: assumes d_name */
+		    if (r->d_name[0] == '.')
+			continue;
+		    asprintf(&fn, "%s/%s", name, r->d_name);
+		    include_file(fn);
+		    free(fn);
+		}
+		closedir(d);
+	    }
 	} else {
-		if (S_ISDIR(st.st_mode)) {
-			if ((d = opendir(name)) == NULL) {
-				scan_err("warning: opendir failed on %s: %s", name, strerror(errno));
-			} else {
-				while ((r = readdir(d)) != NULL) {
-					/* FIXME: assumes d_name */
-					if (r->d_name[0] == '.')
-						continue;
-					asprintf(&fn, "%s/%s", name, r->d_name);
-					include_file(fn);
-					free(fn);
-				}
-				closedir(d);
-			}
-		} else {
-                     scan_err("opening %s as file", name);
+	    scan_err("opening %s as file", name);
 		     
-                     yyin = fopen(name, "r");
-		     if ( !yyin ) {
-			 scan_err("boned: %s", yytext);
-		     }
+	    yyin = fopen(name, "r");
+	    if ( !yyin ) {
+		scan_err("boned: %s", yytext);
+	    }
 
-		     yypush_buffer_state(yy_create_buffer(yyin, YY_BUF_SIZE));
+	    yypush_buffer_state(yy_create_buffer(yyin, YY_BUF_SIZE));
 		     
-                }
 	}
+    }
 }
