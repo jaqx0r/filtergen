@@ -564,7 +564,7 @@ int filtergen_get_lineno();
 extern char * filtergen_text;
 
 void filtergen_error(const char * s) {
-    fprintf(stderr, "%s:%ld: %s\n", filtergen_filename(), filtergen_get_lineno(), s);
+    fprintf(stderr, "%s:%d: %s\n", filtergen_filename(), filtergen_get_lineno(), s);
 }
 
 int filtergen_print(FILE * f, int type, YYSTYPE v) {
