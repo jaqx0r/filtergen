@@ -122,12 +122,8 @@ text         return TOK_TEXT;
 
 <include>[ \t]*       /* eat whitespace after include */
 <include>[^ \t\n;]+    { /* include file name */
-                          char * name;
-
-                          name = strdup(yytext);
                           scan_err("including %s", yytext);
-                          yyin = include_file(name);
-                          free(name);
+                          yyin = include_file(yytext);
                           if ( !yyin ) {
                                scan_err("boned: %s", yytext);
                           }
@@ -138,6 +134,7 @@ text         return TOK_TEXT;
                        }
 
 <<EOF>>                {
+                          scan_err("eof! popping state");
                            yypop_buffer_state();
 
                            if (!YY_CURRENT_BUFFER) {
