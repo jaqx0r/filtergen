@@ -136,424 +136,424 @@ int filtergen_print(FILE * f, int t, YYSTYPE v);
 %%
 ast: rule_list
 	{
-		/* we expect parm to be already allocated, and that
-		 * it is of type (struct ast_s *) */
-		((struct ast_s *) parm)->list = $1;
+	    /* we expect parm to be already allocated, and that
+	     * it is of type (struct ast_s *) */
+	    ((struct ast_s *) parm)->list = $1;
 	}
 
 rule_list: /* empty */
 	{
-		$$ = NULL;
+	    $$ = NULL;
 	}
 	| rule_list rule
 	{
-		$$ = malloc(sizeof(struct rule_list_s));
-		$$->list = $1;
-		$$->rule = $2;
+	    $$ = malloc(sizeof(struct rule_list_s));
+	    $$->list = $1;
+	    $$->rule = $2;
 	}
 	;
 
 rule:	  specifier_list TOK_SEMICOLON
 	{
-		$$ = malloc(sizeof(struct rule_s));
-		$$->list = $1;
+	    $$ = malloc(sizeof(struct rule_s));
+	    $$->list = $1;
 	}
 	;
 
 specifier_list: /* empty */
 	{
-		$$ = NULL;
+	    $$ = NULL;
 	}
 	| specifier_list negated_specifier
 	{
-		$$ = malloc(sizeof(struct specifier_list_s));
-		$$->list = $1;
-		$$->spec = $2;
+	    $$ = malloc(sizeof(struct specifier_list_s));
+	    $$->list = $1;
+	    $$->spec = $2;
 	}
 	;
 
 negated_specifier: specifier
 	{
-		$$ = malloc(sizeof(struct negated_specifier_s));
-		$$->negated = 0;
-		$$->spec = $1;
+	    $$ = malloc(sizeof(struct negated_specifier_s));
+	    $$->negated = 0;
+	    $$->spec = $1;
 	}
 	| TOK_BANG specifier
 	{
-		$$ = malloc(sizeof(struct negated_specifier_s));
-		$$->negated = 1;
-		$$->spec = $2;
+	    $$ = malloc(sizeof(struct negated_specifier_s));
+	    $$->negated = 1;
+	    $$->spec = $2;
 	}
 	;
 
 specifier: compound_specifier
 	{
-		$$ = malloc(sizeof(struct specifier_s));
-		memset($$, 0, sizeof(struct specifier_s));
-		$$->compound = $1;
+	    $$ = malloc(sizeof(struct specifier_s));
+	    memset($$, 0, sizeof(struct specifier_s));
+	    $$->compound = $1;
 	}
 	| direction_specifier
 	{
-		$$ = malloc(sizeof(struct specifier_s));
-		memset($$, 0, sizeof(struct specifier_s));
-		$$->direction = $1;
+	    $$ = malloc(sizeof(struct specifier_s));
+	    memset($$, 0, sizeof(struct specifier_s));
+	    $$->direction = $1;
 	}		
 	| target_specifier
 	{
-		$$ = malloc(sizeof(struct specifier_s));
-		memset($$, 0, sizeof(struct specifier_s));
-		$$->target = $1;
+	    $$ = malloc(sizeof(struct specifier_s));
+	    memset($$, 0, sizeof(struct specifier_s));
+	    $$->target = $1;
 	}
 	| host_specifier
 	{
-		$$ = malloc(sizeof(struct specifier_s));
-		memset($$, 0, sizeof(struct specifier_s));
-		$$->host = $1;
+	    $$ = malloc(sizeof(struct specifier_s));
+	    memset($$, 0, sizeof(struct specifier_s));
+	    $$->host = $1;
 	}
 	| port_specifier
 	{
-		$$ = malloc(sizeof(struct specifier_s));
-		memset($$, 0, sizeof(struct specifier_s));
-		$$->port = $1;
+	    $$ = malloc(sizeof(struct specifier_s));
+	    memset($$, 0, sizeof(struct specifier_s));
+	    $$->port = $1;
 	}
 	| protocol_specifier
 	{
-		$$ = malloc(sizeof(struct specifier_s));
-		memset($$, 0, sizeof(struct specifier_s));
-		$$->protocol = $1;
+	    $$ = malloc(sizeof(struct specifier_s));
+	    memset($$, 0, sizeof(struct specifier_s));
+	    $$->protocol = $1;
 	}
 	| icmptype_specifier
 	{
-		$$ = malloc(sizeof(struct specifier_s));
-		memset($$, 0, sizeof(struct specifier_s));
-		$$->icmptype = $1;
+	    $$ = malloc(sizeof(struct specifier_s));
+	    memset($$, 0, sizeof(struct specifier_s));
+	    $$->icmptype = $1;
 	}
 	| option_specifier
 	{
-		$$ = malloc(sizeof(struct specifier_s));
-		memset($$, 0, sizeof(struct specifier_s));
-		$$->option = $1;
+	    $$ = malloc(sizeof(struct specifier_s));
+	    memset($$, 0, sizeof(struct specifier_s));
+	    $$->option = $1;
 	}
 	| chaingroup_specifier
 	{
-		$$ = malloc(sizeof(struct specifier_s));
-		memset($$, 0, sizeof(struct specifier_s));
-		$$->chaingroup = $1;
+	    $$ = malloc(sizeof(struct specifier_s));
+	    memset($$, 0, sizeof(struct specifier_s));
+	    $$->chaingroup = $1;
 	}
 	;
 
 direction_specifier: TOK_INPUT direction_argument_list
 	{
-		$$ = malloc(sizeof(struct direction_specifier_s));
-		$$->type = TOK_INPUT;
-		$$->list = $2;
+	    $$ = malloc(sizeof(struct direction_specifier_s));
+	    $$->type = TOK_INPUT;
+	    $$->list = $2;
 	}
 	| TOK_OUTPUT direction_argument_list
 	{
-		$$ = malloc(sizeof(struct direction_specifier_s));
-		$$->type = TOK_OUTPUT;
-		$$->list = $2;
+	    $$ = malloc(sizeof(struct direction_specifier_s));
+	    $$->type = TOK_OUTPUT;
+	    $$->list = $2;
 	}
 	;
 
 direction_argument_list: direction_argument_list_
 	{
-		$$ = $1;
+	    $$ = $1;
 	}
 	| TOK_LCURLY direction_argument_list_ TOK_RCURLY
 	{
-		$$ = $2;
+	    $$ = $2;
 	}
 	;
 
 direction_argument_list_: /* empty */
 	{
-		$$ = NULL;
+	    $$ = NULL;
 	}
 	| direction_argument_list_ direction_argument
 	{
-		$$ = malloc(sizeof(struct direction_argument_list_s));
-		$$->list = $1;
-		$$->arg = $2;
+	    $$ = malloc(sizeof(struct direction_argument_list_s));
+	    $$->list = $1;
+	    $$->arg = $2;
 	}
 	;
 
 direction_argument: TOK_IDENTIFIER
 	{
-		$$ = malloc(sizeof(struct direction_argument_s));
-		$$->direction = $1;
+	    $$ = malloc(sizeof(struct direction_argument_s));
+	    $$->direction = $1;
 	}
 	;
 
 target_specifier: TOK_ACCEPT
 	{
-		$$ = malloc(sizeof(struct target_specifier_s));
-		$$->type = TOK_ACCEPT;
+	    $$ = malloc(sizeof(struct target_specifier_s));
+	    $$->type = TOK_ACCEPT;
 	}
 	| TOK_REJECT
 	{
-		$$ = malloc(sizeof(struct target_specifier_s));
-		$$->type = TOK_REJECT;
+	    $$ = malloc(sizeof(struct target_specifier_s));
+	    $$->type = TOK_REJECT;
 	}
 	| TOK_DROP
 	{
-		$$ = malloc(sizeof(struct target_specifier_s));
-		$$->type = TOK_DROP;
+	    $$ = malloc(sizeof(struct target_specifier_s));
+	    $$->type = TOK_DROP;
 	}
 	| TOK_MASQ
 	{
-		$$ = malloc(sizeof(struct target_specifier_s));
-		$$->type = TOK_MASQ;
+	    $$ = malloc(sizeof(struct target_specifier_s));
+	    $$->type = TOK_MASQ;
 	}
 	| TOK_PROXY
 	{
-		$$ = malloc(sizeof(struct target_specifier_s));
-		$$->type = TOK_PROXY;
+	    $$ = malloc(sizeof(struct target_specifier_s));
+	    $$->type = TOK_PROXY;
 	}
 	| TOK_REDIRECT
 	{
-		$$ = malloc(sizeof(struct target_specifier_s));
-		$$->type = TOK_REDIRECT;
+	    $$ = malloc(sizeof(struct target_specifier_s));
+	    $$->type = TOK_REDIRECT;
 	}
 	;
 
 host_specifier: TOK_SOURCE host_argument_list
 	{
-		$$ = malloc(sizeof(struct host_specifier_s));
-		$$->type = TOK_SOURCE;
-		$$->list = $2;
+	    $$ = malloc(sizeof(struct host_specifier_s));
+	    $$->type = TOK_SOURCE;
+	    $$->list = $2;
 	}
 	| TOK_DEST host_argument_list
 	{
-		$$ = malloc(sizeof(struct host_specifier_s));
-		$$->type = TOK_DEST;
-		$$->list = $2;
+	    $$ = malloc(sizeof(struct host_specifier_s));
+	    $$->type = TOK_DEST;
+	    $$->list = $2;
 	}
 	;
 
 host_argument_list: host_argument_list_
 	{
-		$$ = $1;
+	    $$ = $1;
 	}
 	| TOK_LCURLY host_argument_list_ TOK_RCURLY
 	{
-		$$ = $2;
+	    $$ = $2;
 	}
 	;
 
 host_argument_list_: /* empty */
 	{
-		$$ = NULL;
+	    $$ = NULL;
 	}
 	| host_argument_list_ host_argument
 	{
-		$$ = malloc(sizeof(struct host_argument_list_s));
-		$$->list = $1;
-		$$->arg = $2;
+	    $$ = malloc(sizeof(struct host_argument_list_s));
+	    $$->list = $1;
+	    $$->arg = $2;
 	}
 	;
 
 host_argument: TOK_IDENTIFIER TOK_SLASH TOK_IDENTIFIER
 	{
-		$$ = malloc(sizeof(struct host_argument_s));
-		$$->host = $1;
-		$$->mask = $3;
+	    $$ = malloc(sizeof(struct host_argument_s));
+	    $$->host = $1;
+	    $$->mask = $3;
 	}
         | TOK_IDENTIFIER
         {
-		$$ = malloc(sizeof(struct host_argument_s));
-		$$->host = $1;
-                $$->mask = 0;
+	    $$ = malloc(sizeof(struct host_argument_s));
+	    $$->host = $1;
+	    $$->mask = 0;
 	}
 	;
 
 port_specifier: TOK_SPORT port_argument_list
 	{
-		$$ = malloc(sizeof(struct port_specifier_s));
-		$$->type = TOK_SPORT;
-		$$->list = $2;
+	    $$ = malloc(sizeof(struct port_specifier_s));
+	    $$->type = TOK_SPORT;
+	    $$->list = $2;
 	}
 	| TOK_DPORT port_argument_list
 	{
-		$$ = malloc(sizeof(struct port_specifier_s));
-		$$->type = TOK_DPORT;
-		$$->list = $2;
+	    $$ = malloc(sizeof(struct port_specifier_s));
+	    $$->type = TOK_DPORT;
+	    $$->list = $2;
 	}
 	;
 
 port_argument_list: port_argument_list_
 	{
-		$$ = $1;
+	    $$ = $1;
 	}
 	| TOK_LCURLY port_argument_list TOK_RCURLY
 	{
-		$$ = $2;
+	    $$ = $2;
 	}
 
 port_argument_list_: port_argument
 	{
-		$$ = malloc(sizeof(struct port_argument_list_s));
-		$$->list = NULL;
-		$$->arg = $1;
+	    $$ = malloc(sizeof(struct port_argument_list_s));
+	    $$->list = NULL;
+	    $$->arg = $1;
 	}
 	| port_argument_list_ port_argument
 	{
-		$$ = malloc(sizeof(struct port_argument_list_s));
-		$$->list = $1;
-		$$->arg = $2;
+	    $$ = malloc(sizeof(struct port_argument_list_s));
+	    $$->list = $1;
+	    $$->arg = $2;
 	}
 	;
 
 port_argument: TOK_IDENTIFIER TOK_COLON TOK_IDENTIFIER
 	{
-		$$ = malloc(sizeof(struct port_argument_s));
-		$$->port_min = $1;
-		$$->port_max = $3;
+	    $$ = malloc(sizeof(struct port_argument_s));
+	    $$->port_min = $1;
+	    $$->port_max = $3;
 	}
 	| TOK_IDENTIFIER
 	{
-		$$ = malloc(sizeof(struct port_argument_s));
-		$$->port_min = $1;
-		$$->port_max = NULL;
+	    $$ = malloc(sizeof(struct port_argument_s));
+	    $$->port_min = $1;
+	    $$->port_max = NULL;
 	}
 	;
 
 protocol_specifier: TOK_PROTO protocol_argument_list
 	{
-		$$ = malloc(sizeof(struct protocol_specifier_s));
-		$$->list = $2;
+	    $$ = malloc(sizeof(struct protocol_specifier_s));
+	    $$->list = $2;
 	}
 	;
 
 protocol_argument_list: protocol_argument_list_
 	{
-		$$ = $1;
+	    $$ = $1;
 	}
 	| TOK_LCURLY protocol_argument_list_ TOK_RCURLY
 	{
-		$$ = $2;
+	    $$ = $2;
 	}
 	;
 
 protocol_argument_list_: /* empty */
 	{
-		$$ = NULL;
+	    $$ = NULL;
 	}
 	| protocol_argument_list_ protocol_argument
 	{
-		$$ = malloc(sizeof(struct protocol_argument_list_s));
-		$$->list = $1;
-		$$->arg = $2;
+	    $$ = malloc(sizeof(struct protocol_argument_list_s));
+	    $$->list = $1;
+	    $$->arg = $2;
 	}
 	;
 
 protocol_argument: TOK_IDENTIFIER
 	{
-		$$ = malloc(sizeof(struct protocol_argument_s));
-		$$->proto = strdup($1);
+	    $$ = malloc(sizeof(struct protocol_argument_s));
+	    $$->proto = strdup($1);
 	}
 	;
 
 icmptype_specifier: TOK_ICMPTYPE icmptype_argument_list
 	{
-		$$ = malloc(sizeof(struct icmptype_specifier_s));
-		$$->list = $2;
+	    $$ = malloc(sizeof(struct icmptype_specifier_s));
+	    $$->list = $2;
 	}
 	;
 
 icmptype_argument_list: icmptype_argument_list_
 	{
-		$$ = $1;
+	    $$ = $1;
 	}
 	| TOK_LCURLY icmptype_argument_list_ TOK_RCURLY
 	{
-		$$ = $2;
+	    $$ = $2;
 	}
 	;
 
 icmptype_argument_list_: /* empty */
 	{
-		$$ = NULL;
+	    $$ = NULL;
 	}
 	| icmptype_argument_list_ icmptype_argument
 	{
-		$$ = malloc(sizeof(struct icmptype_argument_list_s));
-		$$->list = $1;
-		$$->arg = $2;
+	    $$ = malloc(sizeof(struct icmptype_argument_list_s));
+	    $$->list = $1;
+	    $$->arg = $2;
 	}
 	;
 
 icmptype_argument: TOK_IDENTIFIER
 	{
-		$$ = malloc(sizeof(struct icmptype_argument_s));
-		$$->icmptype = $1;
+	    $$ = malloc(sizeof(struct icmptype_argument_s));
+	    $$->icmptype = $1;
 	}
 	;
 
 option_specifier: TOK_LOCAL
 	{
-		$$ = malloc(sizeof(struct option_specifier_s));
-		$$->type = TOK_LOCAL;
-		$$->logmsg = 0;
+	    $$ = malloc(sizeof(struct option_specifier_s));
+	    $$->type = TOK_LOCAL;
+	    $$->logmsg = 0;
 	}
 	| TOK_FORWARD
 	{
-		$$ = malloc(sizeof(struct option_specifier_s));
-		$$->type = TOK_FORWARD;
-		$$->logmsg = 0;
+	    $$ = malloc(sizeof(struct option_specifier_s));
+	    $$->type = TOK_FORWARD;
+	    $$->logmsg = 0;
 	}
 	| TOK_ONEWAY
 	{
-		$$ = malloc(sizeof(struct option_specifier_s));
-		$$->type = TOK_ONEWAY;
-		$$->logmsg = 0;
+	    $$ = malloc(sizeof(struct option_specifier_s));
+	    $$->type = TOK_ONEWAY;
+	    $$->logmsg = 0;
 	}
         | TOK_LOG TOK_TEXT TOK_IDENTIFIER
         {
-                $$ = malloc(sizeof(struct option_specifier_s));
-		$$->type = TOK_LOG;
-		$$->logmsg = $3;
+	    $$ = malloc(sizeof(struct option_specifier_s));
+	    $$->type = TOK_LOG;
+	    $$->logmsg = $3;
 	}
 	| TOK_LOG
 	{
-                $$ = malloc(sizeof(struct option_specifier_s));	
-		$$->type = TOK_LOG;
-		$$->logmsg = 0;
+	    $$ = malloc(sizeof(struct option_specifier_s));	
+	    $$->type = TOK_LOG;
+	    $$->logmsg = 0;
 	}
 	;
 
 compound_specifier: TOK_LCURLY subrule_list TOK_RCURLY
 	{
-		$$ = malloc(sizeof(struct compound_specifier_s));
-		$$->list = $2;
+	    $$ = malloc(sizeof(struct compound_specifier_s));
+	    $$->list = $2;
 	}
 	;
 
 subrule_list: specifier_list
 	{
-		$$ = malloc(sizeof(struct subrule_list_s));
-		$$->subrule_list = NULL;
-		$$->specifier_list = $1;
+	    $$ = malloc(sizeof(struct subrule_list_s));
+	    $$->subrule_list = NULL;
+	    $$->specifier_list = $1;
 	}
 	| subrule_list TOK_SEMICOLON specifier_list
 	{
-		$$ = malloc(sizeof(struct subrule_list_s));
-		$$->subrule_list = $1;
-		$$->specifier_list = $3;
+	    $$ = malloc(sizeof(struct subrule_list_s));
+	    $$->subrule_list = $1;
+	    $$->specifier_list = $3;
 	}
 	;
 
 chaingroup_specifier: TOK_LSQUARE TOK_IDENTIFIER subrule_list TOK_RSQUARE
 	{
-		$$ = malloc(sizeof(struct chaingroup_specifier_s));
-		$$->name = $2;
-		$$->list = $3;
+	    $$ = malloc(sizeof(struct chaingroup_specifier_s));
+	    $$->name = $2;
+	    $$->list = $3;
 	}
 	| TOK_LSQUARE subrule_list TOK_RSQUARE
 	{
-		$$ = malloc(sizeof(struct chaingroup_specifier_s));
-		$$->name = NULL;
-		$$->list = $2;
+	    $$ = malloc(sizeof(struct chaingroup_specifier_s));
+	    $$->name = NULL;
+	    $$->list = $2;
 	}
 	;
 
@@ -568,6 +568,6 @@ void filtergen_error(const char * s) {
 }
 
 int filtergen_print(FILE * f, int type, YYSTYPE v) {
-	fprintf(f, "%d:\"%s\":%p", type, filtergen_text, &v);
-	return 0;
+    fprintf(f, "%d:\"%s\":%p", type, filtergen_text, &v);
+    return 0;
 }
