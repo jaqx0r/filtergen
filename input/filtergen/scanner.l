@@ -158,7 +158,11 @@ long int filtergen_linenumber() {
 
 /* FIXME: make this return an immutable string */
 char * filtergen_filename(void) {
-    return inc_stack[inc_stackptr].filename ?: strdup("(standard input)");
+    char * fn;
+
+    fn = inc_stack[inc_stackptr].filename;
+fprintf(stderr, "fn: %s\n", fn);
+    return fn ? fn : strdup("(standard input)");
 }
 
 static void scan_err(const char * fmt, ...) {
