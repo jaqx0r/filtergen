@@ -7,11 +7,11 @@ EnsureSConsVersion(0, 95)
 VERSION = "0.13"
 
 opts = Options()
-opts.AddOptions(
-	EnumOption('debug', 'debugging compiler options', 'no',
-			   allowed_values=('yes', 'no', 'gcov'),
-			   map={})
-	)
+#opts.AddOptions(
+#	EnumOption('debug', 'debugging compiler options', 'yes',
+#			   allowed_values=('yes', 'no', 'gcov'),
+#			   map={})
+#	)
 
 env = Environment(options = opts)
 
@@ -65,12 +65,13 @@ if not env.GetOption("clean"):
 	env = conf.Finish()
 
 # choose debugging level
-if ARGUMENTS.get("debug") in ('yes', 'gcov'):
-	env.AppendUnique(CCFLAGS=['-g', '-O0'])
-	if ARGUMENTS.get("debug") in ('gcov'):
-		env.AppendUnique(CCFLAGS=['-fprofile-arcs', '-ftest-coverage'])
+if ARGUMENTS.get("debug") in ('no',):
+    env.AppendUnique(CCFLAGS=['-O2'])
 else:
-	env.AppendUnique(CCFLAGS=['-O2'])
+    env.AppendUnique(CCFLAGS=['-g', '-O0'])
+    if ARGUMENTS.get("debug") in ('gcov',):
+        env.AppendUnique(CCFLAGS=['-fprofile-arcs', '-ftest-coverage'])
+
 
 # set warning flags
 warnings = ['',
