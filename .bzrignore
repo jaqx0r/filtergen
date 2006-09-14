@@ -11,11 +11,3 @@ input/iptables-save/parser.h
 input/iptables-save/scanner.c
 ir/iremit
 .sconsign
-input/filtergen/.sconsign
-input/iptables-save/.sconsign
-ir/.sconsign
-output/cisco/.sconsign
-output/filtergen/.sconsign
-output/ipchains/.sconsign
-output/ipfilter/.sconsign
-output/iptables/.sconsign
