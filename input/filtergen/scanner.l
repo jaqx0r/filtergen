@@ -135,7 +135,7 @@ char * filtergen_filename(void) {
     char * fn = NULL;
 
     /*fn = inc_stack[inc_stackptr].filename;*/
-    return fn ? fn : strdup("(standard input)");
+    return fn ? fn : strdup("(unknown)");
 }
 
 static void scan_err(const char * fmt, ...) {
