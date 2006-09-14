@@ -1,7 +1,7 @@
 %option noyywrap
 %option nounput
 %option prefix="filtergen_"
-%option yylineno
+%option noyylineno
 %x include
 %x comment
 %{
