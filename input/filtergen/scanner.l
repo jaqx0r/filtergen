@@ -31,19 +31,8 @@
 #include <dirent.h>
 #include "parser.h"
 
-/* include file stack */
-#define MAXINCLUDES 16
-struct inc_stack_s {
-    YY_BUFFER_STATE state;
-    char * filename;
-    long int lineno;
-};
-struct inc_stack_s inc_stack[MAXINCLUDES] = { { state: 0, filename: NULL, lineno: 1 } };
-
-int inc_stackptr = 0;
-
 static void scan_err(const char * fmt, ...);
-FILE * include_file(const char *);
+void include_file(const char *);
 %}
 
 string  \"[^\n]+\"
@@ -78,8 +67,6 @@ id      [[:alnum:]_][[:alnum:]_+-]*
              }
 
 {space}      /* ignore */
-
-\n           inc_stack[inc_stackptr].lineno++;
 
 include      BEGIN(include);
 
@@ -122,16 +109,15 @@ text         return TOK_TEXT;
 
 <include>[ \t]*       /* eat whitespace after include */
 <include>[^ \t\n;]+    { /* include file name */
-                          scan_err("including %s", yytext);
-                          yyin = include_file(yytext);
-                          if ( !yyin ) {
-                               scan_err("boned: %s", yytext);
-                          }
+    char * name;
 
-                          yypush_buffer_state(yy_create_buffer(yyin, YY_BUF_SIZE));
-
-                          BEGIN(INITIAL);
-                       }
+    name = strdup(yytext);
+    scan_err("including %s", name);
+    include_file(name);
+    free(name);
+    
+    BEGIN(INITIAL);
+}
 
 <<EOF>>                {
                           scan_err("eof! popping state");
@@ -145,9 +131,9 @@ text         return TOK_TEXT;
 
 /* FIXME: make this return an immutable string */
 char * filtergen_filename(void) {
-    char * fn;
+    char * fn = NULL;
 
-    fn = inc_stack[inc_stackptr].filename;
+    /*fn = inc_stack[inc_stackptr].filename;*/
     return fn ? fn : strdup("(standard input)");
 }
 
@@ -155,22 +141,20 @@ static void scan_err(const char * fmt, ...) {
     va_list args;
 
     va_start(args, fmt);
-    if (inc_stackptr >= 0)
-	fprintf(stderr, "%s:%d: ", filtergen_filename(), filtergen_get_lineno());
+    fprintf(stderr, "%s:%d: ", filtergen_filename(), filtergen_get_lineno());
     vfprintf(stderr, fmt, args);
     fprintf(stderr, "\n");
 }
 
 /* include a file or directory */
-FILE * include_file(const char * name) {
+void include_file(const char * name) {
 	struct stat st;
 	DIR * d;
 	struct dirent * r;
 	char * fn;
-        FILE * f = NULL;
 
 	if (stat(name, &st)) {
-		scan_err("warning: stat failed on %s: %s", name, strerror(errno));
+		scan_err("warning: stat failed on \"%s\": %s", name, strerror(errno));
 	} else {
 		if (S_ISDIR(st.st_mode)) {
 			if ((d = opendir(name)) == NULL) {
@@ -181,15 +165,21 @@ FILE * include_file(const char * name) {
 					if (r->d_name[0] == '.')
 						continue;
 					asprintf(&fn, "%s/%s", name, r->d_name);
-					f = include_file(fn);
+					include_file(fn);
 					free(fn);
 				}
 				closedir(d);
 			}
 		} else {
                      scan_err("opening %s as file", name);
-                     f = fopen(name, "r");
+		     
+                     yyin = fopen(name, "r");
+		     if ( !yyin ) {
+			 scan_err("boned: %s", yytext);
+		     }
+
+		     yypush_buffer_state(yy_create_buffer(yyin, YY_BUF_SIZE));
+		     
                 }
 	}
-        return f;
 }
