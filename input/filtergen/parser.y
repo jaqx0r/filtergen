@@ -39,33 +39,33 @@ extern int filtergen_lex(void);
 %debug
 
 %union {
-	struct rule_list_s * u_rule_list;
-	struct rule_s * u_rule;
-	struct specifier_list_s * u_specifier_list;
-	struct negated_specifier_s * u_negated_specifier;
-	struct specifier_s * u_specifier;
-	struct direction_specifier_s * u_direction_specifier;
-	struct direction_argument_list_s * u_direction_argument_list;
-	struct direction_argument_s * u_direction_argument;
-	struct target_specifier_s * u_target_specifier;
-	struct log_target_specifier_s * u_log_target_specifier;
-	struct host_specifier_s * u_host_specifier;
-	struct host_argument_list_s * u_host_argument_list;
-	struct host_argument_s * u_host_argument;
-	struct port_specifier_s * u_port_specifier;
-	struct port_argument_list_s * u_port_argument_list;
-	struct port_argument_s * u_port_argument;
-	struct protocol_specifier_s * u_protocol_specifier;
-	struct protocol_argument_list_s * u_protocol_argument_list;
-	struct protocol_argument_s * u_protocol_argument;
-	struct icmptype_specifier_s * u_icmptype_specifier;
-	struct icmptype_argument_list_s * u_icmptype_argument_list;
-	struct icmptype_argument_s * u_icmptype_argument;
-	struct option_specifier_s * u_option_specifier;
-	struct compound_specifier_s * u_compound_specifier;
-	struct chaingroup_specifier_s * u_chaingroup_specifier;
-	struct subrule_list_s * u_subrule_list;
-	char * u_str;
+    struct rule_list_s * u_rule_list;
+    struct rule_s * u_rule;
+    struct specifier_list_s * u_specifier_list;
+    struct negated_specifier_s * u_negated_specifier;
+    struct specifier_s * u_specifier;
+    struct direction_specifier_s * u_direction_specifier;
+    struct direction_argument_list_s * u_direction_argument_list;
+    struct direction_argument_s * u_direction_argument;
+    struct target_specifier_s * u_target_specifier;
+    struct log_target_specifier_s * u_log_target_specifier;
+    struct host_specifier_s * u_host_specifier;
+    struct host_argument_list_s * u_host_argument_list;
+    struct host_argument_s * u_host_argument;
+    struct port_specifier_s * u_port_specifier;
+    struct port_argument_list_s * u_port_argument_list;
+    struct port_argument_s * u_port_argument;
+    struct protocol_specifier_s * u_protocol_specifier;
+    struct protocol_argument_list_s * u_protocol_argument_list;
+    struct protocol_argument_s * u_protocol_argument;
+    struct icmptype_specifier_s * u_icmptype_specifier;
+    struct icmptype_argument_list_s * u_icmptype_argument_list;
+    struct icmptype_argument_s * u_icmptype_argument;
+    struct option_specifier_s * u_option_specifier;
+    struct compound_specifier_s * u_compound_specifier;
+    struct chaingroup_specifier_s * u_chaingroup_specifier;
+    struct subrule_list_s * u_subrule_list;
+    char * u_str;
 }
 %type <u_rule_list> rule_list
 %type <u_rule> rule
