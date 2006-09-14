@@ -43,8 +43,6 @@ struct inc_stack_s inc_stack[MAXINCLUDES] = { { state: 0, filename: NULL, lineno
 
 int inc_stackptr = 0;
 
-long int lineno();
-char * filename();
 static void scan_err(const char * fmt, ...);
 void include_file(const char *);
 %}
@@ -154,11 +152,9 @@ text         return TOK_TEXT;
                        }
 %%
 
-/*
-long int filtergen_lineno() {
+long int filtergen_linenumber() {
 	return inc_stack[inc_stackptr].lineno;
 }
-*/
 
 /* FIXME: make this return an immutable string */
 char * filtergen_filename(void) {
@@ -170,7 +166,7 @@ static void scan_err(const char * fmt, ...) {
 
     va_start(args, fmt);
     if (inc_stackptr >= 0)
-	fprintf(stderr, "%s:%d: ", filtergen_filename(), filtergen_lineno);
+	fprintf(stderr, "%s:%ld: ", filtergen_filename(), filtergen_linenumber());
     vfprintf(stderr, fmt, args);
     fprintf(stderr, "\n");
 }
