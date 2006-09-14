@@ -1,7 +1,6 @@
 %option noyywrap
 %option nounput
 %option prefix="filtergen_"
-%option noyylineno
 %x include
 %x comment
 %{
@@ -44,7 +43,7 @@ struct inc_stack_s inc_stack[MAXINCLUDES] = { { state: 0, filename: NULL, lineno
 int inc_stackptr = 0;
 
 static void scan_err(const char * fmt, ...);
-void include_file(const char *);
+FILE * include_file(const char *);
 %}
 
 string  \"[^\n]+\"
@@ -123,45 +122,35 @@ text         return TOK_TEXT;
 
 <include>[ \t]*       /* eat whitespace after include */
 <include>[^ \t\n;]+    { /* include file name */
-                          if (inc_stackptr >= MAXINCLUDES - 1) {
-                              scan_err("warning: too many nested includes");
-    			      scan_err("warning: skipping include of file %s", yytext);
+                          char * name;
 
-			  } else {
-				char * name;
+                          name = strdup(yytext);
+                          scan_err("including %s", yytext);
+                          yyin = include_file(name);
+                          free(name);
+                          if ( !yyin ) {
+                               scan_err("boned: %s", yytext);
+                          }
 
-				name = strdup(filtergen_text);
-				include_file(name);
-				free(name);
-			  }
+                          yypush_buffer_state(yy_create_buffer(yyin, YY_BUF_SIZE));
+
                           BEGIN(INITIAL);
                        }
 
 <<EOF>>                {
-                           if (!inc_stackptr) {
+                           yypop_buffer_state();
+
+                           if (!YY_CURRENT_BUFFER) {
                               yyterminate();
-			   } else {
-			      if (inc_stack[inc_stackptr].filename) {
-				  free(inc_stack[inc_stackptr].filename);
-				  inc_stack[inc_stackptr].filename = NULL;
-                              }
- 			      inc_stackptr--;
-                              yy_delete_buffer(YY_CURRENT_BUFFER);
-                              yy_switch_to_buffer(inc_stack[inc_stackptr].state);
                            }
                        }
 %%
-
-long int filtergen_linenumber() {
-	return inc_stack[inc_stackptr].lineno;
-}
 
 /* FIXME: make this return an immutable string */
 char * filtergen_filename(void) {
     char * fn;
 
     fn = inc_stack[inc_stackptr].filename;
-fprintf(stderr, "fn: %s\n", fn);
     return fn ? fn : strdup("(standard input)");
 }
 
@@ -170,32 +159,18 @@ static void scan_err(const char * fmt, ...) {
 
     va_start(args, fmt);
     if (inc_stackptr >= 0)
-	fprintf(stderr, "%s:%ld: ", filtergen_filename(), filtergen_linenumber());
+	fprintf(stderr, "%s:%d: ", filtergen_filename(), filtergen_get_lineno());
     vfprintf(stderr, fmt, args);
     fprintf(stderr, "\n");
 }
 
-
-void step_into_include_file(const char * fn) {
-	FILE * f;
-
-        if (!(f = fopen(fn, "r"))) {
-                scan_err("warning: can't open file \"%s\"", fn);
-        } else {
-                inc_stack[inc_stackptr++].state = YY_CURRENT_BUFFER;
-                inc_stack[inc_stackptr].lineno = 1;
-                inc_stack[inc_stackptr].filename = strdup(fn);
-                yyin = f;
-                yy_switch_to_buffer(yy_create_buffer(yyin, YY_BUF_SIZE));
-	}
-}
-
 /* include a file or directory */
-void include_file(const char * name) {
+FILE * include_file(const char * name) {
 	struct stat st;
 	DIR * d;
 	struct dirent * r;
 	char * fn;
+        FILE * f = NULL;
 
 	if (stat(name, &st)) {
 		scan_err("warning: stat failed on %s: %s", name, strerror(errno));
@@ -209,12 +184,15 @@ void include_file(const char * name) {
 					if (r->d_name[0] == '.')
 						continue;
 					asprintf(&fn, "%s/%s", name, r->d_name);
-					include_file(fn);
+					f = include_file(fn);
 					free(fn);
 				}
 				closedir(d);
 			}
-		} else
-			step_into_include_file(name);
+		} else {
+                     scan_err("opening %s as file", name);
+                     f = fopen(name, "r");
+                }
 	}
+        return f;
 }
