@@ -113,7 +113,7 @@ filtergen_sources = ['filtergen.cc',
 					 'filter.c',
 					 'fg-util.c',
 					 'icmpent.c',
-					 'factoriser.c',
+                     'factoriser.cc',
 					 ]
 filtergen  = env.Program('filtergen', filtergen_sources,
 						 LIBS=['in_filtergen',
