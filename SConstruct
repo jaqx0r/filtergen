@@ -76,7 +76,7 @@ else:
 # set warning flags
 warnings = ['',
 			'all',
-			'error',
+		#	'error',
 			'aggregate-return',
 			'cast-align',
 			'cast-qual',
@@ -110,7 +110,7 @@ pkgexdir = pkgdocdir + '/examples'
 # Add the top level directory to the include path
 env.AppendUnique(CPPPATH=['#'])
 
-filtergen_sources = ['filtergen.c',
+filtergen_sources = ['filtergen.cc',
 					 'gen.c',
 					 'filter.c',
 					 'fg-util.c',

@@ -20,6 +20,10 @@
 #ifndef _FK_FILTER_H
 #define _FK_FILTER_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+    
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -30,7 +34,6 @@
 #else
 #define	_PRINTF_ATTR(s,e)
 #endif
-
 
 /**
  * If it doesn't begin with "F_", it's a simple token, not an
@@ -194,5 +197,10 @@ filter_flush flush_iptables, flush_ipchains;
 /* filtergen.c */
 int oputs(const char *s);
 int oprintf(const char *fmt, ...) _PRINTF_ATTR(1,2);
+
+#ifdef __cplusplus
+}
+#endif  
+
 
 #endif /* _FK_FILTER_H */
