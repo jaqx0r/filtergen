@@ -80,9 +80,7 @@ warnings = ['',
 			'aggregate-return',
 			'cast-align',
 			'cast-qual',
-			'nested-externs',
 			'shadow',
-			'bad-function-cast',
 			'write-strings']
 env.AppendUnique(CCFLAGS=['-W%s' % (w,) for w in warnings])
 
@@ -111,7 +109,7 @@ pkgexdir = pkgdocdir + '/examples'
 env.AppendUnique(CPPPATH=['#'])
 
 filtergen_sources = ['filtergen.cc',
-					 'gen.c',
+                     'gen.cc',
 					 'filter.c',
 					 'fg-util.c',
 					 'icmpent.c',
