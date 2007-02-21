@@ -114,32 +114,32 @@ filtergen_sources = ['filtergen.cc',
 					 'fg-util.c',
 					 'icmpent.c',
                      'factoriser.cc',
-					 ]
+                     ]
 filtergen  = env.Program('filtergen', filtergen_sources,
-						 LIBS=['in_filtergen',
-							   'in_iptables_save',
-							   'out_iptables',
-							   'out_ipchains',
-							   'out_ipfilter',
-							   'out_cisco',
-							   'out_filtergen',
-							   ],
-						 LIBPATH=['input/filtergen',
-								  'input/iptables-save',
-								  'output/iptables',
-								  'output/ipchains',
-								  'output/ipfilter',
-								  'output/cisco',
-								  'output/filtergen',
-								  ]
-						 )
+                         LIBS=['in_filtergen',
+                               'in_iptables_save',
+                               'out_iptables',
+                               'out_ipchains',
+                               'out_ipfilter',
+                               'out_cisco',
+                               'out_filtergen',
+                               ],
+                         LIBPATH=['input/filtergen',
+                                  'input/iptables-save',
+                                  'output/iptables',
+                                  'output/ipchains',
+                                  'output/ipfilter',
+                                  'output/cisco',
+                                  'output/filtergen',
+                                  ]
+                         )
 Default(filtergen)
 env.Distribute(env['DISTTREE'], filtergen_sources + ['filter.h',
-													 'icmpent.h',
-													 'util.h',
-													 'factoriser.h',
-													 'input/input.h',
-													 ])
+                                                     'icmpent.h',
+                                                     'util.h',
+                                                     'factoriser.h',
+                                                     'input/input.h',
+                                                     ])
 
 def sed(target, source, env):
 	expandos = {
