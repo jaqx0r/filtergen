@@ -16,3 +16,6 @@ input/filtergen/driver.h
 input/filtergen/parser.cc
 input/filtergen/parser.hh
 input/filtergen/scanner.cc
+location.hh
+position.hh
+stack.hh
