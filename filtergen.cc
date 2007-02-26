@@ -1,7 +1,7 @@
 /* packet filter compiler
  *
  * Copyright (c) 2002 Matthew Kirkwood
- * Copyright (c) 2003,2004 Jamie Wilkinson
+ * Copyright (c) 2003-2007 Jamie Wilkinson
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

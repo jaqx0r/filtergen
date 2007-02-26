@@ -186,13 +186,13 @@ void resolve_host_argument_list(struct host_argument_list_s * n) {
                 /* replace the hostname with the IP */
                 free(n->arg->host);
 		/* getnameinfo does no allocation. */
-		n->arg->host = malloc(NI_MAXHOST + 1);
+		n->arg->host = (char *) malloc(NI_MAXHOST + 1);
 		if (getnameinfo(a->ai_addr, a->ai_addrlen, n->arg->host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST) == 0) {
 		    /* if there's more, create some more hosts */
 		    for (i = a->ai_next; i; i = i->ai_next) {
-			list = malloc(sizeof(struct host_argument_list_s));
-			host = malloc(sizeof(struct host_argument_s));
-			host->host = malloc(NI_MAXHOST + 1);
+			list = (struct host_argument_list_s *) malloc(sizeof(struct host_argument_list_s));
+			host = (struct host_argument_s *)  malloc(sizeof(struct host_argument_s));
+			host->host = (char *) malloc(NI_MAXHOST + 1);
 			if (getnameinfo(i->ai_addr, i->ai_addrlen, host->host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST) == 0) {
 			    if (n->arg->mask) {
 				host->mask = strdup(n->arg->mask);

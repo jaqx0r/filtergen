@@ -214,3 +214,12 @@ env.Alias('dist', srcdist)
 # don't leave the disttree around
 env.AddPreAction(env['DISTTREE'], Action('rm -rf ' + str(File(env['DISTTREE']))))
 env.AddPostAction(srcdist, Action('rm -rf ' + str(File(env['DISTTREE']))))
+
+
+
+Program('calc++', ['calc++.cc',
+                   'calc++-parser.yy',
+                   'calcxx-scanner.ll',
+                   'calc++-driver.cc'
+                   ]
+                   )

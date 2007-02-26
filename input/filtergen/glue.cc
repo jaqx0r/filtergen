@@ -21,11 +21,12 @@
 #include "filter.h"
 #include "input/input.h"
 #include "ast.h"
+#include "driver.h"
 #include "parser.h"
 #include "resolver.h"
 
-int filtergen_parse(void *);
-int filtergen_restart(FILE *);
+//int filtergen_parse(void *);
+//int filtergen_restart(FILE *);
 
 int convtrace = 0;
 
@@ -71,7 +72,7 @@ struct filter * convert_compound_specifier(struct compound_specifier_s * r) {
     return res;
 }
 
-struct filter * convert_direction_argument(struct direction_argument_s * n, int type) {
+struct filter * convert_direction_argument(struct direction_argument_s * n, filtertype type) {
     struct filter * res = NULL;
 
     if (n->direction) {
@@ -83,7 +84,7 @@ struct filter * convert_direction_argument(struct direction_argument_s * n, int 
     return res;
 }
 
-struct filter * convert_direction_argument_list(struct direction_argument_list_s * n, int type) {
+struct filter * convert_direction_argument_list(struct direction_argument_list_s * n, filtertype type) {
     struct filter * res = NULL, * end = NULL;
 
     eprint("converting direction argument list\n");
@@ -110,7 +111,7 @@ struct filter * convert_direction_argument_list(struct direction_argument_list_s
     
 struct filter * convert_direction(struct direction_specifier_s * n) {
     struct filter * res = NULL;
-    int type;
+    filtertype type;
 
     eprint("converting direction specifier\n");
         
@@ -135,7 +136,7 @@ struct filter * convert_direction(struct direction_specifier_s * n) {
     return res;
 }
 
-struct filter * convert_host_argument(struct host_argument_s * n, int type) {
+struct filter * convert_host_argument(struct host_argument_s * n, filtertype type) {
     struct filter * res = NULL;
     char * h;
 
@@ -155,7 +156,7 @@ struct filter * convert_host_argument(struct host_argument_s * n, int type) {
     return res;
 }
 
-struct filter * convert_host_argument_list(struct host_argument_list_s * n, int type) {
+struct filter * convert_host_argument_list(struct host_argument_list_s * n, filtertype type) {
     struct filter * res = NULL, * end = NULL;
 
     eprint("converting host argument list\n");
@@ -260,7 +261,7 @@ struct filter * convert_protocol_specifier(struct protocol_specifier_s * n) {
     return res;        
 }
 
-struct filter * convert_port_argument(struct port_argument_s * n, int type) {
+struct filter * convert_port_argument(struct port_argument_s * n, filtertype type) {
     struct filter * res = NULL;
     char * p;
 
@@ -280,7 +281,7 @@ struct filter * convert_port_argument(struct port_argument_s * n, int type) {
     return res;
 }
 
-struct filter * convert_port_argument_list(struct port_argument_list_s * n, int type) {
+struct filter * convert_port_argument_list(struct port_argument_list_s * n, filtertype type) {
     struct filter * res = NULL, * end = NULL;
 
     eprint("converting port argument list\n");
@@ -577,20 +578,16 @@ struct filter * convert(struct ast_s * ast) {
 }
 
 struct filter * filtergen_source_parser(FILE * file, int resolve_names) {
-    struct ast_s ast;
     struct filter * f;
 
-    filtergen_restart(file);
-    if (filtergen_parse((void *) &ast) == 0) {
-	if (resolve_names)
-	    resolve(&ast);
-	f = convert(&ast);
-	if (!f) {
-	    fprintf(stderr, "couldn't convert file to IR\n");
-	    return NULL;
-	}
-    } else {
-	fprintf(stderr, "couldn't parse file\n");
+    filtergen_driver driver;
+    driver.parse(file);
+    
+    if (resolve_names)
+	resolve(driver.result);
+    f = convert(driver.result);
+    if (!f) {
+	fprintf(stderr, "couldn't convert file to IR\n");
 	return NULL;
     }
     return f;

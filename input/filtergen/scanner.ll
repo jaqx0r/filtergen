@@ -30,6 +30,7 @@
 #include <unistd.h>
 #include <dirent.h>
 #include "parser.h"
+#include "driver.h"
 
 static void scan_err(const char * fmt, ...);
 void include_file(const char *);
@@ -62,7 +63,7 @@ id      [[:alnum:]_][[:alnum:]_+-]*
 		 * characters in this regex are ", otherwise there's a bug
 		 * in flex...  The result is somethign that is syntactically
 		 * identical to an identifier for our purposes. */
-		filtergen_lval.u_str = strndup(filtergen_text + 1, filtergen_leng - 2);
+		yylval->u_str = strndup(filtergen_text + 1, filtergen_leng - 2);
 		return TOK_IDENTIFIER;
              }
 
@@ -99,7 +100,7 @@ text         return TOK_TEXT;
 "!"          return TOK_BANG;
 
 {id}(\.{id})*	{
-    filtergen_lval.u_str = strndup(filtergen_text, filtergen_leng);
+    yylval->u_str = strndup(filtergen_text, filtergen_leng);
     return TOK_IDENTIFIER;
 }
 
@@ -184,3 +185,17 @@ void include_file(const char * name) {
 	}
     }
 }
+
+void
+filtergen_driver::scan_begin()
+{
+    yy_flex_debug = trace_scanning;
+    filtergen_restart(file);
+}
+
+void
+filtergen_driver::scan_end()
+{
+}
+
+	
