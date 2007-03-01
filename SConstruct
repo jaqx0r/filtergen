@@ -75,13 +75,13 @@ else:
 
 # set warning flags
 warnings = ['',
-			'all',
-		#	'error',
-			'aggregate-return',
-			'cast-align',
-			'cast-qual',
-			'shadow',
-			'write-strings']
+            'all',
+            #'error',
+            #'aggregate-return',
+            'cast-align',
+            'cast-qual',
+            'shadow',
+            'write-strings']
 env.AppendUnique(CCFLAGS=['-W%s' % (w,) for w in warnings])
 
 # set the version
@@ -214,12 +214,3 @@ env.Alias('dist', srcdist)
 # don't leave the disttree around
 env.AddPreAction(env['DISTTREE'], Action('rm -rf ' + str(File(env['DISTTREE']))))
 env.AddPostAction(srcdist, Action('rm -rf ' + str(File(env['DISTTREE']))))
-
-
-
-Program('calc++', ['calc++.cc',
-                   'calc++-parser.yy',
-                   'calcxx-scanner.ll',
-                   'calc++-driver.cc'
-                   ]
-                   )

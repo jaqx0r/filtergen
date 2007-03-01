@@ -272,7 +272,7 @@ struct filter * ipts_convert(struct ast_s * ast) {
     return res;
 }
 
-struct filter * ipts_source_parser(FILE * file, int resolve_names __attribute__((unused))) {
+struct filter * ipts_source_parser(FILE * file, char * filename, int resolve_names __attribute__((unused))) {
     struct ast_s ast;
     struct filter * f = NULL;
 

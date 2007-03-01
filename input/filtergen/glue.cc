@@ -577,11 +577,11 @@ struct filter * convert(struct ast_s * ast) {
     return res;
 }
 
-struct filter * filtergen_source_parser(FILE * file, int resolve_names) {
+struct filter * filtergen_source_parser(FILE * file, char * filename, int resolve_names) {
     struct filter * f;
 
     filtergen_driver driver;
-    driver.parse(file);
+    driver.parse(std::string(filename));
     
     if (resolve_names)
 	resolve(driver.result);

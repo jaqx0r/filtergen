@@ -1,4 +1,4 @@
-/* parser for filtergen
+/* parser for filtergen               -*- C++ -*-
  *
  * Copyright (c) 2003 Jamie Wilkinson <jaq@spacepants.org>
  *
@@ -34,7 +34,7 @@
 %initial-action
 {
     // Initialise the initial location
-    @$.begin.filename = @$.end.filename = new std::string("-");
+    @$.begin.filename = @$.end.filename = &driver.file;
 };
 
 %debug
@@ -103,7 +103,7 @@
 %type <u_chaingroup_specifier> chaingroup_specifier
 %type <u_subrule_list> subrule_list
 
-%defines
+%token TOK_EOF 0 "end of file"
 %token TOK_ACCEPT
 %token TOK_DEST
 %token TOK_DPORT
@@ -136,7 +136,6 @@
 %token TOK_COLON
 
 %start ast
-
 %%
 
 ast: rule_list

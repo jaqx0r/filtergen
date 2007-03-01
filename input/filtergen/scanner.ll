@@ -1,9 +1,4 @@
-%option noyywrap
-%option nounput
-%option prefix="filtergen_"
-%x include
-%x comment
-%{
+%{  /* -*- C++ -*- */
 /* input scanner for filtergen language
  *
  * Copyright (c) 2003 Jamie Wilkinson <jaq@spacepants.org>
@@ -23,34 +18,45 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <string.h>
-#include <stdarg.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <dirent.h>
-#include "parser.h"
-#include "driver.h"
 
-static void scan_err(const char * fmt, ...);
+#include "driver.h"
+#include "parser.hh"
+
 void include_file(const char *);
 %}
+
+%option noyywrap nounput
+%option batch debug
+     
+%x include
+%x comment
 
 string  \"[^\n]+\"
 space   [ \t]+
 id      [[:alnum:]_][[:alnum:]_+-]*
 
+%{
+#define YY_USER_ACTION yylloc->columns(yyleng);
+%}
+
 %%
+%{
+    yylloc->step();
+%}
 
 "/*"	BEGIN(comment);
 
 <comment>{
 [^*\n]*		/* eat anything that's not a '*' */
 "*"+[^*/\n]*	/* eat up '*'s not followes by '/'s */
-\n		/* eat newlines */
+[\n]            yylloc->lines(yyleng); yylloc->step();
 "*"+"/"		BEGIN(INITIAL);
 <<EOF>>		{
-			scan_err("warning: comment reached end of file");
+    driver.error(*yylloc, "warning: comment reached end of file");
 			yyterminate();
 		}
 }
@@ -63,7 +69,7 @@ id      [[:alnum:]_][[:alnum:]_+-]*
 		 * characters in this regex are ", otherwise there's a bug
 		 * in flex...  The result is somethign that is syntactically
 		 * identical to an identifier for our purposes. */
-		yylval->u_str = strndup(filtergen_text + 1, filtergen_leng - 2);
+                yylval->u_str = strndup(yytext+1, yyleng-2);
 		return TOK_IDENTIFIER;
              }
 
@@ -100,7 +106,7 @@ text         return TOK_TEXT;
 "!"          return TOK_BANG;
 
 {id}(\.{id})*	{
-    yylval->u_str = strndup(filtergen_text, filtergen_leng);
+    yylval->u_str = strndup(yytext, yyleng);
     return TOK_IDENTIFIER;
 }
 
@@ -113,7 +119,6 @@ text         return TOK_TEXT;
     char * name;
 
     name = strdup(yytext);
-    scan_err("including %s", name);
     include_file(name);
     free(name);
     
@@ -121,7 +126,7 @@ text         return TOK_TEXT;
 }
 
 <<EOF>>                {
-    scan_err("eof! popping state");
+    driver.error(*yylloc, "eof! popping state");
     yypop_buffer_state();
 
     if (!YY_CURRENT_BUFFER) {
@@ -131,23 +136,6 @@ text         return TOK_TEXT;
 
 %%
 
-/* FIXME: make this return an immutable string */
-char * filtergen_filename(void) {
-    char * fn = NULL;
-
-    /*fn = inc_stack[inc_stackptr].filename;*/
-    return fn ? fn : strdup("(unknown)");
-}
-
-static void scan_err(const char * fmt, ...) {
-    va_list args;
-
-    va_start(args, fmt);
-    fprintf(stderr, "%s:%d: ", filtergen_filename(), filtergen_get_lineno());
-    vfprintf(stderr, fmt, args);
-    fprintf(stderr, "\n");
-}
-
 /* include a file or directory */
 void include_file(const char * name) {
     struct stat st;
@@ -156,11 +144,11 @@ void include_file(const char * name) {
     char * fn;
 
     if (stat(name, &st)) {
-	scan_err("warning: stat failed on \"%s\": %s", name, strerror(errno));
+	//scan_err("warning: stat failed on \"%s\": %s", name, strerror(errno));
     } else {
 	if (S_ISDIR(st.st_mode)) {
 	    if ((d = opendir(name)) == NULL) {
-		scan_err("warning: opendir failed on %s: %s", name, strerror(errno));
+		//driver.error(*yylloc, "warning: opendir failed");// on %s: %s", name, strerror(errno));
 	    } else {
 		while ((r = readdir(d)) != NULL) {
 		    /* FIXME: assumes d_name */
@@ -173,11 +161,11 @@ void include_file(const char * name) {
 		closedir(d);
 	    }
 	} else {
-	    scan_err("opening %s as file", name);
+	    //scan_err("opening %s as file", name);
 		     
 	    yyin = fopen(name, "r");
 	    if ( !yyin ) {
-		scan_err("boned: %s", yytext);
+		//scan_err("boned: %s", yytext);
 	    }
 
 	    yypush_buffer_state(yy_create_buffer(yyin, YY_BUF_SIZE));
@@ -190,12 +178,15 @@ void
 filtergen_driver::scan_begin()
 {
     yy_flex_debug = trace_scanning;
-    filtergen_restart(file);
+
+    if (!(yyin = fopen(file.c_str(), "r")))
+	error(std::string("cannot open ") + file);
 }
 
 void
 filtergen_driver::scan_end()
 {
+    fclose(yyin);
 }
 
 	

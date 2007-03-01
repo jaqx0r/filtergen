@@ -278,7 +278,7 @@ int main(int argc, char **argv) {
 	} else {
 	    file = stdin;
 	}
-	f = sp->parser(file, resolve_names);
+	f = sp->parser(file, filename, resolve_names);
 	l = ft->compiler(f, flags);
     }
 
