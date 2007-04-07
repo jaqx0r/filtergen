@@ -22,7 +22,7 @@
 #include "input/input.h"
 #include "ast.h"
 #include "driver.h"
-#include "parser.h"
+#include "parser.hh"
 #include "resolver.h"
 
 //int filtergen_parse(void *);
@@ -108,13 +108,13 @@ struct filter * convert_direction_argument_list(struct direction_argument_list_s
 
     return res;
 }
-    
+
 struct filter * convert_direction(struct direction_specifier_s * n) {
     struct filter * res = NULL;
     filtertype type;
 
     eprint("converting direction specifier\n");
-        
+
     switch (n->type) {
       case TOK_INPUT:
 	type = INPUT;
@@ -184,7 +184,7 @@ struct filter * convert_host_argument_list(struct host_argument_list_s * n, filt
 struct filter * convert_host_specifier(struct host_specifier_s * n) {
     struct filter * res = NULL;
     enum filtertype type;
-	
+
     eprint("converting host specifier\n");
 
     switch (n->type) {
@@ -205,7 +205,7 @@ struct filter * convert_host_specifier(struct host_specifier_s * n) {
 	printf("error: no host argument list\n");
     }
 
-    return res;        
+    return res;
 }
 
 struct filter * convert_protocol_argument(struct protocol_argument_s * n) {
@@ -249,7 +249,7 @@ struct filter * convert_protocol_argument_list(struct protocol_argument_list_s *
 
 struct filter * convert_protocol_specifier(struct protocol_specifier_s * n) {
     struct filter * res = NULL;
-	
+
     eprint("converting protocol specifier\n");
 
     if (n->list) {
@@ -258,7 +258,7 @@ struct filter * convert_protocol_specifier(struct protocol_specifier_s * n) {
 	printf("error: no protocol argument list\n");
     }
 
-    return res;        
+    return res;
 }
 
 struct filter * convert_port_argument(struct port_argument_s * n, filtertype type) {
@@ -309,7 +309,7 @@ struct filter * convert_port_argument_list(struct port_argument_list_s * n, filt
 struct filter * convert_port_specifier(struct port_specifier_s * n) {
     struct filter * res = NULL;
     enum filtertype type;
-	
+
     eprint("converting port specifier\n");
 
     switch (n->type) {
@@ -330,7 +330,7 @@ struct filter * convert_port_specifier(struct port_specifier_s * n) {
 	printf("error: no port argument list\n");
     }
 
-    return res;        
+    return res;
 }
 
 struct filter * convert_icmptype_argument(struct icmptype_argument_s * n) {
@@ -374,7 +374,7 @@ struct filter * convert_icmptype_argument_list(struct icmptype_argument_list_s *
 
 struct filter * convert_icmptype_specifier(struct icmptype_specifier_s * n) {
     struct filter * res = NULL;
-	
+
     eprint("converting icmptype specifier\n");
 
     if (n->list) {
@@ -383,12 +383,12 @@ struct filter * convert_icmptype_specifier(struct icmptype_specifier_s * n) {
 	printf("error: no icmptype argument list\n");
     }
 
-    return res;        
+    return res;
 }
 
 struct filter * convert_option_specifier(struct option_specifier_s * n) {
     struct filter * res = NULL;
-	
+
     eprint("converting option specifier\n");
 
     switch (n->type) {
@@ -409,7 +409,7 @@ struct filter * convert_option_specifier(struct option_specifier_s * n) {
 	break;
     }
 
-    return res;        
+    return res;
 }
 
 struct filter * convert_chaingroup_specifier(struct chaingroup_specifier_s * n) {
@@ -424,7 +424,7 @@ struct filter * convert_chaingroup_specifier(struct chaingroup_specifier_s * n) 
 
 	asprintf(&name, "chain_%d", ccount++);
     }
-  
+
     if (n->list) {
 	sub = convert_subrule_list(n->list);
 
@@ -439,7 +439,7 @@ struct filter * convert_chaingroup_specifier(struct chaingroup_specifier_s * n) 
 struct filter * convert_specifier(struct specifier_s * r) {
     struct filter * res = NULL;
     eprint("converting specifier\n");
-    
+
     if (r->compound) {
         eprint("converting compound specifier\n");
 	res = convert_compound_specifier(r->compound);
@@ -489,7 +489,7 @@ struct filter * convert_specifier(struct specifier_s * r) {
 	res = convert_chaingroup_specifier(r->chaingroup);
     } else
 	printf("error: no specifiers\n");
-    
+
     return res;
 }
 
@@ -569,7 +569,7 @@ struct filter * convert_rule_list(struct rule_list_s * n) {
 
 struct filter * convert(struct ast_s * ast) {
     struct filter * res = NULL;
-    
+
     eprint("converting ast\n");
 
     if (ast->list)
@@ -582,7 +582,7 @@ struct filter * filtergen_source_parser(FILE * file, char * filename, int resolv
 
     filtergen_driver driver;
     driver.parse(std::string(filename));
-    
+
     if (resolve_names)
 	resolve(driver.result);
     f = convert(driver.result);
