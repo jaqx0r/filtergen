@@ -1,9 +1,4 @@
-%option noyywrap
-%option nounput
-%option prefix="ipts_"
-%option yylineno
-
-%{
+%{ /* -*- C++ -*- */
 /* input scanner for iptables-save format
  *
  * Copyright (c) 2004 Jamie Wilkinson <jaq@spacepants.org>
@@ -24,16 +19,27 @@
  */
 
 #include <string.h>
-#include "parser.h"
+#include "driver.h"
+#include "parser.hh"
 
-char * ipts_filename(void);
 %}
+
+%option noyywrap nounput
+%option batch debug
+%option prefix="ipts_"
 
 string	\"[^\n]+\"
 space	[ \t]+
 id	[[:alnum:]_+-\.\/~]+
 
+%{
+#define YY_USER_ACTION yylloc->columns(ipts_leng);
+%}
+
 %%
+%{
+	yylloc->step();
+%}
 
 #[^\n]* 	/* strip shell-style comments */
 
@@ -43,7 +49,7 @@ id	[[:alnum:]_+-\.\/~]+
 
 {space}	/* ignore */
 
-\n		/* ignore */
+[\n]		yylloc->lines(ipts_leng); yylloc->step();
 
 ^COMMIT		return TOK_COMMIT;
 
@@ -53,7 +59,7 @@ id	[[:alnum:]_+-\.\/~]+
                  * characters in this regex are ", otherwise there's a bug
                  * in flex...  The result is somethign that is syntactically
                  * identical to an identifier for our purposes. */
-                ipts_lval.u_str = strndup(ipts_text + 1, ipts_leng - 2);
+                yylval->u_str = strndup(ipts_text + 1, ipts_leng - 2);
                 return TOK_IDENTIFIER;
                 }
 
@@ -126,19 +132,34 @@ id	[[:alnum:]_+-\.\/~]+
 
 	/* everything else */
 {id}	{
-		ipts_lval.u_str = strndup(ipts_text, ipts_leng);
+		yylval->u_str = strndup(ipts_text, ipts_leng);
 		return TOK_IDENTIFIER;
 	}
 
 "["	return TOK_LSQUARE;
 "]"	return TOK_RSQUARE;
-":"	return TOK_COLON; 
+":"	return TOK_COLON;
 "!"	return TOK_BANG;
 
 \"	return TOK_QUOTE;
 
 %%
 
-char * ipts_filename(void) {
-	return NULL;
+void
+ipts_driver::scan_begin()
+{
+	yy_flex_debug = trace_scanning;
+
+	if (file)
+	   yyin = file;
+	else {
+	     if (!(yyin = fopen(filename.c_str(), "r")))
+	     	error(std::string("cannot open ") + filename);
+	}
+}
+
+void
+ipts_driver::scan_end()
+{
+	fclose(yyin);
 }

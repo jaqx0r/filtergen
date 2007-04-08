@@ -22,7 +22,7 @@
 #include "filter.h"
 #include "input/input.h"
 #include "ast.h"
-#include "parser.h"
+#include "parser.hh"
 
 int ipts_parse(void *);
 int ipts_restart(FILE *);
@@ -111,7 +111,7 @@ struct filter * ipts_convert_option(struct option_s * n) {
   struct filter * res = NULL;
 
   eprint("converting option\n");
-  
+
   if (n->in_interface_option) {
     ipts_convert_in_interface_option(n->in_interface_option);
   } else if (n->jump_option) {
@@ -176,7 +176,7 @@ struct filter * ipts_convert_rule(struct rule_s * n) {
     /* chain, policy, pkt_count are set */
     /* FIXME: somehow append the chain default policy to the end of the
      * rule list */
-    int direction = 0;
+    enum filtertype direction;
     enum filtertype type;
 
     if (!strcasecmp(n->chain, "input")) {
@@ -273,17 +273,16 @@ struct filter * ipts_convert(struct ast_s * ast) {
 }
 
 struct filter * ipts_source_parser(FILE * file, char * filename, int resolve_names __attribute__((unused))) {
-    struct ast_s ast;
     struct filter * f = NULL;
 
-    ipts_restart(file);
-    if (ipts_parse((void *) &ast) != 0) {
-	fprintf(stderr, "iptables-save parse failed\n");
-	f = NULL;
-    } else {
-	if ((f = ipts_convert(&ast)) == NULL) {
-	    fprintf(stderr, "iptables-save conversion failed\n");
-	}
+    ipts_driver driver;
+    driver.parse(file, std::string(filename));
+
+
+    f = ipts_convert(driver.result);
+    if (!f) {
+      fprintf(stderr, "iptables-save conversion failed\n");
+      return NULL;
     }
     return f;
 }

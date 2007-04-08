@@ -34,7 +34,7 @@
 %initial-action
 {
     // Initialise the initial location
-    @$.begin.filename = @$.end.filename = &driver.file;
+    @$.begin.filename = @$.end.filename = &driver.filename;
 };
 
 %debug
@@ -201,7 +201,7 @@ specifier: compound_specifier
 	    $$ = (struct specifier_s *) malloc(sizeof(struct specifier_s));
 	    memset($$, 0, sizeof(struct specifier_s));
 	    $$->direction = $1;
-	}		
+	}
 	| target_specifier
 	{
 	    $$ = (struct specifier_s *) malloc(sizeof(struct specifier_s));
@@ -520,7 +520,7 @@ option_specifier: TOK_LOCAL
 	}
 	| TOK_LOG
 	{
-	    $$ = (struct option_specifier_s *) malloc(sizeof(struct option_specifier_s));	
+	    $$ = (struct option_specifier_s *) malloc(sizeof(struct option_specifier_s));
 	    $$->type = TOK_LOG;
 	    $$->logmsg = 0;
 	}

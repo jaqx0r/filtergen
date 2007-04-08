@@ -31,7 +31,7 @@ void include_file(const char *);
 
 %option noyywrap nounput
 %option batch debug
-     
+
 %x include
 %x comment
 
@@ -121,7 +121,7 @@ text         return TOK_TEXT;
     name = strdup(yytext);
     include_file(name);
     free(name);
-    
+
     BEGIN(INITIAL);
 }
 
@@ -162,14 +162,14 @@ void include_file(const char * name) {
 	    }
 	} else {
 	    //scan_err("opening %s as file", name);
-		     
+
 	    yyin = fopen(name, "r");
 	    if ( !yyin ) {
 		//scan_err("boned: %s", yytext);
 	    }
 
 	    yypush_buffer_state(yy_create_buffer(yyin, YY_BUF_SIZE));
-		     
+
 	}
     }
 }
@@ -179,8 +179,12 @@ filtergen_driver::scan_begin()
 {
     yy_flex_debug = trace_scanning;
 
-    if (!(yyin = fopen(file.c_str(), "r")))
-	error(std::string("cannot open ") + file);
+    if (file)
+      yyin = file;
+    else {
+      if (!(yyin = fopen(filename.c_str(), "r")))
+	error(std::string("cannot open ") + filename);
+    }
 }
 
 void
@@ -189,4 +193,4 @@ filtergen_driver::scan_end()
     fclose(yyin);
 }
 
-	
+

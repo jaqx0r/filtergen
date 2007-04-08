@@ -1,8 +1,9 @@
 Import('env')
 
-sources=['parser.y',
-	 'scanner.l',
-	 'glue.c',
+sources=['parser.yy',
+	 'scanner.ll',
+	 'driver.cc',
+	 'glue.cc',
 	 ]
 env.Library('in_iptables_save', sources)
 
@@ -11,9 +12,9 @@ env.Distribute(env['DISTTREE'], sources + ['SConscript',
 					   'ast.h',
 					   # these included so bison and flex aren't
 					   # required by users
-					   'parser.c',
-					   'parser.h',
-					   'scanner.c'
+					   'parser.cc',
+					   'parser.hh',
+					   'scanner.cc'
 					   ])
 
 SConscript('t/SConscript', 'env')

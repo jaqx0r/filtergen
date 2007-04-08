@@ -581,7 +581,7 @@ struct filter * filtergen_source_parser(FILE * file, char * filename, int resolv
     struct filter * f;
 
     filtergen_driver driver;
-    driver.parse(std::string(filename));
+    driver.parse(file, std::string(filename));
 
     if (resolve_names)
 	resolve(driver.result);
