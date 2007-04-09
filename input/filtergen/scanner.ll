@@ -31,6 +31,7 @@ void include_file(const char *);
 
 %option noyywrap nounput
 %option batch debug
+%option prefix="filtergen_"
 
 %x include
 %x comment
