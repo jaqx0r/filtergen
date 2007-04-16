@@ -15,11 +15,11 @@ filtergen_driver::parse(FILE * f, const std::string & fn)
 {
   file = f;
     filename = fn;
-    scan_begin();
-    yy::filtergen_parser parser(*this);
-    parser.set_debug_level(trace_parsing);
-    parser.parse();
-    scan_end();
+//     scan_begin();
+//     yy::filtergen_parser parser(*this);
+//     parser.set_debug_level(trace_parsing);
+//     parser.parse();
+//     scan_end();
 }
 
 void

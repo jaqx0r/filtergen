@@ -1,7 +1,6 @@
-%{  /* -*- C++ -*- */
 /* input scanner for filtergen language
  *
- * Copyright (c) 2003 Jamie Wilkinson <jaq@spacepants.org>
+ * Copyright (c) 2003-2007 Jamie Wilkinson <jaq@spacepants.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,6 +17,38 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include "scanner.h"
+
+FiltergenScanner::FiltergenScanner(std::istream & s):
+  source(s),
+  currentSpelling("")
+{
+}
+
+void
+FiltergenScanner::accept()
+{
+  const int c = source.get();
+  currentSpelling += c;
+}
+
+int
+FiltergenScanner::nextToken()
+{
+  return 0;
+}
+
+#if 0
+%}
+
+%option c++
+ //%option noyywrap nounput
+ //%option batch debug
+%option prefix="Filtergen"
+%option bison-bridge
+%option bison-locations
+
+%{
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -28,10 +59,6 @@
 
 void include_file(const char *);
 %}
-
-%option noyywrap nounput
-%option batch debug
-%option prefix="filtergen_"
 
 %x include
 %x comment
@@ -128,11 +155,11 @@ text         return TOK_TEXT;
 
 <<EOF>>                {
     driver.error(*yylloc, "eof! popping state");
-    yypop_buffer_state();
+    //yypop_buffer_state();
 
-    if (!YY_CURRENT_BUFFER) {
-	yyterminate();
-    }
+    //if (!YY_CURRENT_BUFFER) {
+    //	yyterminate();
+    //}
 }
 
 %%
@@ -164,34 +191,35 @@ void include_file(const char * name) {
 	} else {
 	    //scan_err("opening %s as file", name);
 
-	    yyin = fopen(name, "r");
-	    if ( !yyin ) {
+	    //yyin = fopen(name, "r");
+	    //if ( !yyin ) {
 		//scan_err("boned: %s", yytext);
-	    }
+	    //}
 
-	    yypush_buffer_state(yy_create_buffer(yyin, YY_BUF_SIZE));
+	    //yypush_buffer_state(yy_create_buffer(yyin, YY_BUF_SIZE));
 
 	}
     }
 }
 
-void
-filtergen_driver::scan_begin()
-{
-    yy_flex_debug = trace_scanning;
+// void
+// filtergen_driver::scan_begin()
+// {
+//   //    yy_flex_debug = trace_scanning;
 
-    if (file)
-      yyin = file;
-    else {
-      if (!(yyin = fopen(filename.c_str(), "r")))
-	error(std::string("cannot open ") + filename);
-    }
-}
+//     if (file)
+//       yyin = file;
+//     else {
+//       if (!(yyin = fopen(filename.c_str(), "r")))
+// 	error(std::string("cannot open ") + filename);
+//     }
+// }
 
-void
-filtergen_driver::scan_end()
-{
-    fclose(yyin);
-}
+// void
+// filtergen_driver::scan_end()
+// {
+//     fclose(yyin);
+// }
 
 
+#endif

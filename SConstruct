@@ -62,6 +62,7 @@ if not env.GetOption("clean"):
 	if conf.CheckCHeader('getopt.h'):
 		conf.env.AppendUnique(CPPFLAGS=['-DHAVE_GETOPT_H'])
 	conf.CheckLib('getopt', 'getopt')
+	# TODO(jaq): check for cppunit-config and version >= 1.9.6
 	env = conf.Finish()
 
 # choose debugging level
@@ -108,6 +109,18 @@ pkgexdir = pkgdocdir + '/examples'
 # Add the top level directory to the include path
 env.AppendUnique(CPPPATH=['#'])
 
+
+runtests = env.Program('runtests', ['runtests.cc',
+			 'dummy_test.cc',
+			 'input/filtergen/string_test.cc',
+			 'input/filtergen/scanner_test.cc',
+			 ],
+		       LIBS=['cppunit',
+			     'in_filtergen'],
+		       LIBPATH=['input/filtergen',
+				])
+env.AddPostAction('runtests', Action('./runtests'))
+
 filtergen_sources = ['filtergen.cc',
                      'gen.cc',
 					 'filter.c',
@@ -133,6 +146,7 @@ filtergen  = env.Program('filtergen', filtergen_sources,
                                   'output/filtergen',
                                   ]
                          )
+env.Depends(filtergen, runtests)
 Default(filtergen)
 env.Distribute(env['DISTTREE'], filtergen_sources + ['filter.h',
                                                      'icmpent.h',
@@ -214,3 +228,4 @@ env.Alias('dist', srcdist)
 # don't leave the disttree around
 env.AddPreAction(env['DISTTREE'], Action('rm -rf ' + str(File(env['DISTTREE']))))
 env.AddPostAction(srcdist, Action('rm -rf ' + str(File(env['DISTTREE']))))
+

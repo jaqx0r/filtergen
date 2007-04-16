@@ -1,19 +1,24 @@
 Import('env')
 
-sources = ['parser.yy',
-           'scanner.ll',
+#env.Program('scanner_test', ['scanner_test.cc',
+#			     'scanner.ll'])
+#env.AddPostAction('scanner_test', Action('./scanner_test'))
+sources = [
+           'scanner.cc',
            'resolver.cc',
            'driver.cc',
            'glue.cc']
 
 env.Library('in_filtergen', sources)
+#env.Depends('in_filtergen', 'scanner_test')
 
 env.Distribute(env['DISTTREE'], sources + ['SConscript',
                                            'ast.h',
                                            'resolver.h',
                                            # build these so users don't have to
                                            # require flex and bison
-                                           'parser.cc', 'parser.h', 'scanner.cc',
+                                           #'parser.cc', 'parser.h',
+					   'scanner.cc',
                                            ])
 
 SConscript('t/SConscript', 'env')
