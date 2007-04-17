@@ -14,3 +14,4 @@ location.hh
 position.hh
 stack.hh
 runtests
+doc/reference/html

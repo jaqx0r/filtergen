@@ -121,7 +121,7 @@ struct source_parser_s {
     source_parser * parser;
 } source_parsers[] = {
     { "filtergen", filtergen_source_parser },
-    { "iptables-save", ipts_source_parser },
+    //    { "iptables-save", ipts_source_parser },
     { NULL, NULL }
 };
 
@@ -163,7 +163,7 @@ int main(int argc, char **argv) {
     int l;
     char *filename = NULL, *ftn = NULL, *ofn = NULL, * source_name = NULL;
     struct source_parser_s * sp;
-    struct filtyp *ft = NULL; 
+    struct filtyp *ft = NULL;
     int flags = 0;
     char *progname;
     int arg;

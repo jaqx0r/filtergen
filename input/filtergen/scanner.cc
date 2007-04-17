@@ -19,6 +19,7 @@
 
 #include "scanner.h"
 
+/** Create a new scanner object */
 FiltergenScanner::FiltergenScanner(std::istream & s):
   source(s),
   currentSpelling("")

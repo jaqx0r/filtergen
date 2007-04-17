@@ -77,8 +77,8 @@ else:
 # set warning flags
 warnings = ['',
             'all',
-            #'error',
-            #'aggregate-return',
+            'error',
+	    #'effc++',
             'cast-align',
             'cast-qual',
             'shadow',
@@ -123,14 +123,14 @@ env.AddPostAction('runtests', Action('./runtests'))
 
 filtergen_sources = ['filtergen.cc',
                      'gen.cc',
-					 'filter.c',
-					 'fg-util.c',
-					 'icmpent.c',
+		     'filter.c',
+		     'fg-util.c',
+		     'icmpent.c',
                      'factoriser.cc',
                      ]
 filtergen  = env.Program('filtergen', filtergen_sources,
                          LIBS=['in_filtergen',
-                               'in_iptables_save',
+                               #'in_iptables_save',
                                'out_iptables',
                                'out_ipchains',
                                'out_ipfilter',
@@ -148,6 +148,7 @@ filtergen  = env.Program('filtergen', filtergen_sources,
                          )
 env.Depends(filtergen, runtests)
 Default(filtergen)
+env.AddPostAction(filtergen, Action('doxygen'))
 env.Distribute(env['DISTTREE'], filtergen_sources + ['filter.h',
                                                      'icmpent.h',
                                                      'util.h',
