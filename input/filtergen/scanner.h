@@ -11,10 +11,12 @@ class FiltergenScanner
  public:
   FiltergenScanner(std::istream & source);
 
-  void accept();
   int nextToken();
 
  private:
+  void accept();
+  int inspect();
+
   friend class FiltergenScannerTest;
   std::istream & source;
   std::string currentSpelling;

@@ -9,6 +9,7 @@ public CppUnit::TestFixture
   CPPUNIT_TEST(testConstructor);
   CPPUNIT_TEST(testNextTokenEmptyStream);
   CPPUNIT_TEST(testAccept);
+  CPPUNIT_TEST(testInspect);
   CPPUNIT_TEST_SUITE_END();
 
  public:
@@ -18,6 +19,7 @@ public CppUnit::TestFixture
   void testConstructor();
   void testNextTokenEmptyStream();
   void testAccept();
+  void testInspect();
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION(FiltergenScannerTest);
@@ -59,3 +61,23 @@ FiltergenScannerTest::testAccept()
   scanner->accept();
   CPPUNIT_ASSERT_EQUAL(std::string("a"), scanner->currentSpelling);
 }
+
+void
+FiltergenScannerTest::testInspect()
+{
+  std::istringstream i("a");
+  FiltergenScanner * scanner = new FiltergenScanner(i);
+
+  CPPUNIT_ASSERT_EQUAL((int) 'a', scanner->inspect());
+  CPPUNIT_ASSERT_EQUAL(std::string(""), scanner->currentSpelling);
+  scanner->accept();
+  CPPUNIT_ASSERT_EQUAL(std::string("a"), scanner->currentSpelling);
+}
+
+// void
+// FiltergenScannerTest::testCComment()
+// {
+//   std::istringstream i("/* c comment */");
+//   FiltergenScanner * scanner = new FiltergenScanner(i);
+
+//   scanner->

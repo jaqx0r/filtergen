@@ -33,6 +33,14 @@ FiltergenScanner::accept()
 }
 
 int
+FiltergenScanner::inspect()
+{
+  const int c = source.get();
+  source.putback(c);
+  return c;
+}
+
+int
 FiltergenScanner::nextToken()
 {
   return 0;
