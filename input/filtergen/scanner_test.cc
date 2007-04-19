@@ -41,6 +41,7 @@ FiltergenScannerTest::testConstructor()
   FiltergenScanner * scanner = new FiltergenScanner(i);
 
   CPPUNIT_ASSERT_ASSERTION_FAIL(CPPUNIT_ASSERT(0 == scanner));
+  CPPUNIT_ASSERT_EQUAL(std::string(""), scanner->currentSpelling);
 }
 
 void
