@@ -39,24 +39,22 @@ class FiltergenScanner
  private:
   /** Accept the next character from the source into the current token
    * The next character is removed from the stream.
+   * @param append add this character to the current lexeme
    */
-  void accept();
+  void accept(bool append = true);
   /** Inspect the next character in the source stream
    * Does not remove this character from the stream.
    * @return the next character in the stream
    */
   int inspect(int nthChar = 0);
 
-  /** Skip whitespace and comments when looking for the next token
-   */
+  /** Skip whitespace and comments from the source stream */
   void skipWhitespaceAndComments();
 
   /** The source file stream */
   std::istream & source;
-  /** The current spelling of the current token */
-  std::string currentSpelling;
-  /** Flag indicating if the scanner is within a comment */
-  bool inComment;
+  /** The spelling of the current token */
+  std::string lexeme;
 
   /** Unit test class requiring friend access to private attributes */
   friend class FiltergenScannerTest;

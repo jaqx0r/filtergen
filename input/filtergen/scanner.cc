@@ -23,16 +23,16 @@
 
 FiltergenScanner::FiltergenScanner(std::istream & s):
   source(s),
-  currentSpelling(""),
-  inComment(false)
+  lexeme("")
 {
 }
 
 void
-FiltergenScanner::accept()
+FiltergenScanner::accept(bool append)
 {
   const int c = source.get();
-  currentSpelling += c;
+  if (append)
+    lexeme += c;
 }
 
 int
@@ -52,24 +52,24 @@ FiltergenScanner::inspect(int nthChar)
 void
 FiltergenScanner::skipWhitespaceAndComments()
 {
-  inComment = false;
+  bool inComment = false;
 
   while (isspace(inspect()) || (inspect() == '/' && inspect(1) == '*')) {
 
     while (isspace(inspect()))
-      accept();
+      accept(false);
 
     if (inspect() == '/' && inspect(1) == '*') {
       inComment = true;
-      accept(); accept();
+      accept(false); accept(false);
 
       while (inComment) {
 	// TODO(jaq): handle eof
 	if (inspect() == '*' && inspect(1) == '/') {
+	  accept(false); accept(false);
 	  inComment = false;
-	  accept(); accept();
 	} else {
-	  accept();
+	  accept(false);
 	}
       }
     }

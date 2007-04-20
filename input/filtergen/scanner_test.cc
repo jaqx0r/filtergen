@@ -46,8 +46,7 @@ FiltergenScannerTest::testConstructor()
   std::istringstream i("");
   FiltergenScanner scanner(i);
 
-  CPPUNIT_ASSERT_EQUAL(std::string(""), scanner.currentSpelling);
-  CPPUNIT_ASSERT_EQUAL(false, scanner.inComment);
+  CPPUNIT_ASSERT_EQUAL(std::string(""), scanner.lexeme);
 }
 
 void
@@ -56,9 +55,9 @@ FiltergenScannerTest::testAccept()
   std::istringstream i("a");
   FiltergenScanner scanner(i);
 
-  CPPUNIT_ASSERT_EQUAL(std::string(""), scanner.currentSpelling);
+  CPPUNIT_ASSERT_EQUAL(std::string(""), scanner.lexeme);
   scanner.accept();
-  CPPUNIT_ASSERT_EQUAL(std::string("a"), scanner.currentSpelling);
+  CPPUNIT_ASSERT_EQUAL(std::string("a"), scanner.lexeme);
 }
 
 void
@@ -68,9 +67,9 @@ FiltergenScannerTest::testInspect()
   FiltergenScanner scanner(i);
 
   CPPUNIT_ASSERT_EQUAL((int) 'a', scanner.inspect());
-  CPPUNIT_ASSERT_EQUAL(std::string(""), scanner.currentSpelling);
+  CPPUNIT_ASSERT_EQUAL(std::string(""), scanner.lexeme);
   scanner.accept();
-  CPPUNIT_ASSERT_EQUAL(std::string("a"), scanner.currentSpelling);
+  CPPUNIT_ASSERT_EQUAL(std::string("a"), scanner.lexeme);
 }
 
 void
@@ -100,6 +99,7 @@ FiltergenScannerTest::testSkipWhitespace()
 
   scanner.skipWhitespaceAndComments();
   CPPUNIT_ASSERT_EQUAL(true, scanner.source.eof());
+  CPPUNIT_ASSERT_EQUAL(std::string(""), scanner.lexeme);
 }
 
 void
@@ -110,5 +110,6 @@ FiltergenScannerTest::testCComment()
 
   scanner.skipWhitespaceAndComments();
   CPPUNIT_ASSERT_EQUAL(true, scanner.source.eof());
+  CPPUNIT_ASSERT_EQUAL(std::string(""), scanner.lexeme);
 }
 
