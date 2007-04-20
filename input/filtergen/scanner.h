@@ -45,12 +45,18 @@ class FiltergenScanner
    * Does not remove this character from the stream.
    * @return the next character in the stream
    */
-  int inspect();
+  int inspect(int nthChar = 0);
+
+  /** Skip whitespace and comments when looking for the next token
+   */
+  void skipWhitespaceAndComments();
 
   /** The source file stream */
   std::istream & source;
   /** The current spelling of the current token */
   std::string currentSpelling;
+  /** Flag indicating if the scanner is within a comment */
+  bool inComment;
 
   /** Unit test class requiring friend access to private attributes */
   friend class FiltergenScannerTest;

@@ -17,11 +17,14 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <cctype>
+
 #include "scanner.h"
 
 FiltergenScanner::FiltergenScanner(std::istream & s):
   source(s),
-  currentSpelling("")
+  currentSpelling(""),
+  inComment(false)
 {
 }
 
@@ -33,16 +36,56 @@ FiltergenScanner::accept()
 }
 
 int
-FiltergenScanner::inspect()
+FiltergenScanner::inspect(int nthChar)
 {
   const int c = source.get();
-  source.putback(c);
-  return c;
+  if (nthChar == 0) {
+    source.putback(c);
+    return c;
+  } else {
+    const char r = inspect(nthChar - 1);
+    source.putback(c);
+    return r;
+  }
+}
+
+void
+FiltergenScanner::skipWhitespaceAndComments()
+{
+  inComment = false;
+
+  while (isspace(inspect()) || (inspect() == '/' && inspect(1) == '*')) {
+
+    while (isspace(inspect()))
+      accept();
+
+    if (inspect() == '/' && inspect(1) == '*') {
+      inComment = true;
+      accept(); accept();
+
+      while (inComment) {
+	// TODO(jaq): handle eof
+	if (inspect() == '*' && inspect(1) == '/') {
+	  inComment = false;
+	  accept(); accept();
+	} else {
+	  accept();
+	}
+      }
+    }
+  }
 }
 
 int
 FiltergenScanner::nextToken()
 {
+  //skipWhitespaceAndComments();// skip whitespace and comments
+
+  //
+  //accept();
+  if (source.eof()) {
+    return 1;
+  }
   return 0;
 }
 
