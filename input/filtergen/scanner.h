@@ -26,37 +26,37 @@
 class FiltergenScanner
 {
  public:
-  /** Create a new scanner object
+  /** Create a new scanner object.
    * @param source the stream used as input to the scanner
    */
   FiltergenScanner(std::istream & source);
 
-  /** Return the next token from the source
+  /** Return the next token from the source.
    * @return int pretending to be an identifier for the token
    */
   int nextToken();
 
  private:
-  /** Accept the next character from the source into the current token
+  /** Accept the next character from the source into the current token.
    * The next character is removed from the stream.
    * @param append add this character to the current lexeme
    */
   void accept(bool append = true);
-  /** Inspect the next character in the source stream
+  /** Inspect the next character in the source stream.
    * Does not remove this character from the stream.
    * @return the next character in the stream
    */
   int inspect(int nthChar = 0);
 
-  /** Skip whitespace and comments from the source stream */
+  /** Skip whitespace and comments from the source stream. */
   void skipWhitespaceAndComments();
 
-  /** The source file stream */
+  /** The source file stream. */
   std::istream & source;
-  /** The spelling of the current token */
+  /** The spelling of the current token. */
   std::string lexeme;
 
-  /** Unit test class requiring friend access to private attributes */
+  /** Unit test class requiring friend access to private attributes. */
   friend class FiltergenScannerTest;
 };
 

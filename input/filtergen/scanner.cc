@@ -54,7 +54,9 @@ FiltergenScanner::skipWhitespaceAndComments()
 {
   bool inComment = false;
 
-  while (isspace(inspect()) || (inspect() == '/' && inspect(1) == '*')) {
+  while (isspace(inspect()) ||
+	 (inspect() == '/' && inspect(1) == '*')  ||
+	 (inspect() == '#')) {
 
     while (isspace(inspect()))
       accept(false);
@@ -67,6 +69,20 @@ FiltergenScanner::skipWhitespaceAndComments()
 	// TODO(jaq): handle eof
 	if (inspect() == '*' && inspect(1) == '/') {
 	  accept(false); accept(false);
+	  inComment = false;
+	} else {
+	  accept(false);
+	}
+      }
+    }
+
+    if (inspect() == '#') {
+      inComment = true;
+      accept(false);
+
+      while (inComment) {
+	if (inspect() == '\n') {
+	  accept(false);
 	  inComment = false;
 	} else {
 	  accept(false);

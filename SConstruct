@@ -110,11 +110,12 @@ pkgexdir = pkgdocdir + '/examples'
 env.AppendUnique(CPPPATH=['#'])
 
 
-runtests = env.Program('runtests', ['runtests.cc',
-			 'dummy_test.cc',
-			 'input/filtergen/string_test.cc',
-			 'input/filtergen/scanner_test.cc',
-			 ],
+runtests = env.Program('runtests',
+		       ['runtests.cc',
+			'dummy_test.cc',
+			'input/filtergen/string_test.cc',
+			'input/filtergen/scanner_test.cc',
+			],
 		       LIBS=['cppunit',
 			     'in_filtergen'],
 		       LIBPATH=['input/filtergen',

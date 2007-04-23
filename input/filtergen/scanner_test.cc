@@ -13,6 +13,7 @@ public CppUnit::TestFixture
   CPPUNIT_TEST(testNextTokenEmptyStream);
   CPPUNIT_TEST(testSkipWhitespace);
   CPPUNIT_TEST(testCComment);
+  CPPUNIT_TEST(testShellComment);
   CPPUNIT_TEST_SUITE_END();
 
  public:
@@ -26,6 +27,7 @@ public CppUnit::TestFixture
   void testInspectNext();
   void testSkipWhitespace();
   void testCComment();
+  void testShellComment();
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION(FiltergenScannerTest);
@@ -113,3 +115,13 @@ FiltergenScannerTest::testCComment()
   CPPUNIT_ASSERT_EQUAL(std::string(""), scanner.lexeme);
 }
 
+void
+FiltergenScannerTest::testShellComment()
+{
+  std::istringstream i("# shell comment\n");
+  FiltergenScanner scanner(i);
+
+  scanner.skipWhitespaceAndComments();
+  CPPUNIT_ASSERT_EQUAL(true, scanner.source.eof());
+  CPPUNIT_ASSERT_EQUAL(std::string(""), scanner.lexeme);
+}
