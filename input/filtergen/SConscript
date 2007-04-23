@@ -4,10 +4,11 @@ Import('env')
 #			     'scanner.ll'])
 #env.AddPostAction('scanner_test', Action('./scanner_test'))
 sources = [
-           'scanner.cc',
-           'resolver.cc',
-           'driver.cc',
-           'glue.cc']
+    'token.cc',
+    'scanner.cc',
+    'resolver.cc',
+    'driver.cc',
+    'glue.cc']
 
 env.Library('in_filtergen', sources)
 #env.Depends('in_filtergen', 'scanner_test')
