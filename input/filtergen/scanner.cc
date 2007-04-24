@@ -92,17 +92,17 @@ FiltergenScanner::skipWhitespaceAndComments()
   }
 }
 
-int
+Token *
 FiltergenScanner::nextToken()
 {
-  //skipWhitespaceAndComments();// skip whitespace and comments
+  skipWhitespaceAndComments();
 
   //
   //accept();
   if (source.eof()) {
-    return 1;
+    return new Token(Token::EOS);
   }
-  return 0;
+  return new Token(Token::ERROR);
 }
 
 #if 0

@@ -21,4 +21,35 @@
 Token::Token(Kind initial_kind):
   kind(initial_kind)
 {
+  kind_names[EOS] = "EOS";
+  kind_names[ERROR] = "ERROR";
 }
+
+const std::string &
+Token::kindStr() const
+{
+  std::map<Kind, std::string>::const_iterator iter = kind_names.find(kind);
+  //if (iter != kind_names.end())
+  return (*iter).second;
+  //return "";
+}
+
+std::ostream &
+operator<<(std::ostream & os, const Token & token)
+{
+  os << "Token(" << token.kindStr() << ")";
+  return os;
+}
+
+bool
+Token::operator==(const Token & other) const
+{
+  return this->kind == other.kind;
+}
+
+bool
+Token::operator!=(const Token & other) const
+{
+  return this->kind != other.kind;
+}
+

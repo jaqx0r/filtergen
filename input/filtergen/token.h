@@ -20,6 +20,9 @@
 #ifndef __FILTERGEN_TOKEN_H__
 #define __FILTERGEN_TOKEN_H__
 
+#include <iostream>
+#include <map>
+
 /** Token */
 class Token
 {
@@ -36,9 +39,22 @@ class Token
    */
   Token(Kind kind);
 
+  /** The name of the kind of token. */
+  const std::string & kindStr() const;
+
+  /** Output stream operator. */
+  friend std::ostream & operator<<(std::ostream & os, const Token & token);
+  /** Equality comparison operator. */
+  bool operator==(const Token & other) const;
+  /** Inequality comparison operator. */
+  bool operator!=(const Token & other) const;
+
  private:
   /** The kind of token. */
   Kind kind;
+
+  /** A list of human readable kind names. */
+  std::map<Kind, std::string> kind_names;
 
   /** Unit test class requiring friend access to private attributes. */
   friend class FiltergenTokenTest;

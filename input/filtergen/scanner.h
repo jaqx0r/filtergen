@@ -22,6 +22,8 @@
 
 #include <iostream>
 
+#include "token.h"
+
 /** Token scanner for the filtergen language */
 class FiltergenScanner
 {
@@ -34,7 +36,7 @@ class FiltergenScanner
   /** Return the next token from the source.
    * @return int pretending to be an identifier for the token
    */
-  int nextToken();
+  Token * nextToken();
 
  private:
   /** Accept the next character from the source into the current token.

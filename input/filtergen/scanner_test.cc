@@ -1,6 +1,7 @@
 #include <cppunit/extensions/HelperMacros.h>
 
 #include "scanner.h"
+#include "token.h"
 
 class FiltergenScannerTest:
 public CppUnit::TestFixture
@@ -89,8 +90,9 @@ FiltergenScannerTest::testNextTokenEmptyStream()
 {
   std::istringstream i("");
   FiltergenScanner scanner(i);
+  Token t(Token::EOS);
 
-  CPPUNIT_ASSERT_EQUAL(0, scanner.nextToken());
+  CPPUNIT_ASSERT_EQUAL(t, *scanner.nextToken());
 }
 
 void
