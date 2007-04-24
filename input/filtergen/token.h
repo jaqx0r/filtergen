@@ -30,8 +30,8 @@ class Token
 
   /** Kinds of tokens that will be returned by the scanner. */
   enum Kind {
-    ERROR = -1, /** scanner error */
-    EOS = 0, /** end of stream */
+    ERROR = -1, /**< scanner error */
+    EOS = 0, /**< end of stream */
   };
 
   /** Create a new token.
