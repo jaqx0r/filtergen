@@ -40,6 +40,7 @@ class Token
     SLASH,
     COLON,
     BANG,
+    ID,
   };
 
   /** Create a new token.

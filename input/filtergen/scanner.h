@@ -44,20 +44,20 @@ class FiltergenScanner
    * to accept().
    * @return kind of token lexed.
    */
-  Token::Kind nextToken();
+  const Token::Kind nextToken();
 
   /** Accept the next character from the source, optionally into the
    * current token.
    * The next character is removed from the stream.
    * @param append add this character to the current lexeme
    */
-  void accept(bool append = true);
+  void accept(const bool append = true);
   /** Inspect the nth character in the source stream.
    * Does not remove this character from the stream.
    * @param lookahead the number of characters into the stream to inspect
    * @return the next character in the stream
    */
-  int inspect(int lookahead = 0);
+  int inspect(const int lookahead = 0);
 
   /** Skip whitespace and comments from the source stream. */
   void skipWhitespaceAndComments();

@@ -16,6 +16,7 @@ public CppUnit::TestFixture
   CPPUNIT_TEST(testCComment);
   CPPUNIT_TEST(testShellComment);
   CPPUNIT_TEST(testScanPunctuation);
+  CPPUNIT_TEST(testScanNumbers);
   CPPUNIT_TEST_SUITE_END();
 
  public:
@@ -31,6 +32,7 @@ public CppUnit::TestFixture
   void testCComment();
   void testShellComment();
   void testScanPunctuation();
+  void testScanNumbers();
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION(FiltergenScannerTest);
@@ -145,4 +147,22 @@ FiltergenScannerTest::testScanPunctuation()
   CPPUNIT_ASSERT_EQUAL(Token::SLASH, scanner.nextToken());
   CPPUNIT_ASSERT_EQUAL(Token::COLON, scanner.nextToken());
   CPPUNIT_ASSERT_EQUAL(Token::BANG, scanner.nextToken());
+}
+
+void
+FiltergenScannerTest::testScanNumbers()
+{
+  std::istringstream i("37 69 255");
+  FiltergenScanner scanner(i);
+
+  CPPUNIT_ASSERT_EQUAL(Token::ID, scanner.nextToken());
+  CPPUNIT_ASSERT_EQUAL(std::string("37"), scanner.lexeme);
+  scanner.skipWhitespaceAndComments();
+  scanner.lexeme.clear();
+  CPPUNIT_ASSERT_EQUAL(Token::ID, scanner.nextToken());
+  CPPUNIT_ASSERT_EQUAL(std::string("69"), scanner.lexeme);
+  scanner.skipWhitespaceAndComments();
+  scanner.lexeme.clear();
+  CPPUNIT_ASSERT_EQUAL(Token::ID, scanner.nextToken());
+  CPPUNIT_ASSERT_EQUAL(std::string("255"), scanner.lexeme);
 }

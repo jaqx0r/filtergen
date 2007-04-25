@@ -28,7 +28,7 @@ FiltergenScanner::FiltergenScanner(std::istream & s):
 }
 
 void
-FiltergenScanner::accept(bool append)
+FiltergenScanner::accept(const bool append)
 {
   const int c = source.get();
   if (append)
@@ -36,7 +36,7 @@ FiltergenScanner::accept(bool append)
 }
 
 int
-FiltergenScanner::inspect(int nthChar)
+FiltergenScanner::inspect(const int nthChar)
 {
   const int c = source.get();
   if (nthChar == 0) {
@@ -92,7 +92,7 @@ FiltergenScanner::skipWhitespaceAndComments()
   }
 }
 
-Token::Kind
+const Token::Kind
 FiltergenScanner::nextToken()
 {
   if (source.eof())
@@ -124,6 +124,15 @@ FiltergenScanner::nextToken()
   case '!':
     accept();
     return Token::BANG;
+  }
+
+  /* numbers */
+  if (isdigit(inspect())) {
+    accept();
+    while (isdigit(inspect())) {
+      accept();
+    }
+    return Token::ID;
   }
 
   return Token::ERROR;
