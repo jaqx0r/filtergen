@@ -33,22 +33,31 @@ class FiltergenScanner
    */
   FiltergenScanner(std::istream & source);
 
-  /** Return the next token from the source.
-   * @return int pretending to be an identifier for the token
+  /** Return the next token from the stream.
+   * @return Token
    */
-  Token * nextToken();
+  Token * getToken();
 
  private:
-  /** Accept the next character from the source into the current token.
+  /** Lex the next token from the stream.
+   * Updates lexeme with the current spelling of the token, via calls
+   * to accept().
+   * @return kind of token lexed.
+   */
+  Token::Kind nextToken();
+
+  /** Accept the next character from the source, optionally into the
+   * current token.
    * The next character is removed from the stream.
    * @param append add this character to the current lexeme
    */
   void accept(bool append = true);
-  /** Inspect the next character in the source stream.
+  /** Inspect the nth character in the source stream.
    * Does not remove this character from the stream.
+   * @param lookahead the number of characters into the stream to inspect
    * @return the next character in the stream
    */
-  int inspect(int nthChar = 0);
+  int inspect(int lookahead = 0);
 
   /** Skip whitespace and comments from the source stream. */
   void skipWhitespaceAndComments();

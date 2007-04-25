@@ -183,7 +183,7 @@ env.Distribute(env['DISTTREE'], ['fgadm.in', 'rules.filter.in', 'fgadm.conf.in']
 
 SConscript([
 	'input/filtergen/SConscript',
-	'input/iptables-save/SConscript',
+	#'input/iptables-save/SConscript',
 	'ir/SConscript',
 	'output/iptables/SConscript',
 	'output/ipchains/SConscript',

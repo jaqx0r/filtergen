@@ -32,6 +32,14 @@ class Token
   enum Kind {
     ERROR = -1, /**< scanner error */
     EOS = 0, /**< end of stream */
+    LCURLY,
+    RCURLY,
+    LSQUARE,
+    RSQUARE,
+    SEMI,
+    SLASH,
+    COLON,
+    BANG,
   };
 
   /** Create a new token.

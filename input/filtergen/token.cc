@@ -23,15 +23,21 @@ Token::Token(Kind initial_kind):
 {
   kind_names[EOS] = "EOS";
   kind_names[ERROR] = "ERROR";
+  kind_names[LCURLY] = "LCURLY";
+  kind_names[RCURLY] = "RCURLY";
+  kind_names[LSQUARE] = "LSQUARE";
+  kind_names[RSQUARE] = "RSQUARE";
+  kind_names[SEMI] = "SEMI";
+  kind_names[SLASH] = "SLASH";
+  kind_names[COLON] = "colon";
+  kind_names[BANG] = "bang";
 }
 
 const std::string &
 Token::kindStr() const
 {
   std::map<Kind, std::string>::const_iterator iter = kind_names.find(kind);
-  //if (iter != kind_names.end())
   return (*iter).second;
-  //return "";
 }
 
 std::ostream &

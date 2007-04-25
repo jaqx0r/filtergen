@@ -92,17 +92,53 @@ FiltergenScanner::skipWhitespaceAndComments()
   }
 }
 
-Token *
+Token::Kind
 FiltergenScanner::nextToken()
+{
+  if (source.eof())
+    return Token::EOS;
+
+  switch (inspect()) {
+    /* punctuation */
+  case '{':
+    accept();
+    return Token::LCURLY;
+  case '}':
+    accept();
+    return Token::RCURLY;
+  case '[':
+    accept();
+    return Token::LSQUARE;
+  case ']':
+    accept();
+    return Token::RSQUARE;
+  case ';':
+    accept();
+    return Token::SEMI;
+  case '/':
+    accept();
+    return Token::SLASH;
+  case ':':
+    accept();
+    return Token::COLON;
+  case '!':
+    accept();
+    return Token::BANG;
+  }
+
+  return Token::ERROR;
+}
+
+Token *
+FiltergenScanner::getToken()
 {
   skipWhitespaceAndComments();
 
-  //
-  //accept();
-  if (source.eof()) {
-    return new Token(Token::EOS);
-  }
-  return new Token(Token::ERROR);
+  lexeme.clear();
+  Token::Kind kind = nextToken();
+  Token * tok = new Token(kind);
+
+  return tok;
 }
 
 #if 0
