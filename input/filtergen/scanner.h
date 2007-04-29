@@ -67,6 +67,9 @@ class FiltergenScanner
   /** The spelling of the current token. */
   std::string lexeme;
 
+  /** List of keywords and their token kinds. */
+  std::map<std::string, Token::Kind> keywords;
+
   /** Unit test class requiring friend access to private attributes. */
   friend class FiltergenScannerTest;
 };

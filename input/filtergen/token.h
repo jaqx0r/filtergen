@@ -40,7 +40,26 @@ class Token
     SLASH,
     COLON,
     BANG,
-    ID,
+    ID, /**< represents identifiers */
+    ACCEPT,
+    DEST,
+    DPORT,
+    DROP,
+    FORWARD,
+    ICMPTYPE,
+    INPUT,
+    LOCAL,
+    LOG,
+    MASQ,
+    ONEWAY,
+    OUTPUT,
+    PROTO,
+    PROXY,
+    REDIRECT,
+    REJECT,
+    SOURCE,
+    SPORT,
+    TEXT,
   };
 
   /** Create a new token.

@@ -17,6 +17,7 @@ public CppUnit::TestFixture
   CPPUNIT_TEST(testShellComment);
   CPPUNIT_TEST(testScanPunctuation);
   CPPUNIT_TEST(testScanNumbers);
+  CPPUNIT_TEST(testScanKeywords);
   CPPUNIT_TEST_SUITE_END();
 
  public:
@@ -33,6 +34,7 @@ public CppUnit::TestFixture
   void testShellComment();
   void testScanPunctuation();
   void testScanNumbers();
+  void testScanKeywords();
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION(FiltergenScannerTest);
@@ -166,3 +168,41 @@ FiltergenScannerTest::testScanNumbers()
   CPPUNIT_ASSERT_EQUAL(Token::ID, scanner.nextToken());
   CPPUNIT_ASSERT_EQUAL(std::string("255"), scanner.lexeme);
 }
+
+void
+FiltergenScannerTest::testScanKeywords()
+{
+  typedef std::vector<std::pair<Token::Kind, std::string> > keyword_t;
+
+  keyword_t keywords;
+
+  keywords.push_back(std::pair<Token::Kind, std::string>(Token::ACCEPT, "accept"));
+  keywords.push_back(std::pair<Token::Kind, std::string>(Token::DEST, "dest"));
+  keywords.push_back(std::pair<Token::Kind, std::string>(Token::DPORT, "dport"));
+  keywords.push_back(std::pair<Token::Kind, std::string>(Token::DROP, "drop"));
+  keywords.push_back(std::pair<Token::Kind, std::string>(Token::FORWARD, "forward"));
+  keywords.push_back(std::pair<Token::Kind, std::string>(Token::ICMPTYPE, "icmptype"));
+  keywords.push_back(std::pair<Token::Kind, std::string>(Token::INPUT, "input"));
+  keywords.push_back(std::pair<Token::Kind, std::string>(Token::LOCAL, "local"));
+  keywords.push_back(std::pair<Token::Kind, std::string>(Token::LOG, "log"));
+  keywords.push_back(std::pair<Token::Kind, std::string>(Token::MASQ, "masq"));
+  keywords.push_back(std::pair<Token::Kind, std::string>(Token::ONEWAY, "oneway"));
+  keywords.push_back(std::pair<Token::Kind, std::string>(Token::OUTPUT, "output"));
+  keywords.push_back(std::pair<Token::Kind, std::string>(Token::PROTO, "proto"));
+  keywords.push_back(std::pair<Token::Kind, std::string>(Token::PROXY, "proxy"));
+  keywords.push_back(std::pair<Token::Kind, std::string>(Token::REDIRECT, "redirect"));
+  keywords.push_back(std::pair<Token::Kind, std::string>(Token::REJECT, "reject"));
+  keywords.push_back(std::pair<Token::Kind, std::string>(Token::SOURCE, "source"));
+  keywords.push_back(std::pair<Token::Kind, std::string>(Token::SPORT, "sport"));
+  keywords.push_back(std::pair<Token::Kind, std::string>(Token::TEXT, "text"));
+
+  for (keyword_t::iterator it = keywords.begin();
+       it != keywords.end();
+       ++it) {
+    std::istringstream i(it->second);
+    FiltergenScanner scanner(i);
+
+    CPPUNIT_ASSERT_EQUAL(it->first, scanner.nextToken());
+  }
+}
+

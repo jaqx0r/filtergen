@@ -25,6 +25,25 @@ FiltergenScanner::FiltergenScanner(std::istream & s):
   source(s),
   lexeme("")
 {
+  keywords["accept"] = Token::ACCEPT;
+  keywords["dest"] = Token::DEST;
+  keywords["dport"] = Token::DPORT;
+  keywords["drop"] = Token::DROP;
+  keywords["forward"] = Token::FORWARD;
+  keywords["icmptype"] = Token::ICMPTYPE;
+  keywords["input"] = Token::INPUT;
+  keywords["local"] = Token::LOCAL;
+  keywords["log"] = Token::LOG;
+  keywords["masq"] = Token::MASQ;
+  keywords["oneway"] = Token::ONEWAY;
+  keywords["output"] = Token::OUTPUT;
+  keywords["proto"] = Token::PROTO;
+  keywords["proxy"] = Token::PROXY;
+  keywords["redirect"] = Token::REDIRECT;
+  keywords["reject"] = Token::REJECT;
+  keywords["source"] = Token::SOURCE;
+  keywords["sport"] = Token::SPORT;
+  keywords["text"] = Token::TEXT;
 }
 
 void
@@ -124,6 +143,17 @@ FiltergenScanner::nextToken()
   case '!':
     accept();
     return Token::BANG;
+  }
+
+  /* keywords and identifiers */
+  if (isalpha(inspect())) {
+    accept();
+    while (isalpha(inspect())) {
+      accept();
+    }
+    if (keywords.find(lexeme) != keywords.end())
+      return keywords[lexeme];
+    return Token::ID;
   }
 
   /* numbers */
