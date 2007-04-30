@@ -4,6 +4,7 @@ Import('env')
 #			     'scanner.ll'])
 #env.AddPostAction('scanner_test', Action('./scanner_test'))
 sources = [
+    'enum.cc',
     'token.cc',
     'scanner.cc',
     'resolver.cc',
