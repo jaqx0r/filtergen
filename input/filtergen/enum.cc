@@ -8,3 +8,8 @@ Enum::operator int() const
 {
   return val;
 }
+
+Enum::operator const char *() const
+{
+  return enumName;
+}

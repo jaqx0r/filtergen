@@ -38,6 +38,8 @@ class Enum
 
   /** Cast to int operator. */
   operator int() const;
+  /** Cast to string operator. */
+  operator const char*() const;
 
  private:
   friend class EnumTest;
