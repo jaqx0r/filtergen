@@ -46,7 +46,7 @@ EnumTest::testConstructor()
 void
 EnumTest::testNull()
 {
-  CPPUNIT_ASSERT_EQUAL(std::string("null"), std::string(Enum::null.getName()));
+  CPPUNIT_ASSERT_EQUAL(std::string("null"), std::string(Enum::null));
 }
 
 void

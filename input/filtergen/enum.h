@@ -3,45 +3,32 @@
 
 class Enum
 {
- private:
-  static unsigned int enum_count;
-  int val;
-  const char * enumName;
-
  public:
- Enum(): val(0), enumName(0) {}
- Enum(const char * name): val(enum_count)
-  {
-    enumName = name;
-    enum_count++;
-  }
+  Enum(const char * name);
+  Enum(const Enum & rhs);
 
-  const static Enum null;
+  static unsigned int getMaxEnum();
 
- Enum(const Enum & rhs) : val(rhs.val)
-    {
-      enumName = rhs.enumName;
-    }
-
-  const char * getName() const { return enumName; }
-  static unsigned int getMaxEnum() { return enum_count; }
-
-  bool operator==(const Enum & rhs) const
-  {
-    return (enumName == rhs.enumName);
-  }
-
-  bool operator!=(const Enum & rhs) const
-  {
-    return (enumName != rhs.enumName);
-  }
+  /** Equality comparison operator. */
+  bool operator==(const Enum & rhs) const;
+  /** Inequality comparison operator. */
+  bool operator!=(const Enum & rhs) const;
 
   /** Cast to int operator. */
   operator int() const;
   /** Cast to string operator. */
   operator const char*() const;
 
+  const static Enum null;
+
  private:
+  /** Total number of enums of this type. */
+  static unsigned int enum_count;
+  /** Integer value of this enum. */
+  int val;
+  /** String representation of this enum. */
+  const char * enumName;
+
   friend class EnumTest;
 };
 
