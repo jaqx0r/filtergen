@@ -21,6 +21,7 @@
 #define __FILTERGEN_SCANNER_H__
 
 #include <iostream>
+#include <vector>
 
 #include "token.h"
 
@@ -44,7 +45,7 @@ class FiltergenScanner
    * to accept().
    * @return kind of token lexed.
    */
-  const Token::Kind nextToken();
+  const Token nextToken();
 
   /** Accept the next character from the source, optionally into the
    * current token.
@@ -68,7 +69,7 @@ class FiltergenScanner
   std::string lexeme;
 
   /** List of keywords and their token kinds. */
-  std::map<std::string, Token::Kind> keywords;
+  std::map<std::string, const Token *> keywords;
 
   /** Unit test class requiring friend access to private attributes. */
   friend class FiltergenScannerTest;

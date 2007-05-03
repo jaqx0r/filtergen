@@ -172,29 +172,29 @@ FiltergenScannerTest::testScanNumbers()
 void
 FiltergenScannerTest::testScanKeywords()
 {
-  typedef std::vector<std::pair<Token::Kind, std::string> > keyword_t;
+  typedef std::vector<std::pair<Token, std::string> > keyword_t;
 
   keyword_t keywords;
 
-  keywords.push_back(std::pair<Token::Kind, std::string>(Token::ACCEPT, "accept"));
-  keywords.push_back(std::pair<Token::Kind, std::string>(Token::DEST, "dest"));
-  keywords.push_back(std::pair<Token::Kind, std::string>(Token::DPORT, "dport"));
-  keywords.push_back(std::pair<Token::Kind, std::string>(Token::DROP, "drop"));
-  keywords.push_back(std::pair<Token::Kind, std::string>(Token::FORWARD, "forward"));
-  keywords.push_back(std::pair<Token::Kind, std::string>(Token::ICMPTYPE, "icmptype"));
-  keywords.push_back(std::pair<Token::Kind, std::string>(Token::INPUT, "input"));
-  keywords.push_back(std::pair<Token::Kind, std::string>(Token::LOCAL, "local"));
-  keywords.push_back(std::pair<Token::Kind, std::string>(Token::LOG, "log"));
-  keywords.push_back(std::pair<Token::Kind, std::string>(Token::MASQ, "masq"));
-  keywords.push_back(std::pair<Token::Kind, std::string>(Token::ONEWAY, "oneway"));
-  keywords.push_back(std::pair<Token::Kind, std::string>(Token::OUTPUT, "output"));
-  keywords.push_back(std::pair<Token::Kind, std::string>(Token::PROTO, "proto"));
-  keywords.push_back(std::pair<Token::Kind, std::string>(Token::PROXY, "proxy"));
-  keywords.push_back(std::pair<Token::Kind, std::string>(Token::REDIRECT, "redirect"));
-  keywords.push_back(std::pair<Token::Kind, std::string>(Token::REJECT, "reject"));
-  keywords.push_back(std::pair<Token::Kind, std::string>(Token::SOURCE, "source"));
-  keywords.push_back(std::pair<Token::Kind, std::string>(Token::SPORT, "sport"));
-  keywords.push_back(std::pair<Token::Kind, std::string>(Token::TEXT, "text"));
+  keywords.push_back(std::pair<Token, std::string>(Token::ACCEPT, "accept"));
+  keywords.push_back(std::pair<Token, std::string>(Token::DEST, "dest"));
+  keywords.push_back(std::pair<Token, std::string>(Token::DPORT, "dport"));
+  keywords.push_back(std::pair<Token, std::string>(Token::DROP, "drop"));
+  keywords.push_back(std::pair<Token, std::string>(Token::FORWARD, "forward"));
+  keywords.push_back(std::pair<Token, std::string>(Token::ICMPTYPE, "icmptype"));
+  keywords.push_back(std::pair<Token, std::string>(Token::INPUT, "input"));
+  keywords.push_back(std::pair<Token, std::string>(Token::LOCAL, "local"));
+  keywords.push_back(std::pair<Token, std::string>(Token::LOG, "log"));
+  keywords.push_back(std::pair<Token, std::string>(Token::MASQ, "masq"));
+  keywords.push_back(std::pair<Token, std::string>(Token::ONEWAY, "oneway"));
+  keywords.push_back(std::pair<Token, std::string>(Token::OUTPUT, "output"));
+  keywords.push_back(std::pair<Token, std::string>(Token::PROTO, "proto"));
+  keywords.push_back(std::pair<Token, std::string>(Token::PROXY, "proxy"));
+  keywords.push_back(std::pair<Token, std::string>(Token::REDIRECT, "redirect"));
+  keywords.push_back(std::pair<Token, std::string>(Token::REJECT, "reject"));
+  keywords.push_back(std::pair<Token, std::string>(Token::SOURCE, "source"));
+  keywords.push_back(std::pair<Token, std::string>(Token::SPORT, "sport"));
+  keywords.push_back(std::pair<Token, std::string>(Token::TEXT, "text"));
 
   for (keyword_t::iterator it = keywords.begin();
        it != keywords.end();

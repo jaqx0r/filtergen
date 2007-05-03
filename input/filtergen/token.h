@@ -23,67 +23,53 @@
 #include <iostream>
 #include <map>
 
+#include "enum.h"
+
 /** Token */
-class Token
+class Token:
+public Enum
 {
  public:
 
+  Token(const char *);
+
   /** Kinds of tokens that will be returned by the scanner. */
-  enum Kind {
-    ERROR = -1, /**< scanner error */
-    EOS = 0, /**< end of stream */
-    LCURLY,
-    RCURLY,
-    LSQUARE,
-    RSQUARE,
-    SEMI,
-    SLASH,
-    COLON,
-    BANG,
-    ID, /**< represents identifiers */
-    ACCEPT,
-    DEST,
-    DPORT,
-    DROP,
-    FORWARD,
-    ICMPTYPE,
-    INPUT,
-    LOCAL,
-    LOG,
-    MASQ,
-    ONEWAY,
-    OUTPUT,
-    PROTO,
-    PROXY,
-    REDIRECT,
-    REJECT,
-    SOURCE,
-    SPORT,
-    TEXT,
-  };
+  static const Token ERROR; /**< scanner error */
+  static const Token EOS; /**< end of stream */
+  static const Token LCURLY;
+  static const Token RCURLY;
+  static const Token LSQUARE;
+  static const Token RSQUARE;
+  static const Token SEMI;
+  static const Token SLASH;
+  static const Token COLON;
+  static const Token BANG;
+  static const Token ID; /**< represents identifiers */
 
-  /** Create a new token.
-   * @param kind the kind of token being created
-   */
-  Token(Kind kind);
-
-  /** The name of the kind of token. */
-  const std::string & kindStr() const;
+  static const Token ACCEPT;
+  static const Token DEST;
+  static const Token DPORT;
+  static const Token DROP;
+  static const Token FORWARD;
+  static const Token ICMPTYPE;
+  static const Token INPUT;
+  static const Token LOCAL;
+  static const Token LOG;
+  static const Token MASQ;
+  static const Token ONEWAY;
+  static const Token OUTPUT;
+  static const Token PROTO;
+  static const Token PROXY;
+  static const Token REDIRECT;
+  static const Token REJECT;
+  static const Token SOURCE;
+  static const Token SPORT;
+  static const Token TEXT;
 
   /** Output stream operator. */
   friend std::ostream & operator<<(std::ostream & os, const Token & token);
-  /** Equality comparison operator. */
-  bool operator==(const Token & other) const;
-  /** Inequality comparison operator. */
-  bool operator!=(const Token & other) const;
 
  private:
-  /** The kind of token. */
-  Kind kind;
-
-  /** A list of human readable kind names. */
-  std::map<Kind, std::string> kind_names;
-
   /** Unit test class requiring friend access to private attributes. */
   friend class FiltergenTokenTest;
 };

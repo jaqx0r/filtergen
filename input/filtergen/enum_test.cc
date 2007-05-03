@@ -40,7 +40,7 @@ EnumTest::testConstructor()
   Enum foo("bar");
 
   CPPUNIT_ASSERT_EQUAL(std::string("bar"), std::string(foo.enumName));
-  CPPUNIT_ASSERT_EQUAL(1, foo.val);
+  CPPUNIT_ASSERT_EQUAL(Enum::enum_count - 1, (unsigned int) foo.val);
 }
 
 void
@@ -52,7 +52,7 @@ EnumTest::testNull()
 void
 EnumTest::testIntCast()
 {
-  CPPUNIT_ASSERT_EQUAL(0, (int) Enum::null);
+  CPPUNIT_ASSERT_EQUAL(Enum::null.val, (int) Enum::null);
 }
 
 void

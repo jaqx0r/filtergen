@@ -18,47 +18,45 @@
  */
 #include "token.h"
 
-Token::Token(Kind initial_kind):
-  kind(initial_kind)
+Token::Token(const char * name):
+  Enum::Enum(name)
 {
-  kind_names[EOS] = "EOS";
-  kind_names[ERROR] = "ERROR";
-  kind_names[LCURLY] = "LCURLY";
-  kind_names[RCURLY] = "RCURLY";
-  kind_names[LSQUARE] = "LSQUARE";
-  kind_names[RSQUARE] = "RSQUARE";
-  kind_names[SEMI] = "SEMI";
-  kind_names[SLASH] = "SLASH";
-  kind_names[COLON] = "COLON";
-  kind_names[BANG] = "BANG";
-  kind_names[ID] = "ID";
-}
-
-const std::string &
-Token::kindStr() const
-{
-  std::map<Kind, std::string>::const_iterator iter = kind_names.find(kind);
-  if (iter != kind_names.end())
-    return (*iter).second;
-  throw 0;
 }
 
 std::ostream &
 operator<<(std::ostream & os, const Token & token)
 {
-  os << "Token(" << token.kindStr() << ")";
+  os << "Token(" << (const char *) token << ")";
   return os;
 }
 
-bool
-Token::operator==(const Token & other) const
-{
-  return this->kind == other.kind;
-}
-
-bool
-Token::operator!=(const Token & other) const
-{
-  return this->kind != other.kind;
-}
-
+const Token Token::EOS("EOS");
+const Token Token::ERROR("ERROR");
+const Token Token::LCURLY("LCURLY");
+const Token Token::RCURLY("RCURLY");
+const Token Token::LSQUARE("LSQUARE");
+const Token Token::RSQUARE("RSQUARE");
+const Token Token::SEMI("SEMI");
+const Token Token::SLASH("SLASH");
+const Token Token::COLON("COLON");
+const Token Token::BANG("BANG");
+const Token Token::ID("ID");
+const Token Token::ACCEPT("ACCEPT");
+const Token Token::DEST("DEST");
+const Token Token::DPORT("DPORT");
+const Token Token::DROP("DROP");
+const Token Token::FORWARD("FORWARD");
+const Token Token::ICMPTYPE("ICMPTYPE");
+const Token Token::INPUT("INPUT");
+const Token Token::LOCAL("LOCAL");
+const Token Token::LOG("LOG");
+const Token Token::MASQ("MASQ");
+const Token Token::ONEWAY("ONEWAY");
+const Token Token::OUTPUT("OUTPUT");
+const Token Token::PROTO("PROTO");
+const Token Token::PROXY("PROXY");
+const Token Token::REDIRECT("REDIRECT");
+const Token Token::REJECT("REJECT");
+const Token Token::SOURCE("SOURCE");
+const Token Token::SPORT("SPORT");
+const Token Token::TEXT("TEXT");

@@ -3,10 +3,9 @@
 unsigned int Enum::enum_count = 0;
 
 Enum::Enum(const char * name):
-  val(enum_count)
+  val(enum_count++)
 {
   enumName = name;
-  enum_count++;
 }
 
 Enum::Enum(const Enum & rhs):
