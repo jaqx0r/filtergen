@@ -148,7 +148,7 @@ FiltergenScanner::nextToken()
   /* keywords and identifiers */
   if (isalpha(inspect())) {
     accept();
-    while (isalpha(inspect())) {
+    while (isalpha(inspect()) || inspect() == '.') {
       accept();
     }
     if (keywords.find(lexeme) != keywords.end())

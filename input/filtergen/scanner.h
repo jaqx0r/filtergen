@@ -21,7 +21,8 @@
 #define __FILTERGEN_SCANNER_H__
 
 #include <iostream>
-#include <vector>
+#include <map>
+#include <string>
 
 #include "token.h"
 

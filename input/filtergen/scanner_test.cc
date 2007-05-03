@@ -18,6 +18,7 @@ public CppUnit::TestFixture
   CPPUNIT_TEST(testScanPunctuation);
   CPPUNIT_TEST(testScanNumbers);
   CPPUNIT_TEST(testScanKeywords);
+  CPPUNIT_TEST(testScanNames);
   CPPUNIT_TEST_SUITE_END();
 
  public:
@@ -35,6 +36,7 @@ public CppUnit::TestFixture
   void testScanPunctuation();
   void testScanNumbers();
   void testScanKeywords();
+  void testScanNames();
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION(FiltergenScannerTest);
@@ -206,3 +208,23 @@ FiltergenScannerTest::testScanKeywords()
   }
 }
 
+void
+FiltergenScannerTest::testScanNames()
+{
+  std::istringstream i("foo bar mail.example.com");
+  FiltergenScanner scanner(i);
+
+  CPPUNIT_ASSERT_EQUAL(Token::ID, scanner.nextToken());
+  CPPUNIT_ASSERT_EQUAL(std::string("foo"), scanner.lexeme);
+  scanner.skipWhitespaceAndComments();
+  scanner.lexeme.clear();
+  CPPUNIT_ASSERT_EQUAL(Token::ID, scanner.nextToken());
+  CPPUNIT_ASSERT_EQUAL(std::string("bar"), scanner.lexeme);
+  scanner.skipWhitespaceAndComments();
+  scanner.lexeme.clear();
+  CPPUNIT_ASSERT_EQUAL(Token::ID, scanner.nextToken());
+  CPPUNIT_ASSERT_EQUAL(std::string("mail.example.com"), scanner.lexeme);
+  scanner.skipWhitespaceAndComments();
+  scanner.lexeme.clear();
+  CPPUNIT_ASSERT_EQUAL(Token::EOS, scanner.nextToken());
+}

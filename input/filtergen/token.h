@@ -25,12 +25,13 @@
 
 #include "enum.h"
 
-/** Token */
+/** Token. */
 class Token:
 public Enum
 {
  public:
 
+  /** Constructor taking the human-visible name of the token. */
   Token(const char *);
 
   /** Kinds of tokens that will be returned by the scanner. */
@@ -46,7 +47,7 @@ public Enum
   static const Token BANG;
   static const Token ID; /**< represents identifiers */
 
-  static const Token ACCEPT;
+  static const Token ACCEPT; /**< keywords follow */
   static const Token DEST;
   static const Token DPORT;
   static const Token DROP;
