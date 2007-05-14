@@ -85,7 +85,6 @@ FiltergenScanner::skipWhitespaceAndComments()
       accept(false); accept(false);
 
       while (inComment) {
-	// TODO(jaq): handle eof
 	if (inspect() == '*' && inspect(1) == '/') {
 	  accept(false); accept(false);
 	  inComment = false;
@@ -100,7 +99,7 @@ FiltergenScanner::skipWhitespaceAndComments()
       accept(false);
 
       while (inComment) {
-	if (inspect() == '\n') {
+	if (inspect() == '\n' || source.eof()) {
 	  accept(false);
 	  inComment = false;
 	} else {
@@ -114,6 +113,9 @@ FiltergenScanner::skipWhitespaceAndComments()
 const Token
 FiltergenScanner::nextToken()
 {
+  skipWhitespaceAndComments();
+  lexeme.clear();
+
   if (source.eof())
     return Token::EOS;
 
@@ -156,15 +158,13 @@ FiltergenScanner::nextToken()
     return Token::ID;
   }
 
+  accept();
   return Token::ERROR;
 }
 
 Token *
 FiltergenScanner::getToken()
 {
-  skipWhitespaceAndComments();
-
-  lexeme.clear();
   Token * tok = new Token(nextToken());
 
   return tok;

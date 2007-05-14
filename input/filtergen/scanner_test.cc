@@ -15,11 +15,13 @@ public CppUnit::TestFixture
   CPPUNIT_TEST(testSkipWhitespace);
   CPPUNIT_TEST(testCComment);
   CPPUNIT_TEST(testShellComment);
+  CPPUNIT_TEST(testShellCommentNoEOL);
   CPPUNIT_TEST(testScanPunctuation);
   CPPUNIT_TEST(testScanNumbers);
   CPPUNIT_TEST(testScanKeywords);
   CPPUNIT_TEST(testScanNames);
   CPPUNIT_TEST(testScanNetworkNames);
+  CPPUNIT_TEST(testInterspersedComments);
   CPPUNIT_TEST_SUITE_END();
 
  public:
@@ -34,11 +36,13 @@ public CppUnit::TestFixture
   void testSkipWhitespace();
   void testCComment();
   void testShellComment();
+  void testShellCommentNoEOL();
   void testScanPunctuation();
   void testScanNumbers();
   void testScanKeywords();
   void testScanNames();
   void testScanNetworkNames();
+  void testInterspersedComments();
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION(FiltergenScannerTest);
@@ -140,6 +144,17 @@ FiltergenScannerTest::testShellComment()
 }
 
 void
+FiltergenScannerTest::testShellCommentNoEOL()
+{
+  std::istringstream i("# shell comment no EOL");
+  FiltergenScanner scanner(i);
+
+  scanner.skipWhitespaceAndComments();
+  CPPUNIT_ASSERT_EQUAL(true, scanner.source.eof());
+  CPPUNIT_ASSERT_EQUAL(std::string(""), scanner.lexeme);
+}
+
+void
 FiltergenScannerTest::testScanPunctuation()
 {
   std::istringstream i("{}[];/:!");
@@ -161,14 +176,13 @@ FiltergenScannerTest::testScanNumbers()
   std::istringstream i("37 69 255");
   FiltergenScanner scanner(i);
 
+  /* 37 */
   CPPUNIT_ASSERT_EQUAL(Token::ID, scanner.nextToken());
   CPPUNIT_ASSERT_EQUAL(std::string("37"), scanner.lexeme);
-  scanner.skipWhitespaceAndComments();
-  scanner.lexeme.clear();
+  /* 69 */
   CPPUNIT_ASSERT_EQUAL(Token::ID, scanner.nextToken());
   CPPUNIT_ASSERT_EQUAL(std::string("69"), scanner.lexeme);
-  scanner.skipWhitespaceAndComments();
-  scanner.lexeme.clear();
+  /* 255 */
   CPPUNIT_ASSERT_EQUAL(Token::ID, scanner.nextToken());
   CPPUNIT_ASSERT_EQUAL(std::string("255"), scanner.lexeme);
 }
@@ -216,18 +230,16 @@ FiltergenScannerTest::testScanNames()
   std::istringstream i("foo bar mail.example.com");
   FiltergenScanner scanner(i);
 
+  /* foo */
   CPPUNIT_ASSERT_EQUAL(Token::ID, scanner.nextToken());
   CPPUNIT_ASSERT_EQUAL(std::string("foo"), scanner.lexeme);
-  scanner.skipWhitespaceAndComments();
-  scanner.lexeme.clear();
+  /* bar */
   CPPUNIT_ASSERT_EQUAL(Token::ID, scanner.nextToken());
   CPPUNIT_ASSERT_EQUAL(std::string("bar"), scanner.lexeme);
-  scanner.skipWhitespaceAndComments();
-  scanner.lexeme.clear();
+  /* mail.example.com */
   CPPUNIT_ASSERT_EQUAL(Token::ID, scanner.nextToken());
   CPPUNIT_ASSERT_EQUAL(std::string("mail.example.com"), scanner.lexeme);
-  scanner.skipWhitespaceAndComments();
-  scanner.lexeme.clear();
+
   CPPUNIT_ASSERT_EQUAL(Token::EOS, scanner.nextToken());
 }
 
@@ -240,42 +252,69 @@ FiltergenScannerTest::testScanNetworkNames()
 
   CPPUNIT_ASSERT_EQUAL(Token::ID, scanner.nextToken());
   CPPUNIT_ASSERT_EQUAL(std::string("0.0.0.0"), scanner.lexeme);
-  scanner.skipWhitespaceAndComments();
-  scanner.lexeme.clear();
 
   CPPUNIT_ASSERT_EQUAL(Token::ID, scanner.nextToken());
   CPPUNIT_ASSERT_EQUAL(std::string("http"), scanner.lexeme);
-  scanner.skipWhitespaceAndComments();
-  scanner.lexeme.clear();
 
   CPPUNIT_ASSERT_EQUAL(Token::ID, scanner.nextToken());
   CPPUNIT_ASSERT_EQUAL(std::string("127.0.0.1"), scanner.lexeme);
-  scanner.lexeme.clear();
   CPPUNIT_ASSERT_EQUAL(Token::SLASH, scanner.nextToken());
-  scanner.lexeme.clear();
   CPPUNIT_ASSERT_EQUAL(Token::ID, scanner.nextToken());
   CPPUNIT_ASSERT_EQUAL(std::string("255.255.255.255"), scanner.lexeme);
-  scanner.skipWhitespaceAndComments();
-  scanner.lexeme.clear();
 
   CPPUNIT_ASSERT_EQUAL(Token::ID, scanner.nextToken());
   CPPUNIT_ASSERT_EQUAL(std::string("bar"), scanner.lexeme);
-  scanner.lexeme.clear();
   CPPUNIT_ASSERT_EQUAL(Token::SLASH, scanner.nextToken());
-  scanner.lexeme.clear();
   CPPUNIT_ASSERT_EQUAL(Token::ID, scanner.nextToken());
   CPPUNIT_ASSERT_EQUAL(std::string("29"), scanner.lexeme);
-  scanner.skipWhitespaceAndComments();
-  scanner.lexeme.clear();
 
   CPPUNIT_ASSERT_EQUAL(Token::ID, scanner.nextToken());
   CPPUNIT_ASSERT_EQUAL(std::string("bar"), scanner.lexeme);
+  CPPUNIT_ASSERT_EQUAL(Token::SLASH, scanner.nextToken());
+  CPPUNIT_ASSERT_EQUAL(Token::ID, scanner.nextToken());
+  CPPUNIT_ASSERT_EQUAL(std::string("255.255.255.248"), scanner.lexeme);
+
+  CPPUNIT_ASSERT_EQUAL(Token::EOS, scanner.nextToken());
+}
+
+void
+FiltergenScannerTest::testInterspersedComments()
+{
+  std::istringstream i("/* blah */word\n"
+		       "# blah\n"
+		       "word\n"
+		       "word #blah\n"
+		       "/* c comments can't nest */ ***/\n"
+		       "/* this /* is okay */word\n");
+  FiltergenScanner scanner(i);
+
+  /* c comment */
+  CPPUNIT_ASSERT_EQUAL(Token::ID, scanner.nextToken());
+  CPPUNIT_ASSERT_EQUAL(std::string("word"), scanner.lexeme);
+  scanner.lexeme.clear();
+  /* shell comment */
+  CPPUNIT_ASSERT_EQUAL(Token::ID, scanner.nextToken());
+  CPPUNIT_ASSERT_EQUAL(std::string("word"), scanner.lexeme);
+  scanner.lexeme.clear();
+  /* shell comment end of line */
+  CPPUNIT_ASSERT_EQUAL(Token::ID, scanner.nextToken());
+  CPPUNIT_ASSERT_EQUAL(std::string("word"), scanner.lexeme);
+  scanner.lexeme.clear();
+  /* c comments can't nest */
+  CPPUNIT_ASSERT_EQUAL(Token::ERROR, scanner.nextToken());
+  CPPUNIT_ASSERT_EQUAL(std::string("*"), scanner.lexeme);
+  scanner.lexeme.clear();
+  CPPUNIT_ASSERT_EQUAL(Token::ERROR, scanner.nextToken());
+  CPPUNIT_ASSERT_EQUAL(std::string("*"), scanner.lexeme);
+  scanner.lexeme.clear();
+  CPPUNIT_ASSERT_EQUAL(Token::ERROR, scanner.nextToken());
+  CPPUNIT_ASSERT_EQUAL(std::string("*"), scanner.lexeme);
   scanner.lexeme.clear();
   CPPUNIT_ASSERT_EQUAL(Token::SLASH, scanner.nextToken());
   scanner.lexeme.clear();
+  /* last one is ok */
   CPPUNIT_ASSERT_EQUAL(Token::ID, scanner.nextToken());
-  CPPUNIT_ASSERT_EQUAL(std::string("255.255.255.248"), scanner.lexeme);
-  scanner.skipWhitespaceAndComments();
+  CPPUNIT_ASSERT_EQUAL(std::string("word"), scanner.lexeme);
   scanner.lexeme.clear();
 
   CPPUNIT_ASSERT_EQUAL(Token::EOS, scanner.nextToken());
