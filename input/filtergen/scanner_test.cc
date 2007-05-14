@@ -19,6 +19,7 @@ public CppUnit::TestFixture
   CPPUNIT_TEST(testScanNumbers);
   CPPUNIT_TEST(testScanKeywords);
   CPPUNIT_TEST(testScanNames);
+  CPPUNIT_TEST(testScanNetworkNames);
   CPPUNIT_TEST_SUITE_END();
 
  public:
@@ -37,6 +38,7 @@ public CppUnit::TestFixture
   void testScanNumbers();
   void testScanKeywords();
   void testScanNames();
+  void testScanNetworkNames();
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION(FiltergenScannerTest);
@@ -226,5 +228,55 @@ FiltergenScannerTest::testScanNames()
   CPPUNIT_ASSERT_EQUAL(std::string("mail.example.com"), scanner.lexeme);
   scanner.skipWhitespaceAndComments();
   scanner.lexeme.clear();
+  CPPUNIT_ASSERT_EQUAL(Token::EOS, scanner.nextToken());
+}
+
+void
+FiltergenScannerTest::testScanNetworkNames()
+{
+  std::istringstream i("0.0.0.0 http 127.0.0.1/255.255.255.255 bar/29 "
+		       "bar/255.255.255.248");
+  FiltergenScanner scanner(i);
+
+  CPPUNIT_ASSERT_EQUAL(Token::ID, scanner.nextToken());
+  CPPUNIT_ASSERT_EQUAL(std::string("0.0.0.0"), scanner.lexeme);
+  scanner.skipWhitespaceAndComments();
+  scanner.lexeme.clear();
+
+  CPPUNIT_ASSERT_EQUAL(Token::ID, scanner.nextToken());
+  CPPUNIT_ASSERT_EQUAL(std::string("http"), scanner.lexeme);
+  scanner.skipWhitespaceAndComments();
+  scanner.lexeme.clear();
+
+  CPPUNIT_ASSERT_EQUAL(Token::ID, scanner.nextToken());
+  CPPUNIT_ASSERT_EQUAL(std::string("127.0.0.1"), scanner.lexeme);
+  scanner.lexeme.clear();
+  CPPUNIT_ASSERT_EQUAL(Token::SLASH, scanner.nextToken());
+  scanner.lexeme.clear();
+  CPPUNIT_ASSERT_EQUAL(Token::ID, scanner.nextToken());
+  CPPUNIT_ASSERT_EQUAL(std::string("255.255.255.255"), scanner.lexeme);
+  scanner.skipWhitespaceAndComments();
+  scanner.lexeme.clear();
+
+  CPPUNIT_ASSERT_EQUAL(Token::ID, scanner.nextToken());
+  CPPUNIT_ASSERT_EQUAL(std::string("bar"), scanner.lexeme);
+  scanner.lexeme.clear();
+  CPPUNIT_ASSERT_EQUAL(Token::SLASH, scanner.nextToken());
+  scanner.lexeme.clear();
+  CPPUNIT_ASSERT_EQUAL(Token::ID, scanner.nextToken());
+  CPPUNIT_ASSERT_EQUAL(std::string("29"), scanner.lexeme);
+  scanner.skipWhitespaceAndComments();
+  scanner.lexeme.clear();
+
+  CPPUNIT_ASSERT_EQUAL(Token::ID, scanner.nextToken());
+  CPPUNIT_ASSERT_EQUAL(std::string("bar"), scanner.lexeme);
+  scanner.lexeme.clear();
+  CPPUNIT_ASSERT_EQUAL(Token::SLASH, scanner.nextToken());
+  scanner.lexeme.clear();
+  CPPUNIT_ASSERT_EQUAL(Token::ID, scanner.nextToken());
+  CPPUNIT_ASSERT_EQUAL(std::string("255.255.255.248"), scanner.lexeme);
+  scanner.skipWhitespaceAndComments();
+  scanner.lexeme.clear();
+
   CPPUNIT_ASSERT_EQUAL(Token::EOS, scanner.nextToken());
 }

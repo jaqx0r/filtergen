@@ -146,22 +146,13 @@ FiltergenScanner::nextToken()
   }
 
   /* keywords and identifiers */
-  if (isalpha(inspect())) {
+  if (isalnum(inspect())) {
     accept();
-    while (isalpha(inspect()) || inspect() == '.') {
+    while (isalnum(inspect()) || inspect() == '.') {
       accept();
     }
     if (keywords.find(lexeme) != keywords.end())
       return *keywords[lexeme];
-    return Token::ID;
-  }
-
-  /* numbers */
-  if (isdigit(inspect())) {
-    accept();
-    while (isdigit(inspect())) {
-      accept();
-    }
     return Token::ID;
   }
 
