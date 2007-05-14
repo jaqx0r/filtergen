@@ -171,26 +171,7 @@ FiltergenScanner::getToken()
 }
 
 #if 0
-%}
-
-%option c++
- //%option noyywrap nounput
- //%option batch debug
-%option prefix="Filtergen"
-%option bison-bridge
-%option bison-locations
-
-%{
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <dirent.h>
-
-#include "driver.h"
-#include "parser.hh"
-
 void include_file(const char *);
-%}
 
 %x include
 %x comment
@@ -198,15 +179,6 @@ void include_file(const char *);
 string  \"[^\n]+\"
 space   [ \t]+
 id      [[:alnum:]_][[:alnum:]_+-]*
-
-%{
-#define YY_USER_ACTION yylloc->columns(yyleng);
-%}
-
-%%
-%{
-    yylloc->step();
-%}
 
 "/*"	BEGIN(comment);
 
@@ -233,46 +205,7 @@ id      [[:alnum:]_][[:alnum:]_+-]*
 		return TOK_IDENTIFIER;
              }
 
-{space}      /* ignore */
-
 include      BEGIN(include);
-
-accept       return TOK_ACCEPT;
-dest         return TOK_DEST;
-dport        return TOK_DPORT;
-drop         return TOK_DROP;
-forward      return TOK_FORWARD;
-icmptype     return TOK_ICMPTYPE;
-input        return TOK_INPUT;
-local        return TOK_LOCAL;
-log          return TOK_LOG;
-masq         return TOK_MASQ;
-oneway       return TOK_ONEWAY;
-output       return TOK_OUTPUT;
-proto        return TOK_PROTO;
-proxy        return TOK_PROXY;
-redirect     return TOK_REDIRECT;
-reject       return TOK_REJECT;
-source       return TOK_SOURCE;
-sport        return TOK_SPORT;
-text         return TOK_TEXT;
-
-"{"          return TOK_LCURLY;
-"}"          return TOK_RCURLY;
-"["          return TOK_LSQUARE;
-"]"          return TOK_RSQUARE;
-";"          return TOK_SEMICOLON;
-":"          return TOK_COLON;
-"!"          return TOK_BANG;
-
-{id}(\.{id})*	{
-    yylval->u_str = strndup(yytext, yyleng);
-    return TOK_IDENTIFIER;
-}
-
-"/"          return TOK_SLASH;
-
-.            return TOK_ERR;
 
 <include>[ \t]*       /* eat whitespace after include */
 <include>[^ \t\n;]+    { /* include file name */
@@ -333,25 +266,5 @@ void include_file(const char * name) {
 	}
     }
 }
-
-// void
-// filtergen_driver::scan_begin()
-// {
-//   //    yy_flex_debug = trace_scanning;
-
-//     if (file)
-//       yyin = file;
-//     else {
-//       if (!(yyin = fopen(filename.c_str(), "r")))
-// 	error(std::string("cannot open ") + filename);
-//     }
-// }
-
-// void
-// filtergen_driver::scan_end()
-// {
-//     fclose(yyin);
-// }
-
 
 #endif
