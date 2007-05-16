@@ -85,7 +85,10 @@ FiltergenScanner::skipWhitespaceAndComments()
       accept(false); accept(false);
 
       while (inComment) {
-	if (inspect() == '*' && inspect(1) == '/') {
+	if (source.eof()) {
+	  // TODO(jaq) raise an exception here, comment reached eof
+	  inComment = false;
+	} else if (inspect() == '*' && inspect(1) == '/') {
 	  accept(false); accept(false);
 	  inComment = false;
 	} else {

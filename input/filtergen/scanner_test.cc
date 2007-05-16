@@ -14,6 +14,7 @@ public CppUnit::TestFixture
   CPPUNIT_TEST(testNextTokenEmptyStream);
   CPPUNIT_TEST(testSkipWhitespace);
   CPPUNIT_TEST(testCComment);
+  CPPUNIT_TEST(testCCommentNoEnd);
   CPPUNIT_TEST(testShellComment);
   CPPUNIT_TEST(testShellCommentNoEOL);
   CPPUNIT_TEST(testScanPunctuation);
@@ -35,6 +36,7 @@ public CppUnit::TestFixture
   void testInspectNext();
   void testSkipWhitespace();
   void testCComment();
+  void testCCommentNoEnd();
   void testShellComment();
   void testShellCommentNoEOL();
   void testScanPunctuation();
@@ -318,4 +320,18 @@ FiltergenScannerTest::testInterspersedComments()
   scanner.lexeme.clear();
 
   CPPUNIT_ASSERT_EQUAL(Token::EOS, scanner.nextToken());
+}
+
+void
+FiltergenScannerTest::testCCommentNoEnd()
+{
+  std::istringstream i("/* a comment without"
+		       "   an ending is like haiku"
+		       "   with too many syllables");
+  FiltergenScanner scanner(i);
+
+  // TODO(jaq) test for comment reached end of file exception
+  scanner.skipWhitespaceAndComments();
+  CPPUNIT_ASSERT_EQUAL(true, scanner.source.eof());
+  CPPUNIT_ASSERT_EQUAL(std::string(""), scanner.lexeme);
 }

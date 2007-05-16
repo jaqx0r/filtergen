@@ -1,3 +1,0 @@
-/* a comment without
-   an ending is like haiku
-   with too many syllables   # { dg-warning "comment reached end of file" "" }
