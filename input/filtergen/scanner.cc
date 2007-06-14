@@ -126,8 +126,8 @@ FiltergenScanner::nextToken()
   if (source.eof())
     return Token::EOS;
 
+  /* punctuation */
   switch (inspect()) {
-    /* punctuation */
   case '{':
     accept();
     return Token::LCURLY;
@@ -193,25 +193,6 @@ FiltergenScanner::getToken()
 void include_file(const char *);
 
 %x include
-%x comment
-
-space   [ \t]+
-id      [[:alnum:]_][[:alnum:]_+-]*
-
-"/*"	BEGIN(comment);
-
-<comment>{
-[^*\n]*		/* eat anything that's not a '*' */
-"*"+[^*/\n]*	/* eat up '*'s not followes by '/'s */
-[\n]            yylloc->lines(yyleng); yylloc->step();
-"*"+"/"		BEGIN(INITIAL);
-<<EOF>>		{
-    driver.error(*yylloc, "warning: comment reached end of file");
-			yyterminate();
-		}
-}
-
-#[^\n]*      /* strip shell style comments */
 
 include      BEGIN(include);
 
@@ -224,15 +205,6 @@ include      BEGIN(include);
     free(name);
 
     BEGIN(INITIAL);
-}
-
-<<EOF>>                {
-    driver.error(*yylloc, "eof! popping state");
-    //yypop_buffer_state();
-
-    //if (!YY_CURRENT_BUFFER) {
-    //	yyterminate();
-    //}
 }
 
 %%

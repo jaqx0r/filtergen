@@ -22,5 +22,3 @@ env.Distribute(env['DISTTREE'], sources + ['SConscript',
                                            #'parser.cc', 'parser.h',
 					   'scanner.cc',
                                            ])
-
-SConscript('t/SConscript', 'env')
