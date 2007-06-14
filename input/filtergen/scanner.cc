@@ -153,8 +153,11 @@ FiltergenScanner::nextToken()
   /* string identifiers */
   if (inspect() == '"') {
     accept(false);
-    while (inspect() != '"')
+    while (!source.eof() && inspect() != '"')
       accept();
+    /* TODO(jaq): should raise an error, unterminated string */
+    if (source.eof())
+      return Token::ERROR;
     accept(false);
     return Token::ID;
   }

@@ -24,6 +24,7 @@ public CppUnit::TestFixture
   CPPUNIT_TEST(testScanNetworkNames);
   CPPUNIT_TEST(testInterspersedComments);
   CPPUNIT_TEST(testStringIdentifier);
+  CPPUNIT_TEST(testStringIdentifierNoEnd);
   CPPUNIT_TEST_SUITE_END();
 
  public:
@@ -47,6 +48,7 @@ public CppUnit::TestFixture
   void testScanNetworkNames();
   void testInterspersedComments();
   void testStringIdentifier();
+  void testStringIdentifierNoEnd();
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION(FiltergenScannerTest);
@@ -346,4 +348,14 @@ FiltergenScannerTest::testStringIdentifier()
 
   CPPUNIT_ASSERT_EQUAL(Token::ID, scanner.nextToken());
   CPPUNIT_ASSERT_EQUAL(std::string("string"), scanner.lexeme);
+}
+
+void
+FiltergenScannerTest::testStringIdentifierNoEnd()
+{
+  std::istringstream i("\"string");
+  FiltergenScanner scanner(i);
+
+  CPPUNIT_ASSERT_EQUAL(Token::ERROR, scanner.nextToken());
+  CPPUNIT_ASSERT_EQUAL(true, scanner.source.eof());
 }
