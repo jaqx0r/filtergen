@@ -150,6 +150,15 @@ FiltergenScanner::nextToken()
     return Token::BANG;
   }
 
+  /* string identifiers */
+  if (inspect() == '"') {
+    accept(false);
+    while (inspect() != '"')
+      accept();
+    accept(false);
+    return Token::ID;
+  }
+
   /* keywords and identifiers */
   if (isalnum(inspect())) {
     accept();
@@ -179,7 +188,6 @@ void include_file(const char *);
 %x include
 %x comment
 
-string  \"[^\n]+\"
 space   [ \t]+
 id      [[:alnum:]_][[:alnum:]_+-]*
 
@@ -197,16 +205,6 @@ id      [[:alnum:]_][[:alnum:]_+-]*
 }
 
 #[^\n]*      /* strip shell style comments */
-
-{string}     {
-		/* we do not store the " characters in the string, so lop
-		 * them off.  We can "safely" assume that the first and last
-		 * characters in this regex are ", otherwise there's a bug
-		 * in flex...  The result is somethign that is syntactically
-		 * identical to an identifier for our purposes. */
-                yylval->u_str = strndup(yytext+1, yyleng-2);
-		return TOK_IDENTIFIER;
-             }
 
 include      BEGIN(include);
 
