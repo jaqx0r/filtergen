@@ -25,6 +25,7 @@ public CppUnit::TestFixture
   CPPUNIT_TEST(testInterspersedComments);
   CPPUNIT_TEST(testStringIdentifier);
   CPPUNIT_TEST(testStringIdentifierNoEnd);
+  CPPUNIT_TEST(testNextTokenCommentEOF);
   CPPUNIT_TEST_SUITE_END();
 
  public:
@@ -49,6 +50,7 @@ public CppUnit::TestFixture
   void testInterspersedComments();
   void testStringIdentifier();
   void testStringIdentifierNoEnd();
+  void testNextTokenCommentEOF();
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION(FiltergenScannerTest);
@@ -334,8 +336,7 @@ FiltergenScannerTest::testCCommentNoEnd()
 		       "   with too many syllables");
   FiltergenScanner scanner(i);
 
-  // TODO(jaq) test for comment reached end of file exception
-  scanner.skipWhitespaceAndComments();
+  CPPUNIT_ASSERT_EQUAL(false, scanner.skipWhitespaceAndComments());
   CPPUNIT_ASSERT_EQUAL(true, scanner.source.eof());
   CPPUNIT_ASSERT_EQUAL(std::string(""), scanner.lexeme);
 }
@@ -356,6 +357,19 @@ FiltergenScannerTest::testStringIdentifierNoEnd()
   std::istringstream i("\"string");
   FiltergenScanner scanner(i);
 
+  CPPUNIT_ASSERT_EQUAL(Token::ERROR, scanner.nextToken());
+  CPPUNIT_ASSERT_EQUAL(true, scanner.source.eof());
+}
+
+void
+FiltergenScannerTest::testNextTokenCommentEOF()
+{
+  std::istringstream i("foo /* comment"
+		       "bar # comment");
+  FiltergenScanner scanner(i);
+
+  CPPUNIT_ASSERT_EQUAL(Token::ID, scanner.nextToken());
+  CPPUNIT_ASSERT_EQUAL(std::string("foo"), scanner.lexeme);
   CPPUNIT_ASSERT_EQUAL(Token::ERROR, scanner.nextToken());
   CPPUNIT_ASSERT_EQUAL(true, scanner.source.eof());
 }

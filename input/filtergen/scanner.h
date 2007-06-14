@@ -61,8 +61,11 @@ class FiltergenScanner
    */
   int inspect(const int lookahead = 0);
 
-  /** Skip whitespace and comments from the source stream. */
-  void skipWhitespaceAndComments();
+  /** Skip whitespace and comments from the source stream.
+   * @return true if whitespace and comments were skipped, false if
+   * EOF was detected before the end of a comment
+   */
+  bool skipWhitespaceAndComments();
 
   /** The source file stream. */
   std::istream & source;

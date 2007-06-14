@@ -68,7 +68,7 @@ FiltergenScanner::inspect(const int nthChar)
   }
 }
 
-void
+bool
 FiltergenScanner::skipWhitespaceAndComments()
 {
   bool inComment = false;
@@ -86,8 +86,8 @@ FiltergenScanner::skipWhitespaceAndComments()
 
       while (inComment) {
 	if (source.eof()) {
-	  // TODO(jaq) raise an exception here, comment reached eof
 	  inComment = false;
+	  return false;
 	} else if (inspect() == '*' && inspect(1) == '/') {
 	  accept(false); accept(false);
 	  inComment = false;
@@ -111,12 +111,16 @@ FiltergenScanner::skipWhitespaceAndComments()
       }
     }
   }
+
+  return true;
 }
 
 const Token
 FiltergenScanner::nextToken()
 {
-  skipWhitespaceAndComments();
+  if (!skipWhitespaceAndComments())
+    return Token::ERROR;
+
   lexeme.clear();
 
   if (source.eof())
