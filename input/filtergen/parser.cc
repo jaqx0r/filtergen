@@ -17,19 +17,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include "parser.h"
-
-FiltergenParser::FiltergenParser(std::istream & s):
-  source(s)
-{
-}
-
-bool
-FiltergenParser::check()
-{
-  return true;
-}
-
 #if 0
 
 %skeleton "lalr1.cc"
@@ -117,48 +104,41 @@ FiltergenParser::check()
 %type <u_compound_specifier> compound_specifier
 %type <u_chaingroup_specifier> chaingroup_specifier
 %type <u_subrule_list> subrule_list
+#endif //0
 
-%token TOK_EOF 0 "end of file"
-%token TOK_ACCEPT
-%token TOK_DEST
-%token TOK_DPORT
-%token TOK_DROP
-%token TOK_FORWARD
-%token TOK_ICMPTYPE
-%token TOK_INPUT
-%token TOK_LCURLY
-%token TOK_LOCAL
-%token TOK_LOG
-%token TOK_LSQUARE
-%token TOK_MASQ
-%token TOK_ONEWAY
-%token TOK_OUTPUT
-%token TOK_PROTO
-%token TOK_PROXY
-%token TOK_RCURLY
-%token TOK_REDIRECT
-%token TOK_REJECT
-%token TOK_RSQUARE
-%token TOK_SEMICOLON
-%token TOK_SOURCE
-%token TOK_SPORT
-%token TOK_TEXT
-%token <u_str> TOK_IDENTIFIER
-%token TOK_DOT
-%token TOK_SLASH
-%token TOK_ERR
-%token TOK_BANG
-%token TOK_COLON
+#include "parser.h"
 
-%start ast
-%%
+FiltergenParser::FiltergenParser(FiltergenScanner & _scanner):
+  scanner(_scanner)
+{
 
-ast: rule_list
-	{
-	    $$ = (struct ast_s *) malloc(sizeof(struct ast_s));
-	    driver.result = $$;
-	    $$->list = $1;
-	}
+}
+
+bool
+FiltergenParser::match(const Token & expected)
+{
+  Token * current = scanner.getToken();
+  bool result = (*current == expected);
+  delete current;
+  return result;
+}
+
+bool
+FiltergenParser::parse()
+{
+  //parseRuleList();
+  return true;
+}
+
+// void
+// FiltergenParser::parseRuleList()
+// {
+//   parseRule();
+//   parseRuleList();
+// }
+
+
+#if 0
 
 rule_list: /* empty */
 	{
@@ -178,6 +158,16 @@ rule:	  specifier_list TOK_SEMICOLON
 	    $$->list = $1;
 	}
 	;
+#endif //0
+
+// void
+// FiltergenParser::parseRule()
+// {
+//   parseSpecifierList();
+//   match(Token::SEMI);
+// }
+
+#if 0
 
 specifier_list: /* empty */
 	{
@@ -508,6 +498,12 @@ icmptype_argument: TOK_IDENTIFIER
 	    $$->icmptype = $1;
 	}
 	;
+
+void
+FiltergenParser::parseIcmpTypeArgument()
+{
+  match(Token::ID);
+}
 
 option_specifier: TOK_LOCAL
 	{

@@ -22,23 +22,31 @@
 
 #include <iostream>
 
+#include "scanner.h"
+#include "token.h"
+
 /** Parser for the filtergen language */
 class FiltergenParser
 {
  public:
   /** Create a new parser object.
-   * @param source the stream used as input to the parser
+   * @param scanner the scanner used to scan the input and return tokens
    */
-  FiltergenParser(std::istream & source);
+  FiltergenParser(FiltergenScanner & scanner);
 
-  /** Check that the source matches the grammar of this parser.
+  /** Parse the input according to the grammar of this parser.
    * @return bool
    */
-  bool check();
+  bool parse();
 
  private:
-  /** The source file stream. */
-  std::istream & source;
+  /** Match a token in the stream.
+   * @param expected the expected token
+   */
+  bool match(const Token & expected);
+
+  /** The source scanner. */
+  FiltergenScanner & scanner;
 
   /** Unit test class requiring friend access to private attributes. */
   friend class FiltergenParserTest;

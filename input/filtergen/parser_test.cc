@@ -3,12 +3,24 @@
 #include <iostream>
 
 #include "parser.h"
+#include "scanner.h"
+#include "token.h"
+
+
+class MockScanner:
+  public FiltergenScanner
+{
+public:
+  MockScanner();
+  Token * getToken();
+};
 
 class FiltergenParserTest:
-public CppUnit::TestFixture
+  public CppUnit::TestFixture
 {
   CPPUNIT_TEST_SUITE(FiltergenParserTest);
   CPPUNIT_TEST(testConstructor);
+  CPPUNIT_TEST(testMatch);
   CPPUNIT_TEST(testSimpleRule);
   CPPUNIT_TEST_SUITE_END();
 
@@ -17,6 +29,7 @@ public CppUnit::TestFixture
   void tearDown();
 
   void testConstructor();
+  void testMatch();
   void testSimpleRule();
 };
 
@@ -36,9 +49,18 @@ void
 FiltergenParserTest::testConstructor()
 {
   std::istringstream i("");
-  FiltergenParser parser(i);
+  FiltergenScanner scanner(i);
+  FiltergenParser parser(scanner);
+}
 
-  CPPUNIT_ASSERT_EQUAL(true, parser.check());
+void
+FiltergenParserTest::testMatch()
+{
+  std::istringstream i(";");
+  FiltergenScanner s(i);
+  FiltergenParser parser(s);
+
+  CPPUNIT_ASSERT_EQUAL(true, parser.match(Token::SEMI));
 }
 
 void
@@ -46,7 +68,8 @@ FiltergenParserTest::testSimpleRule()
 {
   std::istringstream i("# parse a very simple rule\n"
 		       "accept;");
-  FiltergenParser parser(i);
+  FiltergenScanner s(i);
+  FiltergenParser parser(s);
 
-  CPPUNIT_ASSERT_EQUAL(true, parser.check());
+  CPPUNIT_ASSERT_EQUAL(true, parser.parse());
 }
