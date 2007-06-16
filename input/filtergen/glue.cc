@@ -21,8 +21,6 @@
 #include "filter.h"
 #include "input/input.h"
 #include "ast.h"
-#include "driver.h"
-//#include "parser.hh"
 #include "resolver.h"
 
 //int filtergen_parse(void *);
