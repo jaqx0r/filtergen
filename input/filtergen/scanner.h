@@ -44,7 +44,7 @@ class FiltergenScanner
   /** Lex the next token from the stream.
    * Updates lexeme with the current spelling of the token, via calls
    * to accept().
-   * @return kind of token lexed.
+   * @return Token
    */
   const Token nextToken();
 

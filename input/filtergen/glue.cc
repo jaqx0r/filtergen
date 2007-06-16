@@ -22,12 +22,13 @@
 #include "input/input.h"
 #include "ast.h"
 #include "driver.h"
-#include "parser.hh"
+//#include "parser.hh"
 #include "resolver.h"
 
 //int filtergen_parse(void *);
 //int filtergen_restart(FILE *);
 
+#if 0
 int convtrace = 0;
 
 #define eprint(x) if (convtrace) fprintf(stderr, x)
@@ -578,17 +579,21 @@ struct filter * convert(struct ast_s * ast) {
 }
 
 struct filter * filtergen_source_parser(FILE * file, char * filename, int resolve_names) {
-    struct filter * f;
+  struct filter * f = NULL;
 
-    filtergen_driver driver;
-    driver.parse(file, std::string(filename));
+  //filtergen_driver driver;
+    //driver.parse(file, std::string(filename));
 
     if (resolve_names)
 	resolve(driver.result);
-    f = convert(driver.result);
+    //f = convert(driver.result);
     if (!f) {
 	fprintf(stderr, "couldn't convert file to IR\n");
 	return NULL;
     }
     return f;
+  return NULL;
 }
+
+#endif // 0
+

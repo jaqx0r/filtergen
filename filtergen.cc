@@ -120,7 +120,7 @@ struct source_parser_s {
     const char * name;
     source_parser * parser;
 } source_parsers[] = {
-    { "filtergen", filtergen_source_parser },
+  //{ "filtergen", filtergen_source_parser },
     //    { "iptables-save", ipts_source_parser },
     { NULL, NULL }
 };

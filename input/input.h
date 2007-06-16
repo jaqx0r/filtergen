@@ -18,5 +18,5 @@ source_parser ipts_source_parser;
 #ifdef __cplusplus
 }
 #endif
-    
+
 #endif /* FILTERGEN_INPUT_H */

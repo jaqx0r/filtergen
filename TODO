@@ -4,6 +4,9 @@ TODO for filtergen
 input/filtergen include files
 input/filtergen parser to IR
 glue input/filtergen into main
+record test count
+incorporate gcov into runtests
+improve cppunit asserts
 
 milestones for version 0.13
 --------------------------
