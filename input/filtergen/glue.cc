@@ -23,9 +23,6 @@
 #include "ast.h"
 #include "resolver.h"
 
-//int filtergen_parse(void *);
-//int filtergen_restart(FILE *);
-
 #if 0
 int convtrace = 0;
 
