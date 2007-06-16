@@ -1,6 +1,6 @@
-/* parser for filtergen               -*- C++ -*-
+/* parser for the filtergen language
  *
- * Copyright (c) 2003 Jamie Wilkinson <jaq@spacepants.org>
+ * Copyright (c) 2003-2007 Jamie Wilkinson <jaq@spacepants.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,6 +16,21 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
+#include "parser.h"
+
+FiltergenParser::FiltergenParser(std::istream & s):
+  source(s)
+{
+}
+
+bool
+FiltergenParser::check()
+{
+  return true;
+}
+
+#if 0
 
 %skeleton "lalr1.cc"
 %define "parser_class_name" "filtergen_parser"
@@ -569,3 +584,4 @@ yy::filtergen_parser::error(const yy::filtergen_parser::location_type & l,
 {
     driver.error(l, m);
 }
+#endif

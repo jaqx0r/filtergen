@@ -4,6 +4,7 @@ sources = [
     'enum.cc',
     'token.cc',
     'scanner.cc',
+    'parser.cc',
     'resolver.cc',
     'glue.cc']
 

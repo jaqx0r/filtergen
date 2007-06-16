@@ -20,15 +20,27 @@
 #ifndef __FILTERGEN_PARSER_H__
 #define __FILTERGEN_PARSER_H__
 
+#include <iostream>
+
 /** Parser for the filtergen language */
 class FiltergenParser
 {
  public:
   /** Create a new parser object.
+   * @param source the stream used as input to the parser
    */
-  FiltergenParser();
+  FiltergenParser(std::istream & source);
+
+  /** Check that the source matches the grammar of this parser.
+   * @return bool
+   */
+  bool check();
 
  private:
+  /** The source file stream. */
+  std::istream & source;
+
+  /** Unit test class requiring friend access to private attributes. */
   friend class FiltergenParserTest;
 };
 

@@ -1,5 +1,7 @@
 #include <cppunit/extensions/HelperMacros.h>
 
+#include <iostream>
+
 #include "parser.h"
 
 class FiltergenParserTest:
@@ -7,6 +9,7 @@ public CppUnit::TestFixture
 {
   CPPUNIT_TEST_SUITE(FiltergenParserTest);
   CPPUNIT_TEST(testConstructor);
+  CPPUNIT_TEST(testSimpleRule);
   CPPUNIT_TEST_SUITE_END();
 
  public:
@@ -14,6 +17,7 @@ public CppUnit::TestFixture
   void tearDown();
 
   void testConstructor();
+  void testSimpleRule();
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION(FiltergenParserTest);
@@ -31,5 +35,18 @@ FiltergenParserTest::tearDown()
 void
 FiltergenParserTest::testConstructor()
 {
-  FiltergenParser parser();
+  std::istringstream i("");
+  FiltergenParser parser(i);
+
+  CPPUNIT_ASSERT_EQUAL(true, parser.check());
+}
+
+void
+FiltergenParserTest::testSimpleRule()
+{
+  std::istringstream i("# parse a very simple rule\n"
+		       "accept;");
+  FiltergenParser parser(i);
+
+  CPPUNIT_ASSERT_EQUAL(true, parser.check());
 }
