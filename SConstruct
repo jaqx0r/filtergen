@@ -7,11 +7,11 @@ EnsureSConsVersion(0, 95)
 VERSION = "0.13"
 
 opts = Options()
-#opts.AddOptions(
-#	EnumOption('debug', 'debugging compiler options', 'yes',
-#			   allowed_values=('yes', 'no', 'gcov'),
-#			   map={})
-#	)
+opts.AddOptions(
+    EnumOption('debug', 'debugging compiler options', 'yes',
+	       allowed_values=('yes', 'no', 'gcov'),
+	       map={})
+    )
 
 env = Environment(options = opts)
 
