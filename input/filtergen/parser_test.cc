@@ -11,6 +11,7 @@ class FiltergenParserTest:
   CPPUNIT_TEST_SUITE(FiltergenParserTest);
   CPPUNIT_TEST(testConstructor);
   CPPUNIT_TEST(testMatch);
+  CPPUNIT_TEST(testParseIcmpTypeArgument);
   CPPUNIT_TEST(testParseRule);
   CPPUNIT_TEST_SUITE_END();
 
@@ -20,6 +21,7 @@ class FiltergenParserTest:
 
   void testConstructor();
   void testMatch();
+  void testParseIcmpTypeArgument();
   void testParseRule();
 };
 
@@ -61,6 +63,16 @@ FiltergenParserTest::testMatch()
   FiltergenParser parser(s);
 
   CPPUNIT_ASSERT_EQUAL(true, parser.match(Token::SEMI));
+}
+
+void
+FiltergenParserTest::testParseIcmpTypeArgument()
+{
+  MockScanner s;
+  s.tokens.push_back(Token::ID);
+  FiltergenParser parser(s);
+
+  CPPUNIT_ASSERT_EQUAL(true, parser.parseIcmpTypeArgument());
 }
 
 void

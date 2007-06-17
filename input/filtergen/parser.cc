@@ -409,12 +409,15 @@ icmptype_argument: TOK_IDENTIFIER
 	    $$->icmptype = $1;
 	}
 	;
+#endif // 0
 
-void
+bool
 FiltergenParser::parseIcmpTypeArgument()
 {
-  match(Token::ID);
+  return match(Token::ID);
 }
+
+#if 0
 
 option_specifier: TOK_LOCAL
 	{

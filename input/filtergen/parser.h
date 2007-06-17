@@ -45,6 +45,8 @@ class FiltergenParser
    */
   bool match(const Token & expected);
 
+  bool parseIcmpTypeArgument();
+
   bool parseRule();
 
   /** The source scanner. */
