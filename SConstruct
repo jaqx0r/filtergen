@@ -107,6 +107,7 @@ env.AppendUnique(CPPPATH=['#'])
 runtests = env.Program('runtests',
 		       source=['runtests.cc',
 			       'dummy_test.cc',
+			       'input/input.cc',
 			       'input/filtergen/string_test.cc',
 			       'input/filtergen/enum_test.cc',
 			       'input/filtergen/token_test.cc',

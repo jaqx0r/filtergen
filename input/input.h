@@ -1,6 +1,19 @@
 #ifndef FILTERGEN_INPUT_H
 #define FILTERGEN_INPUT_H
 
+#include "input/filtergen/token.h"
+
+class Scanner
+{
+ public:
+  virtual ~Scanner() = 0;
+
+  /** Return the next token from the stream.
+   * @return Token
+   */
+  virtual Token * getToken() = 0;
+};
+
 #ifdef __cplusplus
 extern "C" {
 #endif

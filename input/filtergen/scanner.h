@@ -24,10 +24,12 @@
 #include <map>
 #include <string>
 
+#include "input/input.h"
 #include "token.h"
 
 /** Token scanner for the filtergen language */
-class FiltergenScanner
+class FiltergenScanner:
+public Scanner
 {
  public:
   /** Create a new scanner object.

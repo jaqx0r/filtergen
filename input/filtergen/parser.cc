@@ -17,98 +17,9 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#if 0
-
-%skeleton "lalr1.cc"
-%define "parser_class_name" "filtergen_parser"
-%defines
-%{
-#include <string>
-#include "ast.h"
-#include "driver.h"
-%}
-
-%parse-param { filtergen_driver & driver }
-%lex-param { filtergen_driver & driver }
-
-%locations
-
-%initial-action
-{
-    // Initialise the initial location
-    @$.begin.filename = @$.end.filename = &driver.filename;
-};
-
-%debug
-%error-verbose
-
-%union
-{
-    struct ast_s * u_ast;
-    struct rule_list_s * u_rule_list;
-    struct rule_s * u_rule;
-    struct specifier_list_s * u_specifier_list;
-    struct negated_specifier_s * u_negated_specifier;
-    struct specifier_s * u_specifier;
-    struct direction_specifier_s * u_direction_specifier;
-    struct direction_argument_list_s * u_direction_argument_list;
-    struct direction_argument_s * u_direction_argument;
-    struct target_specifier_s * u_target_specifier;
-    struct log_target_specifier_s * u_log_target_specifier;
-    struct host_specifier_s * u_host_specifier;
-    struct host_argument_list_s * u_host_argument_list;
-    struct host_argument_s * u_host_argument;
-    struct port_specifier_s * u_port_specifier;
-    struct port_argument_list_s * u_port_argument_list;
-    struct port_argument_s * u_port_argument;
-    struct protocol_specifier_s * u_protocol_specifier;
-    struct protocol_argument_list_s * u_protocol_argument_list;
-    struct protocol_argument_s * u_protocol_argument;
-    struct icmptype_specifier_s * u_icmptype_specifier;
-    struct icmptype_argument_list_s * u_icmptype_argument_list;
-    struct icmptype_argument_s * u_icmptype_argument;
-    struct option_specifier_s * u_option_specifier;
-    struct compound_specifier_s * u_compound_specifier;
-    struct chaingroup_specifier_s * u_chaingroup_specifier;
-    struct subrule_list_s * u_subrule_list;
-    char * u_str;
-};
-%type <u_ast> ast
-%type <u_rule_list> rule_list
-%type <u_rule> rule
-%type <u_specifier_list> specifier_list
-%type <u_negated_specifier> negated_specifier
-%type <u_specifier> specifier
-%type <u_direction_specifier> direction_specifier
-%type <u_direction_argument_list> direction_argument_list
-%type <u_direction_argument_list> direction_argument_list_
-%type <u_direction_argument> direction_argument
-%type <u_target_specifier> target_specifier
-%type <u_host_specifier> host_specifier
-%type <u_host_argument_list> host_argument_list
-%type <u_host_argument_list> host_argument_list_
-%type <u_host_argument> host_argument
-%type <u_port_specifier> port_specifier
-%type <u_port_argument_list> port_argument_list
-%type <u_port_argument_list> port_argument_list_
-%type <u_port_argument> port_argument
-%type <u_protocol_specifier> protocol_specifier
-%type <u_protocol_argument_list> protocol_argument_list
-%type <u_protocol_argument_list> protocol_argument_list_
-%type <u_protocol_argument> protocol_argument
-%type <u_icmptype_specifier> icmptype_specifier
-%type <u_icmptype_argument_list> icmptype_argument_list
-%type <u_icmptype_argument_list> icmptype_argument_list_
-%type <u_icmptype_argument> icmptype_argument
-%type <u_option_specifier> option_specifier
-%type <u_compound_specifier> compound_specifier
-%type <u_chaingroup_specifier> chaingroup_specifier
-%type <u_subrule_list> subrule_list
-#endif //0
-
 #include "parser.h"
 
-FiltergenParser::FiltergenParser(FiltergenScanner & _scanner):
+FiltergenParser::FiltergenParser(Scanner & _scanner):
   scanner(_scanner)
 {
 
@@ -160,12 +71,12 @@ rule:	  specifier_list TOK_SEMICOLON
 	;
 #endif //0
 
-// void
-// FiltergenParser::parseRule()
-// {
-//   parseSpecifierList();
-//   match(Token::SEMI);
-// }
+bool
+FiltergenParser::parseRule()
+{
+  //parseSpecifierList();
+  return match(Token::SEMI);
+}
 
 #if 0
 

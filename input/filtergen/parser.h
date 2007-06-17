@@ -22,7 +22,7 @@
 
 #include <iostream>
 
-#include "scanner.h"
+#include "input/input.h"
 #include "token.h"
 
 /** Parser for the filtergen language */
@@ -32,7 +32,7 @@ class FiltergenParser
   /** Create a new parser object.
    * @param scanner the scanner used to scan the input and return tokens
    */
-  FiltergenParser(FiltergenScanner & scanner);
+  FiltergenParser(Scanner & scanner);
 
   /** Parse the input according to the grammar of this parser.
    * @return bool
@@ -45,8 +45,10 @@ class FiltergenParser
    */
   bool match(const Token & expected);
 
+  bool parseRule();
+
   /** The source scanner. */
-  FiltergenScanner & scanner;
+  Scanner & scanner;
 
   /** Unit test class requiring friend access to private attributes. */
   friend class FiltergenParserTest;
