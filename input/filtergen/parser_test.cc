@@ -10,8 +10,9 @@ class FiltergenParserTest:
 {
   CPPUNIT_TEST_SUITE(FiltergenParserTest);
   CPPUNIT_TEST(testConstructor);
+  CPPUNIT_TEST(testAccept);
   CPPUNIT_TEST(testMatch);
-  CPPUNIT_TEST(testParseIcmpTypeArgument);
+  CPPUNIT_TEST(testMatchFailure);
   CPPUNIT_TEST(testParseRule);
   CPPUNIT_TEST_SUITE_END();
 
@@ -20,14 +21,15 @@ class FiltergenParserTest:
   void tearDown();
 
   void testConstructor();
+  void testAccept();
   void testMatch();
-  void testParseIcmpTypeArgument();
+  void testMatchFailure();
   void testParseRule();
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION(FiltergenParserTest);
 
-/** A mock scanner object that we can fill with tokens. */
+/** A mock scanner object that we can fill with a sequence of tokens. */
 class MockScanner:
   public Scanner
 {
@@ -52,7 +54,18 @@ void
 FiltergenParserTest::testConstructor()
 {
   MockScanner s;
+  s.tokens.push_back(Token::EOS);
   FiltergenParser parser(s);
+}
+
+void
+FiltergenParserTest::testAccept()
+{
+  MockScanner s;
+  s.tokens.push_back(Token::ACCEPT);
+  FiltergenParser parser(s);
+
+  CPPUNIT_ASSERT_EQUAL(Token::ACCEPT, *(parser.currentToken));
 }
 
 void
@@ -66,13 +79,13 @@ FiltergenParserTest::testMatch()
 }
 
 void
-FiltergenParserTest::testParseIcmpTypeArgument()
+FiltergenParserTest::testMatchFailure()
 {
   MockScanner s;
-  s.tokens.push_back(Token::ID);
+  s.tokens.push_back(Token::SEMI);
   FiltergenParser parser(s);
 
-  CPPUNIT_ASSERT_EQUAL(true, parser.parseIcmpTypeArgument());
+  CPPUNIT_ASSERT_EQUAL(false, parser.match(Token::ACCEPT));
 }
 
 void
@@ -82,5 +95,5 @@ FiltergenParserTest::testParseRule()
   s.tokens.push_back(Token::SEMI);
   FiltergenParser parser(s);
 
-  CPPUNIT_ASSERT_EQUAL(true, parser.parseRule());
+  CPPUNIT_ASSERT_NO_THROW(parser.parseRule());
 }

@@ -22,23 +22,29 @@
 FiltergenParser::FiltergenParser(Scanner & _scanner):
   scanner(_scanner)
 {
+  accept();
+}
 
+void
+FiltergenParser::accept()
+{
+  currentToken = scanner.getToken();
 }
 
 bool
 FiltergenParser::match(const Token & expected)
 {
-  Token * current = scanner.getToken();
-  bool result = (*current == expected);
-  delete current;
-  return result;
+  if (*currentToken == expected) {
+    accept();
+    return true;
+  } else
+    return false;
 }
 
-bool
+void
 FiltergenParser::parse()
 {
   //parseRuleList();
-  return true;
 }
 
 // void
@@ -71,11 +77,11 @@ rule:	  specifier_list TOK_SEMICOLON
 	;
 #endif //0
 
-bool
+void
 FiltergenParser::parseRule()
 {
   //parseSpecifierList();
-  return match(Token::SEMI);
+  match(Token::SEMI);
 }
 
 #if 0
@@ -409,15 +415,6 @@ icmptype_argument: TOK_IDENTIFIER
 	    $$->icmptype = $1;
 	}
 	;
-#endif // 0
-
-bool
-FiltergenParser::parseIcmpTypeArgument()
-{
-  return match(Token::ID);
-}
-
-#if 0
 
 option_specifier: TOK_LOCAL
 	{

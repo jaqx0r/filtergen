@@ -37,20 +37,26 @@ class FiltergenParser
   /** Parse the input according to the grammar of this parser.
    * @return bool
    */
-  bool parse();
+  void parse();
 
  private:
+  /** Accept the current token, and advance the "token pointer" in the source
+   * stream.
+   */
+  void accept();
+
   /** Match a token in the stream.
    * @param expected the expected token
    */
   bool match(const Token & expected);
 
-  bool parseIcmpTypeArgument();
-
-  bool parseRule();
+  void parseRule();
 
   /** The source scanner. */
   Scanner & scanner;
+
+  /** The current token being parsed. */
+  const Token * currentToken;
 
   /** Unit test class requiring friend access to private attributes. */
   friend class FiltergenParserTest;
