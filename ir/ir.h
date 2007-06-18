@@ -1,6 +1,6 @@
 /* internal representation of packet filter description
  *
- * Copyright (c) 2005 Jamie Wilkinson <jaq@spacepants.org>
+ * Copyright (c) 2005-2007 Jamie Wilkinson <jaq@spacepants.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 
 #ifndef __FILTERGEN_IR_H__
 #define __FILTERGEN_IR_H__
+
 
 enum ir_expr_type { IR_EXPR_NONE, IR_EXPR_VALUE, IR_EXPR_UNARY, IR_EXPR_BINARY };
 
