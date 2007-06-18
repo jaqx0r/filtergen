@@ -38,6 +38,7 @@ SourcePositionTest::testConstructor()
 {
   SourcePosition sp;
 
+  CPPUNIT_ASSERT_EQUAL(std::string("(none)"), sp.filename);
   CPPUNIT_ASSERT_EQUAL(0, sp.linestart);
   CPPUNIT_ASSERT_EQUAL(0, sp.lineend);
   CPPUNIT_ASSERT_EQUAL(0, sp.colstart);
@@ -47,8 +48,9 @@ SourcePositionTest::testConstructor()
 void
 SourcePositionTest::testConstructorArgs()
 {
-  SourcePosition sp(1, 2, 3, 4);
+  SourcePosition sp("foo", 1, 2, 3, 4);
 
+  CPPUNIT_ASSERT_EQUAL(std::string("foo"), sp.filename);
   CPPUNIT_ASSERT_EQUAL(1, sp.linestart);
   CPPUNIT_ASSERT_EQUAL(2, sp.colstart);
   CPPUNIT_ASSERT_EQUAL(3, sp.lineend);
@@ -60,29 +62,29 @@ SourcePositionTest::testOutputStreamOperator()
 {
   std::ostringstream os;
 
-  SourcePosition sp(1);
+  SourcePosition sp("foo", 1);
   os << sp;
-  CPPUNIT_ASSERT_EQUAL(std::string("1"), os.str());
+  CPPUNIT_ASSERT_EQUAL(std::string("foo:1"), os.str());
 
   /* reset os */
   os.str("");
 
-  SourcePosition sp1(1, 2);
+  SourcePosition sp1("bar", 1, 2);
   os << sp1;
-  CPPUNIT_ASSERT_EQUAL(std::string("1.2"), os.str());
+  CPPUNIT_ASSERT_EQUAL(std::string("bar:1.2"), os.str());
 
   os.str("");
   SourcePosition sp2(1, 2, 3, 4);
   os << sp2;
-  CPPUNIT_ASSERT_EQUAL(std::string("1.2-3.4"), os.str());
+  CPPUNIT_ASSERT_EQUAL(std::string("(none):1.2-3.4"), os.str());
 
   os.str("");
   SourcePosition sp3(1, 2, 1, 3);
   os << sp3;
-  CPPUNIT_ASSERT_EQUAL(std::string("1.2-3"), os.str());
+  CPPUNIT_ASSERT_EQUAL(std::string("(none):1.2-3"), os.str());
 
   os.str("");
-  SourcePosition sp4(1, 0, 2, 0);
+  SourcePosition sp4("quux", 1, 0, 2, 0);
   os << sp4;
-  CPPUNIT_ASSERT_EQUAL(std::string("1-2"), os.str());
+  CPPUNIT_ASSERT_EQUAL(std::string("quux:1-2"), os.str());
 }

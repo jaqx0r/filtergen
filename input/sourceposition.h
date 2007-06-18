@@ -7,11 +7,15 @@ class SourcePosition
 {
 public:
   /** Constructor.
+   * @param filename the name of the file that the source position is in
    * @param linestart the line number that the source position starts on
    * @param colstart the column number that the source position starts on
    * @param lineend the line number that the source position ends on
    * @param colend the column number that the source positoin ends on
    */
+  SourcePosition(std::string filename,
+		 int linestart = 0, int colstart = 0,
+		 int lineend = 0, int colend = 0);
   SourcePosition(int linestart = 0, int colstart = 0,
 		 int lineend = 0, int colend = 0);
 
@@ -26,10 +30,11 @@ public:
 				   const SourcePosition & sourceposition);
 
 private:
-  int linestart;
-  int colstart;
-  int lineend;
-  int colend;
+  const std::string filename;
+  const int linestart;
+  const int colstart;
+  const int lineend;
+  const int colend;
 
   friend class SourcePositionTest;
 };
