@@ -1,17 +1,16 @@
 Import('env')
 
-sources = [
-    'enum.cc',
-    'token.cc',
-    'scanner.cc',
-    'parser.cc',
-    'resolver.cc',
-    'glue.cc']
+sources = ['enum.cc',
+           'token.cc',
+           'scanner.cc',
+           'parser.cc',
+           'resolver.cc',
+           'glue.cc']
 
 env.Library('in_filtergen', sources)
 
 env.Distribute(env['DISTTREE'],
-	       sources + ['SConscript',
-			  'ast.h',
-			  'resolver.h',
-			  ])
+               sources + ['SConscript',
+                          'ast.h',
+                          'resolver.h',
+                          ])

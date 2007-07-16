@@ -373,3 +373,4 @@ FiltergenScannerTest::testNextTokenCommentEOF()
   CPPUNIT_ASSERT_EQUAL(Token::ERROR, scanner.nextToken());
   CPPUNIT_ASSERT_EQUAL(true, scanner.source.eof());
 }
+
