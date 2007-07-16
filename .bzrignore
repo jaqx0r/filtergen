@@ -5,8 +5,6 @@ fgadm
 filtergen
 ir/iremit
 .sconsign
-input/filtergen/parser.cc
-input/filtergen/parser.hh
 input/iptables-save/parser.cc
 input/iptables-save/parser.hh
 input/iptables-save/scanner.cc
