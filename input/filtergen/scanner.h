@@ -22,6 +22,7 @@
 
 #include <iostream>
 #include <map>
+#include <stack>
 #include <string>
 
 #include "input/input.h"
@@ -35,7 +36,7 @@ public Scanner
   /** Create a new scanner object.
    * @param source the stream used as input to the scanner
    */
-  FiltergenScanner(std::istream & source);
+  FiltergenScanner(std::istream * source);
 
   /** Return the next token from the stream.
    * @return Token
@@ -69,8 +70,13 @@ public Scanner
    */
   bool skipWhitespaceAndComments();
 
-  /** The source file stream. */
-  std::istream & source;
+  /** Return the current source stream.
+   * @return the current source stream
+   */
+  std::istream * const source() const;
+
+  /** The source file stream stack */
+  std::stack<std::istream *> sources;
   /** The spelling of the current token. */
   std::string lexeme;
 

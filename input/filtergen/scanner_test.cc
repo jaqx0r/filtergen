@@ -26,6 +26,7 @@ public CppUnit::TestFixture
   CPPUNIT_TEST(testStringIdentifier);
   CPPUNIT_TEST(testStringIdentifierNoEnd);
   CPPUNIT_TEST(testNextTokenCommentEOF);
+  CPPUNIT_TEST(testInclude);
   CPPUNIT_TEST_SUITE_END();
 
  public:
@@ -51,6 +52,7 @@ public CppUnit::TestFixture
   void testStringIdentifier();
   void testStringIdentifierNoEnd();
   void testNextTokenCommentEOF();
+  void testInclude();
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION(FiltergenScannerTest);
@@ -69,16 +71,17 @@ void
 FiltergenScannerTest::testConstructor()
 {
   std::istringstream i("");
-  FiltergenScanner scanner(i);
+  FiltergenScanner scanner(&i);
 
   CPPUNIT_ASSERT_EQUAL(std::string(""), scanner.lexeme);
+  CPPUNIT_ASSERT_EQUAL((size_t) 1, scanner.sources.size());
 }
 
 void
 FiltergenScannerTest::testAccept()
 {
   std::istringstream i("a");
-  FiltergenScanner scanner(i);
+  FiltergenScanner scanner(&i);
 
   CPPUNIT_ASSERT_EQUAL(std::string(""), scanner.lexeme);
   scanner.accept();
@@ -89,7 +92,7 @@ void
 FiltergenScannerTest::testInspect()
 {
   std::istringstream i("a");
-  FiltergenScanner scanner(i);
+  FiltergenScanner scanner(&i);
 
   CPPUNIT_ASSERT_EQUAL((int) 'a', scanner.inspect());
   CPPUNIT_ASSERT_EQUAL(std::string(""), scanner.lexeme);
@@ -101,7 +104,7 @@ void
 FiltergenScannerTest::testInspectNext()
 {
   std::istringstream i("ab");
-  FiltergenScanner scanner(i);
+  FiltergenScanner scanner(&i);
 
   CPPUNIT_ASSERT_EQUAL((int) 'b', scanner.inspect(1));
   CPPUNIT_ASSERT_EQUAL((int) 'a', scanner.inspect());
@@ -111,7 +114,7 @@ void
 FiltergenScannerTest::testNextTokenEmptyStream()
 {
   std::istringstream i("");
-  FiltergenScanner scanner(i);
+  FiltergenScanner scanner(&i);
 
   // force empty stream
   scanner.accept();
@@ -122,10 +125,10 @@ void
 FiltergenScannerTest::testSkipWhitespace()
 {
   std::istringstream i(" ");
-  FiltergenScanner scanner(i);
+  FiltergenScanner scanner(&i);
 
   scanner.skipWhitespaceAndComments();
-  CPPUNIT_ASSERT_EQUAL(true, scanner.source.eof());
+  CPPUNIT_ASSERT_EQUAL(true, scanner.source()->eof());
   CPPUNIT_ASSERT_EQUAL(std::string(""), scanner.lexeme);
 }
 
@@ -133,10 +136,10 @@ void
 FiltergenScannerTest::testCComment()
 {
   std::istringstream i("/* c comment */");
-  FiltergenScanner scanner(i);
+  FiltergenScanner scanner(&i);
 
   scanner.skipWhitespaceAndComments();
-  CPPUNIT_ASSERT_EQUAL(true, scanner.source.eof());
+  CPPUNIT_ASSERT_EQUAL(true, scanner.source()->eof());
   CPPUNIT_ASSERT_EQUAL(std::string(""), scanner.lexeme);
 }
 
@@ -144,10 +147,10 @@ void
 FiltergenScannerTest::testShellComment()
 {
   std::istringstream i("# shell comment\n");
-  FiltergenScanner scanner(i);
+  FiltergenScanner scanner(&i);
 
   scanner.skipWhitespaceAndComments();
-  CPPUNIT_ASSERT_EQUAL(true, scanner.source.eof());
+  CPPUNIT_ASSERT_EQUAL(true, scanner.source()->eof());
   CPPUNIT_ASSERT_EQUAL(std::string(""), scanner.lexeme);
 }
 
@@ -155,10 +158,10 @@ void
 FiltergenScannerTest::testShellCommentNoEOL()
 {
   std::istringstream i("# shell comment no EOL");
-  FiltergenScanner scanner(i);
+  FiltergenScanner scanner(&i);
 
   scanner.skipWhitespaceAndComments();
-  CPPUNIT_ASSERT_EQUAL(true, scanner.source.eof());
+  CPPUNIT_ASSERT_EQUAL(true, scanner.source()->eof());
   CPPUNIT_ASSERT_EQUAL(std::string(""), scanner.lexeme);
 }
 
@@ -166,7 +169,7 @@ void
 FiltergenScannerTest::testScanPunctuation()
 {
   std::istringstream i("{}[];/:!");
-  FiltergenScanner scanner(i);
+  FiltergenScanner scanner(&i);
 
   CPPUNIT_ASSERT_EQUAL(Token::LCURLY, scanner.nextToken());
   CPPUNIT_ASSERT_EQUAL(Token::RCURLY, scanner.nextToken());
@@ -182,7 +185,7 @@ void
 FiltergenScannerTest::testScanNumbers()
 {
   std::istringstream i("37 69 255");
-  FiltergenScanner scanner(i);
+  FiltergenScanner scanner(&i);
 
   /* 37 */
   CPPUNIT_ASSERT_EQUAL(Token::ID, scanner.nextToken());
@@ -226,7 +229,7 @@ FiltergenScannerTest::testScanKeywords()
        it != keywords.end();
        ++it) {
     std::istringstream i(it->second);
-    FiltergenScanner scanner(i);
+    FiltergenScanner scanner(&i);
 
     CPPUNIT_ASSERT_EQUAL(it->first, scanner.nextToken());
   }
@@ -236,7 +239,7 @@ void
 FiltergenScannerTest::testScanNames()
 {
   std::istringstream i("foo bar mail.example.com");
-  FiltergenScanner scanner(i);
+  FiltergenScanner scanner(&i);
 
   /* foo */
   CPPUNIT_ASSERT_EQUAL(Token::ID, scanner.nextToken());
@@ -256,7 +259,7 @@ FiltergenScannerTest::testScanNetworkNames()
 {
   std::istringstream i("0.0.0.0 http 127.0.0.1/255.255.255.255 bar/29 "
 		       "bar/255.255.255.248");
-  FiltergenScanner scanner(i);
+  FiltergenScanner scanner(&i);
 
   CPPUNIT_ASSERT_EQUAL(Token::ID, scanner.nextToken());
   CPPUNIT_ASSERT_EQUAL(std::string("0.0.0.0"), scanner.lexeme);
@@ -294,7 +297,7 @@ FiltergenScannerTest::testInterspersedComments()
 		       "word #blah\n"
 		       "/* c comments can't nest */ ***/\n"
 		       "/* this /* is okay */word\n");
-  FiltergenScanner scanner(i);
+  FiltergenScanner scanner(&i);
 
   /* c comment */
   CPPUNIT_ASSERT_EQUAL(Token::ID, scanner.nextToken());
@@ -334,10 +337,10 @@ FiltergenScannerTest::testCCommentNoEnd()
   std::istringstream i("/* a comment without"
 		       "   an ending is like haiku"
 		       "   with too many syllables");
-  FiltergenScanner scanner(i);
+  FiltergenScanner scanner(&i);
 
   CPPUNIT_ASSERT_EQUAL(false, scanner.skipWhitespaceAndComments());
-  CPPUNIT_ASSERT_EQUAL(true, scanner.source.eof());
+  CPPUNIT_ASSERT_EQUAL(true, scanner.source()->eof());
   CPPUNIT_ASSERT_EQUAL(std::string(""), scanner.lexeme);
 }
 
@@ -345,7 +348,7 @@ void
 FiltergenScannerTest::testStringIdentifier()
 {
   std::istringstream i("\"string\"");
-  FiltergenScanner scanner(i);
+  FiltergenScanner scanner(&i);
 
   CPPUNIT_ASSERT_EQUAL(Token::ID, scanner.nextToken());
   CPPUNIT_ASSERT_EQUAL(std::string("string"), scanner.lexeme);
@@ -355,10 +358,10 @@ void
 FiltergenScannerTest::testStringIdentifierNoEnd()
 {
   std::istringstream i("\"string");
-  FiltergenScanner scanner(i);
+  FiltergenScanner scanner(&i);
 
   CPPUNIT_ASSERT_EQUAL(Token::ERROR, scanner.nextToken());
-  CPPUNIT_ASSERT_EQUAL(true, scanner.source.eof());
+  CPPUNIT_ASSERT_EQUAL(true, scanner.source()->eof());
 }
 
 void
@@ -366,11 +369,22 @@ FiltergenScannerTest::testNextTokenCommentEOF()
 {
   std::istringstream i("foo /* comment"
 		       "bar # comment");
-  FiltergenScanner scanner(i);
+  FiltergenScanner scanner(&i);
 
   CPPUNIT_ASSERT_EQUAL(Token::ID, scanner.nextToken());
   CPPUNIT_ASSERT_EQUAL(std::string("foo"), scanner.lexeme);
   CPPUNIT_ASSERT_EQUAL(Token::ERROR, scanner.nextToken());
-  CPPUNIT_ASSERT_EQUAL(true, scanner.source.eof());
+  CPPUNIT_ASSERT_EQUAL(true, scanner.source()->eof());
 }
 
+void
+FiltergenScannerTest::testInclude()
+{
+  //TODO(jaq): this touches the filesystem :(
+  std::istringstream i("include testsuite/filtergen.input/fg.scan/include");
+  FiltergenScanner scanner(&i);
+
+  CPPUNIT_ASSERT_EQUAL(Token::ID, scanner.nextToken());
+  CPPUNIT_ASSERT_EQUAL(std::string("pants"), scanner.lexeme);
+  CPPUNIT_ASSERT_EQUAL(Token::EOS, scanner.nextToken());
+}

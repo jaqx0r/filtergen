@@ -18,13 +18,16 @@
  */
 
 #include <cctype>
+#include <fstream>
+#include <iostream>
 
 #include "scanner.h"
 
-FiltergenScanner::FiltergenScanner(std::istream & s):
-  source(s),
+FiltergenScanner::FiltergenScanner(std::istream * s):
   lexeme("")
 {
+  sources.push(s);
+
   keywords["accept"] = &Token::ACCEPT;
   keywords["dest"] = &Token::DEST;
   keywords["dport"] = &Token::DPORT;
@@ -49,7 +52,7 @@ FiltergenScanner::FiltergenScanner(std::istream & s):
 void
 FiltergenScanner::accept(const bool append)
 {
-  const int c = source.get();
+  const int c = source()->get();
   if (append)
     lexeme += c;
 }
@@ -57,13 +60,13 @@ FiltergenScanner::accept(const bool append)
 int
 FiltergenScanner::inspect(const int nthChar)
 {
-  const int c = source.get();
+  const int c = source()->get();
   if (nthChar == 0) {
-    source.putback(c);
+    source()->putback(c);
     return c;
   } else {
     const char r = inspect(nthChar - 1);
-    source.putback(c);
+    source()->putback(c);
     return r;
   }
 }
@@ -85,7 +88,7 @@ FiltergenScanner::skipWhitespaceAndComments()
       accept(false); accept(false);
 
       while (inComment) {
-	if (source.eof()) {
+	if (source()->eof()) {
 	  inComment = false;
 	  return false;
 	} else if (inspect() == '*' && inspect(1) == '/') {
@@ -102,7 +105,7 @@ FiltergenScanner::skipWhitespaceAndComments()
       accept(false);
 
       while (inComment) {
-	if (inspect() == '\n' || source.eof()) {
+	if (inspect() == '\n' || source()->eof()) {
 	  accept(false);
 	  inComment = false;
 	} else {
@@ -115,6 +118,13 @@ FiltergenScanner::skipWhitespaceAndComments()
   return true;
 }
 
+std::istream * const
+FiltergenScanner::source() const
+{
+  assert(sources.size() > 0);
+  return sources.top();
+}
+
 const Token
 FiltergenScanner::nextToken()
 {
@@ -123,8 +133,14 @@ FiltergenScanner::nextToken()
 
   lexeme.clear();
 
-  if (source.eof())
-    return Token::EOS;
+  if (source()->eof()) {
+    if (sources.size() > 1) {
+      sources.pop();
+      return nextToken();
+    } else {
+      return Token::EOS;
+    }
+  }
 
   /* punctuation */
   switch (inspect()) {
@@ -157,10 +173,10 @@ FiltergenScanner::nextToken()
   /* string identifiers */
   if (inspect() == '"') {
     accept(false);
-    while (!source.eof() && inspect() != '"')
+    while (!source()->eof() && inspect() != '"')
       accept();
     /* TODO(jaq): should raise an error, unterminated string */
-    if (source.eof())
+    if (source()->eof())
       return Token::ERROR;
     accept(false);
     return Token::ID;
@@ -172,6 +188,21 @@ FiltergenScanner::nextToken()
     while (isalnum(inspect()) || inspect() == '.') {
       accept();
     }
+
+    /* include file support */
+    if (std::string("include") == lexeme) {
+      skipWhitespaceAndComments();
+      lexeme.clear();
+      while (!isspace(inspect()) &&
+             inspect() != ';' &&
+             !source()->eof()) {
+        accept();
+      }
+      std::cerr << "filename = " << lexeme << std::endl;
+      sources.push(new std::ifstream(lexeme.c_str()));
+      return nextToken();
+    }
+
     if (keywords.find(lexeme) != keywords.end())
       return *keywords[lexeme];
     return Token::ID;
