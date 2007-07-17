@@ -381,7 +381,7 @@ void
 FiltergenScannerTest::testInclude()
 {
   //TODO(jaq): this touches the filesystem :(
-  std::istringstream i("include testsuite/filtergen.input/fg.scan/include");
+  std::istringstream i("include input/filtergen/include.test");
   FiltergenScanner scanner(&i);
 
   CPPUNIT_ASSERT_EQUAL(Token::ID, scanner.nextToken());
