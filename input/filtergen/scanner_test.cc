@@ -388,3 +388,7 @@ FiltergenScannerTest::testInclude()
   CPPUNIT_ASSERT_EQUAL(std::string("pants"), scanner.lexeme);
   CPPUNIT_ASSERT_EQUAL(Token::EOS, scanner.nextToken());
 }
+
+/* TODO(jaq): fail on a file not found */
+
+/* TODO(jaq): recursive include stops at a certain depth */

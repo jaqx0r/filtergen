@@ -1,1 +1,0 @@
-include nonexistentfile # { dg-warning "stat failed on nonexistentfile" "" }
