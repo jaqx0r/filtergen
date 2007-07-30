@@ -198,7 +198,6 @@ FiltergenScanner::nextToken()
              !source()->eof()) {
         accept();
       }
-      std::cerr << "filename = " << lexeme << std::endl;
       sources.push(new std::ifstream(lexeme.c_str()));
       return nextToken();
     }
