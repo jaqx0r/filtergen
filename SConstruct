@@ -1,12 +1,27 @@
 import glob
 import os
 import SCons.Node.FS
+from SCons.Script.SConscript import SConsEnvironment
 
 EnsureSConsVersion(0, 95)
 
 VERSION = "0.13"
 
 opts = Options()
+
+### unit testing
+def UnitTest(env, source, **kwargs):
+	test = env.Program(source, **kwargs)
+	# run the test after the program
+	testcmd = "echo " + test[0].abspath
+	env.AddPostAction(test, testcmd)
+	env.Alias('check', test)
+	env.AlwaysBuild(test)
+	return test
+
+SConsEnvironment.UnitTest = UnitTest
+### unit testing
+
 opts.AddOptions(
 	EnumOption('debug', 'debugging compiler options', 'yes',
 			   allowed_values=('yes', 'no', 'gcov'),
@@ -65,12 +80,12 @@ if not env.GetOption("clean"):
 	env = conf.Finish()
 
 # choose debugging level
-if ARGUMENTS.get("debug") == 'no':
-	env.AppendUnique(CCFLAGS=['-O2'])
+if ARGUMENTS.get("debug") in ('no',):
+    env.AppendUnique(CCFLAGS=['-O2'])
 else:
-	env.AppendUnique(CCFLAGS=['-g', '-O0'])
-	if ARGUMENTS.get("debug") in ['gcov']:
-		env.AppendUnique(CCFLAGS=['-fprofile-arcs', '-ftest-coverage'])
+    env.AppendUnique(CCFLAGS=['-g', '-O0'])
+    if ARGUMENTS.get("debug") in ('gcov',):
+        env.AppendUnique(CCFLAGS=['-fprofile-arcs', '-ftest-coverage'])
 
 # set warning flags
 warnings = ['',
@@ -160,7 +175,6 @@ def sed(target, source, env):
 		i.close()
 		o.close()
 	return None
-
 fgadm = env.Command('fgadm', 'fgadm.in', [sed, Chmod('fgadm', 0755)])
 
 env.Command(['fgadm.conf', 'rules.filter'],

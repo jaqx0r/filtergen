@@ -1,0 +1,14 @@
+.sconf_temp
+.sconsign.dblite
+config.log
+fgadm
+filtergen
+input/filtergen/parser.c
+input/filtergen/parser.h
+input/filtergen/scanner.c
+input/iptables-save/parser.c
+input/iptables-save/parser.h
+input/iptables-save/scanner.c
+ir/iremit
+.sconsign
+input/filtergen/t/scan

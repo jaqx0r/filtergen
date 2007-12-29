@@ -8,5 +8,5 @@ If you're on a Red Hat-like RPM-based system, you should be able just to run
 "rpm -ta" on the tarball.
 
 filtergen's build system uses SCons, rather than the GNU autotools or a custom
-Makefile.  To build and install, ensure you have SCons, gcc, and flex
+Makefile.  To build and install, ensure you have SCons, gcc, flex, and bison
 installed, and type "scons install".
