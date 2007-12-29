@@ -1,6 +1,7 @@
 import glob
 import os
 import SCons.Node.FS
+from SCons.Script.SConscript import SConsEnvironment
 
 EnsureSConsVersion(0, 95)
 
@@ -12,6 +13,19 @@ opts = Options()
 #			   allowed_values=('yes', 'no', 'gcov'),
 #			   map={})
 #	)
+
+### unit testing
+def UnitTest(env, source, **kwargs):
+	test = env.Program(source, **kwargs)
+	# run the test after the program
+	testcmd = "echo " + test[0].abspath
+	env.AddPostAction(test, testcmd)
+	env.Alias('check', test)
+	env.AlwaysBuild(test)
+	return test
+
+SConsEnvironment.UnitTest = UnitTest
+### unit testing
 
 env = Environment(options = opts)
 
@@ -157,7 +171,6 @@ def sed(target, source, env):
 		i.close()
 		o.close()
 	return None
-
 fgadm = env.Command('fgadm', 'fgadm.in', [sed, Chmod('fgadm', 0755)])
 
 env.Command(['fgadm.conf', 'rules.filter'],
