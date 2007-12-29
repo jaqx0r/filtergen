@@ -120,23 +120,23 @@ pkgexdir = pkgdocdir + '/examples'
 env.AppendUnique(CPPPATH=['#'])
 
 runtests = env.UnitTest(
-		       source=['runtests.cc',
-			       'dummy_test.cc',
-			       'input/input.cc',
-			       'input/sourceposition_test.cc',
-			       'input/sourceposition.cc',
-			       'input/filtergen/string_test.cc',
-			       'input/filtergen/enum_test.cc',
-			       'input/filtergen/token_test.cc',
-			       'input/filtergen/scanner_test.cc',
-			       'input/filtergen/parser_test.cc',
-			       'ir/binaryexpr_test.cc',
-			],
-		       LIBS=['cppunit',
-			     'in_filtergen',
-			     ],
-		       LIBPATH=['input/filtergen',
-				])
+               source=['runtests.cc',
+                   'dummy_test.cc',
+                   'input/input.cc',
+                   'input/sourceposition_test.cc',
+                   'input/sourceposition.cc',
+                   'input/filtergen/string_test.cc',
+                   'input/filtergen/enum_test.cc',
+                   'input/filtergen/token_test.cc',
+                   'input/filtergen/scanner_test.cc',
+                   'input/filtergen/parser_test.cc',
+                   'ir/binaryexpr_test.cc',
+            ],
+               LIBS=['cppunit',
+                 'in_filtergen',
+                 ],
+               LIBPATH=['input/filtergen',
+                ])
 #env.AddPostAction('runtests', Action('./runtests'))
 #env.Default(runtests)
 
