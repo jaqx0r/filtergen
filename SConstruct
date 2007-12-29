@@ -168,7 +168,8 @@ filtergen  = env.Program('filtergen', filtergen_sources,
 env.Depends(filtergen, runtests)
 Default(filtergen)
 
-env.AddPostAction(filtergen, Action('doxygen'))
+#env.AddPostAction(filtergen, Action('doxygen'))
+env.AddPostAction(runtests, Action('doxygen'))
 env.Distribute(env['DISTTREE'],
 	       filtergen_sources + ['filter.h',
 				    'icmpent.h',
