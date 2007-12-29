@@ -24,10 +24,10 @@ public:
    * coding standards style.
    * http://www.gnu.org/prep/standards/html_node/Errors.html#Errors
    * @param os the output stream
-   * @param sourceposition the SourcePosition object being streamed
+   * @param sp the SourcePosition object being streamed
    */
   friend std::ostream & operator<<(std::ostream & os,
-				   const SourcePosition & sourceposition);
+                                   const SourcePosition & sp);
 
 private:
   const std::string filename;
