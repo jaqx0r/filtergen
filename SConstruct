@@ -1,6 +1,7 @@
 import glob
 import os
 import SCons.Node.FS
+from SCons.Script.SConscript import SConsEnvironment
 
 EnsureSConsVersion(0, 95)
 
@@ -9,9 +10,23 @@ VERSION = "0.13"
 opts = Options()
 opts.AddOptions(
     EnumOption('debug', 'debugging compiler options', 'yes',
-	       allowed_values=('yes', 'no', 'gcov'),
-	       map={})
+               allowed_values=('yes', 'no', 'gcov'),
+               map={})
     )
+
+### unit testing
+def UnitTest(env, source, **kwargs):
+	test = env.Program(source, **kwargs)
+	# run the test after the program
+	testcmd = "echo " + test[0].abspath
+	env.AddPostAction(test, testcmd)
+	env.Alias('check', test)
+	env.AlwaysBuild(test)
+	return test
+
+SConsEnvironment.UnitTest = UnitTest
+### unit testing
+
 
 env = Environment(options = opts)
 
@@ -70,7 +85,6 @@ else:
     env.AppendUnique(CCFLAGS=['-g', '-O0'])
     if ARGUMENTS.get("debug") in ('gcov',):
         env.AppendUnique(CCFLAGS=['-fprofile-arcs', '-ftest-coverage'])
-
 
 # set warning flags
 warnings = ['',
@@ -151,6 +165,7 @@ filtergen  = env.Program('filtergen', filtergen_sources,
                          )
 env.Depends(filtergen, runtests)
 Default(filtergen)
+
 env.AddPostAction(filtergen, Action('doxygen'))
 env.Distribute(env['DISTTREE'],
 	       filtergen_sources + ['filter.h',
@@ -161,19 +176,19 @@ env.Distribute(env['DISTTREE'],
 				    ])
 
 def sed(target, source, env):
-    expandos = {
-	'SYSCONFDIR': sysconfdir,
-	'PKGEXDIR': pkgexdir,
-	'SBINDIR': sbindir,
-	'VERSION': VERSION
-	}
-    for (t, s) in zip(target, source):
-	o = file(str(t), "w")
-	i = file(str(s), "r")
-	o.write(i.read() % expandos)
-	i.close()
-	o.close()
-    return None
+	expandos = {
+		'SYSCONFDIR': sysconfdir,
+		'PKGEXDIR': pkgexdir,
+		'SBINDIR': sbindir,
+		'VERSION': VERSION
+		}
+	for (t, s) in zip(target, source):
+		o = file(str(t), "w")
+		i = file(str(s), "r")
+		o.write(i.read() % expandos)
+		i.close()
+		o.close()
+	return None
 
 fgadm = env.Command('fgadm', 'fgadm.in', [sed, Chmod('fgadm', 0755)])
 
@@ -188,14 +203,15 @@ SConscript([
     'input/filtergen/SConscript',
     #'input/iptables-save/SConscript',
     'ir/SConscript',
-    'output/iptables/SConscript',
-    'output/ipchains/SConscript',
-    'output/ipfilter/SConscript',
-    'output/cisco/SConscript',
-    'output/filtergen/SConscript',
-    'examples/SConscript',
-    'doc/SConscript',
-    ], 'env')
+	#'output/iptables/SConscript',
+	#'output/ipchains/SConscript',
+	#'output/ipfilter/SConscript',
+	#'output/cisco/SConscript',
+	#'output/filtergen/SConscript',
+	#'output/graphviz/SConscript',
+	'examples/SConscript',
+	'doc/SConscript',
+	], 'env')
 
 env.Install(DESTDIR + sbindir, [filtergen, fgadm])
 bin = env.Alias('install-bin', DESTDIR + sbindir)

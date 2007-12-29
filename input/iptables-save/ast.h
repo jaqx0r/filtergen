@@ -44,120 +44,38 @@ struct not_range_s {
     struct range_s * range;
 };
 
-struct in_interface_option_s {
-    struct not_identifier_s * not_identifier;
-};
-
-struct jump_option_s {
-    struct identifier_s * identifier;
-};
-
-struct destination_option_s {
-    struct not_identifier_s * not_identifier;
-};
-
-struct protocol_option_s {
-    struct identifier_s * identifier;
-};
-
-struct match_option_s {
-    struct identifier_s * identifier;
-};
-
-struct dport_option_s {
-    struct not_range_s * not_range;
-    struct not_identifier_s * not_identifier;
-};
-
-struct to_ports_option_s {
-    struct identifier_s * identifier;
-};
-
-struct source_option_s {
-    struct not_identifier_s * not_identifier;
-};
-
-struct out_interface_option_s {
-    struct not_identifier_s * not_identifier;
-};
-
-struct to_source_option_s {
-    struct identifier_s * identifier;
-};
-
-struct state_option_s {
-    struct identifier_s * identifier;
-};
-
-struct limit_option_s {
-    struct identifier_s * identifier;
-};
-
-struct log_prefix_option_s {
-    struct identifier_s * identifier;
-};
-
-struct sport_option_s {
-    struct not_range_s * not_range;
-    struct not_identifier_s * not_identifier;
-};
-
-struct uid_owner_option_s {
-    struct identifier_s * identifier;
-};
-
-struct tcp_flags_option_s {
-    struct identifier_s * flags;
-    struct identifier_s * mask;
-};
-
-struct reject_with_option_s {
-    struct identifier_s * identifier;
-};
-
-struct icmp_type_option_s {
-    struct identifier_s * identifier;
-};
-
-struct fragment_option_s {
-    int i;
-};
-
-struct clamp_mss_to_pmtu_option_s {
-    int i;
-};
-
-struct helper_option_s {
-    struct identifier_s * identifier;
-};
-
-struct syn_option_s {
-    int i;
+enum ipts_option_type { IPTS_OPT_IN_INTERFACE,
+			IPTS_OPT_OUT_INTERFACE,
+			IPTS_OPT_JUMP,
+			IPTS_OPT_SOURCE,
+			IPTS_OPT_DESTINATION,
+			IPTS_OPT_MATCH,
+			IPTS_OPT_PROTOCOL,
+			IPTS_OPT_DPORT,
+			IPTS_OPT_SPORT,
+			IPTS_OPT_TO_PORTS,
+			IPTS_OPT_TO_SOURCE,
+			IPTS_OPT_STATE,
+			IPTS_OPT_LIMIT,
+			IPTS_OPT_LOG_PREFIX,
+			IPTS_OPT_UID_OWNER,
+			IPTS_OPT_TCP_FLAGS,
+			IPTS_OPT_REJECT_WITH,
+			IPTS_OPT_ICMP_TYPE,
+			IPTS_OPT_FRAGMENT,
+			IPTS_OPT_CLAMP_MSS_TO_PMTU,
+			IPTS_OPT_HELPER,
+			IPTS_OPT_SYN,
 };
 
 struct option_s {
-    struct in_interface_option_s * in_interface_option;
-    struct jump_option_s * jump_option;
-    struct destination_option_s * destination_option;
-    struct protocol_option_s * protocol_option;
-    struct match_option_s * match_option;
-    struct dport_option_s * dport_option;
-    struct to_ports_option_s * to_ports_option;
-    struct source_option_s * source_option;
-    struct out_interface_option_s * out_interface_option;
-    struct to_source_option_s * to_source_option;
-    struct state_option_s * state_option;
-    struct limit_option_s * limit_option;
-    struct log_prefix_option_s * log_prefix_option;
-    struct sport_option_s * sport_option;
-    struct uid_owner_option_s * uid_owner_option;
-    struct tcp_flags_option_s * tcp_flags_option;
-    struct reject_with_option_s * reject_with_option;
-    struct icmp_type_option_s * icmp_type_option;
-    struct fragment_option_s * fragment_option;
-    struct clamp_mss_to_pmtu_option_s * clamp_mss_to_pmtu_option;
-    struct helper_option_s * helper_option;
-    struct syn_option_s * syn_option;
+    enum ipts_option_type type;
+
+    struct not_identifier_s * not_identifier;
+    struct identifier_s * identifier;
+    struct not_range_s * not_range;
+    struct identifier_s * flags;
+    struct identifier_s * mask;
 };
 
 struct not_option_s {

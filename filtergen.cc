@@ -33,8 +33,9 @@
 #include <getopt.h>
 #endif
 
-#include "filter.h"
+#include "ir/ir.h"
 #include "input/input.h"
+#include "output/output.h"
 
 static FILE *outfile;
 
@@ -127,17 +128,19 @@ struct source_parser_s {
 
 /** Function pointer table containing target filter types and the emitter
  * functions */
-struct filtyp {
+struct target_emitter_s {
     const char * name;
-    filtergen * compiler;
-    filter_flush * flusher;
-} filter_types[] = {
-    { "iptables", fg_iptables, flush_iptables, },
-    { "ipchains", fg_ipchains, flush_ipchains, },
-    { "ipfilter", fg_ipfilter, NULL },
-    { "cisco", fg_cisco, NULL },
-    { "filtergen", emit_filtergen, NULL },
-    { NULL, NULL, NULL }
+    target_emitter * emitter;
+} target_emitters[] = {
+    /*
+      { "iptables", fg_iptables },
+      { "ipchains", fg_ipchains },
+      { "ipfilter", fg_ipfilter },
+      { "cisco", fg_cisco },
+    */
+    //{ "filtergen", emit_filtergen },
+    //{ "graphviz", graphviz_target_emitter },
+    { NULL, NULL }
 };
 
 #ifdef HAVE_GETOPT_H
@@ -159,15 +162,14 @@ static struct option long_options[] = {
 
 /** Program entry point. */
 int main(int argc, char **argv) {
-    struct filter *f;
+    struct ir_s * ir;
     int l;
     char *filename = NULL, *ftn = NULL, *ofn = NULL, * source_name = NULL;
-    struct source_parser_s * sp;
-    struct filtyp *ft = NULL;
-    int flags = 0;
+    struct source_parser_s * sp = NULL;
+    struct target_emitter_s * te = NULL;
+    /* int flags = 0; / * FIXME: kill this */
     char *progname;
     int arg;
-    enum filtertype flushpol = T_ACCEPT;
     int resolve_names = 1;
 
     progname = argv[0];
@@ -183,7 +185,7 @@ int main(int argc, char **argv) {
 	    exit(0);
 	    break;
 	  case 'c':
-	    flags |= FF_NOSKEL;
+	    /* flags |= FF_NOSKEL;*/
 	    break;
 	  case 'o':
 	    ofn = strdup(optarg);
@@ -194,20 +196,22 @@ int main(int argc, char **argv) {
 	  case 't':
 	    ftn = strdup(optarg);
 	    break;
-	  case 'F':
-	    flags |= FF_FLUSH;
-	    if (!strcasecmp(optarg, "accept")) {
-		flushpol = T_ACCEPT;
-	    } else if (!strcasecmp(optarg, "drop")) {
-		flushpol = DROP;
-	    } else if (!strcasecmp(optarg, "reject")) {
-		flushpol = T_REJECT;
-	    } else {
-		fprintf(stderr, "%s: flush policy unrecofgnised: %s\n", progname, optarg);
-		usage(progname);
-		exit(1);
-	    }
-	    break;
+	    /*
+	      case 'F':
+	      flags |= FF_FLUSH;
+	      if (!strcasecmp(optarg, "accept")) {
+	      flushpol = T_ACCEPT;
+	      } else if (!strcasecmp(optarg, "drop")) {
+	      flushpol = DROP;
+	      } else if (!strcasecmp(optarg, "reject")) {
+	      flushpol = T_REJECT;
+	      } else {
+	      fprintf(stderr, "%s: flush policy unrecofgnised: %s\n", progname, optarg);
+	      usage(progname);
+	      exit(1);
+	      }
+	      break;
+	    */
 	  case 'V':
 	    printf("filtergen " VERSION "\n");
 	    exit(0);
@@ -219,13 +223,17 @@ int main(int argc, char **argv) {
 	    break;
 	}
     }
-    if (!(flags & FF_FLUSH)) {
-	if (optind >= argc) {
-	    usage(progname);
-	    exit(1);
-	} else
-	    filename = argv[optind++];
-    }
+    /*
+      if (!(flags & FF_FLUSH)) {
+    */
+    if (optind >= argc) {
+	usage(progname);
+	exit(1);
+    } else
+	filename = argv[optind++];
+    /*
+      }
+    */
 
     if (ofn) {
 	/* XXX - open a different tempfile, and rename on success */
@@ -250,21 +258,36 @@ int main(int argc, char **argv) {
     }
 
     /* work out which target emitter to use */
-    if(!ftn || !*ftn) ftn = strdup("iptables");
-    for (ft = filter_types; ft->name; ft++)
-	if (!strcmp(ftn, ft->name))
+    /*if(!ftn || !*ftn) ftn = strdup("iptables");*/
+    if(!ftn || !*ftn) ftn = strdup("filtergen");
+    for (te = target_emitters; te->name; te++)
+	if (!strcmp(ftn, te->name))
 	    break;
-    if (!ft->name) {
+    if (!te->name) {
 	fprintf(stderr, "%s: target filter unrecognised: %s\n", progname, ftn);
 	usage(progname);
 	exit(1);
     }
 
     /* What to do, then? */
-    if(flags & FF_FLUSH) {
-	/* Just flush it */
-	l = ft->flusher(flushpol);
+    /*
+      if(flags & FF_FLUSH) {
+      / * Just flush it * /
+      l = ft->flusher(flushpol);
+      } else {
+    */
+    FILE * file;
+
+    /* Compile from a file */
+    if(filename && !strcmp(filename, "-")) filename = NULL;
+
+    if (filename) {
+	/** FIXME: make more effort to find the file */
+	if (!(file = fopen(filename, "r"))) {
+	    fprintf(stderr, "can't open file \"%s\"", filename);
+	}
     } else {
+#if 0
 	FILE * file;
 
 	/* Compile from a file */
@@ -280,7 +303,15 @@ int main(int argc, char **argv) {
 	}
 	f = sp->parser(file, filename, resolve_names);
 	l = ft->compiler(f, flags);
+#else
+	file = stdin;
+#endif
     }
+    ir = sp->parser(file, resolve_names);
+    l = te->emitter(ir, outfile);
+    /*
+      }
+    */
 
     if(ofn) fclose(outfile);
 

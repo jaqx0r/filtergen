@@ -54,30 +54,6 @@
     struct option_list_s * u_option_list;
     struct not_option_s * u_not_option;
     struct option_s * u_option;
-
-    struct in_interface_option_s * u_in_interface_option;
-    struct jump_option_s * u_jump_option;
-    struct destination_option_s * u_destination_option;
-    struct protocol_option_s * u_protocol_option;
-    struct match_option_s * u_match_option;
-    struct dport_option_s * u_dport_option;
-    struct to_ports_option_s * u_to_ports_option;
-    struct source_option_s * u_source_option;
-    struct out_interface_option_s * u_out_interface_option;
-    struct to_source_option_s * u_to_source_option;
-    struct state_option_s * u_state_option;
-    struct limit_option_s * u_limit_option;
-    struct log_prefix_option_s * u_log_prefix_option;
-    struct sport_option_s * u_sport_option;
-    struct uid_owner_option_s * u_uid_owner_option;
-    struct tcp_flags_option_s * u_tcp_flags_option;
-    struct reject_with_option_s * u_reject_with_option;
-    struct icmp_type_option_s * u_icmp_type_option;
-    struct fragment_option_s * u_fragment_option;
-    struct clamp_mss_to_pmtu_option_s * u_clamp_mss_to_pmtu_option;
-    struct helper_option_s * u_helper_option;
-    struct syn_option_s * u_syn_option;
-
     struct not_range_s * u_not_range;
     struct range_s * u_range;
     struct not_identifier_s * u_not_identifier;
@@ -94,30 +70,6 @@
 %type <u_option_list> option_list
 %type <u_not_option> not_option
 %type <u_option> option
-
-%type <u_syn_option> syn_option
-%type <u_helper_option> helper_option
-%type <u_clamp_mss_to_pmtu_option> clamp_mss_to_pmtu_option
-%type <u_fragment_option> fragment_option
-%type <u_icmp_type_option> icmp_type_option
-%type <u_reject_with_option> reject_with_option
-%type <u_tcp_flags_option> tcp_flags_option
-%type <u_uid_owner_option> uid_owner_option
-%type <u_sport_option> sport_option
-%type <u_log_prefix_option> log_prefix_option
-%type <u_limit_option> limit_option
-%type <u_state_option> state_option
-%type <u_to_source_option> to_source_option
-%type <u_out_interface_option> out_interface_option
-%type <u_source_option> source_option
-%type <u_to_ports_option> to_ports_option
-%type <u_dport_option> dport_option
-%type <u_match_option> match_option
-%type <u_protocol_option> protocol_option
-%type <u_destination_option> destination_option
-%type <u_jump_option> jump_option
-%type <u_in_interface_option> in_interface_option
-
 %type <u_not_range> not_range
 %type <u_range> range
 %type <u_not_identifier> not_identifier
