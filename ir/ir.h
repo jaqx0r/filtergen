@@ -20,26 +20,42 @@
 #ifndef __FILTERGEN_IR_H__
 #define __FILTERGEN_IR_H__
 
-enum ir_expr_type { IR_EXPR_NONE, IR_EXPR_VALUE, IR_EXPR_UNARY, IR_EXPR_BINARY };
-
 enum ir_operator { IR_OP_NONE, IR_OP_AND, IR_OP_OR, IR_OP_NOT, IR_OP_PRED };
 
+enum ir_value_type { IR_VAL_OPERATOR,
+		     IR_VAL_PREDICATE,
+		     IR_VAL_LITERAL,
+		     IR_VAL_RANGE,
+		     IR_VAL_CHAIN
+};
+
+struct ir_chain_s;
+
+struct ir_value_s {
+    /** type of this value */
+    enum ir_value_type type;
+
+    union {
+	/** operator */
+	enum ir_operator operator;
+	/** name of the predicate */
+	char * predicate;
+	/** value of the literal */
+	char * literal;
+	/** subrule chain */
+	struct ir_chain_s * chain;
+    } u;
+};
+    
 /** expression tree */
 struct ir_expr_s {
-  /** type of this expression node */
-  enum ir_expr_type type;
+    /** the left child, or first argument to this expression */
+    struct ir_expr_s * left;
+    /** the right child, or second argument, to this expression */
+    struct ir_expr_s * right;
 
-  /** the value of this expression node */
-  char * value;
-
-  /** the type of operator for this expression */
-  enum ir_operator operator;
-
-  /** the left child, or first argument to this expression */
-  struct ir_expr_s * left;
-
-  /** the right child, or second argument, to this expression */
-  struct ir_expr_s * right;
+    /** The keystone of this expression tree */
+    struct ir_value_s * value;
 };
 
 /** Actions that can be performed by packet filters. */
@@ -53,7 +69,7 @@ struct ir_action_s {
      * e.g. --reject-with icmp-host-unreachable .
      * TODO: change the char * into some enumeration to make it pf agnostic
      */
-    char * options;
+  struct ir_expr_s * option;
 };
 
 /** Represents a rule in a packet filter.
@@ -63,7 +79,19 @@ struct ir_rule_s {
     struct ir_expr_s * expr;
     struct ir_action_s * action;
 
-  struct ir_rule_s * next;
+    struct ir_rule_s * next;
+};
+
+/** Represents a rule chain, which is a named block of rules that can be
+ *  called by other blocks as the target. */
+struct ir_chain_s {
+    /** The name of the chain. */
+    char * name;
+    /** The list of rules in this chain. */
+    struct ir_rule_s * rule;
+
+    /** The next chain in the chain chain. */
+    struct ir_chain_s * next;
 };
 
 /** Top level container for the internal representation.  The names reflect
@@ -71,12 +99,12 @@ struct ir_rule_s {
  */
 struct ir_s {
     /** list of rules for the main packet filter */
-    struct ir_rule_s * filter;
+    struct ir_chain_s * filter;
     /** list of rules for Network Address Translation */
-    struct ir_rule_s * nat;
+    struct ir_chain_s * nat;
     /** list of rules for packet modification.
 	c.f. pf's "options: scrub" */
-    struct ir_rule_s * mangle;
+    struct ir_chain_s * mangle;
     /* TODO: add "conf" section, correlating to pf's "options: set",
        and for modifying kernel sysctl parameters */
 };
@@ -85,15 +113,25 @@ struct ir_s {
 #define IR_FREE(x) void x##_free(struct x##_s *)
 
 IR_NEW(ir);
+IR_NEW(ir_chain);
 IR_NEW(ir_rule);
 IR_NEW(ir_action);
 IR_NEW(ir_expr);
+IR_NEW(ir_value);
 IR_FREE(ir);
+IR_FREE(ir_chain);
 IR_FREE(ir_rule);
 IR_FREE(ir_action);
 IR_FREE(ir_expr);
+IR_FREE(ir_value);
 
 #undef IR_NEW
 #undef IR_FREE
+
+struct ir_expr_s * ir_expr_new_operator(enum ir_operator);
+struct ir_expr_s * ir_expr_new_predicate(const char *);
+struct ir_expr_s * ir_expr_new_literal(const char *);
+struct ir_expr_s * ir_expr_new_range();
+struct ir_expr_s * ir_expr_new_chain(struct ir_chain_s *);
 
 #endif /* __FILTERGEN_IR_H__ */

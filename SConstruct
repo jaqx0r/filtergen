@@ -8,11 +8,6 @@ EnsureSConsVersion(0, 95)
 VERSION = "0.13"
 
 opts = Options()
-#opts.AddOptions(
-#	EnumOption('debug', 'debugging compiler options', 'yes',
-#			   allowed_values=('yes', 'no', 'gcov'),
-#			   map={})
-#	)
 
 ### unit testing
 def UnitTest(env, source, **kwargs):
@@ -26,6 +21,12 @@ def UnitTest(env, source, **kwargs):
 
 SConsEnvironment.UnitTest = UnitTest
 ### unit testing
+
+opts.AddOptions(
+	EnumOption('debug', 'debugging compiler options', 'yes',
+			   allowed_values=('yes', 'no', 'gcov'),
+			   map={}),
+	)
 
 env = Environment(options = opts)
 
@@ -86,7 +87,6 @@ else:
     if ARGUMENTS.get("debug") in ('gcov',):
         env.AppendUnique(CCFLAGS=['-fprofile-arcs', '-ftest-coverage'])
 
-
 # set warning flags
 warnings = ['',
 			'all',
@@ -125,8 +125,8 @@ pkgexdir = pkgdocdir + '/examples'
 env.AppendUnique(CPPPATH=['#'])
 
 filtergen_sources = ['filtergen.c',
-					 'gen.c',
-					 'filter.c',
+					 #'gen.c',
+					 #'filter.c',
 					 'fg-util.c',
 					 'icmpent.c',
 					 'factoriser.c',
@@ -134,23 +134,27 @@ filtergen_sources = ['filtergen.c',
 filtergen  = env.Program('filtergen', filtergen_sources,
 						 LIBS=['in_filtergen',
 							   'in_iptables_save',
-							   'out_iptables',
-							   'out_ipchains',
-							   'out_ipfilter',
-							   'out_cisco',
+							   'ir',
+							   #'out_iptables',
+							   #'out_ipchains',
+							   #'out_ipfilter',
+							   #'out_cisco',
 							   'out_filtergen',
+							   'out_graphviz',
 							   ],
 						 LIBPATH=['input/filtergen',
 								  'input/iptables-save',
+								  'ir',
 								  'output/iptables',
 								  'output/ipchains',
 								  'output/ipfilter',
 								  'output/cisco',
 								  'output/filtergen',
+								  'output/graphviz'
 								  ]
 						 )
 Default(filtergen)
-env.Distribute(env['DISTTREE'], filtergen_sources + ['filter.h',
+env.Distribute(env['DISTTREE'], filtergen_sources + [#'filter.h',
 													 'icmpent.h',
 													 'util.h',
 													 'factoriser.h',
@@ -183,11 +187,12 @@ SConscript([
 	'input/filtergen/SConscript',
 	'input/iptables-save/SConscript',
 	'ir/SConscript',
-	'output/iptables/SConscript',
-	'output/ipchains/SConscript',
-	'output/ipfilter/SConscript',
-	'output/cisco/SConscript',
+	#'output/iptables/SConscript',
+	#'output/ipchains/SConscript',
+	#'output/ipfilter/SConscript',
+	#'output/cisco/SConscript',
 	'output/filtergen/SConscript',
+	'output/graphviz/SConscript',
 	'examples/SConscript',
 	'doc/SConscript',
 	], 'env')

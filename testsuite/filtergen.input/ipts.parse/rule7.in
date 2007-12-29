@@ -1,0 +1,5 @@
+*filter
+:INPUT DROP [0:0]
+[0:0] -A INPUT -i eth0 -j LOG --log-prefix "foo "
+[0:0] -A INPUT -i eth0 -j REJECT --reject-with icmp-port-unreachable
+COMMIT
