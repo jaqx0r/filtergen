@@ -52,14 +52,30 @@ class FiltergenParser
 
   /** Parse a rule_list production.
    *
-   * \code rule_list := | [rule_list] [rule] \endcode
+   * \code rule_list := | rule_list rule \endcode
    */
   void parseRuleList();
   /** Parse a rule production.
    *
-   * \code rule := \endcode
+   * \code rule := specifier_list ';' \endcode
    */
   void parseRule();
+  /** Parse a specifier_list production.
+   *
+   * \code specifier_list := | specifier_list negated_specifier \endcode
+   */
+  void parseSpecifierList();
+  /** Parse a negated_specifier production.
+   *
+   * \code negated_specifier := specifier | '!' specifier \endcode
+   */
+  void parseNegatedSpecifier();
+  /** Parse a specifier production.
+   *
+   * \code specifier := compound_specifier | direction_specifier | target_specifier | host_specifier | port_specifier | protocol_specifier | icmptype_specifier | option_specifier | chaingroup_specifier \endcode
+   */
+  void parseSpecifier();
+  /* ... */
   /** Parse a subrule_list production.
    *
    * \code subrule_list := specifier_list | subrule_list ';' specifier_list \endcode
@@ -67,7 +83,7 @@ class FiltergenParser
   void parseSubruleList();
   /** Parse a chaingroup_specifier production.
    *
-   * \code chaingroup_specifier := subrule_list
+   * \code chaingroup_specifier := subrule_list \endcode
    */
   void parseChaingroupSpecifier();
 
