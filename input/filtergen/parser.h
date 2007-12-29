@@ -51,6 +51,7 @@ class FiltergenParser
   bool match(const Token & expected);
 
   void parseRule();
+  void parseChaingroupSpecifier();
 
   /** The source scanner. */
   Scanner & scanner;

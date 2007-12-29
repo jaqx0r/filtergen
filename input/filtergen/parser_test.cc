@@ -14,6 +14,7 @@ class FiltergenParserTest:
   CPPUNIT_TEST(testMatch);
   CPPUNIT_TEST(testMatchFailure);
   CPPUNIT_TEST(testParseRule);
+    CPPUNIT_TEST(testParseUnlabelledChaingroupSpecifier);
   CPPUNIT_TEST_SUITE_END();
 
  public:
@@ -25,6 +26,7 @@ class FiltergenParserTest:
   void testMatch();
   void testMatchFailure();
   void testParseRule();
+    void testParseUnlabelledChaingroupSpecifier();
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION(FiltergenParserTest);
@@ -96,4 +98,15 @@ FiltergenParserTest::testParseRule()
   FiltergenParser parser(s);
 
   CPPUNIT_ASSERT_NO_THROW(parser.parseRule());
+}
+
+void
+FiltergenParserTest::testParseUnlabelledChaingroupSpecifier()
+{
+    MockScanner s;
+    s.tokens.push_back(Token::LSQUARE);
+    s.tokens.push_back(Token::RSQUARE);
+    FiltergenParser parser(s);
+
+    CPPUNIT_ASSERT_NO_THROW(parser.parseChaingroupSpecifier());
 }

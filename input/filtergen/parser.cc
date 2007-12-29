@@ -475,6 +475,17 @@ chaingroup_specifier: TOK_LSQUARE TOK_IDENTIFIER subrule_list TOK_RSQUARE
 	    $$->name = $2;
 	    $$->list = $3;
 	}
+
+#endif // 0
+
+void
+FiltergenParser::parseChaingroupSpecifier()
+{
+    match(Token::LSQUARE);
+    match(Token::RSQUARE);
+}
+
+#if 0
 	| TOK_LSQUARE subrule_list TOK_RSQUARE
 	{
 	    $$ = (struct chaingroup_specifier_s *) malloc(sizeof(struct chaingroup_specifier_s));
