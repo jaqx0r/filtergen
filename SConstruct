@@ -16,13 +16,14 @@ opts.AddOptions(
 
 ### unit testing
 def UnitTest(env, source, **kwargs):
-	test = env.Program(source, **kwargs)
-	# run the test after the program
-	testcmd = "echo " + test[0].abspath
-	env.AddPostAction(test, testcmd)
-	env.Alias('check', test)
-	env.AlwaysBuild(test)
-	return test
+    test = env.Program(source, **kwargs)
+    # run the test after the program
+    testcmd = "sh -c " + test[0].abspath
+    env.AddPostAction(test, Action(testcmd))
+    env.Alias('check', test)
+    #env.AlwaysBuild(test)
+    env.Default(test)
+    return test
 
 SConsEnvironment.UnitTest = UnitTest
 ### unit testing
@@ -118,7 +119,7 @@ pkgexdir = pkgdocdir + '/examples'
 # Add the top level directory to the include path
 env.AppendUnique(CPPPATH=['#'])
 
-runtests = env.Program('runtests',
+runtests = env.UnitTest(
 		       source=['runtests.cc',
 			       'dummy_test.cc',
 			       'input/input.cc',
@@ -136,7 +137,8 @@ runtests = env.Program('runtests',
 			     ],
 		       LIBPATH=['input/filtergen',
 				])
-env.AddPostAction('runtests', Action('./runtests'))
+#env.AddPostAction('runtests', Action('./runtests'))
+#env.Default(runtests)
 
 filtergen_sources = ['filtergen.cc',
                      'gen.cc',
