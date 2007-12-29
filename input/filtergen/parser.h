@@ -25,7 +25,7 @@
 #include "input/input.h"
 #include "token.h"
 
-/** Parser for the filtergen language */
+/** Parser for the filtergen language. */
 class FiltergenParser
 {
  public:
@@ -50,7 +50,25 @@ class FiltergenParser
    */
   bool match(const Token & expected);
 
+  /** Parse a rule_list production.
+   *
+   * \code rule_list := | [rule_list] [rule] \endcode
+   */
+  void parseRuleList();
+  /** Parse a rule production.
+   *
+   * \code rule := \endcode
+   */
   void parseRule();
+  /** Parse a subrule_list production.
+   *
+   * \code subrule_list := specifier_list | subrule_list ';' specifier_list \endcode
+   */
+  void parseSubruleList();
+  /** Parse a chaingroup_specifier production.
+   *
+   * \code chaingroup_specifier := subrule_list
+   */
   void parseChaingroupSpecifier();
 
   /** The source scanner. */

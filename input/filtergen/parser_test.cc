@@ -13,7 +13,9 @@ class FiltergenParserTest:
   CPPUNIT_TEST(testAccept);
   CPPUNIT_TEST(testMatch);
   CPPUNIT_TEST(testMatchFailure);
+  CPPUNIT_TEST(testParseEmptyRuleList);
   CPPUNIT_TEST(testParseRule);
+    CPPUNIT_TEST(testParseEmptySubruleList);
     CPPUNIT_TEST(testParseUnlabelledChaingroupSpecifier);
   CPPUNIT_TEST_SUITE_END();
 
@@ -25,7 +27,9 @@ class FiltergenParserTest:
   void testAccept();
   void testMatch();
   void testMatchFailure();
+    void testParseEmptyRuleList();
   void testParseRule();
+    void testParseEmptySubruleList();
     void testParseUnlabelledChaingroupSpecifier();
 };
 
@@ -98,6 +102,26 @@ FiltergenParserTest::testParseRule()
   FiltergenParser parser(s);
 
   CPPUNIT_ASSERT_NO_THROW(parser.parseRule());
+}
+
+void
+FiltergenParserTest::testParseEmptyRuleList()
+{
+    MockScanner s;
+    s.tokens.push_back(Token::EOS);
+    FiltergenParser parser(s);
+
+    CPPUNIT_ASSERT_NO_THROW(parser.parseRuleList());
+}
+
+void
+FiltergenParserTest::testParseEmptySubruleList()
+{
+    MockScanner s;
+    s.tokens.push_back(Token::EOS);
+    FiltergenParser parser(s);
+
+    CPPUNIT_ASSERT_NO_THROW(parser.parseSubruleList());
 }
 
 void

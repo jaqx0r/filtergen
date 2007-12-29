@@ -20,39 +20,39 @@
 #include "parser.h"
 
 FiltergenParser::FiltergenParser(Scanner & _scanner):
-  scanner(_scanner)
+    scanner(_scanner)
 {
-  accept();
+    accept();
 }
 
 void
 FiltergenParser::accept()
 {
-  currentToken = scanner.getToken();
+    currentToken = scanner.getToken();
 }
 
 bool
 FiltergenParser::match(const Token & expected)
 {
-  if (*currentToken == expected) {
-    accept();
-    return true;
-  } else
-    return false;
+    if (*currentToken == expected) {
+        accept();
+        return true;
+    } else
+        return false;
 }
 
 void
 FiltergenParser::parse()
 {
-  //parseRuleList();
+    //parseRuleList();
 }
 
-// void
-// FiltergenParser::parseRuleList()
-// {
-//   parseRule();
-//   parseRuleList();
-// }
+void
+FiltergenParser::parseRuleList()
+{
+    //parseRule();
+    //parseRuleList();
+}
 
 
 #if 0
@@ -68,6 +68,9 @@ rule_list: /* empty */
 	    $$->rule = $2;
 	}
 	;
+#endif //0
+
+#if 0
 
 rule:	  specifier_list TOK_SEMICOLON
 	{
@@ -80,8 +83,8 @@ rule:	  specifier_list TOK_SEMICOLON
 void
 FiltergenParser::parseRule()
 {
-  //parseSpecifierList();
-  match(Token::SEMI);
+    //parseSpecifierList();
+    match(Token::SEMI);
 }
 
 #if 0
@@ -454,6 +457,15 @@ compound_specifier: TOK_LCURLY subrule_list TOK_RCURLY
 	    $$->list = $2;
 	}
 	;
+
+#endif //0
+
+void
+FiltergenParser::parseSubruleList()
+{
+}
+
+#if 0
 
 subrule_list: specifier_list
 	{
