@@ -3,7 +3,7 @@ Section: net
 Priority: optional
 Maintainer: Jamie Wilkinson <jaq@debian.org>
 Build-Depends: debhelper (>> 4.0.0), flex
-Standards-Version: 3.5.8.0
+Standards-Version: 3.5.9.0
 
 Package: filtergen
 Architecture: any

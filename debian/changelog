@@ -1,3 +1,11 @@
+filtergen (0.11-4) unstable; urgency=low
+  
+  * Added "%option nounput" to the flex scanner to fix a build failure
+    with the new flex, thanks to Bastian Kleineidam.  (Closes: #191188)
+  * Bumped standards version to 3.5.9.
+
+ -- Jamie Wilkinson <jaq@spacepants.org>  Mon, 12 May 2003 20:10:14 +1000
+
 filtergen (0.11-3) unstable; urgency=low
 
   * Removed initscript, README.Debian, postinst, and debconf stuff.
