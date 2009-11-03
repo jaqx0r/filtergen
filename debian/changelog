@@ -1,3 +1,14 @@
+filtergen (0.11-1) unstable; urgency=low
+
+  * New upstream release.  (Closes: #168985)
+    - Fixes documentation error (patch removed).
+    - Adds flush option (patch removed).
+    - Fixes compilation on 64 bit archs (patch removed).
+  * Bathed by the lint siblings.
+  * Bumped standards version to 3.5.7.0. 
+
+ -- Jamie Wilkinson <jaq@debian.org>  Wed, 20 Nov 2002 14:12:35 +1100
+
 filtergen (0.10-7) unstable; urgency=low
 
   * Fix builds on alpha and ia64.  (Closes: #168352)
