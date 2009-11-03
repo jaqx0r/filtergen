@@ -1,3 +1,10 @@
+filtergen (0.10-3) unstable; urgency=low
+
+  * Patched filtergen to add a command to generate flush rules, thus cleaning
+    the initscript a little.
+
+ -- Jamie Wilkinson <jaq@debian.org>  Wed, 30 Oct 2002 20:39:37 +1100
+
 filtergen (0.10-2) unstable; urgency=low
 
   * Added a `check' argument to /etc/init.d/filtergen.

@@ -34,7 +34,7 @@ case "$1" in
 	    case "$BACKEND" in
 		iptables|ipchains)
 		    # save the generated rules to the log file for perusal
-		    eval `$FILTERGEN $FGOPTS -t $BACKEND $RULES | tee $LOG`
+		    $FILTERGEN $FGOPTS -t $BACKEND $RULES | tee $LOG | /bin/sh
 		    ;;
 		*)
 		    echo -n ": Operation not permitted with $BACKEND backend"
@@ -47,7 +47,8 @@ case "$1" in
 	echo -n "Flushing $BACKEND packet filter"
 	case "$BACKEND" in
 	    iptables|ipchains)
-		eval `$FILTERGEN -t $BACKEND -F ACCEPT`
+		$FILTERGEN -t $BACKEND -F ACCEPT | /bin/sh
+		;;
 	    *)
 		echo -n ": Operation not supported with $BACKEND backend"
 		;;
