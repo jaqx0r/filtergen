@@ -1,3 +1,12 @@
+filtergen (0.11-2) unstable; urgency=low
+
+  * Bumped standards version to 3.5.8.0.
+  * Set DH_COMPAT to 4.
+  * Set versioned depends on debconf 1.2.9 for dpkg-reconfigure,
+    making lintian happy.
+
+ -- Jamie Wilkinson <jaq@debian.org>  Sat, 30 Nov 2002 12:14:22 +1100
+
 filtergen (0.11-1) unstable; urgency=low
 
   * New upstream release.  (Closes: #168985)
