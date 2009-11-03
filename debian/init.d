@@ -44,16 +44,18 @@ case "$1" in
 	fi
 	;;
     stop)
-	echo -n "Flushing $BACKEND packet filter"
-	case "$BACKEND" in
-	    iptables|ipchains)
-		$FILTERGEN -t $BACKEND -F ACCEPT | /bin/sh
-		;;
-	    *)
-		echo -n ": Operation not supported with $BACKEND backend"
-		;;
-	esac
-	echo "."
+	if [ "$GENERATE" = "true" ]; then
+	    echo -n "Flushing $BACKEND packet filter"
+	    case "$BACKEND" in
+		iptables|ipchains)
+		    $FILTERGEN -t $BACKEND -F ACCEPT | /bin/sh
+		    ;;
+		*)
+		    echo -n ": Operation not supported with $BACKEND backend"
+		    ;;
+	    esac
+	    echo "."
+	fi
 	;;
     restart|reload|force-reload)
 	$0 stop

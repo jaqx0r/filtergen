@@ -1,3 +1,9 @@
+filtergen (0.10-5) unstable; urgency=low
+
+  * Only `stop' the filter if GENERATE is true.  (Closes: #167232)
+
+ -- Jamie Wilkinson <jaq@debian.org>  Sat,  2 Nov 2002 18:18:32 +1100
+
 filtergen (0.10-4) unstable; urgency=low
 
   * Reworded an error message to be nicer.  (s/permitted/supported)
