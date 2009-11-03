@@ -37,7 +37,7 @@ case "$1" in
 		    $FILTERGEN $FGOPTS -t $BACKEND $RULES | tee $LOG | /bin/sh
 		    ;;
 		*)
-		    echo -n ": Operation not permitted with $BACKEND backend"
+		    echo -n ": Operation not supported with $BACKEND backend"
 		    ;;
 	    esac	
 	    echo "."
