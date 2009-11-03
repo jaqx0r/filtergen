@@ -1,3 +1,11 @@
+filtergen (0.11-3) unstable; urgency=low
+
+  * Removed initscript, README.Debian, postinst, and debconf stuff.
+    Reverted to just the basic program, not trying to provide a
+    super-firewall-tool, just a filter generator.  (Closes: #171951)
+
+ -- Jamie Wilkinson <jaq@debian.org>  Wed, 12 Feb 2003 18:38:43 +1100
+
 filtergen (0.11-2) unstable; urgency=low
 
   * Bumped standards version to 3.5.8.0.
