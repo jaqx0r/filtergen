@@ -1,3 +1,13 @@
+filtergen (0.12.4-4.1) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * scanner.l: Fix buffer overflow with nested include files.
+    Closes: #324908.
+  * debian/rules: Make sure clean doesn't accidentally run makefile
+    (and consequently autoconf).
+
+ -- Matej Vela <vela@debian.org>  Wed,  5 Jul 2006 08:40:35 +0200
+
 filtergen (0.12.4-4) unstable; urgency=low
 
   * Apply patch from Andreas Jochens to fix build failure on amd64.
