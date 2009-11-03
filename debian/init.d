@@ -30,7 +30,7 @@ esac
 case "$1" in
     start)
 	if [ "$GENERATE" = "true" ]; then
-	    echo -n "Generating $BACKEND packet filter"
+	    echo -n "Generating $BACKEND packet filter. "
 	    case "$BACKEND" in
 		iptables|ipchains)
 		    # save the generated rules to the log file for perusal
@@ -45,7 +45,7 @@ case "$1" in
 	;;
     stop)
 	if [ "$GENERATE" = "true" ]; then
-	    echo -n "Flushing $BACKEND packet filter"
+	    echo -n "Flushing $BACKEND packet filter. "
 	    case "$BACKEND" in
 		iptables|ipchains)
 		    $FILTERGEN -t $BACKEND -F ACCEPT | /bin/sh

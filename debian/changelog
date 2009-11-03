@@ -1,3 +1,11 @@
+filtergen (0.10-6) unstable; urgency=low
+
+  * Mention the lack of a firewall on upgrade from a pre-0.10-5 version.
+    (Closes: #167561)
+  * Initscript cosmetic change, hack around stderr from filtergen.
+
+ -- Jamie Wilkinson <jaq@debian.org>  Sun,  3 Nov 2002 01:14:29 +1100
+
 filtergen (0.10-5) unstable; urgency=low
 
   * Only `stop' the filter if GENERATE is true.  (Closes: #167232)
