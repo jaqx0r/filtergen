@@ -1,3 +1,10 @@
+filtergen (0.10-4) unstable; urgency=low
+
+  * Reworded an error message to be nicer.  (s/permitted/supported)
+  * Removed debhelper templates from source.
+
+ -- Jamie Wilkinson <jaq@debian.org>  Wed, 30 Oct 2002 21:53:07 +1100
+
 filtergen (0.10-3) unstable; urgency=low
 
   * Patched filtergen to add a command to generate flush rules, thus cleaning
