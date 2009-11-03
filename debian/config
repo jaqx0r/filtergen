@@ -1,0 +1,44 @@
+#!/bin/sh
+# debconf config script for filtergen
+
+# woosy coward script, die if we run into trouble
+set -e
+
+# source the debconf magics
+. /usr/share/debconf/confmodule
+
+# what we can do
+db_version 2.0
+db_capb backup
+
+# initialise our state machine
+PREVSTATE=1
+STATE=1
+
+while [ "$STATE" != "0" ]; do
+
+    case "$STATE" in
+	1) # do we want filtergen to fiddle with the firewall at boot time?
+	    db_input medium filtergen/generate || true
+	    # where next?
+	    NEXTSTATE=2
+	    PREVSTATE=0
+	    ;;
+	2) # which packet filter do we use here?
+	    db_get filtergen/generate
+	    if [ "$RET" = "true" ]; then
+		db_input low filtergen/backend || true
+	    fi
+	    # where next?
+	    NEXTSTATE=0
+	    PREVSTATE=1
+	    ;;
+    esac
+
+    # debconf is GO!
+    if db_go ; then
+	STATE=$NEXTSTATE
+    else
+	STATE=$PREVSTATE
+    fi
+done
