@@ -32,10 +32,9 @@ case "$1" in
 	if [ "$GENERATE" = "true" ]; then
 	    echo -n "Generating $BACKEND packet filter"
 	    case "$BACKEND" in
-		iptables|ipchains|ipfilter)
+		iptables|ipchains)
 		    # save the generated rules to the log file for perusal
-		    $FILTERGEN $FGOPTS -t $BACKEND $RULES 2>/dev/null > $LOG
-		    . $LOG > /dev/null
+		    eval `$FILTERGEN $FGOPTS -t $BACKEND $RULES | tee $LOG`
 		    ;;
 		*)
 		    echo -n ": Operation not permitted with $BACKEND backend"
@@ -47,33 +46,26 @@ case "$1" in
     stop)
 	echo -n "Flushing $BACKEND packet filter"
 	case "$BACKEND" in
-	    iptables)
-		for i in INPUT OUTPUT FORWARD; do
-		    iptables -P $i ACCEPT
-		done
-		iptables -F
-		iptables -X
-		;;
-	    ipchains)
-		for i in INPUT OUTPUT FORWARD; do
-		    ipchains -P $i ACCEPT
-		done
-		ipchains -F
-		ipchains -X
-		;;
+	    iptables|ipchains)
+		eval `$FILTERGEN -t $BACKEND -F ACCEPT`
 	    *)
 		echo -n ": Operation not supported with $BACKEND backend"
 		;;
 	esac
 	echo "."
 	;;
-  restart|force-reload)
+    restart|reload|force-reload)
 	$0 stop
 	$0 start
 	;;
-  *)
+    check)
+	# echo the output of the current rules to stdout for checking,
+	# along with any error message
+	$FILTERGEN $FGOPTS -t $BACKEND $RULES
+	;;
+    *)
 	N=/etc/init.d/$NAME
-	echo "Usage: $N {start|stop|restart|force-reload}" >&2
+	echo "Usage: $N {start|stop|restart|reload|force-reload|check}" >&2
 	exit 1
 	;;
 esac
