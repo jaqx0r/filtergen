@@ -1,3 +1,106 @@
+filtergen (0.12.4-4) unstable; urgency=low
+
+  * Apply patch from Andreas Jochens to fix build failure on amd64.
+    (Closes: #285935)
+  * Added flex and bison to the build dependencies.
+  * Updated standards version, no other changes required.
+  
+ -- Jamie Wilkinson <jaq@debian.org>  Tue, 23 Aug 2005 14:09:04 +1000
+
+filtergen (0.12.4-3) unstable; urgency=high
+
+  * Call the distclean target instead of clean, in our debian/rules clean
+    target, so that created files are cleaned up.  Yes this is dumb, I
+    blame autogoats.   (Closes: #273371)
+
+ -- Jamie Wilkinson <jaq@debian.org>  Wed, 13 Oct 2004 14:10:26 +1000
+
+filtergen (0.12.4-2) unstable; urgency=low
+
+  * Updated copyright to reflect new upstream location and author.
+
+ -- Jamie Wilkinson <jaq@debian.org>  Tue, 24 Aug 2004 12:34:16 +1000
+  
+filtergen (0.12.4-1) unstable; urgency=low
+
+  * New upstream release.
+    - Fixes behavioural bugs in fgadm script.
+
+ -- Jamie Wilkinson <jaq@debian.org>  Tue, 24 Aug 2004 11:49:16 +1000
+
+filtergen (0.12.3-2) unstable; urgency=low
+
+  * Added watch file.
+
+ -- Jamie Wilkinson <jaq@debian.org>  Fri, 13 Aug 2004 16:47:45 +1000
+
+filtergen (0.12.3-1) unstable; urgency=low
+
+  * New upstream release.
+    - fixes critical port number resolver bug.
+
+ -- Jamie Wilkinson <jaq@debian.org>  Thu, 24 Jun 2004 11:35:03 +1000
+
+filtergen (0.12.1-6) unstable; urgency=low
+
+  * The Sixth Time Lucky release.
+  * Re-add netbase to the build dependencies.  (Closes: #253631)
+
+ -- Jamie Wilkinson <jaq@debian.org>  Fri, 11 Jun 2004 10:05:34 +1000
+
+filtergen (0.12.1-5) unstable; urgency=low
+
+  * Removed unnecessary build dependency on flex.
+  * Fix path to filtergen in fgadm script.
+  * Alter test scripts to print diff output.
+
+ -- Jamie Wilkinson <jaq@debian.org>  Thu, 10 Jun 2004 20:04:17 +1000
+
+filtergen (0.12.1-4) unstable; urgency=low
+
+  * Applied a patch from upstream that fixes the test suite so it's not using
+    protocols that have more than one name in /etc/protocols.  This really fixes
+    the build daemon errors (fingers crossed) so also remove netbase from the
+    build dependencies.
+
+ -- Jamie Wilkinson <jaq@debian.org>  Thu, 10 Jun 2004 18:54:42 +1000
+
+filtergen (0.12.1-3) unstable; urgency=low
+
+  * Add netbase to the build dependencies for /etc/protocols and /etc/services.
+
+ -- Jamie Wilkinson <jaq@debian.org>  Thu, 10 Jun 2004 18:14:38 +1000
+
+filtergen (0.12.1-2) unstable; urgency=low
+
+  * Regenerate the makefile so that -Wcast-align is gone.  (Closes: #253432)
+
+ -- Jamie Wilkinson <jaq@debian.org>  Thu, 10 Jun 2004 09:09:56 +1000
+
+filtergen (0.12.1-1) unstable; urgency=low
+
+  * New upstream release.
+    + Fixes compiler errors on 64 bit platforms.
+
+ -- Jamie Wilkinson <jaq@debian.org>  Wed,  9 Jun 2004 23:52:22 +1000
+
+filtergen (0.12-2) unstable; urgency=low
+
+  * Remove an ugly and incorrect cast around gethosybyname and inet_ntoa
+    to fix builds on 64 bit systems.
+  * Added make check to the build target of rules.
+
+ -- Jamie Wilkinson <jaq@debian.org>  Wed,  9 Jun 2004 19:28:30 +1000
+
+filtergen (0.12-1) unstable; urgency=low
+
+  * New upstream release.
+  * Bumped standards version to 3.6.1.
+  * Moved DH_COMPAT to debian/compat.
+  * Upstream now uses configure, modified configure target.
+
+ -- Jamie Wilkinson <jaq@debian.org>  Wed,  9 Jun 2004 11:44:48 +1000
+
 filtergen (0.11-4) unstable; urgency=low
   
   * Added "%option nounput" to the flex scanner to fix a build failure
@@ -87,4 +190,3 @@ filtergen (0.10-1) unstable; urgency=low
     filtergen will do to your firewall.
 
  -- Jamie Wilkinson <jaq@debian.org>  Sat, 26 Oct 2002 11:15:16 +1000
-
