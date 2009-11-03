@@ -1,3 +1,9 @@
+filtergen (0.10-7) unstable; urgency=low
+
+  * Fix builds on alpha and ia64.  (Closes: #168352)
+
+ -- Jamie Wilkinson <jaq@debian.org>  Sat,  9 Nov 2002 10:14:02 +1100
+
 filtergen (0.10-6) unstable; urgency=low
 
   * Mention the lack of a firewall on upgrade from a pre-0.10-5 version.
