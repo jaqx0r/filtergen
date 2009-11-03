@@ -1,0 +1,22 @@
+Template: filtergen/generate
+Type: boolean
+Default: false
+Description: Do you want filtergen to automatically generate your firewall?
+ You have the option of allowing filtergen to generate your firewall from
+ its filter rules at boot time, or not at all.
+ .
+ You might want to say `no' here if you have an existing firewall init script,
+ or you plan to use filtergen manually to create firewall scripts.
+ .
+ You would answer `yes' if you plan to write a filter rules file and want
+ your firewall to start when your machine boots.
+
+Template: filtergen/backend
+Type: select
+Default: iptables
+Choices: iptables, ipchains, ipfilter, cisco
+Description: Which packet filter system should filtergen generate rules for?
+ filtergen can generate scripts for several packet filter systems.
+ .
+ Most likely, you will want to choose the packet filter system that is
+ installed on this machine.

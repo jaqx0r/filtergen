@@ -1,0 +1,14 @@
+Source: filtergen
+Section: net
+Priority: optional
+Maintainer: Jamie Wilkinson <jaq@debian.org>
+Build-Depends: debhelper (>> 3.0.0), flex
+Standards-Version: 3.5.2
+
+Package: filtergen
+Architecture: any
+Depends: ${shlibs:Depends}, debconf, iptables | ipchains
+Description: packet filter generator for various firewall systems
+ filtergen is a packet filter generator.  It compiles a fairly high-level
+ description language into iptables, ipchains, or ipfilter rules (and has
+ bits of support for Cisco IOS access lists).

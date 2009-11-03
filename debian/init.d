@@ -1,0 +1,81 @@
+#! /bin/sh
+#
+# initscript for filtergen to create/destroy firewall rules
+
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+FILTERGEN=/usr/sbin/filtergen
+CONF=/etc/filtergen/filtergen.conf
+RULES=/etc/filtergen/rules.filter
+LOG=/var/log/filtergen/rules.log
+
+test -x $FILTERGEN || exit 0
+
+# die if there's a problem
+set -e
+
+# load config options
+if [ -f $CONF ]; then
+    . /etc/filtergen/filtergen.conf
+fi
+# sanity check, defaults
+case "$GENERATE" in
+    true|false) ;;
+    *) GENERATE="false" ;;
+esac
+case "$BACKEND" in
+    iptables|ipchains|ipfilter|cisco) ;;
+    *) BACKEND="iptables" ;;
+esac
+
+case "$1" in
+    start)
+	if [ "$GENERATE" = "true" ]; then
+	    echo -n "Generating $BACKEND packet filter"
+	    case "$BACKEND" in
+		iptables|ipchains|ipfilter)
+		    # save the generated rules to the log file for perusal
+		    $FILTERGEN $FGOPTS -t $BACKEND $RULES 2>/dev/null > $LOG
+		    . $LOG > /dev/null
+		    ;;
+		*)
+		    echo -n ": Operation not permitted with $BACKEND backend"
+		    ;;
+	    esac	
+	    echo "."
+	fi
+	;;
+    stop)
+	echo -n "Flushing $BACKEND packet filter"
+	case "$BACKEND" in
+	    iptables)
+		for i in INPUT OUTPUT FORWARD; do
+		    iptables -P $i ACCEPT
+		done
+		iptables -F
+		iptables -X
+		;;
+	    ipchains)
+		for i in INPUT OUTPUT FORWARD; do
+		    ipchains -P $i ACCEPT
+		done
+		ipchains -F
+		ipchains -X
+		;;
+	    *)
+		echo -n ": Operation not supported with $BACKEND backend"
+		;;
+	esac
+	echo "."
+	;;
+  restart|force-reload)
+	$0 stop
+	$0 start
+	;;
+  *)
+	N=/etc/init.d/$NAME
+	echo "Usage: $N {start|stop|restart|force-reload}" >&2
+	exit 1
+	;;
+esac
+
+exit 0

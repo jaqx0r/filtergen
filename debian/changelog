@@ -1,0 +1,11 @@
+filtergen (0.10-1) unstable; urgency=low
+
+  * Initial Release.  (Closes: #166170)
+  * Applied patch from upstream fixing documentation error.
+  * Added NAME section to filter_backends.7, lintian clean.
+  * Depends on iptables or ipchains.
+  * Created initsctipt and filtergen.conf config file to control what
+    filtergen will do to your firewall.
+
+ -- Jamie Wilkinson <jaq@debian.org>  Sat, 26 Oct 2002 11:15:16 +1000
+
