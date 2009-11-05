@@ -28,7 +28,7 @@ configure-stamp:
 
 build: build-stamp
 
-build-stamp: configure-stamp 
+build-stamp: configure-stamp
 	dh_testdir
 	$(MAKE)
 	$(MAKE) check
@@ -44,7 +44,7 @@ clean:
 install: build
 	dh_testdir
 	dh_testroot
-	dh_clean -k
+	dh_prep
 	dh_installdirs
 	$(MAKE) install DESTDIR=$(CURDIR)/debian/filtergen
 
@@ -56,7 +56,7 @@ binary-indep: build install
 binary-arch: build install
 	dh_testdir
 	dh_testroot
-	dh_installdebconf	
+	dh_installdebconf
 	dh_installdocs
 	dh_installexamples
 #	dh_installmenu
