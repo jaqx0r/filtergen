@@ -1,8 +1,8 @@
 Source: filtergen
 Section: net
 Priority: optional
-Maintainer: Matt Palmer <mpalmer@debian.org>
-Build-Depends: debhelper (>= 5), netbase, flex, bison
+Maintainer: Jamie Wilkinson <jaq@debian.org>
+Build-Depends: debhelper (>= 7), netbase, flex, bison
 Standards-Version: 3.8.3
 Homepage: http://spacepants.org/src/filtergen/
 
