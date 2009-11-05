@@ -1,8 +1,14 @@
 filtergen (0.12.5-1) unstable; urgency=low
 
   * New upstream version.  (Closes: #543434)
+  * Thanks Matej!  (Closes: #324908)
+  * Updated standards version to 3.8.3.
+  * Updated to use debhelper 7.
+   - Specify misc:Depends.
+   - Update debian/compat.
+   - Update build dependency.
 
- -- Jamie Wilkinson <jaq@debian.org>  Thu, 05 Nov 2009 18:51:41 +1100
+ -- Jamie Wilkinson <jaq@debian.org>  Thu, 05 Nov 2009 19:18:13 +1100
 
 filtergen (0.12.4-5.1) unstable; urgency=low
 
