@@ -31,14 +31,14 @@ if test $? -ne 0 ; then fail ; fi
 
 test "x$srcdir" = "x" && cat $work/out
 
-cat >$work/good <<EOF
-kind = dest, spelling = "dest", file = "$work/include.d/quux.d/bar", line = 1
-kind = identifier, spelling = "unknown", file = "$work/include.d/quux.d/bar", line = 1
-kind = dport, spelling = "dport", file = "$work/include.d/foo", line = 1
-kind = identifier, spelling = "pants", file = "$work/include.d/foo", line = 1
-EOF
+# can't compare this against a known good output because ordering
+# on the disk, and the way opendir()/readdir() iterates over dirents
+# isn't guaranteed
+# so grep for each file and make sure they got included
+grep -q 'include.d/foo' $work/out && \
+    grep -q 'include.d/quux.d/bar' $work/out && \
+	pass
 
-compare $work/good $work/out
+# didn't match?
+fail
 
-# got this far?
-pass
