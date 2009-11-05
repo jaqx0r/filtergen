@@ -1,3 +1,9 @@
+filtergen (0.12.5-1) unstable; urgency=low
+
+  * New upstream version.  (Closes: #543434)
+
+ -- Jamie Wilkinson <jaq@debian.org>  Thu, 05 Nov 2009 18:51:41 +1100
+
 filtergen (0.12.4-5.1) unstable; urgency=low
 
   * Non-maintainer upload.
@@ -31,7 +37,7 @@ filtergen (0.12.4-4) unstable; urgency=low
     (Closes: #285935)
   * Added flex and bison to the build dependencies.
   * Updated standards version, no other changes required.
-  
+
  -- Jamie Wilkinson <jaq@debian.org>  Tue, 23 Aug 2005 14:09:04 +1000
 
 filtergen (0.12.4-3) unstable; urgency=high
@@ -47,7 +53,7 @@ filtergen (0.12.4-2) unstable; urgency=low
   * Updated copyright to reflect new upstream location and author.
 
  -- Jamie Wilkinson <jaq@debian.org>  Tue, 24 Aug 2004 12:34:16 +1000
-  
+
 filtergen (0.12.4-1) unstable; urgency=low
 
   * New upstream release.
@@ -129,7 +135,7 @@ filtergen (0.12-1) unstable; urgency=low
  -- Jamie Wilkinson <jaq@debian.org>  Wed,  9 Jun 2004 11:44:48 +1000
 
 filtergen (0.11-4) unstable; urgency=low
-  
+
   * Added "%option nounput" to the flex scanner to fix a build failure
     with the new flex, thanks to Bastian Kleineidam.  (Closes: #191188)
   * Bumped standards version to 3.5.9.
@@ -160,7 +166,7 @@ filtergen (0.11-1) unstable; urgency=low
     - Adds flush option (patch removed).
     - Fixes compilation on 64 bit archs (patch removed).
   * Bathed by the lint siblings.
-  * Bumped standards version to 3.5.7.0. 
+  * Bumped standards version to 3.5.7.0.
 
  -- Jamie Wilkinson <jaq@debian.org>  Wed, 20 Nov 2002 14:12:35 +1100
 
