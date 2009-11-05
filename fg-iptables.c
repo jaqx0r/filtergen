@@ -123,9 +123,11 @@ static int cb_iptables_rule(const struct filterent *ent, struct fg_misc *misc)
 		APPS(rule, "!");
 		APPS(rule_r, "!");
 	    }
-	    APPSS2(natrule, "-i", ent->iface);
-	    APPSS2(rule, "-i", ent->iface);
-	    APPSS2(rule_r, "-o", ent->iface);
+	    if (strcmp(ent->iface, "*")) {
+	        APPSS2(natrule, "-i", ent->iface);
+	        APPSS2(rule, "-i", ent->iface);
+	        APPSS2(rule_r, "-o", ent->iface);
+	    }
 	}
 	break;
       case OUTPUT:
@@ -140,9 +142,11 @@ static int cb_iptables_rule(const struct filterent *ent, struct fg_misc *misc)
 		APPS(rule, "!");
 		APPS(rule_r, "!");
 	    }
-	    APPSS2(natrule, "-o", ent->iface);
-	    APPSS2(rule, "-o", ent->iface);
-	    APPSS2(rule_r, "-i", ent->iface);
+	    if (strcmp(ent->iface, "*")) {
+		    APPSS2(natrule, "-o", ent->iface);
+		    APPSS2(rule, "-o", ent->iface);
+		    APPSS2(rule_r, "-i", ent->iface);
+	    }
 	}
 	break;
       default: fprintf(stderr, "unknown direction\n"); abort();

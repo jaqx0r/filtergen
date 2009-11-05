@@ -111,6 +111,7 @@ text         return TOK_TEXT;
 ";"          return TOK_SEMICOLON;
 ":"          return TOK_COLON;
 "!"          return TOK_BANG;
+"*"          return TOK_STAR;
 
 {id}(\.{id})*	{
 			yylval.u_str = strndup(yytext, yyleng);

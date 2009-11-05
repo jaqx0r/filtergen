@@ -8,8 +8,10 @@ filtergen (0.12.5-1) unstable; urgency=low
    - Update debian/compat.
    - Update build dependency.
   * Updated watch file for googlecode.com upstream location change.
+  * Bug fix: "Allow '*' as an interface name", thanks to Matthew
+    Palmer (Closes: #549891).
 
- -- Jamie Wilkinson <jaq@debian.org>  Thu, 05 Nov 2009 20:34:28 +1100
+ -- Jamie Wilkinson <jaq@debian.org>  Thu, 05 Nov 2009 22:03:39 +1100
 
 filtergen (0.12.4-4.1) unstable; urgency=medium
 

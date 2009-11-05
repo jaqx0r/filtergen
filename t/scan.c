@@ -35,7 +35,7 @@ char * tok_map(int c) {
 	r = strdup("log"); break;
       case TOK_LSQUARE:
 	r = strdup("lsquare"); break;
-      case TOK_MASQ: 
+      case TOK_MASQ:
 	r = strdup("masq"); break;
       case TOK_ONEWAY:
 	r = strdup("oneway"); break;
@@ -71,11 +71,13 @@ char * tok_map(int c) {
 	r = strdup("bang"); break;
       case TOK_COLON:
 	r = strdup("colon"); break;
+    case TOK_STAR:
+      r = strdup("star"); break;
       default:
 	r = strdup("UNRECOGNISED"); break;
     }
     return r;
-}  
+}
 
 int main(int argc __attribute__((unused)), char ** argv __attribute__((unused))) {
     int c;
