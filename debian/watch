@@ -1,2 +1,3 @@
-version=2
-http://spacepants.org/src/filtergen/download/ (?:.*/)?filtergen-?_?([\w+\d+\.]+|\d+)(\.tar|\.tgz)(\.gz|\.bz2|) debian uupdate
+version=3
+http://code.google.com/p/filtergen/downloads/list \
+  http://filtergen.googlecode.com/files/filtergen-([\d\.]+)\.tar\.gz
