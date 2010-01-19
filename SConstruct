@@ -36,10 +36,10 @@ def distcopy(target, source, env):
     treedir = str(target[0])
 
     try:
-	os.mkdir(treedir)
+        os.mkdir(treedir)
     except OSError, (errnum, strerror):
-	if errnum != errno.EEXIST:
-	    print 'mkdir %s:%s' % (treedir, strerror)
+        if errnum != errno.EEXIST:
+            print 'mkdir %s:%s' % (treedir, strerror)
 
     cmd = 'tar cf - '
     # we don't know what characters might be in the file names
@@ -57,13 +57,13 @@ def tarballer (target, source, env):
     return p.close ()
 
 dist_bld = Builder(action = distcopy,
-		   target_factory = SCons.Node.FS.default_fs.Entry,
-		   source_factory = SCons.Node.FS.default_fs.Entry,
-		   multi = 1)
+                   target_factory = SCons.Node.FS.default_fs.Entry,
+                   source_factory = SCons.Node.FS.default_fs.Entry,
+                   multi = 1)
 
 tarball_bld = Builder(action = tarballer,
-		      target_factory = SCons.Node.FS.default_fs.Entry,
-		      source_factory = SCons.Node.FS.default_fs.Entry)
+                      target_factory = SCons.Node.FS.default_fs.Entry,
+                      source_factory = SCons.Node.FS.default_fs.Entry)
 
 env.Append(BUILDERS = {'Distribute': dist_bld})
 env.Append(BUILDERS = {'Tarball': tarball_bld})
@@ -74,7 +74,7 @@ Help(opts.GenerateHelpText(env))
 if not env.GetOption("clean"):
     conf = Configure(env)
     if conf.CheckCHeader('getopt.h'):
-	conf.env.AppendUnique(CPPFLAGS=['-DHAVE_GETOPT_H'])
+        conf.env.AppendUnique(CPPFLAGS=['-DHAVE_GETOPT_H'])
     conf.CheckLib('getopt', 'getopt')
     # TODO(jaq): check for cppunit-config and version >= 1.9.6
     env = conf.Finish()
@@ -88,10 +88,10 @@ else:
         env.AppendUnique(CCFLAGS=['-fprofile-arcs', '-ftest-coverage'])
 
 # set warning flags
-warnings = ['',
+warnings = ['',  # for plain -W
             'all',
             'error',
-	    #'effc++',
+            #'effc++',
             'cast-align',
             'cast-qual',
             'shadow',
@@ -121,30 +121,30 @@ env.AppendUnique(CPPPATH=['#'])
 
 runtests = env.UnitTest(
                source=['runtests.cc',
-                   'dummy_test.cc',
-                   'input/input.cc',
-                   'input/sourceposition_test.cc',
-                   'input/sourceposition.cc',
-                   'input/filtergen/string_test.cc',
-                   'input/filtergen/enum_test.cc',
-                   'input/filtergen/token_test.cc',
-                   'input/filtergen/scanner_test.cc',
-                   'input/filtergen/parser_test.cc',
-                   'ir/binaryexpr_test.cc',
-            ],
+                       'dummy_test.cc',
+                       'input/input.cc',
+                       'input/sourceposition_test.cc',
+                       'input/sourceposition.cc',
+                       'input/filtergen/string_test.cc',
+                       'input/filtergen/enum_test.cc',
+                       'input/filtergen/token_test.cc',
+                       'input/filtergen/scanner_test.cc',
+                       'input/filtergen/parser_test.cc',
+                       'ir/binaryexpr_test.cc',
+                       ],
                LIBS=['cppunit',
-                 'in_filtergen',
-                 ],
+                     'in_filtergen',
+                     ],
                LIBPATH=['input/filtergen',
-                ])
-#env.AddPostAction('runtests', Action('./runtests'))
-#env.Default(runtests)
+                        ])
+env.AddPostAction('runtests', Action('./runtests'))
+env.Default(runtests)
 
 filtergen_sources = ['filtergen.cc',
                      'gen.cc',
-		     'filter.c',
-		     'fg-util.c',
-		     'icmpent.c',
+                     'filter.c',
+                     'fg-util.c',
+                     'icmpent.c',
                      'factoriser.cc',
                      ]
 filtergen  = env.Program('filtergen', filtergen_sources,
@@ -171,50 +171,49 @@ Default(filtergen)
 #env.AddPostAction(filtergen, Action('doxygen'))
 env.AddPostAction(runtests, Action('doxygen'))
 env.Distribute(env['DISTTREE'],
-	       filtergen_sources + ['filter.h',
-				    'icmpent.h',
-				    'util.h',
-				    'factoriser.h',
-				    'input/input.h',
-				    ])
+               filtergen_sources + ['filter.h',
+                                    'icmpent.h',
+                                    'util.h',
+                                    'factoriser.h',
+                                    'input/input.h',
+                                    ])
 
 def sed(target, source, env):
-	expandos = {
-		'SYSCONFDIR': sysconfdir,
-		'PKGEXDIR': pkgexdir,
-		'SBINDIR': sbindir,
-		'VERSION': VERSION
-		}
-	for (t, s) in zip(target, source):
-		o = file(str(t), "w")
-		i = file(str(s), "r")
-		o.write(i.read() % expandos)
-		i.close()
-		o.close()
-	return None
+        expandos = {
+                'SYSCONFDIR': sysconfdir,
+                'PKGEXDIR': pkgexdir,
+                'SBINDIR': sbindir,
+                'VERSION': VERSION
+                }
+        for (t, s) in zip(target, source):
+                o = file(str(t), "w")
+                i = file(str(s), "r")
+                o.write(i.read() % expandos)
+                i.close()
+                o.close()
+        return None
 
 fgadm = env.Command('fgadm', 'fgadm.in', [sed, Chmod('fgadm', 0755)])
 
 env.Command(['fgadm.conf', 'rules.filter'],
-	    ['fgadm.conf.in', 'rules.filter.in'],
-	    sed)
+            ['fgadm.conf.in', 'rules.filter.in'],
+            sed)
 Default(fgadm)
 env.Distribute(env['DISTTREE'],
-	       ['fgadm.in', 'rules.filter.in', 'fgadm.conf.in'])
+               ['fgadm.in', 'rules.filter.in', 'fgadm.conf.in'])
 
-SConscript([
-    'input/filtergen/SConscript',
-    #'input/iptables-save/SConscript',
-    'ir/SConscript',
-	#'output/iptables/SConscript',
-	#'output/ipchains/SConscript',
-	#'output/ipfilter/SConscript',
-	#'output/cisco/SConscript',
-	#'output/filtergen/SConscript',
-	#'output/graphviz/SConscript',
-	'examples/SConscript',
-	'doc/SConscript',
-	], 'env')
+SConscript(['input/filtergen/SConscript',
+            'input/iptables-save/SConscript',
+            'ir/SConscript',
+            'output/iptables/SConscript',
+            'output/ipchains/SConscript',
+            'output/ipfilter/SConscript',
+            'output/cisco/SConscript',
+            'output/filtergen/SConscript',
+            'output/graphviz/SConscript',
+            'examples/SConscript',
+            'doc/SConscript',
+            ], 'env')
 
 env.Install(DESTDIR + sbindir, [filtergen, fgadm])
 bin = env.Alias('install-bin', DESTDIR + sbindir)
@@ -234,7 +233,7 @@ env.Install(DESTDIR + pkgexdir, glob.glob('examples/*.filter'))
 pkgex = env.Alias('install-examples', DESTDIR + pkgexdir)
 
 env.Install(DESTDIR + pkgdocdir,
-	    ['doc/flow', 'doc/generator.notes', 'doc/notes'])
+            ['doc/flow', 'doc/generator.notes', 'doc/notes'])
 pkgdoc = env.Alias('install-doc', DESTDIR + pkgdocdir)
 
 env.Alias('install', [bin, man, sysconf, pkgdoc, pkgex])
@@ -242,17 +241,17 @@ env.Alias('install', [bin, man, sysconf, pkgdoc, pkgex])
 Precious(env['DISTTREE'])
 
 env.Distribute(env['DISTTREE'],
-	       ['SConstruct', 'Doxyfile',
-		'AUTHORS', 'THANKS',
-		'README', 'INSTALL', 'HISTORY', 'HONESTY', 'HACKING', 'TODO',
-		'filtergen.8', 'fgadm.8', 'filter_syntax.5',
-		'filter_backends.7',
-		'filtergen.spec.in',
-				])
+               ['SConstruct', 'Doxyfile',
+                'AUTHORS', 'THANKS',
+                'README', 'INSTALL', 'HISTORY', 'HONESTY', 'HACKING', 'TODO',
+                'filtergen.8', 'fgadm.8', 'filter_syntax.5',
+                'filter_backends.7',
+                'filtergen.spec.in',
+                                ])
 
 srcdist = env.Tarball(env['TARBALL'], env['DISTTREE'])
 env.Alias('dist', srcdist)
 # don't leave the disttree around
 env.AddPreAction(env['DISTTREE'],
-		 Action('rm -rf ' + str(File(env['DISTTREE']))))
+                 Action('rm -rf ' + str(File(env['DISTTREE']))))
 env.AddPostAction(srcdist, Action('rm -rf ' + str(File(env['DISTTREE']))))
