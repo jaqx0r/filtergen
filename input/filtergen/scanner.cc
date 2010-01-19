@@ -78,8 +78,8 @@ FiltergenScanner::skipWhitespaceAndComments()
   bool inComment = false;
 
   while (isspace(inspect()) ||
-	 (inspect() == '/' && inspect(1) == '*')  ||
-	 (inspect() == '#')) {
+     (inspect() == '/' && inspect(1) == '*')  ||
+     (inspect() == '#')) {
 
     while (isspace(inspect()))
       accept(false);
@@ -89,15 +89,15 @@ FiltergenScanner::skipWhitespaceAndComments()
       accept(false); accept(false);
 
       while (inComment) {
-	if (source()->eof()) {
-	  inComment = false;
-	  return false;
-	} else if (inspect() == '*' && inspect(1) == '/') {
-	  accept(false); accept(false);
-	  inComment = false;
-	} else {
-	  accept(false);
-	}
+    if (source()->eof()) {
+      inComment = false;
+      return false;
+    } else if (inspect() == '*' && inspect(1) == '/') {
+      accept(false); accept(false);
+      inComment = false;
+    } else {
+      accept(false);
+    }
       }
     }
 
@@ -106,12 +106,12 @@ FiltergenScanner::skipWhitespaceAndComments()
       accept(false);
 
       while (inComment) {
-	if (inspect() == '\n' || source()->eof()) {
-	  accept(false);
-	  inComment = false;
-	} else {
-	  accept(false);
-	}
+    if (inspect() == '\n' || source()->eof()) {
+      accept(false);
+      inComment = false;
+    } else {
+      accept(false);
+    }
       }
     }
   }
@@ -248,33 +248,33 @@ void include_file(const char * name) {
     char * fn;
 
     if (stat(name, &st)) {
-	//scan_err("warning: stat failed on \"%s\": %s", name, strerror(errno));
+        //scan_err("warning: stat failed on \"%s\": %s", name, strerror(errno));
     } else {
-	if (S_ISDIR(st.st_mode)) {
-	    if ((d = opendir(name)) == NULL) {
-		//driver.error(*yylloc, "warning: opendir failed");// on %s: %s", name, strerror(errno));
-	    } else {
-		while ((r = readdir(d)) != NULL) {
-		    /* FIXME: assumes d_name */
-		    if (r->d_name[0] == '.')
-			continue;
-		    asprintf(&fn, "%s/%s", name, r->d_name);
-		    include_file(fn);
-		    free(fn);
-		}
-		closedir(d);
-	    }
-	} else {
-	    //scan_err("opening %s as file", name);
+        if (S_ISDIR(st.st_mode)) {
+            if ((d = opendir(name)) == NULL) {
+                //driver.error(*yylloc, "warning: opendir failed");// on %s: %s", name, strerror(errno));
+            } else {
+                while ((r = readdir(d)) != NULL) {
+                    /* FIXME: assumes d_name */
+                    if (r->d_name[0] == '.')
+                        continue;
+                    asprintf(&fn, "%s/%s", name, r->d_name);
+                    include_file(fn);
+                    free(fn);
+                }
+                closedir(d);
+            }
+        } else {
+            //scan_err("opening %s as file", name);
 
-	    //yyin = fopen(name, "r");
-	    //if ( !yyin ) {
-		//scan_err("boned: %s", yytext);
-	    //}
+            //yyin = fopen(name, "r");
+            //if ( !yyin ) {
+            //scan_err("boned: %s", yytext);
+            //}
 
-	    //yypush_buffer_state(yy_create_buffer(yyin, YY_BUF_SIZE));
+            //yypush_buffer_state(yy_create_buffer(yyin, YY_BUF_SIZE));
 
-	}
+        }
     }
 }
 
