@@ -21,7 +21,7 @@ def UnitTest(env, source, **kwargs):
     testcmd = "sh -c " + test[0].abspath
     env.AddPostAction(test, Action(testcmd))
     env.Alias('check', test)
-    #env.AlwaysBuild(test)
+    env.AlwaysBuild(test)
     env.Default(test)
     return test
 
@@ -137,8 +137,8 @@ runtests = env.UnitTest(
                      ],
                LIBPATH=['input/filtergen',
                         ])
-env.AddPostAction('runtests', Action('./runtests'))
-env.Default(runtests)
+#env.AddPostAction('runtests', Action('./runtests'))
+#env.Default(runtests)
 
 filtergen_sources = ['filtergen.cc',
                      'gen.cc',
@@ -169,7 +169,10 @@ env.Depends(filtergen, runtests)
 Default(filtergen)
 
 #env.AddPostAction(filtergen, Action('doxygen'))
-env.AddPostAction(runtests, Action('doxygen'))
+#env.AddPostAction(runtests, Action('doxygen'))
+
+# Misc files.
+# TODO(jaq): Deprecate these as we migrate to new code.
 env.Distribute(env['DISTTREE'],
                filtergen_sources + ['filter.h',
                                     'icmpent.h',
@@ -247,11 +250,11 @@ env.Distribute(env['DISTTREE'],
                 'filtergen.8', 'fgadm.8', 'filter_syntax.5',
                 'filter_backends.7',
                 'filtergen.spec.in',
-                                ])
+                ])
 
 srcdist = env.Tarball(env['TARBALL'], env['DISTTREE'])
 env.Alias('dist', srcdist)
 # don't leave the disttree around
-env.AddPreAction(env['DISTTREE'],
-                 Action('rm -rf ' + str(File(env['DISTTREE']))))
-env.AddPostAction(srcdist, Action('rm -rf ' + str(File(env['DISTTREE']))))
+delete_distree_action = Action('rm -rf ' + str(File(env['DISTTREE'])))
+env.AddPreAction(env['DISTTREE'], delete_distree_action)
+env.AddPostAction(srcdist, delete_distree_action)

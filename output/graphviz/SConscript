@@ -1,3 +1,4 @@
+# -*- python -*-
 Import('env')
 
 sources = ['graphviz.c']
