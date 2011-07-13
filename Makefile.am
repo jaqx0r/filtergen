@@ -9,6 +9,7 @@ filtergen_SOURCES = \
 	filter.c \
 	fg-util.c \
 	fg-iptables.c \
+	fg-iptrestore.c \
 	fg-ipchains.c \
 	fg-ipfilter.c \
 	fg-cisco.c \
