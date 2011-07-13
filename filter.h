@@ -178,9 +178,9 @@ char *int_to_str_dup(int i);
 
 /* various drivers */
 typedef int filtergen(struct filter *filter, int flags);
-filtergen fg_iptables, fg_ipchains, fg_ipfilter, fg_cisco;
+filtergen fg_iptables, fg_iptrestore, fg_ipchains, fg_ipfilter, fg_cisco;
 typedef int filter_flush(enum filtertype policy);
-filter_flush flush_iptables, flush_ipchains;
+filter_flush flush_iptables, flush_iptrestore, flush_ipchains;
 
 /* ("flags" arguments) */
 #define	FF_NOSKEL	(1 << 0)	/* omit any "skeleton" rules */
