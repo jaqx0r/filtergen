@@ -31,7 +31,7 @@
 #include "parser.h"
 
 /* include file stack */
-#define MAXINCLUDES 16
+#define MAXINCLUDES 512
 struct inc_stack_s {
     YY_BUFFER_STATE state;
     char * filename;
@@ -125,17 +125,9 @@ text         return TOK_TEXT;
 
 <include>[ \t]*       /* eat whitespace after include */
 <include>[^ \t\n;]+    { /* include file name */
-                          if (inc_stackptr >= MAXINCLUDES - 1) {
-                              scan_err("warning: too many nested includes");
-    			      scan_err("warning: skipping include of file %s", yytext);
-
-			  } else {
-				char * name;
-
-				name = strdup(yytext);
-				include_file(name);
-				free(name);
-			  }
+			  char * name = strdup(yytext);
+			  include_file(name);
+			  free(name);
                           BEGIN(INITIAL);
                        }
 
@@ -176,6 +168,12 @@ static void scan_err(const char * fmt, ...) {
 
 void step_into_include_file(const char * fn) {
 	FILE * f;
+
+	if (inc_stackptr >= MAXINCLUDES - 1) {
+		scan_err("warning: too many nested includes");
+		scan_err("warning: skipping include of file \"%s\"", fn);
+		return;
+	}
 
         if (!(f = fopen(fn, "r"))) {
                 scan_err("warning: can't open file \"%s\"", fn);
