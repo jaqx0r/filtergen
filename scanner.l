@@ -49,7 +49,8 @@ void include_file(const char *);
 
 string  \"[^\n]+\"
 space   [ \t]+
-id      [[:alnum:]_][[:alnum:]_+-]*
+word    [[:alnum:]._+-]+
+id      {word}|({word})?:(({word})?:)+({word})?
 
 %%
 
@@ -114,7 +115,7 @@ text         return TOK_TEXT;
 "!"          return TOK_BANG;
 "*"          return TOK_STAR;
 
-{id}(\.{id})*	{
+{id}		{
 			yylval.u_str = strndup(yytext, yyleng);
 			return TOK_IDENTIFIER;
 		}
