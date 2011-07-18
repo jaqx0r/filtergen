@@ -112,6 +112,7 @@ struct filtyp {
     filter_flush * flusher;
 } filter_types[] = {
     { "iptables", AF_INET, fg_iptables, flush_iptables },
+    { "ip6tables", AF_INET6, fg_ip6tables, flush_ip6tables },
     { "iptables-restore", AF_INET, fg_iptrestore, flush_iptrestore },
     { "ipchains", AF_INET, fg_ipchains, flush_ipchains },
     { "ipfilter", AF_INET, fg_ipfilter, NULL },
