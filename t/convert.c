@@ -9,7 +9,7 @@ int indent = -2;
 extern int convtrace;
 
 int yyparse(void *);
-struct filter * convert(struct ast_s *);
+struct filter * convert(struct ast_s *, struct filtergen_opts *);
 #endif
 
 void emit_filter(struct filter * f) {
@@ -156,6 +156,7 @@ void emit_filter(struct filter * f) {
 
 int main(int argc __attribute__((unused)), char ** argv __attribute__((unused))) {
     struct filter * f = NULL;
+    struct filtergen_opts o = { AF_INET };
 
 #ifndef FILTER_EMIT
     char * CONVTRACE;
@@ -172,7 +173,7 @@ int main(int argc __attribute__((unused)), char ** argv __attribute__((unused)))
 	return 1;
     }
 
-    f = convert(&ast);
+    f = convert(&ast, &o);
 #else
     filter_fopen(NULL);
 

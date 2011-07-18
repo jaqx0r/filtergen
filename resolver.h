@@ -21,7 +21,8 @@
 #define __RESOLVER_H__
 
 #include "ast.h"
+#include "filter.h"
 
-void resolve(struct ast_s * n);
+void resolve(struct ast_s * n, struct filtergen_opts *o);
 
 #endif /* __RESOLVER_H__ */

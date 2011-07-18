@@ -68,7 +68,11 @@ struct proto_spec {
 };
 
 struct addr_spec {
-    struct in_addr addr, mask;
+    sa_family_t family;
+    union {
+	struct { struct in_addr addr, mask; } inet;
+	struct { struct in6_addr addr, mask; } inet6;
+    } u;
     char *addrstr, *maskstr;
 };
 
@@ -105,6 +109,9 @@ struct filter {
     int negate;
 };
 
+struct filtergen_opts {
+	sa_family_t family;
+};
 
 /* from filter.c */
 typedef struct filter *filter_tctor(enum filtertype);
@@ -113,7 +120,8 @@ struct filter *new_filter_neg(struct filter *sub);
 struct filter *new_filter_sibs(struct filter *list);
 struct filter *new_filter_subgroup(char *name, struct filter *list);
 typedef struct filter *filter_ctor(enum filtertype, const char*);
-filter_ctor new_filter_device, new_filter_host, new_filter_ports, new_filter_icmp, new_filter_proto, new_filter_log;
+filter_ctor new_filter_device, new_filter_ports, new_filter_icmp, new_filter_proto, new_filter_log;
+struct filter *new_filter_host(enum filtertype, const char*, sa_family_t);
 struct filter *new_filter_oneway(void);
 
 /* filter manipulations */
@@ -125,7 +133,7 @@ void filter_apply_flags(struct filter *f, long flags);
 
 /* from generated lexer and parer in filterlex.l */
 int filter_fopen(const char *filename);
-struct filter *filter_parse_list(void);
+struct filter *filter_parse_list(struct filtergen_opts * o);
 
 /* from gen.c */
 #define	ESET(e,f)	(e->whats_set & (1 << F_ ##f))
