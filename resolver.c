@@ -185,7 +185,7 @@ void resolve_protocol_specifier(struct protocol_specifier_s * n) {
 void resolve_host_argument(struct host_argument_s * n __attribute__((unused))) {
 }
 
-void resolve_host_argument_list(struct host_argument_list_s * n) {
+void resolve_host_argument_list(struct host_argument_list_s * n, struct filtergen_opts * o) {
     struct addrinfo * a = NULL, * i;
     struct addrinfo hints;
     int r;
@@ -193,13 +193,13 @@ void resolve_host_argument_list(struct host_argument_list_s * n) {
     struct host_argument_s * host = NULL;
 
     if (n->list) {
-        resolve_host_argument_list(n->list);
+        resolve_host_argument_list(n->list, o);
     }
 
     if (n->arg) {
         memset(&hints, 0, sizeof(struct addrinfo));
-        /* any address family is good */
-        hints.ai_family = PF_UNSPEC;
+        /* use our chosen address family */
+        hints.ai_family = o->family;
         /* return hostname, though we don't use it, for debugging */
         hints.ai_flags = AI_CANONNAME;
         /* limit so duplicate hosts aren't returned for each socktype */
@@ -245,9 +245,9 @@ void resolve_host_argument_list(struct host_argument_list_s * n) {
     }
 }
 
-void resolve_host_specifier(struct host_specifier_s * n) {
+void resolve_host_specifier(struct host_specifier_s * n, struct filtergen_opts * o) {
     if (n->list) {
-        resolve_host_argument_list(n->list);
+        resolve_host_argument_list(n->list, o);
     }
 }
 
@@ -272,38 +272,38 @@ void resolve_direction_specifier(struct direction_specifier_s * n) {
     }
 }
 
-void resolve_specifier_list(struct specifier_list_s * n);
+void resolve_specifier_list(struct specifier_list_s * n, struct filtergen_opts * o);
 
-void resolve_subrule_list(struct subrule_list_s * n) {
+void resolve_subrule_list(struct subrule_list_s * n, struct filtergen_opts * o) {
     if (n->subrule_list) {
-        resolve_subrule_list(n->subrule_list);
+        resolve_subrule_list(n->subrule_list, o);
     }
     if (n->specifier_list) {
-        resolve_specifier_list(n->specifier_list);
+        resolve_specifier_list(n->specifier_list, o);
     }
 }
 
-void resolve_chaingroup_specifier(struct chaingroup_specifier_s * n) {
+void resolve_chaingroup_specifier(struct chaingroup_specifier_s * n, struct filtergen_opts * o) {
     if (n->list) {
-        resolve_subrule_list(n->list);
+        resolve_subrule_list(n->list, o);
     }
 }
 
-void resolve_compound_specifier(struct compound_specifier_s * n) {
+void resolve_compound_specifier(struct compound_specifier_s * n, struct filtergen_opts * o) {
     if (n->list) {
-        resolve_subrule_list(n->list);
+        resolve_subrule_list(n->list, o);
     }
 }
 
-void resolve_specifier(struct specifier_s * n) {
+void resolve_specifier(struct specifier_s * n, struct filtergen_opts * o) {
     if (n->compound) {
-	resolve_compound_specifier(n->compound);
+	resolve_compound_specifier(n->compound, o);
     } else if (n->direction) {
 	resolve_direction_specifier(n->direction);
     } else if (n->target) {
 	resolve_target_specifier(n->target);
     } else if (n->host) {
-	resolve_host_specifier(n->host);
+	resolve_host_specifier(n->host, o);
     } else if (n->port) {
 	resolve_port_specifier(n->port);
     } else if (n->protocol) {
@@ -313,48 +313,48 @@ void resolve_specifier(struct specifier_s * n) {
     } else if (n->option) {
 	resolve_option_specifier(n->option);
     } else if (n->chaingroup) {
-	resolve_chaingroup_specifier(n->chaingroup);
+	resolve_chaingroup_specifier(n->chaingroup, o);
     }
 }
 
-void resolve_negated_specifier(struct negated_specifier_s * n) {
+void resolve_negated_specifier(struct negated_specifier_s * n, struct filtergen_opts * o) {
     if (n->spec) {
-	resolve_specifier(n->spec);
+	resolve_specifier(n->spec, o);
     }
 }
 
-void resolve_specifier_list(struct specifier_list_s * n) {
+void resolve_specifier_list(struct specifier_list_s * n, struct filtergen_opts * o) {
     if (n->list) {
-	resolve_specifier_list(n->list);
+	resolve_specifier_list(n->list, o);
     }
     if (n->spec) {
-	resolve_negated_specifier(n->spec);
+	resolve_negated_specifier(n->spec, o);
     }
 }
 
-void resolve_rule(struct rule_s * n) {
+void resolve_rule(struct rule_s * n, struct filtergen_opts * o) {
     if (n->list) {
-	resolve_specifier_list(n->list);
+	resolve_specifier_list(n->list, o);
     }
 }
 
-void resolve_rule_list(struct rule_list_s * n) {
+void resolve_rule_list(struct rule_list_s * n, struct filtergen_opts * o) {
     if (n->list) {
-	resolve_rule_list(n->list);
+	resolve_rule_list(n->list, o);
     }
     if (n->rule) {
-	resolve_rule(n->rule);
+	resolve_rule(n->rule, o);
     }
 }
 
-void resolve_ast(struct ast_s * n) {
+void resolve_ast(struct ast_s * n, struct filtergen_opts * o) {
     if (n->list) {
-	resolve_rule_list(n->list);
+	resolve_rule_list(n->list, o);
     }
 }
 
-void resolve(struct ast_s * n) {
+void resolve(struct ast_s * n, struct filtergen_opts * o) {
     if (n) {
-	resolve_ast(n);
+	resolve_ast(n, o);
     }
 }

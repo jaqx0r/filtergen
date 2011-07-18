@@ -39,7 +39,7 @@
 
 int yyparse(void *);
 void yyrestart(FILE *);
-extern struct filter * convert(struct ast_s * n);
+extern struct filter * convert(struct ast_s * n, struct filtergen_opts * o);
 
 static FILE *outfile;
 
@@ -230,9 +230,13 @@ int main(int argc, char **argv) {
 	{
 	    struct ast_s ast;
 
-	    if (yyparse((void *) &ast) == 0) {
-		resolve(&ast);
-		f = convert(&ast);
+	    if (yyparse(&ast) == 0) {
+		struct filtergen_opts o;
+		memset(&o, 0, sizeof o);
+		o.family = ft->family;
+
+		resolve(&ast, &o);
+		f = convert(&ast, &o);
 		if (!f) {
 		    fprintf(stderr, "couldn't convert file\n");
 		    return 1;

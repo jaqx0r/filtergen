@@ -45,28 +45,28 @@ int filter_fopen(const char * filename) {
 
 #define eprint(x) if (convtrace) fprintf(stderr, x)
 
-struct filter * convert_specifier_list(struct specifier_list_s * n);
+struct filter * convert_specifier_list(struct specifier_list_s * n, struct filtergen_opts * o);
 
-struct filter * convert_subrule_list(struct subrule_list_s * n) {
+struct filter * convert_subrule_list(struct subrule_list_s * n, struct filtergen_opts * o) {
     struct filter * res = NULL, * end = NULL;
 
     eprint("converting subrule_list\n");
 
     if (n->subrule_list) {
-	res = convert_subrule_list(n->subrule_list);
+	res = convert_subrule_list(n->subrule_list, o);
 	if (res) {
 	    end = res;
 	    while (end->next) {
 		end = end->next;
 	    }
 	    if (n->specifier_list) {
-		end->next = convert_specifier_list(n->specifier_list);
+		end->next = convert_specifier_list(n->specifier_list, o);
 	    }
 	} else {
 	    printf("warning: convert_subrule_list returned NULL\n");
 	}
     } else if (n->specifier_list) {
-        res = convert_specifier_list(n->specifier_list);
+        res = convert_specifier_list(n->specifier_list, o);
     } else {
         printf("error: no content in subrule_list\n");
     }
@@ -74,13 +74,13 @@ struct filter * convert_subrule_list(struct subrule_list_s * n) {
     return res;
 }
 
-struct filter * convert_compound_specifier(struct compound_specifier_s * r) {
+struct filter * convert_compound_specifier(struct compound_specifier_s * r, struct filtergen_opts * o) {
     struct filter * res = NULL;
 
     eprint("converting compound_specifier\n");
 
     if (r->list) {
-	res = new_filter_sibs(convert_subrule_list(r->list));
+	res = new_filter_sibs(convert_subrule_list(r->list, o));
     }
     return res;
 }
@@ -149,7 +149,7 @@ struct filter * convert_direction(struct direction_specifier_s * n) {
     return res;
 }
 
-struct filter * convert_host_argument(struct host_argument_s * n, int type) {
+struct filter * convert_host_argument(struct host_argument_s * n, int type, struct filtergen_opts * o) {
     struct filter * res = NULL;
     char * h;
 
@@ -161,45 +161,44 @@ struct filter * convert_host_argument(struct host_argument_s * n, int type) {
 		printf("error: asprintf allocation failed when converting host "
                		"argument %s/%s",
 	               	n->host, n->mask);
- 	    } else {
-		res = new_filter_host(type, h);
-	    }
-	} else {
-	    res = new_filter_host(type, n->host);
-	}
+ 	    }
+        } else {
+            h = n->host;
+        }
+	res = new_filter_host(type, h, o->family);
     } else {
-        printf("error: no host part\n");
+	printf("error: no host part\n");
     }
 
     return res;
 }
 
-struct filter * convert_host_argument_list(struct host_argument_list_s * n, int type) {
+struct filter * convert_host_argument_list(struct host_argument_list_s * n, int type, struct filtergen_opts * o) {
     struct filter * res = NULL, * end = NULL;
 
     eprint("converting host argument list\n");
 
     if (n->list) {
-        res = convert_host_argument_list(n->list, type);
+        res = convert_host_argument_list(n->list, type, o);
         if (res) {
             end = res;
             while (end->next) {
                 end = end->next;
             }
             if (n->arg) {
-                end->next = convert_host_argument(n->arg, type);
+                end->next = convert_host_argument(n->arg, type, o);
             }
         } else {
             printf("warning: convert_host_argument_list returned NULL\n");
         }
     } else {
-        res = convert_host_argument(n->arg, type);
+        res = convert_host_argument(n->arg, type, o);
     }
 
     return res;
 }
 
-struct filter * convert_host_specifier(struct host_specifier_s * n) {
+struct filter * convert_host_specifier(struct host_specifier_s * n, struct filtergen_opts * o) {
     struct filter * res = NULL;
     enum filtertype type;
 	
@@ -218,7 +217,7 @@ struct filter * convert_host_specifier(struct host_specifier_s * n) {
         break;
     }
     if (n->list) {
-	res = new_filter_sibs(convert_host_argument_list(n->list, type));
+	res = new_filter_sibs(convert_host_argument_list(n->list, type, o));
     } else {
 	printf("error: no host argument list\n");
     }
@@ -435,7 +434,7 @@ struct filter * convert_option_specifier(struct option_specifier_s * n) {
     return res;        
 }
 
-struct filter * convert_chaingroup_specifier(struct chaingroup_specifier_s * n) {
+struct filter * convert_chaingroup_specifier(struct chaingroup_specifier_s * n, struct filtergen_opts * o) {
     struct filter * res = NULL, * sub = NULL;
     char * name = NULL;
 
@@ -453,7 +452,7 @@ struct filter * convert_chaingroup_specifier(struct chaingroup_specifier_s * n) 
     }
   
     if (n->list) {
-	sub = convert_subrule_list(n->list);
+	sub = convert_subrule_list(n->list, o);
 
 	res = new_filter_subgroup(name, sub);
     } else {
@@ -463,13 +462,13 @@ struct filter * convert_chaingroup_specifier(struct chaingroup_specifier_s * n) 
     return res;
 }
 
-struct filter * convert_specifier(struct specifier_s * r) {
+struct filter * convert_specifier(struct specifier_s * r, struct filtergen_opts * o) {
     struct filter * res = NULL;
     eprint("converting specifier\n");
     
     if (r->compound) {
         eprint("converting compound specifier\n");
-	res = convert_compound_specifier(r->compound);
+	res = convert_compound_specifier(r->compound, o);
     } else if (r->direction) {
         res = convert_direction(r->direction);
     } else if (r->target) {
@@ -503,7 +502,7 @@ struct filter * convert_specifier(struct specifier_s * r) {
 	}
 	res = new_filter_target(type);
     } else if (r->host) {
-        res = convert_host_specifier(r->host);
+        res = convert_host_specifier(r->host, o);
     } else if (r->protocol) {
         res = convert_protocol_specifier(r->protocol);
     } else if (r->port) {
@@ -513,21 +512,21 @@ struct filter * convert_specifier(struct specifier_s * r) {
     } else if (r->option) {
 	res = convert_option_specifier(r->option);
     } else if (r->chaingroup) {
-	res = convert_chaingroup_specifier(r->chaingroup);
+	res = convert_chaingroup_specifier(r->chaingroup, o);
     } else
 	printf("error: no specifiers\n");
     
     return res;
 }
 
-struct filter * convert_negated_specifier(struct negated_specifier_s * r) {
+struct filter * convert_negated_specifier(struct negated_specifier_s * r, struct filtergen_opts * o) {
     struct filter * spec = NULL;
     struct filter * res = NULL;
 
     eprint("converting negated specifier\n");
 
     if (r->spec) {
-	spec = convert_specifier(r->spec);
+	spec = convert_specifier(r->spec, o);
 	if (spec && r->negated) {
 	    eprint("negating\n");
 	    res = new_filter_neg(spec);
@@ -538,73 +537,73 @@ struct filter * convert_negated_specifier(struct negated_specifier_s * r) {
     return res;
 }
 
-struct filter * convert_specifier_list(struct specifier_list_s * n) {
+struct filter * convert_specifier_list(struct specifier_list_s * n, struct filtergen_opts * o) {
     struct filter * res = NULL, * end = NULL;
 
     eprint("converting specifier_list\n");
 
     if (n->list) {
-	res = convert_specifier_list(n->list);
+	res = convert_specifier_list(n->list, o);
 	if (res) {
 	    end = res;
 	    while (end->child) {
 		end = end->child;
 	    }
 	    if (n->spec) {
-		end->child = convert_negated_specifier(n->spec);
+		end->child = convert_negated_specifier(n->spec, o);
 	    }
 	} else {
 	    printf("warning: convert_specifier_list returned NULL\n");
 	}
     } else {
-	res = convert_negated_specifier(n->spec);
+	res = convert_negated_specifier(n->spec, o);
     }
 
     return res;
 }
 
-struct filter * convert_rule(struct rule_s * r) {
+struct filter * convert_rule(struct rule_s * r, struct filtergen_opts * o) {
     struct filter * res = NULL;
 
     eprint("converting rule\n");
 
     if (r->list)
-	res = convert_specifier_list(r->list);
+	res = convert_specifier_list(r->list, o);
     return res;
 }
 
-struct filter * convert_rule_list(struct rule_list_s * n) {
+struct filter * convert_rule_list(struct rule_list_s * n, struct filtergen_opts * o) {
     struct filter * res = NULL, * end = NULL;
 
     eprint("converting rule_list\n");
 
     if (n->list) {
-	res = convert_rule_list(n->list);
+	res = convert_rule_list(n->list, o);
 	end = res;
 	while (end->next) {
 	    end = end->next;
 	}
 	if (n->rule) {
-	    end->next = convert_rule(n->rule);
+	    end->next = convert_rule(n->rule, o);
 	}
     } else {
-	res = convert_rule(n->rule);
+	res = convert_rule(n->rule, o);
     }
 
     return res;
 }
 
-struct filter * convert(struct ast_s * ast) {
+struct filter * convert(struct ast_s * ast, struct filtergen_opts * o) {
     struct filter * res = NULL;
     
     eprint("converting ast\n");
 
     if (ast->list)
-	res = convert_rule_list(ast->list);
+	res = convert_rule_list(ast->list, o);
     return res;
 }
 
-struct filter * filter_parse_list(void) {
+struct filter * filter_parse_list(struct filtergen_opts * o) {
     struct filter * f = NULL;
     struct ast_s ast;
     int r;
@@ -616,7 +615,7 @@ struct filter * filter_parse_list(void) {
     }
 
     /* convert our new style AST into the old style struct */
-    if (!(f = convert(&ast))) {
+    if (!(f = convert(&ast, o))) {
 	printf("conversion failed!\n");
     }
 
