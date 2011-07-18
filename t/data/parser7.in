@@ -8,3 +8,6 @@ source 127.0.0.1/32;
 source 127.0.0.1/255.255.255.255;
 source mail.example.com;
 source mail.example.com/24;
+source ::/128;
+source 0123:4567:89ab:cdef:0123:4567:89AB:CDEF;
+source 1:2:3:4::/32;

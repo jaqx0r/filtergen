@@ -176,6 +176,38 @@ struct filter *new_filter_host(enum filtertype type, const char *matchstr, sa_fa
 	    }
 	    f->u.addrs.maskstr = strdup(inet_ntoa(f->u.addrs.u.inet.mask));
 	    break;
+	case AF_INET6:
+	    if(!str_to_int(mask, &i)) {
+		/* Netmask like foo/128 */
+		unsigned char l[16] = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+					0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
+		unsigned char *p = l + 15;
+		int o;
+		if(i < 0 || i > 128) {
+		    fprintf(stderr, "can't parse netmask \"%s\"\n",
+			    mask);
+		    return NULL;
+		}
+		if (i != 0) {
+		    o = 128 - i;
+		    while (o > 8) {
+			*p = 0x00;
+			o -= 8;
+		    }
+		    if(!i)
+			*p = 0x00;
+		    else {
+			*p >>= o; *p <<= o;
+		    }
+		}
+		memcpy(f->u.addrs.u.inet6.mask.s6_addr, l, sizeof l);
+		f->u.addrs.maskstr = int_to_str_dup(i);
+	    } else {
+		fprintf(stderr, "can't parse netmask \"%s\"\n",
+			mask);
+		return NULL;
+	    }
+	    break;
 	default:
 	    fprintf(stderr, "can't parse netmask \"%s\" for unknown address family\n",
 		    mask);

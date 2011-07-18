@@ -9,3 +9,9 @@ kind = identifier, spelling = "29", file = "(standard input)", line = 5
 kind = identifier, spelling = "bar", file = "(standard input)", line = 6
 kind = slash, spelling = "/", file = "(standard input)", line = 6
 kind = identifier, spelling = "255.255.255.248", file = "(standard input)", line = 6
+kind = identifier, spelling = "0123:4567:89ab:cdef:0123:4567:89AB:CDEF", file = "(standard input)", line = 7
+kind = identifier, spelling = "1:2:3:4::", file = "(standard input)", line = 8
+kind = identifier, spelling = "::5:6:7:8", file = "(standard input)", line = 9
+kind = identifier, spelling = "1:2:3:4::5:6:7:8", file = "(standard input)", line = 10
+kind = identifier, spelling = "::ffff:127.0.0.1", file = "(standard input)", line = 11
+kind = identifier, spelling = "::", file = "(standard input)", line = 12
