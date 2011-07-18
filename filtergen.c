@@ -107,15 +107,16 @@ int oprintf(const char *fmt, ...)
 
 struct filtyp {
     const char * name;
+    sa_family_t family;
     filtergen * compiler;
     filter_flush * flusher;
 } filter_types[] = {
-    { "iptables", fg_iptables, flush_iptables, },
-    { "iptables-restore", fg_iptrestore, flush_iptrestore, },
-    { "ipchains", fg_ipchains, flush_ipchains, },
-    { "ipfilter", fg_ipfilter, NULL },
-    { "cisco", fg_cisco, NULL },
-    { NULL, NULL, NULL },
+    { "iptables", AF_INET, fg_iptables, flush_iptables },
+    { "iptables-restore", AF_INET, fg_iptrestore, flush_iptrestore },
+    { "ipchains", AF_INET, fg_ipchains, flush_ipchains },
+    { "ipfilter", AF_INET, fg_ipfilter, NULL },
+    { "cisco", AF_INET, fg_cisco, NULL },
+    { NULL, 0, NULL, NULL },
 };
 
 #ifdef HAVE_GETOPT_H
