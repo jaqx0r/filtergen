@@ -52,6 +52,10 @@
 #define	A_TCP	0x10
 #define	A_UDP	0x20
 
+/* full path to ip{,6}tables-restore executables */
+#define IPTABLES_RESTORE "/sbin/iptables-restore"
+#define IP6TABLES_RESTORE "/sbin/ip6tables-restore"
+
 static char *appip(char *r, const struct addr_spec *h)
 {
     APPS(r, h->addrstr);
@@ -72,7 +76,7 @@ static char *appport(char *r, const struct port_spec *h)
 #define	APPPORT2(f, r, h)	(APPS(r, f), APPPORT(r, h))
 
 
-static int cb_iptrestore_rule(const struct filterent *ent, struct fg_misc *misc)
+static int cb_iptrestore_rule_common(const struct filterent *ent, struct fg_misc *misc, sa_family_t family)
 {
     char *rulechain = NULL, *revchain = NULL, *natchain = NULL;
     char *ruletarget = NULL, *revtarget = NULL, *nattarget = NULL;
@@ -90,6 +94,10 @@ static int cb_iptrestore_rule(const struct filterent *ent, struct fg_misc *misc)
     /* nat rule? */
     if((target == MASQ) || (target == REDIRECT)) {
 	neednat = 1;
+	if(family == AF_INET6) {
+	    fprintf(stderr, "can't NAT with IPv6\n");
+	    return -1;
+	}
 	if((target == MASQ) && (ent->direction == INPUT)) {
 	    fprintf(stderr, "can't masquerade on input\n");
 	    return -1;
@@ -328,7 +336,17 @@ static int cb_iptrestore_rule(const struct filterent *ent, struct fg_misc *misc)
     return orules;
 }
 
-static int cb_iptrestore_group(const char *name)
+static int cb_iptrestore_rule(const struct filterent *ent, struct fg_misc *misc)
+{
+    return cb_iptrestore_rule_common(ent, misc, AF_INET);
+}
+
+static int cb_ip6trestore_rule(const struct filterent *ent, struct fg_misc *misc)
+{
+    return cb_iptrestore_rule_common(ent, misc, AF_INET6);
+}
+
+static int cb_iptrestore_group_common(const char *name)
 {
     oprintf("-N %s-INPUT\n", name);
     oprintf("-N %s-OUTPUT\n", name);
@@ -337,14 +355,24 @@ static int cb_iptrestore_group(const char *name)
     return 4;
 }
 
-int fg_iptrestore(struct filter *filter, int flags)
+static int cb_iptrestore_group(const char *name)
+{
+    return cb_iptrestore_group_common(name);
+}
+
+static int cb_ip6trestore_group(const char *name)
+{
+    return cb_iptrestore_group_common(name);
+}
+
+static int fg_iptrestore_common(struct filter *filter, int flags, sa_family_t family, const char *iptables_restore)
 {
     long feat = 0;
     int r = 0;
     struct fg_misc misc = { flags, &feat };
     fg_callback cb_iptrestore = {
-		cb_iptrestore_rule,
-		cb_iptrestore_group,
+	.rule =	family == AF_INET ? cb_iptrestore_rule : cb_ip6trestore_rule,
+	.group = family == AF_INET ? cb_iptrestore_group : cb_ip6trestore_group,
     };
     const int nchains = 3;
 
@@ -352,7 +380,7 @@ int fg_iptrestore(struct filter *filter, int flags)
     filter_apply_flags(filter, flags);
 
     if(!(flags & FF_NOSKEL)) {
-    	oputs("/sbin/iptables-restore <<EOF");
+	oprintf("%s <<EOF\n", iptables_restore);
 	oputs("*filter");
 	oputs(":INPUT DROP [0:0]");
 	oputs(":OUTPUT DROP [0:0]");
@@ -394,9 +422,18 @@ int fg_iptrestore(struct filter *filter, int flags)
     return r;
 }
 
+int fg_iptrestore(struct filter *filter, int flags)
+{
+    return fg_iptrestore_common(filter, flags, AF_INET, IPTABLES_RESTORE);
+}
+
+int fg_ip6trestore(struct filter *filter, int flags)
+{
+    return fg_iptrestore_common(filter, flags, AF_INET6, IP6TABLES_RESTORE);
+}
 
 /* Rules which just flush the packet filter */
-int flush_iptrestore(enum filtertype policy) {
+static int flush_iptrestore_common(enum filtertype policy) {
     char * ostr;
 
     oputs("CHAINS=\"INPUT OUTPUT FORWARD\"");
@@ -421,4 +458,12 @@ int flush_iptrestore(enum filtertype policy) {
     oprintf(":FORWARD %s [0:0]\n", ostr);
 
     return 0;
+}
+
+int flush_iptrestore(enum filtertype policy) {
+    return flush_iptrestore_common(policy);
+}
+
+int flush_ip6trestore(enum filtertype policy) {
+    return flush_iptrestore_common(policy);
 }

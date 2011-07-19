@@ -114,6 +114,7 @@ struct filtyp {
     { "iptables", AF_INET, fg_iptables, flush_iptables },
     { "ip6tables", AF_INET6, fg_ip6tables, flush_ip6tables },
     { "iptables-restore", AF_INET, fg_iptrestore, flush_iptrestore },
+    { "ip6tables-restore", AF_INET6, fg_ip6trestore, flush_ip6trestore },
     { "ipchains", AF_INET, fg_ipchains, flush_ipchains },
     { "ipfilter", AF_INET, fg_ipfilter, NULL },
     { "cisco", AF_INET, fg_cisco, NULL },
