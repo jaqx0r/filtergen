@@ -18,7 +18,7 @@ if [ -f $CONF ]; then
 fi
 # sanity check config values
 case "$BACKEND" in
-    iptables|ipchains|ipfilter|cisco) ;;
+    iptables|iptables-restore|ipchains|ipfilter|cisco) ;;
     *) BACKEND="iptables" ;;
 esac
 
@@ -35,6 +35,19 @@ reload () {
 		if [ -x /sbin/$BACKEND ]; then
 		    if $FILTERGEN $FGOPTS -t $BACKEND $FILTER > /dev/null ; then
 			$FILTERGEN $FGOPTS -t $BACKEND $FILTER | /bin/sh
+		    else
+			echo "Errors found in $FILTER.  Not reloading."
+			RETVAL=1
+		    fi
+		else
+		    echo "/sbin/$BACKEND not found.  Not reloading."
+		    RETVAL=1
+		fi
+		;;
+	    iptables-restore)
+		if [ -x /sbin/$BACKEND ]; then
+		    if $FILTERGEN $FGOPTS -t $BACKEND $FILTER > /dev/null ; then
+			$FILTERGEN $FGOPTS -t $BACKEND $FILTER | /sbin/$BACKEND
 		    else
 			echo "Errors found in $FILTER.  Not reloading."
 			RETVAL=1
