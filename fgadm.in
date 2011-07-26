@@ -18,7 +18,7 @@ if [ -f $CONF ]; then
 fi
 # sanity check config values
 case "$BACKEND" in
-    iptables|iptables-restore|ipchains|ipfilter|cisco) ;;
+    iptables|ip6tables|iptables-restore|ip6tables-restore|ipchains|ipfilter|cisco) ;;
     *) BACKEND="iptables" ;;
 esac
 
@@ -31,7 +31,7 @@ reload () {
     if [ -f $FILTER ]; then
 	echo "Generating $BACKEND packet filter."
 	case "$BACKEND" in
-	    iptables|ipchains)
+	    iptables|ip6tables|ipchains)
 		if [ -x /sbin/$BACKEND ]; then
 		    if $FILTERGEN $FGOPTS -t $BACKEND $FILTER > /dev/null ; then
 			$FILTERGEN $FGOPTS -t $BACKEND $FILTER | /bin/sh
@@ -44,7 +44,7 @@ reload () {
 		    RETVAL=1
 		fi
 		;;
-	    iptables-restore)
+	    iptables-restore|ip6tables-restore)
 		if [ -x /sbin/$BACKEND ]; then
 		    if $FILTERGEN $FGOPTS -t $BACKEND $FILTER > /dev/null ; then
 			$FILTERGEN $FGOPTS -t $BACKEND $FILTER | /sbin/$BACKEND
