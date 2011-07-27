@@ -8,16 +8,21 @@ filter_backends \- output drivers for the filtergen packet filter compiler
 This document describes the status and feature-set of the currently
 available \fBfiltergen\fR backends.
 
-.SH IPTABLES
+.SH IPTABLES, IP6TABLES
 Most development is done first against the iptables driver.  It supports
 reject, masquerading, transparent proxying, logging (with text) and
 sub-groups, all of which should work fine (though the latter has only
 recently been fixed).
 
-.SH IPTABLES-RESTORE
+The ip6tables driver is the IPv6 equivalent of the iptables driver.
+
+.SH IPTABLES-RESTORE, IP6TABLES-RESTORE
 The iptables-restore driver supports all of the features of the iptables
 driver. It emits a ruleset that is loaded atomically into Netfilter
 using iptables-restore.
+
+The ip6tables-restore driver is the IPv6 equivalent of the iptables-restore
+driver.
 
 .SH IPCHAINS
 The ipchains driver supports all of the above features, too.  Its state
