@@ -14,6 +14,11 @@ reject, masquerading, transparent proxying, logging (with text) and
 sub-groups, all of which should work fine (though the latter has only
 recently been fixed).
 
+.SH IPTABLES-RESTORE
+The iptables-restore driver supports all of the features of the iptables
+driver. It emits a ruleset that is loaded atomically into Netfilter
+using iptables-restore.
+
 .SH IPCHAINS
 The ipchains driver supports all of the above features, too.  Its state
 model is much weaker though, of course.  The forwarding support should
