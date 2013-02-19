@@ -6,7 +6,7 @@ EnsureSConsVersion(0, 95)
 
 VERSION = "0.13"
 
-opts = Options()
+opts = Variables()
 #opts.AddOptions(
 #	EnumOption('debug', 'debugging compiler options', 'yes',
 #			   allowed_values=('yes', 'no', 'gcov'),
