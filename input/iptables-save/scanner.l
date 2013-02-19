@@ -1,5 +1,6 @@
 %option noyywrap
 %option nounput
+%option noinput
 %option prefix="ipts_"
 %option yylineno
 

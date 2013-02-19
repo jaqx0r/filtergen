@@ -1,5 +1,6 @@
 %option noyywrap
 %option nounput
+%option noinput
 %option prefix="filtergen_"
 %x include
 %x comment
