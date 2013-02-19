@@ -21,6 +21,7 @@
 
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <limits.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <netdb.h>
@@ -47,7 +48,7 @@ void resolve_icmptype_argument(struct icmptype_argument_s * n) {
 	    char * e;
 
 	    m = strtol(n->icmptype, &e, 10);
-	    if (*e) {
+	    if (*e || m == LONG_MIN || m == LONG_MAX) {
 		fprintf(stderr, "warning: suspicious icmp type encountered: %s\n", n->icmptype);
 	    }
         }        
@@ -83,7 +84,7 @@ void resolve_port_argument(struct port_argument_s * n) {
 	    char * e;
 
 	    m = strtol(n->port_min, &e, 10);
-	    if (*e) {
+	    if (*e || m == LONG_MIN || m == LONG_MAX) {
 		fprintf(stderr, "warning: suspicious port name encountered: %s\n", n->port_min);
 	    }
 	}
@@ -99,7 +100,7 @@ void resolve_port_argument(struct port_argument_s * n) {
 	    char * e;
 
 	    m = strtol(n->port_max, &e, 10);
-	    if (*e) {
+	    if (*e || m == LONG_MIN || m == LONG_MAX) {
 		fprintf(stderr, "warning: suspicious port name encountered: %s\n", n->port_max);
 	    }
 	}
@@ -134,7 +135,7 @@ void resolve_protocol_argument(struct protocol_argument_s * n) {
 	    char * e;
 
 	    m = strtol(n->proto, &e, 10);
-	    if (*e) {
+	    if (*e || m == LONG_MIN || m == LONG_MAX) {
 		fprintf(stderr, "warning: suspicious protocol name encountered: %s\n", n->proto);
 	    }
 	}
