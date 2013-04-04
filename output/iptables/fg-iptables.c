@@ -382,9 +382,9 @@ int fg_iptables(struct filter *filter, int flags)
 	oputs("-A INVALID -j LOG --log-prefix \"invalid \"");
 #endif
 	oputs("-A INVALID -j DROP");
-	oputs("-A INPUT -m state --state INVALID -j INVALID");
-	oputs("-A OUTPUT -m state --state INVALID -j INVALID");
-	oputs("-A FORWARD -m state --state INVALID -j INVALID");
+	oputs("-A INPUT -m conntrack --ctstate INVALID -j INVALID");
+	oputs("-A OUTPUT -m conntrack --ctstate INVALID -j INVALID");
+	oputs("-A FORWARD -m conntrack --ctstate INVALID -j INVALID");
 	r += nchains;
     }
     if((r = filtergen_cprod(filter, &cb_iptables, &misc)) < 0)
@@ -393,15 +393,15 @@ int fg_iptables(struct filter *filter, int flags)
 	if((flags & FF_LSTATE) && (feat & (A_TCP|A_UDP))) {
 	    if(feat & A_TCP) {
 		r += nchains;
-		oputs("-I INPUT -p tcp ! --syn -m state --state ESTABLISHED -j ACCEPT");
-		oputs("-I OUTPUT -p tcp ! --syn -m state --state ESTABLISHED -j ACCEPT");
-		oputs("-I FORWARD -p tcp ! --syn -m state --state ESTABLISHED -j ACCEPT");
+		oputs("-I INPUT -p tcp ! --syn -m conntract --ctstate ESTABLISHED -j ACCEPT");
+		oputs("-I OUTPUT -p tcp ! --syn -m conntract --ctstate ESTABLISHED -j ACCEPT");
+		oputs("-I FORWARD -p tcp ! --syn -m conntract --ctstate ESTABLISHED -j ACCEPT");
 	    }
 	    if(feat & A_UDP) {
 		r += nchains;
-		oputs("-I INPUT -p udp -m state --state ESTABLISHED -j ACCEPT");
-		oputs("-I OUTPUT -p udp -m state --state ESTABLISHED -j ACCEPT");
-		oputs("-I FORWARD -p udp -m state --state ESTABLISHED -j ACCEPT");
+		oputs("-I INPUT -p udp -m conntract --ctstate ESTABLISHED -j ACCEPT");
+		oputs("-I OUTPUT -p udp -m conntract --ctstate ESTABLISHED -j ACCEPT");
+		oputs("-I FORWARD -p udp -m conntract --ctstate ESTABLISHED -j ACCEPT");
 	    }
 	}
 #if 0
