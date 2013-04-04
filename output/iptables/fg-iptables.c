@@ -168,8 +168,8 @@ static int cb_iptables_rule(const struct filterent *ent, struct fg_misc *misc)
 	    break;
 	}
 	if(needstate) {
-	    APPS(rule, "-m state --state NEW,ESTABLISHED");
-	    APPS(rule_r, "-m state --state ESTABLISHED");
+	    APPS(rule, "-m conntrack --ctstate NEW,ESTABLISHED");
+	    APPS(rule_r, "-m conntrack --ctstate ESTABLISHED");
 	}
     }
 
