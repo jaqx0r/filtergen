@@ -29,76 +29,76 @@ check () {
 
 reload () {
     if [ -f $FILTER ]; then
-	echo "Generating $BACKEND packet filter."
-	case "$BACKEND" in
-	    ipchains)
-		if [ -x /sbin/$BACKEND ]; then
-		    if $FILTERGEN $FGOPTS -t $BACKEND $FILTER > /dev/null ; then
-			$FILTERGEN $FGOPTS -t $BACKEND $FILTER | /bin/sh
-		    else
-			echo "Errors found in $FILTER.  Not reloading."
-			RETVAL=1
-		    fi
-		else
-		    echo "/sbin/$BACKEND not found.  Not reloading."
-		    RETVAL=1
-		fi
-		;;
-	    iptables)
-		if [ -x /sbin/iptables-restore ]; then
-		    if $FILTERGEN $FGOPTS -t $BACKEND $FILTER > /dev/null && $FILTERGEN $FGOPTS -t $BACKEND $FILTER | /sbin/iptables-restore --test; then
-			$FILTERGEN $FGOPTS -t $BACKEND $FILTER | /sbin/iptables-restore
-		    else
-			echo "Errors found in $FILTER.  Not reloading."
-			RETVAL=1
-		    fi
-		else
-		    echo "/sbin/$BACKEND not found.  Not reloading."
-		    RETVAL=1
-		fi
-		;;
-	    *)
-		echo "Operation not supported for $BACKEND backend."
-		;;
-	esac
+	    echo "Generating $BACKEND packet filter."
+	    case "$BACKEND" in
+	        ipchains)
+		        if [ -x /sbin/$BACKEND ]; then
+		            if $FILTERGEN $FGOPTS -t $BACKEND $FILTER > /dev/null ; then
+			            $FILTERGEN $FGOPTS -t $BACKEND $FILTER | /bin/sh
+		            else
+			            echo "Errors found in $FILTER.  Not reloading."
+			            RETVAL=1
+		            fi
+		        else
+		            echo "/sbin/$BACKEND not found.  Not reloading."
+		            RETVAL=1
+		        fi
+		        ;;
+	        iptables)
+		        if [ -x /sbin/iptables-restore ]; then
+		            if $FILTERGEN $FGOPTS -t $BACKEND $FILTER > /dev/null && $FILTERGEN $FGOPTS -t $BACKEND $FILTER | /sbin/iptables-restore --test; then
+			            $FILTERGEN $FGOPTS -t $BACKEND $FILTER | /sbin/iptables-restore
+		            else
+			            echo "Errors found in $FILTER.  Not reloading."
+			            RETVAL=1
+		            fi
+		        else
+		            echo "/sbin/$BACKEND not found.  Not reloading."
+		            RETVAL=1
+		        fi
+		        ;;
+	        *)
+		        echo "Operation not supported for $BACKEND backend."
+		        ;;
+	    esac
     else
-	echo "$RULES not found.  Not reloading."
-	RETVAL=1
+	    echo "$RULES not found.  Not reloading."
+	    RETVAL=1
     fi
 }
 
 stop () {
     echo "Stopping current packet filter."
     case "$BACKEND" in
-	iptables|ipchains)
-	    if [ -x /sbin/$BACKEND ]; then
-		$FILTERGEN -t $BACKEND -F ACCEPT | /bin/sh
-	    else
-		echo "/sbin/$BACKEND not found"
-		RETVAL=1
-	    fi
-	    ;;
-	*)
-	    echo "Operation not supported for $BACKEND backend."
-	    ;;
+	    iptables|ipchains)
+	        if [ -x /sbin/$BACKEND ]; then
+		        $FILTERGEN -t $BACKEND -F ACCEPT | /bin/sh
+	        else
+		        echo "/sbin/$BACKEND not found"
+		        RETVAL=1
+	        fi
+	        ;;
+	    *)
+	        echo "Operation not supported for $BACKEND backend."
+	        ;;
     esac
 }
- 
+
 save () {
     case "$BACKEND" in
-	iptables)
-	    if [ -f /etc/redhat-release ]; then
-		/sbin/service iptables save
-	    fi
-	    ;;
-	ipchains)
-	    if [ -f /etc/redhat-release ]; then
-		/sbin/service ipchains save
-	    fi
-	    ;;
-	*)
-	    echo "Operation not supported for $BACKEND backend."
-	    ;;
+	    iptables)
+	        if [ -f /etc/redhat-release ]; then
+		        /sbin/service iptables save
+	        fi
+	        ;;
+	    ipchains)
+	        if [ -f /etc/redhat-release ]; then
+		        /sbin/service ipchains save
+	        fi
+	        ;;
+	    *)
+	        echo "Operation not supported for $BACKEND backend."
+	        ;;
     esac
 }
 
@@ -110,18 +110,18 @@ EOF
 
 case "$1" in
     check)
-	check
-	;;
+	    check
+	    ;;
     reload)
-	reload
-	;;
+	    reload
+	    ;;
     stop)
-	stop
-	;;
+	    stop
+	    ;;
     save)
-	save
-	;;
+	    save
+	    ;;
     *)
-	usage
-	;;
+	    usage
+	    ;;
 esac
