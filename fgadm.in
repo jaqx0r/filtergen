@@ -31,10 +31,23 @@ reload () {
     if [ -f $FILTER ]; then
 	echo "Generating $BACKEND packet filter."
 	case "$BACKEND" in
-	    iptables|ipchains)
+	    ipchains)
 		if [ -x /sbin/$BACKEND ]; then
 		    if $FILTERGEN $FGOPTS -t $BACKEND $FILTER > /dev/null ; then
 			$FILTERGEN $FGOPTS -t $BACKEND $FILTER | /bin/sh
+		    else
+			echo "Errors found in $FILTER.  Not reloading."
+			RETVAL=1
+		    fi
+		else
+		    echo "/sbin/$BACKEND not found.  Not reloading."
+		    RETVAL=1
+		fi
+		;;
+	    iptables)
+		if [ -x /sbin/iptables-restore ]; then
+		    if $FILTERGEN $FGOPTS -t $BACKEND $FILTER > /dev/null && $FILTERGEN $FGOPTS -t $BACKEND $FILTER | /sbin/iptables-restore --test; then
+			$FILTERGEN $FGOPTS -t $BACKEND $FILTER | /sbin/iptables-restore
 		    else
 			echo "Errors found in $FILTER.  Not reloading."
 			RETVAL=1
