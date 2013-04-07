@@ -164,7 +164,7 @@ struct not_option_s {
     int neg;
     struct option_s * option;
 };
-    
+
 struct option_list_s {
     struct option_list_s * option_list;
     struct not_option_s * not_option;
@@ -183,13 +183,13 @@ struct rule_list_s {
 };
 
 struct table_s {
-  char * name;
-  struct rule_list_s * rule_list;
+    char * name;
+    struct rule_list_s * rule_list;
 };
 
 struct table_list_s {
-  struct table_list_s * list;
-  struct table_s * table;
+    struct table_list_s * list;
+    struct table_s * table;
 };
 
 struct ast_s {

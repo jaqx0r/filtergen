@@ -98,11 +98,11 @@ int oputs(const char *s)
 {
     int r = 0;
     if(s) {
-	r = fputs(s, outfile);
-	if(r > 0) {
-	    fputc('\n', outfile);
-	    r++;
-	}
+        r = fputs(s, outfile);
+        if(r > 0) {
+            fputc('\n', outfile);
+            r++;
+        }
     }
     return r;
 }
@@ -163,7 +163,7 @@ int main(int argc, char **argv) {
     int l;
     char *filename = NULL, *ftn = NULL, *ofn = NULL, * source_name = NULL;
     struct source_parser_s * sp;
-    struct filtyp *ft = NULL; 
+    struct filtyp *ft = NULL;
     int flags = 0;
     char *progname;
     int arg;
@@ -173,121 +173,121 @@ int main(int argc, char **argv) {
     progname = argv[0];
 
     while ((arg = GETOPT(argc, argv, "hco:t:F:Vrs:")) > 0) {
-	switch (arg) {
-	  case ':':
-	    usage(progname);
-	    exit(1);
-	    break;
-	  case 'h':
-	    usage(progname);
-	    exit(0);
-	    break;
-	  case 'c':
-	    flags |= FF_NOSKEL;
-	    break;
-	  case 'o':
-	    ofn = strdup(optarg);
-	    break;
-	  case 's':
-	    source_name = strdup(optarg);
-	    break;
-	  case 't':
-	    ftn = strdup(optarg);
-	    break;
-	  case 'F':
-	    flags |= FF_FLUSH;
-	    if (!strcasecmp(optarg, "accept")) {
-		flushpol = T_ACCEPT;
-	    } else if (!strcasecmp(optarg, "drop")) {
-		flushpol = DROP;
-	    } else if (!strcasecmp(optarg, "reject")) {
-		flushpol = T_REJECT;
-	    } else {
-		fprintf(stderr, "%s: flush policy unrecofgnised: %s\n", progname, optarg);
-		usage(progname);
-		exit(1);
-	    }
-	    break;
-	  case 'V':
-	    printf("filtergen " VERSION "\n");
-	    exit(0);
-	    break;
-	  case 'r':
-	    resolve_names = 0;
-	    break;
-	  default:
-	    break;
-	}
+        switch (arg) {
+        case ':':
+            usage(progname);
+            exit(1);
+            break;
+        case 'h':
+            usage(progname);
+            exit(0);
+            break;
+        case 'c':
+            flags |= FF_NOSKEL;
+            break;
+        case 'o':
+            ofn = strdup(optarg);
+            break;
+        case 's':
+            source_name = strdup(optarg);
+            break;
+        case 't':
+            ftn = strdup(optarg);
+            break;
+        case 'F':
+            flags |= FF_FLUSH;
+            if (!strcasecmp(optarg, "accept")) {
+                flushpol = T_ACCEPT;
+            } else if (!strcasecmp(optarg, "drop")) {
+                flushpol = DROP;
+            } else if (!strcasecmp(optarg, "reject")) {
+                flushpol = T_REJECT;
+            } else {
+                fprintf(stderr, "%s: flush policy unrecofgnised: %s\n", progname, optarg);
+                usage(progname);
+                exit(1);
+            }
+            break;
+        case 'V':
+            printf("filtergen " VERSION "\n");
+            exit(0);
+            break;
+        case 'r':
+            resolve_names = 0;
+            break;
+        default:
+            break;
+        }
     }
     if (!(flags & FF_FLUSH)) {
-	if (optind >= argc) {
-	    usage(progname);
-	    exit(1);
-	} else
-	    filename = argv[optind++];
+        if (optind >= argc) {
+            usage(progname);
+            exit(1);
+        } else
+            filename = argv[optind++];
     }
 
     if (ofn) {
-	/* XXX - open a different tempfile, and rename on success */
-	outfile = fopen(ofn, "w");
-	if(!outfile) {
-	    fprintf(stderr, "%s: can't open output file \"%s\"\n", progname, ofn);
-	    return 1;
-	}
+        /* XXX - open a different tempfile, and rename on success */
+        outfile = fopen(ofn, "w");
+        if(!outfile) {
+            fprintf(stderr, "%s: can't open output file \"%s\"\n", progname, ofn);
+            return 1;
+        }
     } else
-	outfile = stdout;
+        outfile = stdout;
 
     /* work out which source parser to use */
     if (!source_name || !*source_name) source_name = strdup("filtergen");
     for (sp = source_parsers; sp->name; ++sp) {
-	if (!strcmp(source_name, sp->name))
-	    break;
+        if (!strcmp(source_name, sp->name))
+            break;
     }
     if (!sp->name) {
-	fprintf(stderr, "%s: source parser unrecognised: %s", progname, source_name);
-	usage(progname);
-	exit(1);
+        fprintf(stderr, "%s: source parser unrecognised: %s", progname, source_name);
+        usage(progname);
+        exit(1);
     }
 
     /* work out which target emitter to use */
     if(!ftn || !*ftn) ftn = strdup("iptables");
     for (ft = filter_types; ft->name; ft++)
-	if (!strcmp(ftn, ft->name))
-	    break;
+        if (!strcmp(ftn, ft->name))
+            break;
     if (!ft->name) {
-	fprintf(stderr, "%s: target filter unrecognised: %s\n", progname, ftn);
-	usage(progname);
-	exit(1);
+        fprintf(stderr, "%s: target filter unrecognised: %s\n", progname, ftn);
+        usage(progname);
+        exit(1);
     }
 
     /* What to do, then? */
     if(flags & FF_FLUSH) {
-	/* Just flush it */
-	l = ft->flusher(flushpol);
+        /* Just flush it */
+        l = ft->flusher(flushpol);
     } else {
-	FILE * file;
+        FILE * file;
 
-	/* Compile from a file */
-	if(filename && !strcmp(filename, "-")) filename = NULL;
+        /* Compile from a file */
+        if(filename && !strcmp(filename, "-")) filename = NULL;
 
-	if (filename) {
-	    /** FIXME: make more effort to find the file */
-	    if (!(file = fopen(filename, "r"))) {
-		fprintf(stderr, "can't open file \"%s\"", filename);
-	    }
-	} else {
-	    file = stdin;
-	}
-	f = sp->parser(file, resolve_names);
-	l = ft->compiler(f, flags);
+        if (filename) {
+            /** FIXME: make more effort to find the file */
+            if (!(file = fopen(filename, "r"))) {
+                fprintf(stderr, "can't open file \"%s\"", filename);
+            }
+        } else {
+            file = stdin;
+        }
+        f = sp->parser(file, resolve_names);
+        l = ft->compiler(f, flags);
     }
 
     if(ofn) fclose(outfile);
 
     if(l < 0) {
-	fprintf(stderr, "an error occurred: most likely the filters defined make no sense\n");
-	if(ofn) unlink(ofn);
-	return 1;
+        fprintf(stderr, "an error occurred: most likely the filters defined make no sense\n");
+        if(ofn) unlink(ofn);
+        return 1;
     }
     fprintf(stderr, "generated %d rules\n", l);
     return 0;

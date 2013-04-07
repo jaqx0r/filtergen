@@ -38,7 +38,7 @@ static char *appport(char *r, const struct port_spec *p, int neg)
     if(!p->minstr) return APPS(r, "any");
 
     if(!p->maxstr)
-	return APPS2(r, neg ? "ne " : "eq ", p->minstr);
+        return APPS2(r, neg ? "ne " : "eq ", p->minstr);
 
     if(neg) abort();
     APPS(r, "range");
@@ -56,40 +56,40 @@ static int cb_cisco_rule(const struct filterent *ent, struct fg_misc *misc __att
 
     /* access list name */
     if(ent->iface) {
-	APP2(rule, ent->iface, "-");
-	APP2(rule_r, ent->iface, "-");
+        APP2(rule, ent->iface, "-");
+        APP2(rule_r, ent->iface, "-");
     }
     switch(ent->direction) {
-      case INPUT:	APP(rule, "IN"); APP(rule_r, "OUT"); break;
-      case OUTPUT:	APP(rule, "OUT"); APP(rule_r, "IN"); break;
-      default: fprintf(stderr, "unknown direction\n"); abort();
+    case INPUT:	APP(rule, "IN"); APP(rule_r, "OUT"); break;
+    case OUTPUT:	APP(rule, "OUT"); APP(rule_r, "IN"); break;
+    default: fprintf(stderr, "unknown direction\n"); abort();
     }
 
     /* target */
     switch(ent->target) {
-      case T_ACCEPT:	APPS(rule, "permit"); APPS(rule_r, "permit"); break;
-      case DROP: 	APPS(rule, "deny"); APPS(rule_r, "deny"); break;
-      case T_REJECT:
-	fprintf(stderr, "warning: Cisco IOS does not support REJECT\n");
-	APPS(rule, "deny");
-	APPS(rule_r, "deny");
-	break;
-      default: abort();
+    case T_ACCEPT:	APPS(rule, "permit"); APPS(rule_r, "permit"); break;
+    case DROP: 	APPS(rule, "deny"); APPS(rule_r, "deny"); break;
+    case T_REJECT:
+        fprintf(stderr, "warning: Cisco IOS does not support REJECT\n");
+        APPS(rule, "deny");
+        APPS(rule_r, "deny");
+        break;
+    default: abort();
     }
 
     /* protocol */
     if(ent->proto.name) {
-	APPS(rule, ent->proto.name);
-	APPS(rule_r, ent->proto.name);
-	switch(ent->proto.num) {
-	  case IPPROTO_TCP: case IPPROTO_UDP:
-	    needret++;
-	    break;
-	  default:
-	    needports = 0;
-	}
+        APPS(rule, ent->proto.name);
+        APPS(rule_r, ent->proto.name);
+        switch(ent->proto.num) {
+        case IPPROTO_TCP: case IPPROTO_UDP:
+            needret++;
+            break;
+        default:
+            needports = 0;
+        }
     } else {
-	APPS(rule, "ip"); APPS(rule_r, "ip");
+        APPS(rule, "ip"); APPS(rule_r, "ip");
     }
 
     rule = appip(rule, &ent->srcaddr);
@@ -98,10 +98,10 @@ static int cb_cisco_rule(const struct filterent *ent, struct fg_misc *misc __att
     rule_r = appip(rule_r, &ent->srcaddr);
 
     if(needports) {
-	rule = appport(rule, &ent->u.ports.src, NEG(SPORT));
-	rule = appport(rule, &ent->u.ports.dst, NEG(DPORT));
-	rule_r = appport(rule_r, &ent->u.ports.dst, NEG(DPORT));
-	rule_r = appport(rule_r, &ent->u.ports.src, NEG(SPORT));
+        rule = appport(rule, &ent->u.ports.src, NEG(SPORT));
+        rule = appport(rule, &ent->u.ports.dst, NEG(DPORT));
+        rule_r = appport(rule_r, &ent->u.ports.dst, NEG(DPORT));
+        rule_r = appport(rule_r, &ent->u.ports.src, NEG(SPORT));
     }
 
     if(ent->proto.num == IPPROTO_TCP) APPS(rule_r, "established");
@@ -120,10 +120,10 @@ int fg_cisco(struct filter *filter, int flags)
 {
     struct fg_misc misc = { flags, NULL };
     fg_callback cb_cisco = {
-	rule:	cb_cisco_rule, NULL
+    rule:	cb_cisco_rule, NULL
     };
     oputs("# Warning: This backend is not complete and "
-	  "can generate broken rulesets.");
+          "can generate broken rulesets.");
     filter_nogroup(filter);
     filter_unroll(&filter);
     filter_apply_flags(filter, flags);

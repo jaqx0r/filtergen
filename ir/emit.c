@@ -9,128 +9,128 @@ int indent = 0;
 int indentsize = 1;
 
 EMIT(ir_expr) {
-  if (ir_expr) {
-    eprint("(expr");
-    indent += indentsize;
+    if (ir_expr) {
+        eprint("(expr");
+        indent += indentsize;
 
-    switch (ir_expr->type) {
-     case IR_EXPR_VALUE:
-      eprint(ir_expr->value);
-      break;
-     case IR_EXPR_UNARY:
-      switch (ir_expr->operator) {
-       case IR_OP_NOT:
-	eprint("(not");
-	indent += indentsize;
-	emit_ir_expr(ir_expr->left);
-	indent -= indentsize;
-	eprint(")");
-	break;
-       case IR_OP_PRED:
-	eprint("(pred");
-	eprint(ir_expr->value);
-	indent += indentsize;
-	emit_ir_expr(ir_expr->left);
-	indent -= indentsize;
-	eprint(")");
-	break;
-       default:
-	break;
-      }
-      break;
-     case IR_EXPR_BINARY:
-      switch (ir_expr->operator) {
-       case IR_OP_AND:
-	eprint("(and");
-	indent += indentsize;
-	emit_ir_expr(ir_expr->left);
-	emit_ir_expr(ir_expr->right);
-	indent -= indentsize;
-	eprint(")");
-	break;
-       case IR_OP_OR:
-	eprint("(or");
-	indent += indentsize;
-	emit_ir_expr(ir_expr->left);
-	emit_ir_expr(ir_expr->right);
-	indent -= indentsize;
-	eprint(")");
-	break;
-       default:
-	break;
-      }
-      break;
-     default:
-      break;
+        switch (ir_expr->type) {
+        case IR_EXPR_VALUE:
+            eprint(ir_expr->value);
+            break;
+        case IR_EXPR_UNARY:
+            switch (ir_expr->operator) {
+            case IR_OP_NOT:
+                eprint("(not");
+                indent += indentsize;
+                emit_ir_expr(ir_expr->left);
+                indent -= indentsize;
+                eprint(")");
+                break;
+            case IR_OP_PRED:
+                eprint("(pred");
+                eprint(ir_expr->value);
+                indent += indentsize;
+                emit_ir_expr(ir_expr->left);
+                indent -= indentsize;
+                eprint(")");
+                break;
+            default:
+                break;
+            }
+            break;
+        case IR_EXPR_BINARY:
+            switch (ir_expr->operator) {
+            case IR_OP_AND:
+                eprint("(and");
+                indent += indentsize;
+                emit_ir_expr(ir_expr->left);
+                emit_ir_expr(ir_expr->right);
+                indent -= indentsize;
+                eprint(")");
+                break;
+            case IR_OP_OR:
+                eprint("(or");
+                indent += indentsize;
+                emit_ir_expr(ir_expr->left);
+                emit_ir_expr(ir_expr->right);
+                indent -= indentsize;
+                eprint(")");
+                break;
+            default:
+                break;
+            }
+            break;
+        default:
+            break;
+        }
+
+        indent -= indentsize;
+        eprint(")");
     }
-
-    indent -= indentsize;
-    eprint(")");
-  }
 }
 
 EMIT(ir_action) {
-  if (ir_action) {
-    eprint("(action");
-    indent += indentsize;
+    if (ir_action) {
+        eprint("(action");
+        indent += indentsize;
 
-    switch (ir_action->type) {
-     case IR_ACCEPT:
-      eprint("accept");
-      break;
-     case IR_DROP:
-      eprint("drop");
-      break;
-     case IR_REJECT:
-      eprint("reject");
-      break;
-     case IR_LOG:
-      eprint("log");
-      break;
-     default:
-      /* blow up */
-      break;
+        switch (ir_action->type) {
+        case IR_ACCEPT:
+            eprint("accept");
+            break;
+        case IR_DROP:
+            eprint("drop");
+            break;
+        case IR_REJECT:
+            eprint("reject");
+            break;
+        case IR_LOG:
+            eprint("log");
+            break;
+        default:
+            /* blow up */
+            break;
+        }
+
+        if (ir_action->options) {
+            eprint(ir_action->options);
+        }
+
+        indent -= indentsize;
+        eprint(")");
     }
-
-    if (ir_action->options) {
-      eprint(ir_action->options);
-    }
-
-    indent -= indentsize;
-    eprint(")");
-  }
 }
 
 EMIT(ir_rule) {
-  if (ir_rule) {
-    eprint("(rule");
-    indent += indentsize;
-    if (ir_rule->expr) {
-      emit_ir_expr(ir_rule->expr);
-    }
-    if (ir_rule->action) {
-      emit_ir_action(ir_rule->action);
-    }
+    if (ir_rule) {
+        eprint("(rule");
+        indent += indentsize;
+        if (ir_rule->expr) {
+            emit_ir_expr(ir_rule->expr);
+        }
+        if (ir_rule->action) {
+            emit_ir_action(ir_rule->action);
+        }
 
-    if (ir_rule->next) {
-      emit_ir_rule(ir_rule->next);
-    }
+        if (ir_rule->next) {
+            emit_ir_rule(ir_rule->next);
+        }
 
-    indent -= indentsize;    
-    eprint(")");
-  }
+        indent -= indentsize;
+        eprint(")");
+    }
 }
 
 EMIT(ir) {
-  if (ir) {
-    eprint("(ir");
-    indent+=indentsize;
-    if (ir->filter) {
-      emit_ir_rule(ir->filter);
+    if (ir) {
+        eprint("(ir");
+        indent+=indentsize;
+        if (ir->filter) {
+            emit_ir_rule(ir->filter);
+        }
+        indent-=indentsize;
+        eprint(")");
     }
-    indent-=indentsize;
-    eprint(")");
-  }
 }
 
 int main(void) {

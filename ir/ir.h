@@ -26,20 +26,20 @@ enum ir_operator { IR_OP_NONE, IR_OP_AND, IR_OP_OR, IR_OP_NOT, IR_OP_PRED };
 
 /** expression tree */
 struct ir_expr_s {
-  /** type of this expression node */
-  enum ir_expr_type type;
+    /** type of this expression node */
+    enum ir_expr_type type;
 
-  /** the value of this expression node */
-  char * value;
+    /** the value of this expression node */
+    char * value;
 
-  /** the type of operator for this expression */
-  enum ir_operator operator;
+    /** the type of operator for this expression */
+    enum ir_operator operator;
 
-  /** the left child, or first argument to this expression */
-  struct ir_expr_s * left;
+    /** the left child, or first argument to this expression */
+    struct ir_expr_s * left;
 
-  /** the right child, or second argument, to this expression */
-  struct ir_expr_s * right;
+    /** the right child, or second argument, to this expression */
+    struct ir_expr_s * right;
 };
 
 /** Actions that can be performed by packet filters. */
@@ -63,7 +63,7 @@ struct ir_rule_s {
     struct ir_expr_s * expr;
     struct ir_action_s * action;
 
-  struct ir_rule_s * next;
+    struct ir_rule_s * next;
 };
 
 /** Top level container for the internal representation.  The names reflect
@@ -75,7 +75,7 @@ struct ir_s {
     /** list of rules for Network Address Translation */
     struct ir_rule_s * nat;
     /** list of rules for packet modification.
-	c.f. pf's "options: scrub" */
+        c.f. pf's "options: scrub" */
     struct ir_rule_s * mangle;
     /* TODO: add "conf" section, correlating to pf's "options: set",
        and for modifying kernel sysctl parameters */

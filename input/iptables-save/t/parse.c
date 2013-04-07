@@ -15,8 +15,8 @@ int main(int argc, char ** argv) {
     yydebug = YYDEBUGTRACE ? atoi(YYDEBUGTRACE) : 0;
 
     if (argc > 1) {
-      FILE * f = fopen(argv[1], "r");
-      yyrestart(f);
+        FILE * f = fopen(argv[1], "r");
+        yyrestart(f);
     }
 
     yyparse(&ast);

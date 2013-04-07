@@ -30,60 +30,60 @@ static int out_filtergen_rule(const struct filterent * ent, struct fg_misc * mis
     char * rule = NULL;
 
     switch (ent->direction) {
-      case INPUT:
-	APPSS2(rule, "input", ent->iface);
-	break;
-      case OUTPUT:
-	APPSS2(rule, "output", ent->iface);
-	break;
-      default:
-	break;
+    case INPUT:
+        APPSS2(rule, "input", ent->iface);
+        break;
+    case OUTPUT:
+        APPSS2(rule, "output", ent->iface);
+        break;
+    default:
+        break;
     }
 
     if (ent->srcaddr.addrstr) {
-	APPSS2(rule, "source", ent->srcaddr.addrstr);
-	if (ent->srcaddr.maskstr)
-	    APP2(rule, "/", ent->srcaddr.maskstr);
+        APPSS2(rule, "source", ent->srcaddr.addrstr);
+        if (ent->srcaddr.maskstr)
+            APP2(rule, "/", ent->srcaddr.maskstr);
     }
 
     if (ent->dstaddr.addrstr) {
-	APPSS2(rule, "dest", ent->dstaddr.addrstr);
-	if (ent->dstaddr.maskstr)
-	    APP2(rule, "/", ent->dstaddr.maskstr);
+        APPSS2(rule, "dest", ent->dstaddr.addrstr);
+        if (ent->dstaddr.maskstr)
+            APP2(rule, "/", ent->dstaddr.maskstr);
     }
 
     if (ent->proto.name)
-	APPSS2(rule, "proto", ent->proto.name);
+        APPSS2(rule, "proto", ent->proto.name);
 
     if (ent->u.ports.src.minstr) {
-	APPSS2(rule, "sport", ent->u.ports.src.minstr);
-	if (ent->u.ports.src.maxstr)
-	    APP2(rule, ":", ent->u.ports.src.maxstr);
+        APPSS2(rule, "sport", ent->u.ports.src.minstr);
+        if (ent->u.ports.src.maxstr)
+            APP2(rule, ":", ent->u.ports.src.maxstr);
     }
 
     if (ent->u.ports.dst.minstr) {
-	APPSS2(rule, "dport", ent->u.ports.dst.minstr);
-	if (ent->u.ports.dst.maxstr)
-	    APP2(rule, ":", ent->u.ports.dst.maxstr);
+        APPSS2(rule, "dport", ent->u.ports.dst.minstr);
+        if (ent->u.ports.dst.maxstr)
+            APP2(rule, ":", ent->u.ports.dst.maxstr);
     }
 
     if (ent->u.icmp)
-	APPSS2(rule, "icmptype", ent->u.icmp);
+        APPSS2(rule, "icmptype", ent->u.icmp);
 
     if (ESET(ent,LOG)) APPS(rule, "log");
 
     switch (ent->target) {
-      case T_ACCEPT:
-	APPS(rule, "accept");
-	break;
-      case DROP:
-	APPS(rule, "drop");
-	break;
-      case T_REJECT:
-	APPS(rule, "reject");
-	break;
-      default:
-	break;
+    case T_ACCEPT:
+        APPS(rule, "accept");
+        break;
+    case DROP:
+        APPS(rule, "drop");
+        break;
+    case T_REJECT:
+        APPS(rule, "reject");
+        break;
+    default:
+        break;
     }
 
     APPS(rule, ";");
@@ -96,7 +96,7 @@ static int out_filtergen_rule(const struct filterent * ent, struct fg_misc * mis
 int emit_filtergen(struct filter * filter, int flags) {
     struct fg_misc misc = { flags, NULL };
     fg_callback out_filtergen_cb = {
-	rule: out_filtergen_rule, NULL
+    rule: out_filtergen_rule, NULL
     };
 
     filter_nogroup(filter);

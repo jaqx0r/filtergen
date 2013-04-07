@@ -41,7 +41,7 @@ enum filtertype {
     F_DIRECTION, F_TARGET,
     F_SOURCE, F_DEST, F_SPORT, F_DPORT,
     F_ICMPTYPE,
-    F_PROTO, 
+    F_PROTO,
     F_NEG, F_SIBLIST, F_SUBGROUP,
     F_LOG,
     F_RTYPE,
@@ -81,23 +81,23 @@ struct port_spec {
 struct filter {
     enum filtertype type;
     union {
-	struct {
-	    enum filtertype direction;
-	    char *iface;
-	} ifinfo;
-	enum filtertype target;
-	char *logmsg;
-	enum filtertype rtype;
-	struct addr_spec addrs;
-	struct port_spec ports;
-	char *icmp;
-	struct proto_spec proto;
-	struct filter *neg;
-	struct filter *sib;
-	struct {
-	    char *name;
-	    struct filter *list;
-	} sub;
+        struct {
+            enum filtertype direction;
+            char *iface;
+        } ifinfo;
+        enum filtertype target;
+        char *logmsg;
+        enum filtertype rtype;
+        struct addr_spec addrs;
+        struct port_spec ports;
+        char *icmp;
+        struct proto_spec proto;
+        struct filter *neg;
+        struct filter *sib;
+        struct {
+            char *name;
+            struct filter *list;
+        } sub;
     } u;
     struct filter *child, *next;
 
@@ -130,16 +130,16 @@ struct filter *filter_parse_list(void);
 /* from gen.c */
 #define	ESET(e,f)	(e->whats_set & (1 << F_ ##f))
 struct filterent {
-  /** Either direction+iface or groupname must be set */
+    /** Either direction+iface or groupname must be set */
     enum filtertype direction;
     char *iface;
     char *groupname;
 
-  /** One of these must be set */
+    /** One of these must be set */
     enum filtertype target;
     char *subgroup;
 
-  /** These may or may not be set */
+    /** These may or may not be set */
     int whats_set:F_FILTER_MAX;
     int whats_negated:F_FILTER_MAX;
     struct addr_spec srcaddr, dstaddr;
@@ -149,12 +149,12 @@ struct filterent {
     char *logmsg;
     int oneway;
 
-  /** We need this not to be a union, for error-checking reasons */
+    /** We need this not to be a union, for error-checking reasons */
     struct {
-	struct {
-	    struct port_spec src, dst;
-	} ports;
-	char *icmp;
+        struct {
+            struct port_spec src, dst;
+        } ports;
+        char *icmp;
     } u;
 };
 

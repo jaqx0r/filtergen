@@ -43,7 +43,7 @@ static char *appport(char *r, const struct port_spec *p, int neg)
 
     APPS(r, "port");
     if(!p->maxstr)
-	return APPSS2(r, neg ? "!=" : "=", p->minstr);
+        return APPSS2(r, neg ? "!=" : "=", p->minstr);
 
     APPS(r, p->minstr);
     APPSS2(r, neg ? "><" : "<>", p->maxstr);
@@ -63,24 +63,24 @@ static int cb_ipfilter_rule(const struct filterent *ent, struct fg_misc *misc __
 
     /* target first */
     switch(ent->target) {
-      case T_ACCEPT:	APP(rule, "pass"); break;
-      case DROP:	APP(rule, "block"); break;
-      case T_REJECT:
-	/* XXX - can this violate the rule about icmp errors
-	 * about icmp errors? */
-	if (ent->proto.num == IPPROTO_TCP)
-	    APP(rule, "block return-rst");
-	else
-	    APP(rule, "block return-icmp-as-dest(port-unr)");
-	break;
-      default: abort();
+    case T_ACCEPT:	APP(rule, "pass"); break;
+    case DROP:	APP(rule, "block"); break;
+    case T_REJECT:
+        /* XXX - can this violate the rule about icmp errors
+         * about icmp errors? */
+        if (ent->proto.num == IPPROTO_TCP)
+            APP(rule, "block return-rst");
+        else
+            APP(rule, "block return-icmp-as-dest(port-unr)");
+        break;
+    default: abort();
     }
 
     /* in or out? */
     switch(ent->direction) {
-      case INPUT:	APPS(rule, "in"); break;
-      case OUTPUT:	APPS(rule, "out"); break;
-      default: fprintf(stderr, "unknown direction\n"); abort();
+    case INPUT:	APPS(rule, "in"); break;
+    case OUTPUT:	APPS(rule, "out"); break;
+    default: fprintf(stderr, "unknown direction\n"); abort();
     }
 
     if(ESET(ent,LOG)) APPS(rule, "log");
@@ -96,7 +96,7 @@ static int cb_ipfilter_rule(const struct filterent *ent, struct fg_misc *misc __
 
     /* protocol */
     if(ent->proto.name)
-	APPSS2(rule, "proto", ent->proto.name);
+        APPSS2(rule, "proto", ent->proto.name);
 
     APPS(rule, "from");
     rule = appip(rule, &ent->srcaddr);
@@ -108,7 +108,7 @@ static int cb_ipfilter_rule(const struct filterent *ent, struct fg_misc *misc __
     rule = appicmp(rule, ent->u.icmp, NEG(ICMPTYPE));
 
     if(ent->proto.name && (ent->target == T_ACCEPT) && !ent->oneway)
-	APPS(rule, "keep state");
+        APPS(rule, "keep state");
 
     oputs(rule);
     free(rule);
@@ -119,7 +119,7 @@ int fg_ipfilter(struct filter *filter, int flags)
 {
     struct fg_misc misc = { flags, NULL };
     fg_callback cb_ipfilter = {
-	rule:	cb_ipfilter_rule, NULL
+    rule:	cb_ipfilter_rule, NULL
     };
 
     filter_nogroup(filter);

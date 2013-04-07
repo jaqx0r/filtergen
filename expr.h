@@ -30,6 +30,6 @@ struct group_s {
     char * name;
     struct rule_s * rule_list;
 };
-    
+
 
 #endif /* __EXPR_H__ */
