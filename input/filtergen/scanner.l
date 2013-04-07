@@ -2,6 +2,7 @@
 %option nounput
 %option noinput
 %option prefix="filtergen_"
+%option yylineno
 %x include
 %x comment
 %{
@@ -46,7 +47,7 @@ id      [[:alnum:]_][[:alnum:]_+-]*
 
 <comment>{
 [^*\n]*		/* eat anything that's not a '*' */
-"*"+[^*/\n]*	/* eat up '*'s not followes by '/'s */
+"*"+[^*/\n]*	/* eat up '*'s not followed by '/'s */
 \n		/* eat newlines */
 "*"+"/"		BEGIN(INITIAL);
 <<EOF>>		{
@@ -113,7 +114,7 @@ text         return TOK_TEXT;
     char * name;
 
     name = strdup(yytext);
-    scan_err("including %s", name);
+    //scan_err("including %s", name);
     include_file(name);
     free(name);
 
@@ -121,11 +122,10 @@ text         return TOK_TEXT;
 }
 
 <<EOF>>                {
-    scan_err("eof! popping state");
+    //scan_err("eof! popping state");
     yypop_buffer_state();
-
     if (!YY_CURRENT_BUFFER) {
-	yyterminate();
+        yyterminate();
     }
 }
 
@@ -133,56 +133,56 @@ text         return TOK_TEXT;
 
 /* FIXME: make this return an immutable string */
 char * filtergen_filename(void) {
-  char * fn = NULL;
-  return fn ? fn : strdup("(unknown)");
+    char * fn = NULL;
+    return fn ? fn : strdup("(unknown)");
 }
 
 static void scan_err(const char * fmt, ...) {
-  va_list args;
+    va_list args;
 
-  va_start(args, fmt);
-  fprintf(stderr, "%s:%d: ", filtergen_filename(), filtergen_get_lineno());
-  vfprintf(stderr, fmt, args);
-  fprintf(stderr, "\n");
+    va_start(args, fmt);
+    fprintf(stderr, "%s:%d: ", filtergen_filename(), filtergen_get_lineno());
+    vfprintf(stderr, fmt, args);
+    fprintf(stderr, "\n");
 }
 
 /* include a file or directory */
 void include_file(const char * name) {
-  struct stat st;
-  DIR * d;
-  struct dirent * r;
-  char * fn;
+    struct stat st;
+    DIR * d;
+    struct dirent * r;
+    char * pathname;
 
-  if (stat(name, &st)) {
-	scan_err("warning: stat failed on \"%s\": %s", name, strerror(errno));
-  } else {
-	if (S_ISDIR(st.st_mode)) {
-      if ((d = opendir(name)) == NULL) {
-		scan_err("warning: opendir failed on %s: %s", name, strerror(errno));
-      } else {
-		while ((r = readdir(d)) != NULL) {
-          /* FIXME: assumes d_name */
-          if (r->d_name[0] == '.')
-			continue;
-          if (asprintf(&fn, "%s/%s", name, r->d_name) < 0) {
-            scan_err("internal error: asprintf failed: %s", strerror(errno));
-          } else {
-            include_file(fn);
-		    free(fn);
-          }
-		}
-		closedir(d);
-      }
-	} else {
-      scan_err("opening %s as file", name);
+    if (stat(name, &st)) {
+        scan_err("warning: stat failed on \"%s\": %s", name, strerror(errno));
+    } else {
+        if (S_ISDIR(st.st_mode)) {
+            if ((d = opendir(name)) == NULL) {
+                scan_err("warning: opendir failed on %s: %s", name, strerror(errno));
+            } else {
+                while ((r = readdir(d)) != NULL) {
+                    /* FIXME: assumes d_name */
+                    if (r->d_name[0] == '.')
+                        continue;
+                    if (asprintf(&pathname, "%s/%s", name, r->d_name) < 0) {
+                        scan_err("internal error: asprintf failed constructing pathname for included file %s", r->d_name);
+                    } else {
+                        include_file(pathname);
+                        free(pathname);
+                    }
+                }
+                closedir(d);
+            }
+        } else {
+            //scan_err("opening %s as file", name);
 
-      yyin = fopen(name, "r");
-      if ( !yyin ) {
-		scan_err("boned: %s", yytext);
-      }
+            yyin = fopen(name, "r");
+            if ( !yyin ) {
+                scan_err("boned: %s", yytext);
+            }
 
-      yypush_buffer_state(yy_create_buffer(yyin, YY_BUF_SIZE));
+            yypush_buffer_state(yy_create_buffer(yyin, YY_BUF_SIZE));
 
-	}
-  }
+        }
+    }
 }
