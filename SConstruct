@@ -17,30 +17,30 @@ env = Environment(options = opts)
 
 ## all below thanks to Paul Davis and his ardour build system
 def distcopy(target, source, env):
-	treedir = str(target[0])
+  treedir = str(target[0])
 
-	try:
-		os.mkdir(treedir)
-	except OSError, (errnum, strerror):
-		if errnum != errno.EEXIST:
-			print 'mkdir %s:%s' % (treedir, strerror)
+  try:
+    os.mkdir(treedir)
+  except OSError, (errnum, strerror):
+    if errnum != errno.EEXIST:
+      print 'mkdir %s:%s' % (treedir, strerror)
 
-	cmd = 'tar cf - '
-	#
-	# we don't know what characters might be in the file names
-	# so quote them all before passing them to the shell
-	#
-	all_files = ([ str(s) for s in source ])
-	cmd += " ".join ([ "'%s'" % quoted for quoted in all_files])
-	cmd += ' | (cd ' + treedir + ' && tar xf -)'
-	p = os.popen (cmd)
-	return p.close ();
+  cmd = 'tar cf - '
+  #
+  # we don't know what characters might be in the file names
+  # so quote them all before passing them to the shell
+  #
+  all_files = ([ str(s) for s in source ])
+  cmd += " ".join ([ "'%s'" % quoted for quoted in all_files])
+  cmd += ' | (cd ' + treedir + ' && tar xf -)'
+  p = os.popen (cmd)
+  return p.close ();
 
 def tarballer (target, source, env):
-	cmd = 'tar -zcf ' + str (target[0]) +  ' ' + str(source[0]) + "  --exclude '*~'"
-	print 'running ', cmd, ' ... '
-	p = os.popen (cmd)
-	return p.close ()
+  cmd = 'tar -zcf ' + str (target[0]) +  ' ' + str(source[0]) + "  --exclude '*~'"
+  print 'running ', cmd, ' ... '
+  p = os.popen (cmd)
+  return p.close ()
 
 dist_bld = Builder(action = distcopy,
 				   target_factory = SCons.Node.FS.default_fs.Entry,
@@ -58,19 +58,19 @@ env.Append(BUILDERS = {'Tarball': tarball_bld})
 Help(opts.GenerateHelpText(env))
 
 if not env.GetOption("clean"):
-	conf = Configure(env)
-	if conf.CheckCHeader('getopt.h'):
-		conf.env.AppendUnique(CPPFLAGS=['-DHAVE_GETOPT_H'])
-	conf.CheckLib('getopt', 'getopt')
-	env = conf.Finish()
+  conf = Configure(env)
+  if conf.CheckCHeader('getopt.h'):
+    conf.env.AppendUnique(CPPFLAGS=['-DHAVE_GETOPT_H'])
+  conf.CheckLib('getopt', 'getopt')
+  env = conf.Finish()
 
 # choose debugging level
 if ARGUMENTS.get("debug") in ('no',):
-    env.AppendUnique(CCFLAGS=['-O2'])
+  env.AppendUnique(CCFLAGS=['-O2'])
 else:
-    env.AppendUnique(CCFLAGS=['-g', '-O0'])
-    if ARGUMENTS.get("debug") in ('gcov',):
-        env.AppendUnique(CCFLAGS=['-fprofile-arcs', '-ftest-coverage'])
+  env.AppendUnique(CCFLAGS=['-g', '-O0'])
+  if ARGUMENTS.get("debug") in ('gcov',):
+    env.AppendUnique(CCFLAGS=['-fprofile-arcs', '-ftest-coverage'])
 
 
 # set warning flags
@@ -144,19 +144,19 @@ env.Distribute(env['DISTTREE'], filtergen_sources + ['filter.h',
 													 ])
 
 def sed(target, source, env):
-	expandos = {
-		'SYSCONFDIR': sysconfdir,
-		'PKGEXDIR': pkgexdir,
-		'SBINDIR': sbindir,
-		'VERSION': VERSION
-		}
-	for (t, s) in zip(target, source):
-		o = file(str(t), "w")
-		i = file(str(s), "r")
-		o.write(i.read() % expandos)
-		i.close()
-		o.close()
-	return None
+  expandos = {
+      'SYSCONFDIR': sysconfdir,
+      'PKGEXDIR': pkgexdir,
+      'SBINDIR': sbindir,
+      'VERSION': VERSION
+      }
+  for (t, s) in zip(target, source):
+    o = file(str(t), "w")
+    i = file(str(s), "r")
+    o.write(i.read() % expandos)
+    i.close()
+    o.close()
+  return None
 
 fgadm = env.Command('fgadm', 'fgadm.in', [sed, Chmod('fgadm', 0755)])
 

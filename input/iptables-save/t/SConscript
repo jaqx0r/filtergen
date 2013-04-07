@@ -5,7 +5,7 @@ env.Distribute(env['DISTTREE'], ['SConscript',
 								 'parse.c',
 								 'emit.c',
 								 ])
-								 
+
 env = env.Clone()
 env.AppendUnique(CPPPATH=['../../..', '..'],
 				 LIBPATH=['..'],
