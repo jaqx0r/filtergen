@@ -12,3 +12,9 @@
 /input/iptables-save/scanner.c
 /ir/iremit
 .sconsign
+filtergen.log
+filtergen.sum
+input/filtergen/t/parse
+input/filtergen/t/scan
+input/iptables-save/t/parse
+input/iptables-save/t/scan
