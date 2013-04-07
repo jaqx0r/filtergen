@@ -53,7 +53,7 @@ reload () {
 			            RETVAL=1
 		            fi
 		        else
-		            echo "/sbin/$BACKEND not found.  Not reloading."
+		            echo "/sbin/iptables-restore not found.  Not reloading."
 		            RETVAL=1
 		        fi
 		        ;;
