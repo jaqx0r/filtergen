@@ -50,21 +50,21 @@ id      [[:alnum:]_][[:alnum:]_+-]*
 \n		/* eat newlines */
 "*"+"/"		BEGIN(INITIAL);
 <<EOF>>		{
-			scan_err("warning: comment reached end of file");
-			yyterminate();
-		}
-}
+  scan_err("warning: comment reached end of file");
+  yyterminate();
+            }
+} /* end comment */
 
 #[^\n]*      /* strip shell style comments */
 
 {string}     {
-		/* we do not store the " characters in the string, so lop
-		 * them off.  We can "safely" assume that the first and last
-		 * characters in this regex are ", otherwise there's a bug
-		 * in flex...  The result is somethign that is syntactically
-		 * identical to an identifier for our purposes. */
-		filtergen_lval.u_str = strndup(filtergen_text + 1, filtergen_leng - 2);
-		return TOK_IDENTIFIER;
+  /* we do not store the " characters in the string, so lop
+   * them off.  We can "safely" assume that the first and last
+   * characters in this regex are ", otherwise there's a bug
+   * in flex...  The result is somethign that is syntactically
+   * identical to an identifier for our purposes. */
+  filtergen_lval.u_str = strndup(filtergen_text + 1, filtergen_leng - 2);
+  return TOK_IDENTIFIER;
              }
 
 {space}      /* ignore */
@@ -116,7 +116,7 @@ text         return TOK_TEXT;
     scan_err("including %s", name);
     include_file(name);
     free(name);
-    
+
     BEGIN(INITIAL);
 }
 
@@ -133,55 +133,56 @@ text         return TOK_TEXT;
 
 /* FIXME: make this return an immutable string */
 char * filtergen_filename(void) {
-    char * fn = NULL;
-
-    /*fn = inc_stack[inc_stackptr].filename;*/
-    return fn ? fn : strdup("(unknown)");
+  char * fn = NULL;
+  return fn ? fn : strdup("(unknown)");
 }
 
 static void scan_err(const char * fmt, ...) {
-    va_list args;
+  va_list args;
 
-    va_start(args, fmt);
-    fprintf(stderr, "%s:%d: ", filtergen_filename(), filtergen_get_lineno());
-    vfprintf(stderr, fmt, args);
-    fprintf(stderr, "\n");
+  va_start(args, fmt);
+  fprintf(stderr, "%s:%d: ", filtergen_filename(), filtergen_get_lineno());
+  vfprintf(stderr, fmt, args);
+  fprintf(stderr, "\n");
 }
 
 /* include a file or directory */
 void include_file(const char * name) {
-    struct stat st;
-    DIR * d;
-    struct dirent * r;
-    char * fn;
+  struct stat st;
+  DIR * d;
+  struct dirent * r;
+  char * fn;
 
-    if (stat(name, &st)) {
+  if (stat(name, &st)) {
 	scan_err("warning: stat failed on \"%s\": %s", name, strerror(errno));
-    } else {
+  } else {
 	if (S_ISDIR(st.st_mode)) {
-	    if ((d = opendir(name)) == NULL) {
+      if ((d = opendir(name)) == NULL) {
 		scan_err("warning: opendir failed on %s: %s", name, strerror(errno));
-	    } else {
+      } else {
 		while ((r = readdir(d)) != NULL) {
-		    /* FIXME: assumes d_name */
-		    if (r->d_name[0] == '.')
+          /* FIXME: assumes d_name */
+          if (r->d_name[0] == '.')
 			continue;
-		    asprintf(&fn, "%s/%s", name, r->d_name);
-		    include_file(fn);
+          if (asprintf(&fn, "%s/%s", name, r->d_name) < 0) {
+            scan_err("internal error: asprintf failed: %s", strerror(errno));
+          } else {
+            include_file(fn);
 		    free(fn);
+          }
 		}
 		closedir(d);
-	    }
+      }
 	} else {
-	    scan_err("opening %s as file", name);
-		     
-	    yyin = fopen(name, "r");
-	    if ( !yyin ) {
-		scan_err("boned: %s", yytext);
-	    }
+      scan_err("opening %s as file", name);
 
-	    yypush_buffer_state(yy_create_buffer(yyin, YY_BUF_SIZE));
-		     
+      yyin = fopen(name, "r");
+      if ( !yyin ) {
+		scan_err("boned: %s", yytext);
+      }
+
+      yypush_buffer_state(yy_create_buffer(yyin, YY_BUF_SIZE));
+
 	}
-    }
+  }
 }
