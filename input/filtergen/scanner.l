@@ -3,6 +3,7 @@
 %option noinput
 %option prefix="filtergen_"
 %option yylineno
+%option debug
 %x include
 %x comment
 %{
@@ -31,9 +32,24 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <dirent.h>
+
+#include "../sourcepos.h"
 #include "parser.h"
 
-static void scan_err(const char * fmt, ...);
+int yycolumn = 1;
+
+#define YY_USER_ACTION                                          \
+    {                                                           \
+        filtergen_lloc.first_line = filtergen_lloc.last_line = yylineno; \
+        filtergen_lloc.first_column = yycolumn ;                \
+        filtergen_lloc.last_column = yycolumn+yyleng-1;         \
+        filtergen_lloc.srcfile = current_srcfile;               \
+        current_srcfile->lineno = yylineno;                     \
+        yycolumn += yyleng;                                     \
+    }
+
+void filtergen_error(const char * s, ...);
+void filtergen_warn(const char * s, ...);
 void include_file(const char *);
 %}
 
@@ -43,15 +59,17 @@ id      [[:alnum:]_][[:alnum:]_+-]*
 
 %%
 
+\n		/* eat newlines */ { yycolumn = 1; }
+
 "/*"	BEGIN(comment);
 
 <comment>{
 [^*\n]*		/* eat anything that's not a '*' */
 "*"+[^*/\n]*	/* eat up '*'s not followed by '/'s */
-\n		/* eat newlines */
+\n		/* eat newlines */ { yycolumn = 1; }
 "*"+"/"		BEGIN(INITIAL);
 <<EOF>>		{
-  scan_err("warning: comment reached end of file");
+  filtergen_warn("comment reached end of file");
   yyterminate();
             }
 } /* end comment */
@@ -66,7 +84,7 @@ id      [[:alnum:]_][[:alnum:]_+-]*
    * identical to an identifier for our purposes. */
   filtergen_lval.u_str = strndup(filtergen_text + 1, filtergen_leng - 2);
   return TOK_IDENTIFIER;
-             }
+}
 
 {space}      /* ignore */
 
@@ -107,14 +125,12 @@ text         return TOK_TEXT;
 
 "/"          return TOK_SLASH;
 
-.            return TOK_ERR;
-
 <include>[ \t]*       /* eat whitespace after include */
 <include>[^ \t\n;]+    { /* include file name */
     char * name;
 
     name = strdup(yytext);
-    //scan_err("including %s", name);
+    //filtergen_error("including %s", name);
     include_file(name);
     free(name);
 
@@ -122,29 +138,22 @@ text         return TOK_TEXT;
 }
 
 <<EOF>>                {
-    //scan_err("eof! popping state");
+    //filtergen_error("eof! popping state");
+    sourcefile_pop();
     yypop_buffer_state();
     if (!YY_CURRENT_BUFFER) {
         yyterminate();
+    } else {
+        yyin = current_srcfile->f;
+        yylineno = current_srcfile->lineno;
+        yycolumn = current_srcfile->column;
     }
 }
 
+.  { filtergen_error("unexpected input: %s\n", yytext);
+        return TOK_UNEXPECTED; }
+
 %%
-
-/* FIXME: make this return an immutable string */
-char * filtergen_filename(void) {
-    char * fn = NULL;
-    return fn ? fn : strdup("(unknown)");
-}
-
-static void scan_err(const char * fmt, ...) {
-    va_list args;
-
-    va_start(args, fmt);
-    fprintf(stderr, "%s:%d: ", filtergen_filename(), filtergen_get_lineno());
-    vfprintf(stderr, fmt, args);
-    fprintf(stderr, "\n");
-}
 
 /* include a file or directory */
 void include_file(const char * name) {
@@ -154,18 +163,18 @@ void include_file(const char * name) {
     char * pathname;
 
     if (stat(name, &st)) {
-        scan_err("warning: stat failed on \"%s\": %s", name, strerror(errno));
+        filtergen_warn("stat failed on \"%s\": %s", name, strerror(errno));
     } else {
         if (S_ISDIR(st.st_mode)) {
             if ((d = opendir(name)) == NULL) {
-                scan_err("warning: opendir failed on %s: %s", name, strerror(errno));
+                filtergen_warn("opendir failed on %s: %s", name, strerror(errno));
             } else {
                 while ((r = readdir(d)) != NULL) {
                     /* FIXME: assumes d_name */
                     if (r->d_name[0] == '.')
                         continue;
                     if (asprintf(&pathname, "%s/%s", name, r->d_name) < 0) {
-                        scan_err("internal error: asprintf failed constructing pathname for included file %s", r->d_name);
+                        filtergen_error("internal error: asprintf failed constructing pathname for included file %s", r->d_name);
                     } else {
                         include_file(pathname);
                         free(pathname);
@@ -174,15 +183,15 @@ void include_file(const char * name) {
                 closedir(d);
             }
         } else {
-            //scan_err("opening %s as file", name);
-
-            yyin = fopen(name, "r");
-            if ( !yyin ) {
-                scan_err("boned: %s", yytext);
+            sourcefile_push(name);
+            yyin = current_srcfile->f;
+            yylineno = current_srcfile->lineno;
+            yycolumn = current_srcfile->column;
+            if (!yyin) {
+                filtergen_error("failed to open %s", name);
+            } else {
+                yypush_buffer_state(yy_create_buffer(yyin, YY_BUF_SIZE));
             }
-
-            yypush_buffer_state(yy_create_buffer(yyin, YY_BUF_SIZE));
-
         }
     }
 }

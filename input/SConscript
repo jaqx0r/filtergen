@@ -1,0 +1,13 @@
+Import('env')
+
+sources = ['sourcepos.c']
+
+env.Library('sourcepos', sources)
+
+env.Distribute(env['DISTTREE'],
+               sources + ['SConscript',
+                          'input.h',
+                          'sourcepos.h'])
+
+SConscript(['filtergen/SConscript',
+            'iptables-save/SConscript'], 'env')

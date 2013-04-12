@@ -22,20 +22,54 @@
 %name-prefix="filtergen_"
 /* verbose parser errors */
 %error-verbose
-
+%locations
 %{
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
 #include "ast.h"
+#include "../sourcepos.h"
 
 #define YYPARSE_PARAM parm
 
-void filtergen_error(const char * s);
+void filtergen_error(const char * s, ...);
 extern int filtergen_lex(void);
 
 #define YYPRINT(f, t, v) filtergen_print(f, t, v)
 %}
+
+%code requires {
+typedef struct YYLTYPE {
+  int first_line;
+  int first_column;
+  int last_line;
+  int last_column;
+  struct sourcefile* srcfile;
+} YYLTYPE;
+# define YYLTYPE_IS_DECLARED 1 /* alert the parser that we have our own definition */
+
+# define YYLLOC_DEFAULT(Current, Rhs, N)                               \
+    do                                                                 \
+      if (N)                                                           \
+        {                                                              \
+          (Current).first_line   = YYRHSLOC (Rhs, 1).first_line;       \
+          (Current).first_column = YYRHSLOC (Rhs, 1).first_column;     \
+          (Current).last_line    = YYRHSLOC (Rhs, N).last_line;        \
+          (Current).last_column  = YYRHSLOC (Rhs, N).last_column;      \
+          (Current).srcfile     = YYRHSLOC (Rhs, 1).srcfile;         \
+        }                                                              \
+      else                                                             \
+        { /* empty RHS */                                              \
+          (Current).first_line   = (Current).last_line   =             \
+            YYRHSLOC (Rhs, 0).last_line;                               \
+          (Current).first_column = (Current).last_column =             \
+            YYRHSLOC (Rhs, 0).last_column;                             \
+          (Current).srcfile  = NULL;                        /* new */ \
+        }                                                              \
+    while (0)
+}
 %debug
 
 %union {
@@ -99,6 +133,7 @@ extern int filtergen_lex(void);
 %type <u_subrule_list> subrule_list
 
 %defines
+%token TOK_UNEXPECTED
 %token TOK_ACCEPT
 %token TOK_DEST
 %token TOK_DPORT
@@ -126,7 +161,6 @@ extern int filtergen_lex(void);
 %token <u_str> TOK_IDENTIFIER
 %token TOK_DOT
 %token TOK_SLASH
-%token TOK_ERR
 %token TOK_BANG
 %token TOK_COLON
 %{
@@ -559,13 +593,39 @@ chaingroup_specifier: TOK_LSQUARE TOK_IDENTIFIER subrule_list TOK_RSQUARE
 
 %%
 
-char * filtergen_filename();
-/*long int filtergen_linenumber();*/
-int filtergen_get_lineno();
 extern char * filtergen_text;
 
-void filtergen_error(const char * s) {
-    fprintf(stderr, "%s:%d: %s\n", filtergen_filename(), filtergen_get_lineno(), s);
+void filtergen_error(const char *s, ...) {
+    va_list ap;
+    va_start(ap, s);
+
+    if (yylloc.first_line) {
+        fprintf(stderr, "%s:%d.%d-%d.%d: error: ", yylloc.srcfile->pathname, yylloc.first_line, yylloc.first_column, yylloc.last_line, yylloc.last_column);
+    }
+    vfprintf(stderr, s, ap);
+    fprintf(stderr, "\n");
+}
+
+void filtergen_warn(const char *s, ...) {
+    va_list ap;
+    va_start(ap, s);
+
+    if (yylloc.first_line) {
+        fprintf(stderr, "%s:%d.%d-%d.%d: warning: ", yylloc.srcfile->pathname, yylloc.first_line, yylloc.first_column, yylloc.last_line, yylloc.last_column);
+    }
+    vfprintf(stderr, s, ap);
+    fprintf(stderr, "\n");
+}
+
+void lyyerror(YYLTYPE t, char *s, ...) {
+    va_list ap;
+    va_start(ap, s);
+
+    if (t.first_line) {
+        fprintf(stderr, "%s:%d.%d-%d.%d: error: ", t.srcfile->pathname, t.first_line, t.first_column, t.last_line, t.last_column);
+    }
+    vfprintf(stderr, s, ap);
+    fprintf(stderr, "\n");
 }
 
 int filtergen_print(FILE * f, int type, YYSTYPE v) {

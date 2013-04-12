@@ -8,8 +8,8 @@ env.Distribute(env['DISTTREE'], ['SConscript',
 
 env = env.Clone()
 env.AppendUnique(CPPPATH=['../../..', '..'],
-				 LIBPATH=['..'],
-				 LIBS=['in_filtergen'],
+				 LIBPATH=['..', '#input'],
+				 LIBS=['in_filtergen', 'sourcepos'],
 				 CPPFLAGS=['-Dyyparse=filtergen_parse',
 						   '-Dyydebug=filtergen_debug',
 						   ])
