@@ -17,13 +17,16 @@ endif
 configure: configure-stamp
 configure-stamp:
 	dh_testdir
+	ls -al
+	make -f makefile
 	CFLAGS="$(CFLAGS)" ./configure \
 		--host=$(DEB_HOST_GNU_TYPE) \
 		--build=$(DEB_BUILD_GNU_TYPE) \
 		--prefix=/usr \
 		--mandir=\$${prefix}/share/man \
 		--infodir=\$${prefix}/share/info \
-		--sysconfdir=/etc/filtergen
+		--sysconfdir=/etc/filtergen \
+		|| cat config.log
 	touch configure-stamp
 
 build: build-stamp
@@ -37,7 +40,7 @@ build-stamp: configure-stamp
 clean:
 	dh_testdir
 	dh_testroot
-	[ ! -f Makefile ] || $(MAKE) distclean
+	[ ! -f Makefile ] || $(MAKE) clean
 	rm -f build-stamp configure-stamp
 	dh_clean
 
