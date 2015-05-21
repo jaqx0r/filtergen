@@ -19,7 +19,7 @@
 
 /* prepent all functions with filtergen_ to keep the namespace separate
  * from other parsers */
-%name-prefix="filtergen_"
+%name-prefix "filtergen_"
 /* verbose parser errors */
 %error-verbose
 %locations
