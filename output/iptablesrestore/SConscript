@@ -1,0 +1,9 @@
+Import('env')
+
+sources = ['fg-iptablesrestore.c']
+
+env.Library('out_iptablesrestore', source=sources, CPPPATH='../..')
+
+env.Distribute(env['DISTTREE'], ['SConscript',
+								 ] + sources)
+
