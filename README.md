@@ -162,3 +162,15 @@ and is not really able to reason about connections (whatever the blurb
 claims).  It also matches the terminology used by Linux's iptables.
 
 $Id: README,v 1.9 2002/08/20 22:54:38 matthew Exp $
+INSTALLING filtergen
+====================
+
+Installing filtergen is easy.  If you don't find it easy, that's a bug.  Send
+bug reports to jaq@spacepants.org.
+
+If you're on a Red Hat-like RPM-based system, you should be able just to run
+"rpm -ta" on the tarball.
+
+filtergen's build system uses SCons, rather than the GNU autotools or a custom
+Makefile.  To build and install, ensure you have SCons, gcc, flex, and bison
+installed, and type "scons install".
