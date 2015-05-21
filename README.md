@@ -1,5 +1,7 @@
 	PACKET FILTER GENERATOR
 
+[![Build Status](https://travis-ci.org/jaqx0r/filtergen.svg?branch=master)](https://travis-ci.org/jaqx0r/filtergen)
+
 GENERAL
 
 This tool is for generating packet filtering rules from a fairly high-
