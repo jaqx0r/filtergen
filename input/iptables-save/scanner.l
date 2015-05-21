@@ -25,6 +25,7 @@
  */
 
 #include <string.h>
+#include "ast.h"
 #include "parser.h"
 
 char * ipts_filename(void);

@@ -23,6 +23,7 @@
 /* verbose parser errors */
 %error-verbose
 %locations
+%parse-param {struct ast_s *ast}
 %{
 #include <stdarg.h>
 #include <stdio.h>
@@ -37,8 +38,6 @@ extern int filtergen_lex(void);
 
 #define YYPRINT(f, t, v) filtergen_print(f, t, v)
 %}
-
-%parse-param {struct ast_s *ast}
 
 %code requires {
 typedef struct YYLTYPE {
