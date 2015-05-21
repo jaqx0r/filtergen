@@ -19,10 +19,11 @@
 
 /* prepent all functions with filtergen_ to keep the namespace separate
  * from other parsers */
-%name-prefix="filtergen_"
+%name-prefix "filtergen_"
 /* verbose parser errors */
 %error-verbose
 %locations
+%parse-param {struct ast_s *ast}
 %{
 #include <stdarg.h>
 #include <stdio.h>
@@ -32,9 +33,7 @@
 #include "ast.h"
 #include "../sourcepos.h"
 
-#define YYPARSE_PARAM parm
-
-void filtergen_error(const char * s, ...);
+void filtergen_error(struct ast_s *ast, const char * s, ...);
 extern int filtergen_lex(void);
 
 #define YYPRINT(f, t, v) filtergen_print(f, t, v)
@@ -170,9 +169,8 @@ int filtergen_print(FILE * f, int t, YYSTYPE v);
 %%
 ast: rule_list
 	{
-	    /* we expect parm to be already allocated, and that
-	     * it is of type (struct ast_s *) */
-	    ((struct ast_s *) parm)->list = $1;
+        /* we expect ast to be already allocated */
+	    ast->list = $1;
 	}
 
 rule_list: /* empty */
@@ -595,7 +593,7 @@ chaingroup_specifier: TOK_LSQUARE TOK_IDENTIFIER subrule_list TOK_RSQUARE
 
 extern char * filtergen_text;
 
-void filtergen_error(const char *s, ...) {
+void filtergen_error(struct ast_s __attribute__((__unused__)) *ast, const char *s, ...) {
     va_list ap;
     va_start(ap, s);
 
@@ -617,7 +615,7 @@ void filtergen_warn(const char *s, ...) {
     fprintf(stderr, "\n");
 }
 
-void lyyerror(YYLTYPE t, char *s, ...) {
+void lyyerror(YYLTYPE t, struct ast_s __attribute__((__unused__)) *ast, char *s, ...) {
     va_list ap;
     va_start(ap, s);
 

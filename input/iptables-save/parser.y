@@ -19,18 +19,16 @@
 
 /* prepend all functions with ipts_ to keep the namespace separate
  * from other parsers */
-%name-prefix="ipts_"
+%name-prefix "ipts_"
 /* verbose error messages */
 %error-verbose
-
+%parse-param {struct ast_s *ast}
 %{
 #include <stdio.h>
 #include <stdlib.h>
 #include "ast.h"
 
-#define YYPARSE_PARAM parm
-
-void ipts_error(const char * msg);
+void ipts_error(struct ast_s *ast, const char * msg);
 extern int ipts_lineno;
 extern int ipts_lex(void);
 
@@ -182,9 +180,8 @@ int ipts_print(FILE * f, int t, YYSTYPE v);
 %%
 ast: table_list
 {
-    /* we expect parm to be already allocated, and that
-     * it is of type (struct ast_s *) */
-    ((struct ast_s *) parm)->list = $1;
+    /* we expect ast to be already allocated */
+    ast->list = $1;
 }
 
 table_list: /* empty */
@@ -598,7 +595,7 @@ pkt_count: TOK_LSQUARE TOK_IDENTIFIER TOK_COLON TOK_IDENTIFIER TOK_RSQUARE
 char * ipts_filename();
 extern char * ipts_text;
 
-void ipts_error(const char * msg) {
+void ipts_error(struct ast_s __attribute__((__unused__)) *ast, const char * msg) {
   fprintf(stderr, "%s:%d: %s\n", ipts_filename(), ipts_lineno, msg);
 }
 

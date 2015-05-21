@@ -24,7 +24,7 @@
 #include "parser.h"
 #include "resolver.h"
 
-int filtergen_parse(void *);
+int filtergen_parse(struct ast_s*);
 int filtergen_restart(FILE *);
 
 int convtrace = 0;
@@ -590,7 +590,7 @@ struct filter * filtergen_source_parser(FILE * file, int resolve_names) {
     struct filter * f;
 
     filtergen_restart(file);
-    if (filtergen_parse((void *) &ast) == 0) {
+    if (filtergen_parse(&ast) == 0) {
         if (resolve_names)
             resolve(&ast);
         f = convert(&ast);

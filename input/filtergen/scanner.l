@@ -33,6 +33,7 @@
 #include <unistd.h>
 #include <dirent.h>
 
+#include "ast.h"
 #include "../sourcepos.h"
 #include "parser.h"
 
