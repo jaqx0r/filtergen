@@ -50,6 +50,15 @@ rm -rf $RPM_BUILD_ROOT
 %doc HISTORY HONESTY README TODO tests/*.filter
 
 %changelog
+* Wed Aug 18 2004 Jamie Wilkinsin <jamie@anchor.net.au> - 0.12.4-1
+- New upstream release.
+
+* Tue Jun 22 2004 Jamie Wilkinson <jamie@anchor.net.au> - 0.12.3-1
+- New upstream release.
+
+* Thu Jun 10 2004 Jamie Wilkinson <jamie@anchor.net.au> - 0.12.2-1
+- New upstream release.
+
 * Wed Mar 10 2004 Jamie Wilkinson <jaq@spacepants.org> - 0.12-1
 - New upstream release.
 
