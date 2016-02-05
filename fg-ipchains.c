@@ -248,8 +248,8 @@ int fg_ipchains(struct filter *filter, int flags)
     int r;
     struct fg_misc misc = { flags, NULL };
     fg_callback cb_ipchains = {
-	rule:	cb_ipchains_rule,
-	group:	cb_ipchains_group,
+	.rule =	cb_ipchains_rule,
+	.group = cb_ipchains_group,
     };
 
     filter_unroll(&filter);
