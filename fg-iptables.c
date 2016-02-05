@@ -332,7 +332,7 @@ static int cb_iptables_group(const char *name)
 int fg_iptables(struct filter *filter, int flags)
 {
     long feat = 0;
-    int r;
+    int r = 0;
     struct fg_misc misc = { flags, &feat };
     fg_callback cb_iptables = {
 	rule:	cb_iptables_rule,
