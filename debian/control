@@ -1,13 +1,14 @@
 Source: filtergen
 Section: net
 Priority: optional
-Maintainer: Jamie Wilkinson <jaq@debian.org>
-Build-Depends: debhelper (>> 4.0.0), netbase, flex, bison
-Standards-Version: 3.6.2
+Maintainer: Matt Palmer <mpalmer@debian.org>
+Build-Depends: debhelper (>= 5), netbase, flex, bison
+Standards-Version: 3.8.3
+Homepage: http://spacepants.org/src/filtergen/
 
 Package: filtergen
 Architecture: any
-Depends: ${shlibs:Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: packet filter generator for various firewall systems
  filtergen is a packet filter generator.  It compiles a fairly high-level
  description language into iptables, ipchains, or ipfilter scripts (and has

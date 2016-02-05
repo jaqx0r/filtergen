@@ -9,43 +9,47 @@ Packager: Jamie Wilkinson <jaq@spacepants.org>
 
 Source: http://spacepants.org/src/filtergen/download/%name-%version.tar.gz
 
-Buildroot: %{_tmppath}/%{name}-%{version}-%{release}-root
-BuildPrereq: rpm-build gcc make
+Buildroot: %{_tmppath}/%{name}-root
+BuildPrereq: rpm-build gcc flex make
 
 %description
 filtergen is a packet filter generator.  It compiles a fairly high-level
 description language into iptables, ipchains, or ipfilter rules (and has
 bits of support for Cisco IOS access lists).
 
+
 %prep
 %setup -q
-%configure --sysconfdir=%{_sysconfdir}/filtergen
+
+./configure
 
 %build
 make CFLAGS="${RPM_OPT_FLAGS}"
-make check
 
 %install
-test $RPM_BUILD_ROOT != "/" && rm -rf $RPM_BUILD_ROOT
-make install DESTDIR=${RPM_BUILD_ROOT}
+rm -rf $RPM_BUILD_ROOT
+make PREFIX=${RPM_BUILD_ROOT}/usr BINDIR=${RPM_BUILD_ROOT}/sbin install
+
+%post
+/sbin/chkconfig --add filtergen
+/sbin/chkconfig filtergen off
+
+%preun
+/sbin/service filtergen accept
+/sbin/chkconfig --del filtergen
 
 %clean
-test $RPM_BUILD_ROOT != "/" && rm -rf $RPM_BUILD_ROOT
+rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)
-/usr/sbin/filtergen
-/usr/sbin/fgadm
-%config /etc/filtergen/fgadm.conf
-%config /etc/filtergen/rules.filter
+/sbin/filtergen
+/etc/init.d/filtergen
+/etc/filter/
 %{_mandir}/*
-%doc HISTORY HONESTY README TODO
-%doc /usr/share/doc/%{name}/*
+%doc HISTORY HONESTY README TODO tests/*.filter
 
 %changelog
-* Thu Jun 10 2004 Jamie Wilkinson <jamie@anchor.net.au> - 0.12.2-1
-- New upstream release.
-
 * Wed Mar 10 2004 Jamie Wilkinson <jaq@spacepants.org> - 0.12-1
 - New upstream release.
 
