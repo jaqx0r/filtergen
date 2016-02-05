@@ -4,6 +4,7 @@ Priority: optional
 Maintainer: Jamie Wilkinson <jaq@debian.org>
 Build-Depends: debhelper (>= 7), netbase, flex, bison
 Standards-Version: 3.8.3
+Homepage: http://spacepants.org/src/filtergen/
 
 Package: filtergen
 Architecture: any

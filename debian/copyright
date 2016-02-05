@@ -7,8 +7,8 @@ Upstream Author: Jamie Wilkinson <jaq@spacepants.org>
 
 Copyright:
 
- Copyright (c) 2002 Matthew Kirkwood
- Copyright (c) 2003-2009 Jamie Wilkinson
+Copyright (c) 2001,2002,2003 Matthew Kirkwood
+Copyright (c) 2003-2009 Jamie Wilkinson
 
 License:
 
@@ -28,4 +28,3 @@ License:
 
 On Debian GNU/Linux systems, the complete text of the GNU General
 Public License can be found in `/usr/share/common-licenses/GPL-2'.
-

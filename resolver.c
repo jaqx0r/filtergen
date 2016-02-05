@@ -43,10 +43,10 @@ void resolve_icmptype_argument(struct icmptype_argument_s * n) {
             asprintf(&n->icmptype, "%s", i->i_type);
         } else {
 	    /* check that the icmptype is a number if we can't resolve it */
-	    long m;
+	    //long m;
 	    char * e;
 
-	    m = strtol(n->icmptype, &e, 10);
+	    strtol(n->icmptype, &e, 10);
 	    if (*e) {
 		fprintf(stderr, "warning: suspicious icmp type encountered: %s\n", n->icmptype);
 	    }
@@ -79,10 +79,10 @@ void resolve_port_argument(struct port_argument_s * n) {
 	    asprintf(&n->port_min, "%d", ntohs(s->s_port));
 	} else {
 	    /* check that the port is a number if we can't resolve it */
-	    long m;
+	    //long m;
 	    char * e;
 
-	    m = strtol(n->port_min, &e, 10);
+	    strtol(n->port_min, &e, 10);
 	    if (*e) {
 		fprintf(stderr, "warning: suspicious port name encountered: %s\n", n->port_min);
 	    }
@@ -95,10 +95,10 @@ void resolve_port_argument(struct port_argument_s * n) {
 	    asprintf(&n->port_max, "%d", ntohs(s->s_port));
 	} else {
 	    /* check that the port is a number if we can't resolve it */
-	    long m;
+	    //long m;
 	    char * e;
 
-	    m = strtol(n->port_max, &e, 10);
+	    strtol(n->port_max, &e, 10);
 	    if (*e) {
 		fprintf(stderr, "warning: suspicious port name encountered: %s\n", n->port_max);
 	    }
@@ -130,10 +130,10 @@ void resolve_protocol_argument(struct protocol_argument_s * n) {
 	    asprintf(&n->proto, "%d", p->p_proto);
 	} else {
 	    /* check that the proto is a number if we can't resolve it */
-	    long m;
+	    //long m;
 	    char * e;
 
-	    m = strtol(n->proto, &e, 10);
+	    strtol(n->proto, &e, 10);
 	    if (*e) {
 		fprintf(stderr, "warning: suspicious protocol name encountered: %s\n", n->proto);
 	    }
