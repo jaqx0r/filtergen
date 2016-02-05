@@ -339,8 +339,8 @@ int fg_iptables(struct filter *filter, int flags)
     int r = 0;
     struct fg_misc misc = { flags, &feat };
     fg_callback cb_iptables = {
-	rule:	cb_iptables_rule,
-	group:	cb_iptables_group,
+	.rule = cb_iptables_rule,
+	.group = cb_iptables_group,
     };
     const int nchains = 3;
 

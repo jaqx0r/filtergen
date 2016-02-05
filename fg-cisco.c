@@ -120,7 +120,7 @@ int fg_cisco(struct filter *filter, int flags)
 {
     struct fg_misc misc = { flags, NULL };
     fg_callback cb_cisco = {
-	rule:	cb_cisco_rule, NULL
+	.rule = cb_cisco_rule, NULL
     };
     oputs("# Warning: This backend is not complete and "
 	  "can generate broken rulesets.");
