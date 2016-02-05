@@ -1,7 +1,5 @@
 filtergen (0.12.5-1) unstable; urgency=low
 
-  * New upstream version.  (Closes: #543434)
-  * Thanks Matej!  (Closes: #324908)
   * Updated standards version to 3.8.3.
   * Updated to use debhelper 7.
    - Specify misc:Depends.
