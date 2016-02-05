@@ -22,4 +22,3 @@
 #endif
 
 #include "factoriser.h"
-

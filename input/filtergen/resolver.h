@@ -22,6 +22,6 @@
 
 #include "ast.h"
 
-void resolve(struct ast_s * n);
+void resolve(struct ast_s *n);
 
 #endif /* __RESOLVER_H__ */

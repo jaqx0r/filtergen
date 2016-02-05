@@ -23,131 +23,131 @@
 struct specifier_list_s;
 
 struct subrule_list_s {
-    struct subrule_list_s * subrule_list;
-    struct specifier_list_s * specifier_list;
+  struct subrule_list_s *subrule_list;
+  struct specifier_list_s *specifier_list;
 };
 
 struct chaingroup_specifier_s {
-    char * name;
-    struct subrule_list_s * list;
+  char *name;
+  struct subrule_list_s *list;
 };
 
 struct compound_specifier_s {
-    struct subrule_list_s * list;
+  struct subrule_list_s *list;
 };
 
 struct option_specifier_s {
-    int type;
-    char * logmsg;
+  int type;
+  char *logmsg;
 };
 
 struct icmptype_argument_s {
-    char * icmptype;
+  char *icmptype;
 };
 
 struct icmptype_argument_list_s {
-    struct icmptype_argument_list_s * list;
-    struct icmptype_argument_s * arg;
+  struct icmptype_argument_list_s *list;
+  struct icmptype_argument_s *arg;
 };
 
 struct icmptype_specifier_s {
-    struct icmptype_argument_list_s * list;
+  struct icmptype_argument_list_s *list;
 };
 
 struct protocol_argument_s {
-    char * proto;
+  char *proto;
 };
 
 struct protocol_argument_list_s {
-    struct protocol_argument_list_s * list;
-    struct protocol_argument_s * arg;
+  struct protocol_argument_list_s *list;
+  struct protocol_argument_s *arg;
 };
 
 struct protocol_specifier_s {
-    struct protocol_argument_list_s * list;
+  struct protocol_argument_list_s *list;
 };
 
 struct port_argument_s {
-    char * port_min;
-    char * port_max;
+  char *port_min;
+  char *port_max;
 };
 
 struct port_argument_list_s {
-    struct port_argument_list_s * list;
-    struct port_argument_s * arg;
+  struct port_argument_list_s *list;
+  struct port_argument_s *arg;
 };
 
 struct port_specifier_s {
-    int type;
-    struct port_argument_list_s * list;
+  int type;
+  struct port_argument_list_s *list;
 };
 
 struct host_argument_s {
-    char * host;
-    char * mask;
+  char *host;
+  char *mask;
 };
 
 struct host_argument_list_s {
-    struct host_argument_list_s * list;
-    struct host_argument_s * arg;
+  struct host_argument_list_s *list;
+  struct host_argument_s *arg;
 };
 
 struct host_specifier_s {
-    int type;
-    struct host_argument_list_s * list;
+  int type;
+  struct host_argument_list_s *list;
 };
 
 struct target_specifier_s {
-    int type;
+  int type;
 };
 
 struct direction_argument_s {
-    char * direction;
+  char *direction;
 };
 
 struct direction_argument_list_s {
-    struct direction_argument_list_s * list;
-    struct direction_argument_s * arg;
+  struct direction_argument_list_s *list;
+  struct direction_argument_s *arg;
 };
 
 struct direction_specifier_s {
-    int type;
-    struct direction_argument_list_s * list;
+  int type;
+  struct direction_argument_list_s *list;
 };
 
 struct specifier_s {
-    struct compound_specifier_s * compound;
-    struct direction_specifier_s * direction;
-    struct target_specifier_s * target;
-    struct host_specifier_s * host;
-    struct port_specifier_s * port;
-    struct protocol_specifier_s * protocol;
-    struct icmptype_specifier_s * icmptype;
-    struct option_specifier_s * option;
-    struct chaingroup_specifier_s * chaingroup;
+  struct compound_specifier_s *compound;
+  struct direction_specifier_s *direction;
+  struct target_specifier_s *target;
+  struct host_specifier_s *host;
+  struct port_specifier_s *port;
+  struct protocol_specifier_s *protocol;
+  struct icmptype_specifier_s *icmptype;
+  struct option_specifier_s *option;
+  struct chaingroup_specifier_s *chaingroup;
 };
 
 struct negated_specifier_s {
-    int negated;
-    struct specifier_s * spec;
+  int negated;
+  struct specifier_s *spec;
 };
 
 struct specifier_list_s {
-    struct specifier_list_s * list;
-    struct negated_specifier_s * spec;
+  struct specifier_list_s *list;
+  struct negated_specifier_s *spec;
 };
 
 struct rule_s {
-    struct specifier_list_s * list;
+  struct specifier_list_s *list;
 };
 
 struct rule_list_s {
-    struct rule_list_s * list;
-    struct rule_s * rule;
+  struct rule_list_s *list;
+  struct rule_s *rule;
 };
 
 struct ast_s {
-    struct rule_list_s * list;
+  struct rule_list_s *list;
 };
 
 #endif /* __AST_H__ */

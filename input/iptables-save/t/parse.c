@@ -2,25 +2,24 @@
 #include <stdlib.h>
 #include "../ast.h"
 
-extern char * yytext;
+extern char *yytext;
 int yyparse(void *);
 extern int yydebug;
 int yyrestart(FILE *);
 
-int main(int argc, char ** argv) {
-    char * YYDEBUGTRACE;
-    struct ast_s ast;
+int main(int argc, char **argv) {
+  char *YYDEBUGTRACE;
+  struct ast_s ast;
 
-    YYDEBUGTRACE = getenv("YYDEBUGTRACE");
-    yydebug = YYDEBUGTRACE ? atoi(YYDEBUGTRACE) : 0;
+  YYDEBUGTRACE = getenv("YYDEBUGTRACE");
+  yydebug = YYDEBUGTRACE ? atoi(YYDEBUGTRACE) : 0;
 
-    if (argc > 1) {
-        FILE * f = fopen(argv[1], "r");
-        yyrestart(f);
-    }
+  if (argc > 1) {
+    FILE *f = fopen(argv[1], "r");
+    yyrestart(f);
+  }
 
-    yyparse(&ast);
+  yyparse(&ast);
 
-    return 0;
+  return 0;
 }
-

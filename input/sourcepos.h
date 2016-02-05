@@ -23,28 +23,28 @@
 #include <stdio.h>
 
 struct sourcefile {
-    FILE* f; // File handle being read
-    char* pathname; 
-    int lineno;
-    int column;
-    struct sourcefile* next; // next on stack
+  FILE *f; // File handle being read
+  char *pathname;
+  int lineno;
+  int column;
+  struct sourcefile *next; // next on stack
 };
 
-extern struct sourcefile* current_srcfile;
+extern struct sourcefile *current_srcfile;
 
 /* sourcefile_push opens a new file and pushes a struct sourcefile onto the
  * current_srcfile stack. */
-void sourcefile_push(const char* pathname);
+void sourcefile_push(const char *pathname);
 
 /* sourcefile_pop removes the struct sourcfeil from the top of the stack */
 void sourcefile_pop();
 
 struct sourceposition {
-    int first_l;
-    int first_c;
-    int last_l;
-    int last_c;
-    struct sourcefile* srcfile;
+  int first_l;
+  int first_c;
+  int last_l;
+  int last_c;
+  struct sourcefile *srcfile;
 };
 
 #endif /* FILTERGEN_INPUT_SOURCEPOS_H */
