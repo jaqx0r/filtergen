@@ -40,3 +40,4 @@ debian/files
 debian/filtergen.debhelper.log
 debian/filtergen.substvars
 .pc
+debian/patches
