@@ -23,14 +23,13 @@
 #include <string.h>
 #include "ast.h"
 
-#define YYPARSE_PARAM parm
-
-void yyerror(const char * s);
+void yyerror(void *parse_arg, const char * s);
 extern int yylex(void);
 
 #define YYPRINT(f, t, v) yyprint(f, t, v)
 %}
 %debug
+%parse-param {void *parse_arg}
 
 %union {
 	struct rule_list_s * u_rule_list;
@@ -131,9 +130,9 @@ int yyprint(FILE * f, int t, YYSTYPE v);
 %%
 ast: rule_list
 	{
-		/* we expect parm to be already allocated, and that
+		/* we expect parse_arg to be already allocated, and that
 		 * it is of type (struct ast_s *) */
-		((struct ast_s *) parm)->list = $1;
+		((struct ast_s *) parse_arg)->list = $1;
 	}
 
 rule_list: /* empty */
@@ -564,7 +563,7 @@ char * filename();
 long int lineno();
 extern char * yytext;
 
-void yyerror(const char * s) {
+void yyerror(void * parse_arg __attribute__((unused)), const char * s) {
 	fprintf(stderr, "%s:%ld: %s\n", filename(), lineno(), s);
 }
 
