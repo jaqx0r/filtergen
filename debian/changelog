@@ -1,5 +1,6 @@
 filtergen (0.12.5-1) unstable; urgency=low
 
+  * New Maintainer, per private mail to mpalmer@.
   * Updated standards version to 3.8.3.
   * Updated to use debhelper 7.
    - Specify misc:Depends.
