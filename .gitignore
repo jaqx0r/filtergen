@@ -34,3 +34,8 @@ parser.c
 parser.h
 rules.filter
 scanner.c
+build-stamp
+configure-stamp
+debian/files
+debian/filtergen.debhelper.log
+debian/filtergen.substvars
