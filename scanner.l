@@ -27,6 +27,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <dirent.h>
+#include <glob.h>
 #include "parser.h"
 
 /* include file stack */
@@ -195,7 +196,35 @@ void include_file(const char * name) {
 	char * fn;
 
 	if (stat(name, &st)) {
-		scan_err("warning: stat failed on %s: %s", name, strerror(errno));
+		if (errno == ENOENT && (index(name, '*') != NULL || index(name, '?') != NULL || index(name, '[') != NULL)) {
+			/* Globbing fiesta! */
+			glob_t glob_buf;
+			if (glob(name, 0, NULL, &glob_buf) != 0) {
+				scan_err("warning: failed to glob %s: %s", name, strerror(errno));
+			} else {
+				int n;
+				
+				/* We go through the list of files backwards, because
+				 * step_into_include_file() creates a stack of all the
+				 * files processed and then works on them in a LIFO
+				 * fashion -- which would make all of our rules files
+				 * go backwards.  Since I can't wrap my head around
+				 * why that is, exactly, I'm hacking it up with
+				 * this instead.  Fixination appreciated.
+				 */
+				for (n = glob_buf.gl_pathc - 1; n >= 0; n--) {
+					if (stat(glob_buf.gl_pathv[n], &st)) {
+						scan_err("warning: stat failed on globbed %s: %s", glob_buf.gl_pathv[n], strerror(errno));
+					} else if (S_ISREG(st.st_mode) || S_ISLNK(st.st_mode)) {
+						step_into_include_file(glob_buf.gl_pathv[n]);
+					}
+				}
+			}
+			
+			globfree(&glob_buf);
+		} else {
+			scan_err("warning: stat failed on %s: %s", name, strerror(errno));
+		}
 	} else {
 		if (S_ISDIR(st.st_mode)) {
 			if ((d = opendir(name)) == NULL) {
@@ -211,7 +240,8 @@ void include_file(const char * name) {
 				}
 				closedir(d);
 			}
-		} else
+		} else {
 			step_into_include_file(name);
+		}
 	}
 }
