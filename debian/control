@@ -2,9 +2,11 @@ Source: filtergen
 Section: net
 Priority: optional
 Maintainer: Jamie Wilkinson <jaq@debian.org>
-Build-Depends: debhelper (>= 7), netbase, flex, bison
-Standards-Version: 3.8.3
+Build-Depends: debhelper (>= 9), netbase, flex, bison
+Standards-Version: 3.9.6
 Homepage: http://spacepants.org/src/filtergen/
+VCS-Browser: https://github.com/jaqx0r/filtergen/tree/debian
+VCS-Git: https://github.com/jaqx0r/filtergen.git -b debian
 
 Package: filtergen
 Architecture: any
