@@ -11,6 +11,7 @@ filtergen (0.12.5-1) unstable; urgency=low
     Palmer (Closes: #549891).
   * Fix build failues when using clang instead of GCC (Closes: #751443). 
   * Support globbing in include directives (Closes: #549892).
+  * Update parser.y use of the parse-param directive to support modern bison. 
 
  -- Jamie Wilkinson <jaq@debian.org>  Thu, 05 Nov 2009 22:03:39 +1100
 
