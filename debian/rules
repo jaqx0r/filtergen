@@ -4,76 +4,12 @@
 
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+export DEB_CFLAGS_MAINT_APPEND  = -Wall -pedantic
+export DEB_LDFLAGS_MAINT_APPEND = -Wl,--as-needed
 
-ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
-	CFLAGS += -O0
-else
-	CFLAGS += -O2
-endif
-ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
-	CFLAGS += -g
-endif
+%:
+	dh $@
 
-configure: configure-stamp
-configure-stamp:
-	dh_testdir
-	ls -al
-	make -f makefile
-	CFLAGS="$(CFLAGS)" ./configure \
-		--host=$(DEB_HOST_GNU_TYPE) \
-		--build=$(DEB_BUILD_GNU_TYPE) \
-		--prefix=/usr \
-		--mandir=\$${prefix}/share/man \
-		--infodir=\$${prefix}/share/info \
-		--sysconfdir=/etc/filtergen \
-		|| cat config.log
-	touch configure-stamp
-
-build: build-arch build-indep
-
-build-arch: build-stamp
-build-indep:
-build-stamp: configure-stamp
-	dh_testdir
-	$(MAKE)
-	$(MAKE) check
-	touch build-stamp
-
-clean:
-	dh_testdir
-	dh_testroot
-	[ ! -f Makefile ] || $(MAKE) clean
-	rm -f build-stamp configure-stamp
-	dh_clean
-
-install: build
-	dh_testdir
-	dh_testroot
-	dh_prep
-	dh_installdirs
-	$(MAKE) install DESTDIR=$(CURDIR)/debian/filtergen
-
-# Build architecture-independent files here.
-binary-indep: build-indep install
-# We have nothing to do by default.
-
-# Build architecture-dependent files here.
-binary-arch: build-arch install
-	dh_testdir
-	dh_testroot
-	dh_installdebconf
-	dh_installdocs
-	dh_installexamples
+override_dh_installchangelogs:
 	dh_installchangelogs HISTORY
-	dh_link
-	dh_strip
-	dh_compress
-	dh_fixperms
-	dh_installdeb
-	dh_shlibdeps
-	dh_gencontrol
-	dh_md5sums
-	dh_builddeb
-
-binary: binary-indep binary-arch
-.PHONY: build clean binary-indep binary-arch binary install configure
