@@ -177,7 +177,7 @@ int __fg_apply(struct filterent *_e, const struct filter *f,
     }
 
     return __fg_applyone(&e, f, cb, misc)
-	?: __fg_apply(&e, f->child, cb, misc);
+	? __fg_applyone(&e, f, cb, misc) : __fg_apply(&e, f->child, cb, misc);
 }
 
 

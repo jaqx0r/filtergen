@@ -244,7 +244,7 @@ int main(int argc, char **argv) {
 	strftime(buf, sizeof(buf)-1, "%a %b %e %H:%M:%S %Z %Y",
 		 localtime((time(&t),&t)));
 	oprintf("# filter generated from %s via %s backend at %s\n",
-		filename ? "standard input" : ft->name, buf);
+		filename ? filename : "standard input", ft->name, buf);
 	l = ft->compiler(f, flags);
     }
 
