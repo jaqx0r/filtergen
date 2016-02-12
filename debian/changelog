@@ -20,6 +20,7 @@ filtergen (0.12.5-1) unstable; urgency=low
   * Convert debian/rules to dh style. 
   * Fix compiler warnings as errors to build with modern compiler.
   * Update address of FSF.
+  * Add more example filters to examples. 
 
  -- Jamie Wilkinson <jaq@debian.org>  Sat, 13 Feb 2016 03:04:52 +1100
 
