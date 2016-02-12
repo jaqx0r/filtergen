@@ -568,6 +568,6 @@ void yyerror(void * parse_arg __attribute__((unused)), const char * s) {
 }
 
 int yyprint(FILE * f, int type, YYSTYPE v) {
-	fprintf(f, "%d:\"%s\":%p", type, yytext, &v);
+	fprintf(f, "%d:\"%s\":%p", type, yytext, (void *) &v);
 	return 0;
 }
