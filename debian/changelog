@@ -1,3 +1,10 @@
+filtergen (0.12.6-1) UNRELEASED; urgency=medium
+
+  * New upstream release.
+    - Fixes return type in external declaration of yyrestart (Closes: #749636).
+
+ -- Jamie Wilkinson <jaq@debian.org>  Sat, 13 Feb 2016 04:04:11 +1100
+
 filtergen (0.12.5-1) unstable; urgency=low
 
   * New upstream release.
