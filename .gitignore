@@ -43,3 +43,6 @@ t/test-suite.log
 t/*.trs
 ylwrap
 *.dh-orig
+config.h.in~
+debian/autoreconf.after
+debian/autoreconf.before
