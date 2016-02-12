@@ -194,6 +194,7 @@ void include_file(const char * name) {
 	DIR * d;
 	struct dirent * r;
 	char * fn;
+	int r;
 
 	if (stat(name, &st)) {
 		if (errno == ENOENT && (index(name, '*') != NULL || index(name, '?') != NULL || index(name, '[') != NULL)) {
@@ -234,7 +235,11 @@ void include_file(const char * name) {
 					/* FIXME: assumes d_name */
 					if (r->d_name[0] == '.')
 						continue;
-					asprintf(&fn, "%s/%s", name, r->d_name);
+					if ((r = asprintf(&fn, "%s/%s", name, r->d_name) == -1) {
+	scan_err("error: asprintf failed for %s", name);
+free(fn);
+ return;
+} 
 					include_file(fn);
 					free(fn);
 				}
