@@ -16,3 +16,7 @@ override_dh_auto_configure:
 
 override_dh_installchangelogs:
 	dh_installchangelogs HISTORY
+
+override_dh_auto_test:
+	dh_auto_test -a
+	cat t/test-suite.log
