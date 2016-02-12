@@ -1,5 +1,10 @@
 language: c
-install: travis_retry sudo apt-get install -y bison flex
+sudo: false
+addons:
+    apt:
+	packages:
+	- bison
+	- flex
 script: make -f makefile check
 compiler:
  - clang
