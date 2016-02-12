@@ -54,11 +54,11 @@ install: build
 	$(MAKE) install DESTDIR=$(CURDIR)/debian/filtergen
 
 # Build architecture-independent files here.
-binary-indep: build install
+binary-indep: build-indep install
 # We have nothing to do by default.
 
 # Build architecture-dependent files here.
-binary-arch: build install
+binary-arch: build-arch install
 	dh_testdir
 	dh_testroot
 	dh_installdebconf
