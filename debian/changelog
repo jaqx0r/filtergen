@@ -19,8 +19,8 @@ filtergen (0.12.5-1) unstable; urgency=low
   * Use debian/source options to build from git, add gbp.conf to debian dir. 
   * Convert debian/rules to dh style. 
   * Fix compiler warnings as errors to build with modern compiler.
+  * 
 
- -- Jamie Wilkinson <jaq@debian.org>  Thu, 05 Nov 2009 22:03:39 +1100
 
 filtergen (0.12.4-5.1) unstable; urgency=low
 
