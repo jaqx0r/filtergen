@@ -1,10 +1,10 @@
 language: c
 sudo: false
 addons:
-    apt:
-	packages:
-	- bison
-	- flex
+  apt:
+    packages:
+    - bison
+    - flex
 script: make -f makefile check
 compiler:
  - clang
