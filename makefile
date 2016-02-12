@@ -10,16 +10,16 @@ all: Makefile
 Makefile: configure
 	./configure --enable-maintainer-mode
 
-configure: Makefile.in configure.in config.h.in
+configure: Makefile.in configure.ac config.h.in
 	autoconf
 
-Makefile.in: configure.in Makefile.am config.h.in
+Makefile.in: configure.ac Makefile.am config.h.in
 	automake --foreign --add-missing --copy
 
-config.h.in: configure.in aclocal.m4
+config.h.in: configure.ac aclocal.m4
 	autoheader
 
-aclocal.m4: configure.in
+aclocal.m4: configure.ac
 	aclocal
 
 endif
