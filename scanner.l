@@ -163,6 +163,7 @@ char * filename(void) {
     return inc_stack[inc_stackptr].filename ? inc_stack[inc_stackptr].filename : strdup("(standard input)");
 }
 
+__attribute__((format(printf, 1, 2)))
 static void scan_err(const char * fmt, ...) {
     va_list args;
 
