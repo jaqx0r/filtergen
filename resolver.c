@@ -40,8 +40,14 @@ void resolve_icmptype_argument(struct icmptype_argument_s * n) {
     if (n->icmptype) {
         if ((i = geticmpbyname(n->icmptype))) {
             free(n->icmptype);
-            asprintf(&n->icmptype, "%s", i->i_type);
-        } else {
+              if (asprintf(&n->icmptype, "%s", i->i_type) < 0) {
+	        n->icmptype = NULL;
+	        fprintf(
+	            stderr,
+	            "error: asprintf allocation failed when converting icmptype %s\n",
+	            i->i_type);
+	      }
+	} else {
 	    /* check that the icmptype is a number if we can't resolve it */
 	    //long m;
 	    char * e;
@@ -76,7 +82,12 @@ void resolve_port_argument(struct port_argument_s * n) {
 	/* try to resolve the port name */
 	if ((s = getservbyname(n->port_min, NULL))) {
 	    free(n->port_min);
-	    asprintf(&n->port_min, "%d", ntohs(s->s_port));
+	      if (asprintf(&n->port_min, "%d", ntohs(s->s_port)) < 0) {
+	        n->port_min = NULL;
+        	fprintf(stderr,
+	                "error: asprintf allocation failed when resolving port %d\n",
+                	ntohs(s->s_port));
+	      }
 	} else {
 	    /* check that the port is a number if we can't resolve it */
 	    //long m;
@@ -92,7 +103,12 @@ void resolve_port_argument(struct port_argument_s * n) {
 	/* try to resolve the port name */
 	if ((s = getservbyname(n->port_max, NULL))) {
 	    free(n->port_max);
-	    asprintf(&n->port_max, "%d", ntohs(s->s_port));
+	      if (asprintf(&n->port_max, "%d", ntohs(s->s_port)) < 0) {
+	        n->port_max = NULL;
+	        fprintf(stderr,
+	                "error: asprintf allocation failed when resolving port %d\n",
+	                ntohs(s->s_port));
+	      }
 	} else {
 	    /* check that the port is a number if we can't resolve it */
 	    //long m;
@@ -127,7 +143,13 @@ void resolve_protocol_argument(struct protocol_argument_s * n) {
     if (n->proto) {
 	if ((p = getprotobyname(n->proto))) {
 	    free(n->proto);
-	    asprintf(&n->proto, "%d", p->p_proto);
+	      if (asprintf(&n->proto, "%d", p->p_proto) < 0) {
+	        n->proto = NULL;
+        	fprintf(
+	            stderr,
+        	    "error: asprintf allocation failed when converting protocol %d\n",
+	            p->p_proto);
+	      }
 	} else {
 	    /* check that the proto is a number if we can't resolve it */
 	    //long m;
