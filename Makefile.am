@@ -16,12 +16,11 @@ filtergen_SOURCES = \
 	scanner.l \
 	glue.c \
 	resolver.c \
-	icmpent.c \
-	factoriser.c
+	icmpent.c
 
 filtergen_LDADD = @GETOPT_LIBS@
 
-headers = filter.h util.h ast.h resolver.h icmpent.h factoriser.h
+headers = filter.h util.h ast.h resolver.h icmpent.h
 
 mans = filter_backends.7 filter_syntax.5 filtergen.8 fgadm.8
 
