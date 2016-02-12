@@ -24,13 +24,14 @@ if test $? -ne 0 ; then no_result; fi
 $here/scan < $work/in > $work/out 2>&1
 if test $? -ne 0 ; then fail ; fi
 
-# can't compare this against a known good output because ordering
-# on the disk, and the way opendir()/readdir() iterates over dirents
-# isn't guaranteed
-# so grep for each file and make sure they got included
-grep -q 'include.d/bar' $work/out && \
-    grep -q 'include.d/foo' $work/out && \
-	pass
+cat >$work/good <<EOF
+kind = dest, spelling = "dest", file = "$work/include.d/bar", line = 1
+kind = identifier, spelling = "unknown", file = "$work/include.d/bar", line = 1
+kind = dport, spelling = "dport", file = "$work/include.d/foo", line = 1
+kind = identifier, spelling = "pants", file = "$work/include.d/foo", line = 1
+EOF
 
-# didn't match?
-fail
+compare $work/good $work/out
+
+# got this far?
+pass

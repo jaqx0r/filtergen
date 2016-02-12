@@ -67,7 +67,8 @@ TESTS = t_01_ccomment \
 	t_67_includeemptyfile \
 	t_68_noop \
 	t_69_includeemptynoop \
-	t_70_includesemicolon
+	t_70_includesemicolon \
+	t_71_includeglob
 
 check_PROGRAMS = scan parse emit convert factorise
 

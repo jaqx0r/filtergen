@@ -23,7 +23,7 @@
 #include "parser.h"
 
 int yyparse(void *);
-int yyrestart(FILE *);
+void yyrestart(FILE *);
 
 int convtrace = 0;
 
