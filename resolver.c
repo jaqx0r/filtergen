@@ -49,13 +49,14 @@ void resolve_icmptype_argument(struct icmptype_argument_s * n) {
 	      }
 	} else {
 	    /* check that the icmptype is a number if we can't resolve it */
-	    //long m;
+	    long m;
 	    char * e;
 
-	    strtol(n->icmptype, &e, 10);
-	    if (*e) {
-		fprintf(stderr, "warning: suspicious icmp type encountered: %s\n", n->icmptype);
-	    }
+	    m = strtol(n->icmptype, &e, 10);
+	    if (*e || m == LONG_MIN || m == LONG_MAX) {
+	        fprintf(stderr, "warning: suspicious icmp type encountered: %s\n",
+                n->icmptype);
+      	    }
         }        
     }
 }
@@ -90,12 +91,13 @@ void resolve_port_argument(struct port_argument_s * n) {
 	      }
 	} else {
 	    /* check that the port is a number if we can't resolve it */
-	    //long m;
+	    long m;
 	    char * e;
 
-	    strtol(n->port_min, &e, 10);
-	    if (*e) {
-		fprintf(stderr, "warning: suspicious port name encountered: %s\n", n->port_min);
+	    m = strtol(n->port_min, &e, 10);
+	    if (*e || m == LONG_MIN || m == LONG_MAX) {
+	        fprintf(stderr, "warning: suspicious port name encountered: %s\n",
+                n->port_min);
 	    }
 	}
     }
@@ -111,12 +113,13 @@ void resolve_port_argument(struct port_argument_s * n) {
 	      }
 	} else {
 	    /* check that the port is a number if we can't resolve it */
-	    //long m;
+	    long m;
 	    char * e;
 
-	    strtol(n->port_max, &e, 10);
-	    if (*e) {
-		fprintf(stderr, "warning: suspicious port name encountered: %s\n", n->port_max);
+	    m = strtol(n->port_max, &e, 10);
+	    if (*e || m == LONG_MIN || m == LONG_MAX) {
+	        fprintf(stderr, "warning: suspicious port name encountered: %s\n",
+                n->port_max);
 	    }
 	}
     }
@@ -152,12 +155,13 @@ void resolve_protocol_argument(struct protocol_argument_s * n) {
 	      }
 	} else {
 	    /* check that the proto is a number if we can't resolve it */
-	    //long m;
+	    long m;
 	    char * e;
 
-	    strtol(n->proto, &e, 10);
-	    if (*e) {
-		fprintf(stderr, "warning: suspicious protocol name encountered: %s\n", n->proto);
+	    m = strtol(n->proto, &e, 10);
+	    if (*e || m == LONG_MIN || m == LONG_MAX) {
+	        fprintf(stderr, "warning: suspicious protocol name encountered: %s\n",
+                n->proto);
 	    }
 	}
     }
