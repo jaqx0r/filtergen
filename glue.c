@@ -157,8 +157,13 @@ struct filter * convert_host_argument(struct host_argument_s * n, int type) {
 
     if (n->host) {
         if (n->mask) {
-	    asprintf(&h, "%s/%s", n->host, n->mask);
-	    res = new_filter_host(type, h);
+	    if (asprintf(&h, "%s/%s", n->host, n->mask) < 0) {
+		printf("error: asprintf allocation failed when converting host "
+               		"argument %s/%s",
+	               	n->host, n->mask);
+ 	    } else {
+		res = new_filter_host(type, h);
+	    }
 	} else {
 	    res = new_filter_host(type, n->host);
 	}
@@ -282,8 +287,13 @@ struct filter * convert_port_argument(struct port_argument_s * n, int type) {
 
     if (n->port_min) {
         if (n->port_max) {
-            asprintf(&p, "%s:%s", n->port_min, n->port_max);
-            res = new_filter_ports(type, p);
+	      if (asprintf(&p, "%s:%s", n->port_min, n->port_max) < 0) {
+	        printf("error: asprintf allocation failed when emitting port range "
+	               "%s:%s\n",
+	               n->port_min, n->port_max);
+	      } else {
+	        res = new_filter_ports(type, p);
+	      }
         } else {
             res = new_filter_ports(type, n->port_min);
         }
@@ -435,7 +445,11 @@ struct filter * convert_chaingroup_specifier(struct chaingroup_specifier_s * n) 
 	/* Allocate a filter name */
 	static int ccount = 0;
 
-	asprintf(&name, "chain_%d", ccount++);
+        if (asprintf(&name, "chain_%d", ccount++) < 0) {
+	      printf("error: asprintf allocation failed when creating a filter name "
+             "for chain %d\n",
+             ccount);
+	}
     }
   
     if (n->list) {
