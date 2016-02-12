@@ -1,3 +1,4 @@
+#include <errno.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -84,7 +85,10 @@ int main(int argc __attribute__((unused)), char ** argv __attribute__((unused)))
 
     /* if running in make distcheck the cwd isn't the same as the srcdir */
     if (getenv("srcdir")) {
-	chdir(getenv("srcdir"));
+	if (chdir(getenv("srcdir")) < 0) {
+		fprintf(stderr, "error changing to path %s: %s\n", getenv("srcdir"), strerror(errno));
+		return EXIT_FAILURE;
+	}
     }
 
     while ((c = yylex())) {
