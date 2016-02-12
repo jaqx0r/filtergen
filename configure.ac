@@ -51,6 +51,9 @@ if test "x$ac_cv_c_compiler_gnu" = xyes ; then
 	CFLAGS="$CFLAGS -W -Wall -Werror -Waggregate-return"
 	CFLAGS="$CFLAGS -Wcast-align -Wcast-qual -Wnested-externs"
 	CFLAGS="$CFLAGS -Wshadow -Wbad-function-cast -Wwrite-strings"
+	CFLAGS="$CFLAGS -Winit-self -Wformat=2 -Wuninitialized"
+	CFLAGS="$CFLAGS -Wpointer-arith"
+	CFLAGS="$CFLAGS -Wstrict-aliasing -fstrict-aliasing"
 fi
 
 dnl ---------------
