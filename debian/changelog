@@ -19,6 +19,7 @@ filtergen (0.12.5-1) unstable; urgency=low
   * Use debian/source options to build from git, add gbp.conf to debian dir. 
   * Convert debian/rules to dh style. 
   * Check return codes to pass compiler warnings. 
+  * Remove GNUism ?: to pass compiler warnings. 
 
  -- Jamie Wilkinson <jaq@debian.org>  Thu, 05 Nov 2009 22:03:39 +1100
 
