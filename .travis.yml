@@ -9,3 +9,4 @@ script: make -f makefile check
 compiler:
  - clang
  - gcc
+after_failure: cat t/test-suite.log
