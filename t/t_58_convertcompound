@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -x
 
 TEST="that the converter can convert compound specifiers"
 DATA=converter10
