@@ -23,6 +23,6 @@
 #include "ast.h"
 #include "filter.h"
 
-void resolve(struct ast_s * n, struct filtergen_opts *o);
+void resolve(struct ast_s *n, struct filtergen_opts *o);
 
 #endif /* __RESOLVER_H__ */
