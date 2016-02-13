@@ -32,10 +32,10 @@ if test $? -ne 0 ; then fail ; fi
 test "x$srcdir" = "x" && cat $work/out
 
 cat >$work/good <<EOF
-kind = dest, spelling = "dest", file = "$work/include.d/quux.d/bar", line = 1
-kind = identifier, spelling = "unknown", file = "$work/include.d/quux.d/bar", line = 1
 kind = dport, spelling = "dport", file = "$work/include.d/foo", line = 1
 kind = identifier, spelling = "pants", file = "$work/include.d/foo", line = 1
+kind = dest, spelling = "dest", file = "$work/include.d/quux.d/bar", line = 1
+kind = identifier, spelling = "unknown", file = "$work/include.d/quux.d/bar", line = 1
 EOF
 
 compare $work/good $work/out
