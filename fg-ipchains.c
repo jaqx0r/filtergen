@@ -108,7 +108,7 @@ static int cb_ipchains_rule(const struct filterent *ent, struct fg_misc *misc __
 	abort();
     }
 
-    if(ent->iface) {
+    if(ent->iface && strcmp(ent->iface, "*")) {
 	if(NEG(DIRECTION)) {
 	    APPS(rule, "!");
 	    APPS(rule_r, "!");
