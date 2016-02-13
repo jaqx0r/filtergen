@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -x
 
 TEST="that the parser reads subrule lists correctly"
 DATA=emitter14

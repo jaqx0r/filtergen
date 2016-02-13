@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -x
 
 TEST="that parsing hostname and netmask variations works"
 DATA=parser7
