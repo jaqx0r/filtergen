@@ -1,6 +1,4 @@
 #!/usr/bin/make -f
-# Sample debian/rules that uses debhelper.
-# GNU copyright 1997 to 1999 by Joey Hess.
 
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
@@ -18,4 +16,4 @@ override_dh_installchangelogs:
 	dh_installchangelogs HISTORY
 
 override_dh_auto_test:
-	dh_auto_test -a || cat t/test-suite.log
+	dh_auto_test -a || (cat t/test-suite.log; /bin/false)
