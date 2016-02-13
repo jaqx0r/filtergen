@@ -40,8 +40,7 @@ compare () {
 	0)
 	    ;;
 	1)
-	    # only print diff if not run by automake test suite
-	    test "x$srcdir" = "x" && diff -u "$1" "$2"
+	    diff -u "$1" "$2"
 	    fail
 	    ;;
 	*)
