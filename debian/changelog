@@ -1,8 +1,10 @@
-filtergen (0.12.6-3) UNRELEASED; urgency=medium
+filtergen (0.12.6-3) unstable; urgency=medium
 
   * Fix the way the test suite log is printed after test failure. 
+  * Run the tests in parallel so their output is captured.
+  * Run all tests in verbose (sh -x) mode. 
 
- -- Jamie Wilkinson <jaq@debian.org>  Sat, 13 Feb 2016 17:32:32 +1100
+ -- Jamie Wilkinson <jaq@debian.org>  Sat, 13 Feb 2016 19:05:56 +1100
 
 filtergen (0.12.6-2) unstable; urgency=medium
 
