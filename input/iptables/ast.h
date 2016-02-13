@@ -21,49 +21,49 @@
 #define __IPTABLES_AST_H__
 
 struct pkt_count_s {
-    char * in;
-    char * out;
+  char *in;
+  char *out;
 };
 
 struct identifier_s {
-    char * id;
+  char *id;
 };
 
 struct not_identifier_s {
-    int neg;
-    struct identifier_s * identifier;
+  int neg;
+  struct identifier_s *identifier;
 };
 
 struct option_s {
-    char * option;
-    struct not_identifier_s * not_identifier;
+  char *option;
+  struct not_identifier_s *not_identifier;
 };
 
 struct not_option_s {
-    int neg;
-    struct option_s * option;
+  int neg;
+  struct option_s *option;
 };
-    
+
 struct option_list_s {
-    struct option_list_s * option_list;
-    struct not_option_s * not_option;
+  struct option_list_s *option_list;
+  struct not_option_s *not_option;
 };
 
 struct rule_s {
-    char * table;
-    char * chain;
-    char * policy;
-    struct pkt_count_s * pkt_count;
-    struct option_list_s * option_list;
+  char *table;
+  char *chain;
+  char *policy;
+  struct pkt_count_s *pkt_count;
+  struct option_list_s *option_list;
 };
 
 struct rule_list_s {
-    struct rule_list_s * list;
-    struct rule_s * rule;
+  struct rule_list_s *list;
+  struct rule_s *rule;
 };
 
 struct ast_s {
-    struct rule_list_s * list;
+  struct rule_list_s *list;
 };
 
 #endif /* __IPTABLES_AST_H__ */

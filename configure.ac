@@ -1,6 +1,6 @@
 AC_PREREQ(2.50)
 
-AC_INIT(filtergen, 0.12.6, jaq@spacepants.org)
+AC_INIT(filtergen, 0.12.7, jaq@spacepants.org)
 
 AC_CONFIG_AUX_DIR(.)
 AC_CONFIG_SRCDIR(filtergen.c)
@@ -24,7 +24,7 @@ dnl checks for programs
 dnl -------------------
 
 AC_PROG_CC
-AC_PROG_LEX
+AM_PROG_LEX
 AC_PROG_YACC
 
 dnl -------------------
@@ -51,6 +51,9 @@ if test "x$ac_cv_c_compiler_gnu" = xyes ; then
 	CFLAGS="$CFLAGS -W -Wall -Werror -Waggregate-return"
 	CFLAGS="$CFLAGS -Wcast-align -Wcast-qual -Wnested-externs"
 	CFLAGS="$CFLAGS -Wshadow -Wbad-function-cast -Wwrite-strings"
+	CFLAGS="$CFLAGS -Winit-self -Wformat=2 -Wuninitialized"
+	CFLAGS="$CFLAGS -Wpointer-arith"
+	CFLAGS="$CFLAGS -Wstrict-aliasing -fstrict-aliasing"
 fi
 
 dnl ---------------
