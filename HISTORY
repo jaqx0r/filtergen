@@ -1,3 +1,14 @@
+0.12.7:
+	Supports iptables-restore output format.
+	Supports IPv6 names.
+	Supports ip6tables and ip6tables-restore output format.
+	Better warnings when services don't resolve.
+	Increases include file recursion depth to 512 from 16.
+	
+	Runs tests in parallel so their output is captured, and generate more output.
+	Adds more compiler warnings.
+	Compiles clean under clang.
+
 0.12.6:
 	Support shell globbing in include directives.
 	Allow '*' as a network interface name.
