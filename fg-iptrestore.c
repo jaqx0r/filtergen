@@ -1,6 +1,8 @@
-/* filter generator, iptables driver
+/* filter generator, iptables-restore driver
  *
  * Copyright (c) 2002 Matthew Kirkwood
+ * Copyright (c) 2009 Anchor Systems (written by Matt Palmer
+ *<matt@anchor.net.au>)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,9 +53,9 @@
 #define A_TCP 0x10
 #define A_UDP 0x20
 
-/* full path to ip{,6}tables executables */
-#define IPTABLES "/sbin/iptables"
-#define IP6TABLES "/sbin/ip6tables"
+/* full path to ip{,6}tables-restore executables */
+#define IPTABLES_RESTORE "/sbin/iptables-restore"
+#define IP6TABLES_RESTORE "/sbin/ip6tables-restore"
 
 static char *appip(char *r, const struct addr_spec *h) {
   APPS(r, h->addrstr);
@@ -73,9 +75,8 @@ static char *appport(char *r, const struct port_spec *h) {
 #define APPPORT(r, h) (r = appport(r, h))
 #define APPPORT2(f, r, h) (APPS(r, f), APPPORT(r, h))
 
-static int cb_iptables_rule_common(const struct filterent *ent,
-                                   struct fg_misc *misc, sa_family_t family,
-                                   const char *iptables) {
+static int cb_iptrestore_rule_common(const struct filterent *ent,
+                                     struct fg_misc *misc, sa_family_t family) {
   char *rulechain = NULL, *revchain = NULL, *natchain = NULL;
   char *ruletarget = NULL, *revtarget = NULL, *nattarget = NULL;
   char *natrule = NULL, *rule = NULL, *rule_r = NULL;
@@ -130,11 +131,9 @@ static int cb_iptables_rule_common(const struct filterent *ent,
         APPS(rule, "!");
         APPS(rule_r, "!");
       }
-      if (strcmp(ent->iface, "*")) {
-        APPSS2(natrule, "-i", ent->iface);
-        APPSS2(rule, "-i", ent->iface);
-        APPSS2(rule_r, "-o", ent->iface);
-      }
+      APPSS2(natrule, "-i", ent->iface);
+      APPSS2(rule, "-i", ent->iface);
+      APPSS2(rule_r, "-o", ent->iface);
     }
     break;
   case OUTPUT:
@@ -149,11 +148,9 @@ static int cb_iptables_rule_common(const struct filterent *ent,
         APPS(rule, "!");
         APPS(rule_r, "!");
       }
-      if (strcmp(ent->iface, "*")) {
-        APPSS2(natrule, "-o", ent->iface);
-        APPSS2(rule, "-o", ent->iface);
-        APPSS2(rule_r, "-i", ent->iface);
-      }
+      APPSS2(natrule, "-o", ent->iface);
+      APPSS2(rule, "-o", ent->iface);
+      APPSS2(rule_r, "-i", ent->iface);
     }
     break;
   default:
@@ -257,17 +254,16 @@ static int cb_iptables_rule_common(const struct filterent *ent,
   if (ESET(ent, LOG)) {
     char *lc, *la, *ls;
     if (ent->logmsg) {
-      lc = strdup(" --log-prefix=");
+      lc = strdup(" --log-prefix \"");
       la = ent->logmsg;
-      ls = strdup("\" \"");
+      ls = strdup(" \"");
     } else
       lc = la = ls = strdup("");
     if (islocal)
-      orules++, oprintf("%s -A %s %s LOG%s%s%s\n", iptables, rulechain,
-                        rule + 1, lc, la, ls);
+      orules++,
+          oprintf("-A %s %s LOG%s%s%s\n", rulechain, rule + 1, lc, la, ls);
     if (isforward)
-      orules++, oprintf("%s -A %s %s LOG%s%s%s\n", iptables, forchain, rule + 1,
-                        lc, la, ls);
+      orules++, oprintf("-A %s %s LOG%s%s%s\n", forchain, rule + 1, lc, la, ls);
   }
 
   /* Do this twice, once for NAT, once for filter */
@@ -337,21 +333,27 @@ static int cb_iptables_rule_common(const struct filterent *ent,
   if (ent->oneway)
     needret = 0;
 
-  if (neednat)
-    orules++, oprintf("%s -t nat -A %s%s %s %s%s\n", iptables, subchain,
-                      natchain, natrule + 1, subtarget, nattarget);
+  if (neednat) {
+    orules++;
+    oputs("COMMIT\n");
+    oprintf("*nat\n");
+    oprintf("-A %s%s %s %s%s\n", subchain, natchain, natrule + 1, subtarget,
+            nattarget);
+    oputs("COMMIT\n");
+    oprintf("*filter\n");
+  }
   if (islocal)
-    orules++, oprintf("%s -A %s%s %s %s%s\n", iptables, subchain, rulechain,
-                      rule + 1, subtarget, ruletarget);
+    orules++, oprintf("-A %s%s %s %s%s\n", subchain, rulechain, rule + 1,
+                      subtarget, ruletarget);
   if (needret)
-    orules++, oprintf("%s -I %s%s %s %s%s\n", iptables, subchain, revchain,
-                      rule_r + 1, subtarget, revtarget);
+    orules++, oprintf("-I %s%s %s %s%s\n", subchain, revchain, rule_r + 1,
+                      subtarget, revtarget);
   if (isforward) {
-    orules++, oprintf("%s -A %s%s %s %s%s\n", iptables, subchain, forchain,
-                      rule + 1, subtarget, fortarget);
+    orules++, oprintf("-A %s%s %s %s%s\n", subchain, forchain, rule + 1,
+                      subtarget, fortarget);
     if (needret)
-      orules++, oprintf("%s -I %s%s %s %s%s\n", iptables, subchain, forrevchain,
-                        rule_r + 1, subtarget, forrevtarget);
+      orules++, oprintf("-I %s%s %s %s%s\n", subchain, forrevchain, rule_r + 1,
+                        subtarget, forrevtarget);
   }
 
   free(natrule);
@@ -362,37 +364,41 @@ static int cb_iptables_rule_common(const struct filterent *ent,
   return orules;
 }
 
-static int cb_iptables_rule(const struct filterent *ent, struct fg_misc *misc) {
-  return cb_iptables_rule_common(ent, misc, AF_INET, IPTABLES);
+static int cb_iptrestore_rule(const struct filterent *ent,
+                              struct fg_misc *misc) {
+  return cb_iptrestore_rule_common(ent, misc, AF_INET);
 }
 
-static int cb_ip6tables_rule(const struct filterent *ent,
-                             struct fg_misc *misc) {
-  return cb_iptables_rule_common(ent, misc, AF_INET6, IP6TABLES);
+static int cb_ip6trestore_rule(const struct filterent *ent,
+                               struct fg_misc *misc) {
+  return cb_iptrestore_rule_common(ent, misc, AF_INET6);
 }
 
-static int cb_iptables_group_common(const char *name, const char *iptables) {
-  oprintf("for f in INPUT OUTPUT FORWARD FORW_OUT; do %s -N %s-$f; done\n",
-          iptables, name);
+static int cb_iptrestore_group_common(const char *name) {
+  oprintf("-N %s-INPUT\n", name);
+  oprintf("-N %s-OUTPUT\n", name);
+  oprintf("-N %s-FORWARD\n", name);
+  oprintf("-N %s-FORW_OUT\n", name);
   return 4;
 }
 
-static int cb_iptables_group(const char *name) {
-  return cb_iptables_group_common(name, IPTABLES);
+static int cb_iptrestore_group(const char *name) {
+  return cb_iptrestore_group_common(name);
 }
 
-static int cb_ip6tables_group(const char *name) {
-  return cb_iptables_group_common(name, IP6TABLES);
+static int cb_ip6trestore_group(const char *name) {
+  return cb_iptrestore_group_common(name);
 }
 
-static int fg_iptables_common(struct filter *filter, int flags,
-                              sa_family_t family, const char *iptables) {
+static int fg_iptrestore_common(struct filter *filter, int flags,
+                                sa_family_t family,
+                                const char *iptables_restore) {
   long feat = 0;
   int r = 0;
   struct fg_misc misc = {flags, &feat};
-  fg_callback cb_iptables = {
-      .rule = family == AF_INET ? cb_iptables_rule : cb_ip6tables_rule,
-      .group = family == AF_INET ? cb_iptables_group : cb_ip6tables_group,
+  fg_callback cb_iptrestore = {
+      .rule = family == AF_INET ? cb_iptrestore_rule : cb_ip6trestore_rule,
+      .group = family == AF_INET ? cb_iptrestore_group : cb_ip6trestore_group,
   };
   const int nchains = 3;
 
@@ -400,70 +406,60 @@ static int fg_iptables_common(struct filter *filter, int flags,
   filter_apply_flags(filter, flags);
 
   if (!(flags & FF_NOSKEL)) {
-    oputs("CHAINS=\"INPUT OUTPUT FORWARD\"");
+    oprintf("%s <<EOF\n", iptables_restore);
+    oputs("*filter");
+    oputs(":INPUT DROP [0:0]");
+    oputs(":OUTPUT DROP [0:0]");
+    oputs(":FORWARD DROP [0:0]");
     oputs("");
 
-    oputs("# Flush/remove rules, set policy");
-    oprintf("for f in $CHAINS; do %s -P $f DROP; done\n", iptables);
-    oprintf("%s -F; %s -X\n", iptables, iptables);
-    if (family == AF_INET)
-      oprintf("%s -t nat -F; %s -t nat -X\n", iptables, iptables);
+    oputs("-N FORW_OUT");
     oputs("");
 
-    oputs("# Create FORW_OUT chain");
-    oprintf("%s -N FORW_OUT\n", iptables);
-    oputs("");
+    oputs("-N INVALID");
+    oputs("-A INVALID -j DROP");
 
-    oputs("# Setup INVALID chain");
-    oprintf("%s -N INVALID\n", iptables);
-#if 0
-	oprintf("%s -A INVALID -j LOG --log-prefix \"invalid \"\n", iptables);
-#endif
-    oprintf("%s -A INVALID -j DROP\n", iptables);
-    oprintf("for f in $CHAINS; do\n"
-            "\t%s -I $f -m state --state INVALID -j INVALID;\n"
-            "done\n",
-            iptables);
+    oputs("-I INPUT -m state --state INVALID -j INVALID");
+    oputs("-I OUTPUT -m state --state INVALID -j INVALID");
+    oputs("-I FORWARD -m state --state INVALID -j INVALID");
     oputs("");
     r += nchains;
   }
-  if ((r = filtergen_cprod(filter, &cb_iptables, &misc)) < 0)
+  if ((r = filtergen_cprod(filter, &cb_iptrestore, &misc)) < 0)
     return r;
   if (!(flags & FF_NOSKEL)) {
     if ((flags & FF_LSTATE) && (feat & (A_TCP | A_UDP))) {
-      oputs("for f in $CHAINS; do");
       if (feat & A_TCP) {
         r += nchains;
-        oprintf("\t%s -I $f -p tcp ! --syn -m state --state ESTABLISHED -j "
-                "ACCEPT;\n",
-                iptables);
+        oputs("-I INPUT -p tcp ! --syn -m state --state ESTABLISHED -j ACCEPT");
+        oputs(
+            "-I OUTPUT -p tcp ! --syn -m state --state ESTABLISHED -j ACCEPT");
+        oputs(
+            "-I FORWARD -p tcp ! --syn -m state --state ESTABLISHED -j ACCEPT");
       }
       if (feat & A_UDP) {
         r += nchains;
-        oprintf("\t%s -I $f -p udp -m state --state ESTABLISHED -j ACCEPT;\n",
-                iptables);
+        oputs("-I INPUT -p udp -m state --state ESTABLISHED -j ACCEPT");
+        oputs("-I OUTPUT -p udp -m state --state ESTABLISHED -j ACCEPT");
+        oputs("-I FORWARD -p udp -m state --state ESTABLISHED -j ACCEPT");
       }
-      oputs("done");
     }
-#if 0
-	oprintf("for f in $CHAINS; do %s -A $f -j LOG; done\n", iptables);
-	r += nchains;
-#endif
   }
+  oputs("COMMIT");
+  oputs("EOF");
   return r;
 }
 
-int fg_iptables(struct filter *filter, int flags) {
-  return fg_iptables_common(filter, flags, AF_INET, IPTABLES);
+int fg_iptrestore(struct filter *filter, int flags) {
+  return fg_iptrestore_common(filter, flags, AF_INET, IPTABLES_RESTORE);
 }
 
-int fg_ip6tables(struct filter *filter, int flags) {
-  return fg_iptables_common(filter, flags, AF_INET6, IP6TABLES);
+int fg_ip6trestore(struct filter *filter, int flags) {
+  return fg_iptrestore_common(filter, flags, AF_INET6, IP6TABLES_RESTORE);
 }
 
 /* Rules which just flush the packet filter */
-static int flush_iptables_common(enum filtertype policy, sa_family_t family,
-                                 const char *iptables) {
+static int flush_iptrestore_common(enum filtertype policy) {
   char *ostr;
 
   oputs("CHAINS=\"INPUT OUTPUT FORWARD\"");
@@ -483,18 +479,17 @@ static int flush_iptables_common(enum filtertype policy, sa_family_t family,
     fprintf(stderr, "invalid filtertype %d\n", policy);
     abort();
   }
-  oprintf("for f in $CHAINS; do %s -P $f %s; done\n", iptables, ostr);
-  oprintf("%s -F; %s -X\n", iptables, iptables);
-  if (family == AF_INET)
-    oprintf("%s -t nat -F; %s -t nat -X\n", iptables, iptables);
+  oprintf(":INPUT %s [0:0]\n", ostr);
+  oprintf(":OUTPUT %s [0:0]\n", ostr);
+  oprintf(":FORWARD %s [0:0]\n", ostr);
 
   return 0;
 }
 
-int flush_iptables(enum filtertype policy) {
-  return flush_iptables_common(policy, AF_INET, IPTABLES);
+int flush_iptrestore(enum filtertype policy) {
+  return flush_iptrestore_common(policy);
 }
 
-int flush_ip6tables(enum filtertype policy) {
-  return flush_iptables_common(policy, AF_INET, IP6TABLES);
+int flush_ip6trestore(enum filtertype policy) {
+  return flush_iptrestore_common(policy);
 }

@@ -31,7 +31,7 @@
 #include "parser.h"
 
 /* include file stack */
-#define MAXINCLUDES 16
+#define MAXINCLUDES 512
 struct inc_stack_s {
     YY_BUFFER_STATE state;
     char * filename;
@@ -43,13 +43,14 @@ int inc_stackptr = 0;
 
 long int lineno();
 char * filename();
-static void scan_err(const char * fmt, ...);
+static void scan_err(const char * fmt, ...) __attribute__((format(printf, 1, 2)));
 void include_file(const char *);
 %}
 
 string  \"[^\n]+\"
 space   [ \t]+
-id      [[:alnum:]_][[:alnum:]_+-]*
+word    [[:alnum:]._+-]+
+id      {word}|({word})?:(({word})?:)+({word})?
 
 %%
 
@@ -114,7 +115,7 @@ text         return TOK_TEXT;
 "!"          return TOK_BANG;
 "*"          return TOK_STAR;
 
-{id}(\.{id})*	{
+{id}		{
 			yylval.u_str = strndup(yytext, yyleng);
 			return TOK_IDENTIFIER;
 		}
@@ -125,17 +126,9 @@ text         return TOK_TEXT;
 
 <include>[ \t]*       /* eat whitespace after include */
 <include>[^ \t\n;]+    { /* include file name */
-                          if (inc_stackptr >= MAXINCLUDES - 1) {
-                              scan_err("warning: too many nested includes");
-    			      scan_err("warning: skipping include of file %s", yytext);
-
-			  } else {
-				char * name;
-
-				name = strdup(yytext);
-				include_file(name);
-				free(name);
-			  }
+			  char * name = strdup(yytext);
+			  include_file(name);
+			  free(name);
                           BEGIN(INITIAL);
                        }
 
@@ -143,109 +136,121 @@ text         return TOK_TEXT;
                            if (!inc_stackptr) {
                               yyterminate();
 			   } else {
-			      if (inc_stack[inc_stackptr].filename) {
-				  free(inc_stack[inc_stackptr].filename);
-				  inc_stack[inc_stackptr].filename = NULL;
-                              }
- 			      inc_stackptr--;
-                              yy_delete_buffer(YY_CURRENT_BUFFER);
-                              yy_switch_to_buffer(inc_stack[inc_stackptr].state);
+                             if (inc_stack[inc_stackptr].filename) {
+                               free(inc_stack[inc_stackptr].filename);
+                               inc_stack[inc_stackptr].filename = NULL;
+                             }
+                             inc_stackptr--;
+                             yy_delete_buffer(YY_CURRENT_BUFFER);
+                             yy_switch_to_buffer(inc_stack[inc_stackptr].state);
                            }
-                       }
+			}
 %%
 
 long int lineno(void) {
-    return inc_stack[inc_stackptr].lineno;
+  return inc_stack[inc_stackptr].lineno;
 }
 
 /* FIXME: make this return an immutable string */
-char * filename(void) {
-    return inc_stack[inc_stackptr].filename ? inc_stack[inc_stackptr].filename : strdup("(standard input)");
+char *filename(void) {
+  return inc_stack[inc_stackptr].filename ? inc_stack[inc_stackptr].filename
+                                          : strdup("(standard input)");
 }
 
-static void scan_err(const char * fmt, ...) {
-    va_list args;
+static void scan_err(const char *fmt, ...) {
+  va_list args;
 
-    va_start(args, fmt);
-    if (inc_stackptr >= 0)
-	fprintf(stderr, "%s:%ld: ", filename(), lineno());
-    vfprintf(stderr, fmt, args);
-    fprintf(stderr, "\n");
+  va_start(args, fmt);
+  if (inc_stackptr >= 0)
+    fprintf(stderr, "%s:%ld: ", filename(), lineno());
+  vfprintf(stderr, fmt, args);
+  fprintf(stderr, "\n");
 }
 
+void step_into_include_file(const char *fn) {
+  FILE *f;
 
-void step_into_include_file(const char * fn) {
-	FILE * f;
+  if (inc_stackptr >= MAXINCLUDES - 1) {
+    scan_err("warning: too many nested includes");
+    scan_err("warning: skipping include of file \"%s\"", fn);
+    return;
+  }
 
-        if (!(f = fopen(fn, "r"))) {
-                scan_err("warning: can't open file \"%s\"", fn);
-        } else {
-                inc_stack[inc_stackptr++].state = YY_CURRENT_BUFFER;
-                inc_stack[inc_stackptr].lineno = 1;
-                inc_stack[inc_stackptr].filename = strdup(fn);
-                yyin = f;
-                yy_switch_to_buffer(yy_create_buffer(yyin, YY_BUF_SIZE));
-	}
+  if (!(f = fopen(fn, "r"))) {
+    scan_err("warning: can't open file \"%s\"", fn);
+  } else {
+    inc_stack[inc_stackptr++].state = YY_CURRENT_BUFFER;
+    inc_stack[inc_stackptr].lineno = 1;
+    inc_stack[inc_stackptr].filename = strdup(fn);
+    yyin = f;
+    yy_switch_to_buffer(yy_create_buffer(yyin, YY_BUF_SIZE));
+  }
 }
 
 /* include a file or directory */
-void include_file(const char * name) {
-	struct stat st;
-	DIR * d;
-	struct dirent * r;
-	char * fn;
+void include_file(const char *name) {
+  struct stat st;
+  struct dirent **namelist;
+  char *fn;
+  int n;
 
-	if (stat(name, &st)) {
-		if (errno == ENOENT && (index(name, '*') != NULL || index(name, '?') != NULL || index(name, '[') != NULL)) {
-			/* Globbing fiesta! */
-			glob_t glob_buf;
-			if (glob(name, 0, NULL, &glob_buf) != 0) {
-				scan_err("warning: failed to glob %s: %s", name, strerror(errno));
-			} else {
-				int n;
-				
-				/* We go through the list of files backwards, because
-				 * step_into_include_file() creates a stack of all the
-				 * files processed and then works on them in a LIFO
-				 * fashion -- which would make all of our rules files
-				 * go backwards.  Since I can't wrap my head around
-				 * why that is, exactly, I'm hacking it up with
-				 * this instead.  Fixination appreciated.
-				 */
-				for (n = glob_buf.gl_pathc - 1; n >= 0; n--) {
-					if (stat(glob_buf.gl_pathv[n], &st)) {
-						scan_err("warning: stat failed on globbed %s: %s", glob_buf.gl_pathv[n], strerror(errno));
-					} else if (S_ISREG(st.st_mode) || S_ISLNK(st.st_mode)) {
-						step_into_include_file(glob_buf.gl_pathv[n]);
-					}
-				}
-			}
-			
-			globfree(&glob_buf);
-		} else {
-			scan_err("warning: stat failed on %s: %s", name, strerror(errno));
-		}
-	} else {
-		if (S_ISDIR(st.st_mode)) {
-			if ((d = opendir(name)) == NULL) {
-				scan_err("warning: opendir failed on %s: %s", name, strerror(errno));
-			} else {
-				while ((r = readdir(d)) != NULL) {
-					/* FIXME: assumes d_name */
-					if (r->d_name[0] == '.')
-						continue;
-					if (asprintf(&fn, "%s/%s", name, r->d_name) < 0) {
-						scan_err("internal error: asprintf failed constructing pathname for included file %s", r->d_name);
-						free(fn);
-					} else {
-						include_file(fn);
-						free(fn);
-					}
-				}
-				closedir(d);
-			}
-		} else {
-			step_into_include_file(name);
-		}
-	}
+  if (stat(name, &st)) {
+    if (errno == ENOENT &&
+        (index(name, '*') != NULL || index(name, '?') != NULL ||
+         index(name, '[') != NULL)) {
+      /* Globbing fiesta! */
+      glob_t glob_buf;
+      if (glob(name, 0, NULL, &glob_buf) != 0) {
+        scan_err("warning: failed to glob %s: %s", name, strerror(errno));
+      } else {
+        /* We go through the list of files backwards, because
+         * step_into_include_file() creates a stack of all the
+         * files processed and then works on them in a LIFO
+         * fashion -- which would make all of our rules files
+         * go backwards.  Since I can't wrap my head around
+         * why that is, exactly, I'm hacking it up with
+         * this instead.  Fixination appreciated.
+         */
+        for (n = glob_buf.gl_pathc - 1; n >= 0; n--) {
+          if (stat(glob_buf.gl_pathv[n], &st)) {
+            scan_err("warning: stat failed on globbed %s: %s",
+                     glob_buf.gl_pathv[n], strerror(errno));
+          } else if (S_ISREG(st.st_mode) || S_ISLNK(st.st_mode)) {
+            step_into_include_file(glob_buf.gl_pathv[n]);
+          }
+        }
+      }
+
+      globfree(&glob_buf);
+    } else {
+      scan_err("warning: stat failed on %s: %s", name, strerror(errno));
+    }
+  } else {
+    if (S_ISDIR(st.st_mode)) {
+      if ((n = scandir(name, &namelist, NULL, alphasort)) < 0) {
+        scan_err("warning: scandir failed on %s: %s", name, strerror(errno));
+      } else {
+        while (n--) {
+          /* FIXME: assumes d_name */
+          if (namelist[n]->d_name[0] == '.') {
+	    free(namelist[n]);
+            continue;
+          }
+          if (asprintf(&fn, "%s/%s", name, namelist[n]->d_name) < 0) {
+            scan_err("internal error: asprintf failed constructing pathname "
+                     "for included file %s",
+                     namelist[n]->d_name);
+            free(fn);
+          } else {
+            include_file(fn);
+            free(fn);
+          }
+	  free(namelist[n]);
+        }
+        free(namelist);
+      }
+    } else {
+      step_into_include_file(name);
+    }
+  }
 }

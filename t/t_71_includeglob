@@ -15,7 +15,7 @@ if test $? -ne 0 ; then no_result ; fi
 
 mkdir $work/d
 
-for i in $(seq 1 3); do
+for i in $(seq 3 -1 1); do
 cat > $work/d/$i <<EOF
 proto tcp dport $i accept;
 EOF

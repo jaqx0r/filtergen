@@ -1,0 +1,12 @@
+language: c
+sudo: false
+addons:
+  apt:
+    packages:
+    - bison
+    - flex
+script: make -f makefile check
+compiler:
+ - clang
+ - gcc
+after_failure: cat t/test-suite.log
