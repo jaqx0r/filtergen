@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -x
 
 TEST="that empty rules get parsed correctly"
 

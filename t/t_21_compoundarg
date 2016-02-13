@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -x
 
 TEST="that parsing a rule with a compound port argument works"
 DATA=parser6

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -x
 
 TEST="that c style comments are scanned and ignored"
 

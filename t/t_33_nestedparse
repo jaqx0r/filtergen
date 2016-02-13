@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -x
 
 TEST="that the parser can cope with included files"
 DATA=parser16

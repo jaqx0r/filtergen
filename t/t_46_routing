@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -x
 
 TEST="that the parser reads routing specifiers"
 DATA=emitter13
