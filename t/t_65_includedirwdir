@@ -30,7 +30,6 @@ $here/scan < $work/in > $work/out 2>&1
 if test $? -ne 0 ; then fail ; fi
 
 test "x$srcdir" = "x" && cat $work/out
-cat $work/out
 
 cat >$work/good <<EOF
 kind = dport, spelling = "dport", file = "$work/include.d/foo", line = 1

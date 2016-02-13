@@ -23,7 +23,6 @@ if test $? -ne 0 ; then no_result; fi
 
 $here/scan < $work/in > $work/out 2>&1
 if test $? -ne 0 ; then fail ; fi
-cat $work/out
 
 cat >$work/good <<EOF
 kind = dest, spelling = "dest", file = "$work/include.d/bar", line = 1
