@@ -343,8 +343,8 @@ int fg_iptrestore(struct filter *filter, int flags)
     int r = 0;
     struct fg_misc misc = { flags, &feat };
     fg_callback cb_iptrestore = {
-	rule:	cb_iptrestore_rule,
-	group:	cb_iptrestore_group,
+		cb_iptrestore_rule,
+		cb_iptrestore_group,
     };
     const int nchains = 3;
 
