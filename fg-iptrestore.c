@@ -115,7 +115,7 @@ static int cb_iptrestore_rule(const struct filterent *ent, struct fg_misc *misc)
 	revchain = strdup("OUTPUT");
 	forchain = strdup("FORWARD");
 	forrevchain = strdup("FORW_OUT");
-	if(ent->iface) {
+	if(ent->iface && strcmp(ent->iface, "*")) {
 	    if(NEG(DIRECTION)) {
 		APPS(natrule, "!");
 		APPS(rule, "!");
@@ -132,7 +132,7 @@ static int cb_iptrestore_rule(const struct filterent *ent, struct fg_misc *misc)
 	revchain = strdup("INPUT");
 	forchain = strdup("FORW_OUT");
 	forrevchain = strdup("FORWARD");
-	if(ent->iface) {
+	if(ent->iface && strcmp(ent->iface, "*")) {
 	    if(NEG(DIRECTION)) {
 		APPS(natrule, "!");
 		APPS(rule, "!");
