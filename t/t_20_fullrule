@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -x
 
 TEST="that parsing a full rule with specifiers works"
 DATA=parser5

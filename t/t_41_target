@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -x
 
 TEST="that the parser reads targets and arguments"
 DATA=emitter8

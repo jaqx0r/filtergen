@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -x
 
 TEST="that chained subgroups are parsed correctly"
 DATA=parser14
