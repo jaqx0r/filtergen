@@ -1,3 +1,9 @@
+filtergen (0.12.6-3) UNRELEASED; urgency=medium
+
+  * Fix the way the test suite log is printed after test failure. 
+
+ -- Jamie Wilkinson <jaq@debian.org>  Sat, 13 Feb 2016 17:32:32 +1100
+
 filtergen (0.12.6-2) unstable; urgency=medium
 
   * Cat the test suite log after running the tests.
