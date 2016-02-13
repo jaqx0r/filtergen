@@ -1,10 +1,10 @@
-filtergen (0.12.7-1) UNRELEASED; urgency=medium
+filtergen (0.12.7-1) unstable; urgency=medium
 
   * New upstream release.
     - IPv6 support in the rules files, and in output formats.
     - ip{,6}tables-restore support. 
 
- -- Jamie Wilkinson <jaq@debian.org>  Sat, 13 Feb 2016 22:00:44 +1100
+ -- Jamie Wilkinson <jaq@debian.org>  Sat, 13 Feb 2016 22:04:47 +1100
 
 filtergen (0.12.6-3) unstable; urgency=medium
 
