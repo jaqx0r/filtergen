@@ -157,7 +157,7 @@ static int cb_iptables_rule_common(const struct filterent *ent,
     }
     break;
   default:
-    fprintf(stderr, "unknown direction\n");
+    fprintf(stderr, "unknown direction: %d\n", ent->direction);
     abort();
   }
 
