@@ -56,6 +56,14 @@ void usage(char *prog) {
 #endif
 
 #ifdef HAVE_GETOPT_H
+  fprintf(stderr,
+          " --no-resolve/-R           don't resolve hostnames or portnames\n");
+#else
+  fprintf(stderr,
+          "              -R           don't resolve hostnames or portnames\n");
+#endif
+
+#ifdef HAVE_GETOPT_H
   fprintf(
       stderr,
       " --target/-t target        generate for target (default: iptables)\n");
@@ -135,6 +143,7 @@ static struct option long_options[] = {{"help", no_argument, 0, 'h'},
                                        {"compile", no_argument, 0, 'c'},
                                        {"target", required_argument, 0, 't'},
                                        {"output", required_argument, 0, 'o'},
+                                       {"no-resolve", no_argument, 0, 'R'},
                                        {"flush", required_argument, 0, 'F'},
                                        {"version", no_argument, 0, 'V'},
                                        {0, 0, 0, 0}};
@@ -157,7 +166,7 @@ int main(int argc, char **argv) {
 
   progname = argv[0];
 
-  while ((arg = GETOPT(argc, argv, "hco:t:F:V")) > 0) {
+  while ((arg = GETOPT(argc, argv, "hco:t:F:VR")) > 0) {
     switch (arg) {
     case ':':
       usage(progname);
@@ -172,6 +181,9 @@ int main(int argc, char **argv) {
       break;
     case 'o':
       ofn = strdup(optarg);
+      break;
+    case 'R':
+      flags |= FF_NORESOLVE;
       break;
     case 't':
       ftn = strdup(optarg);
@@ -248,7 +260,10 @@ int main(int argc, char **argv) {
         memset(&o, 0, sizeof o);
         o.family = ft->family;
 
-        resolve(&ast, &o);
+        if (!(flags & FF_NORESOLVE)) {
+          resolve(&ast, &o);
+        }
+
         f = convert(&ast, &o);
         if (!f) {
           fprintf(stderr, "couldn't convert file\n");
