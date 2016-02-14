@@ -596,15 +596,19 @@ struct filter *convert_rule_list(struct rule_list_s *n,
 
   if (n->list) {
     res = convert_rule_list(n->list, o);
-    end = res;
-    while (end->next) {
-      end = end->next;
+    if (res) {
+      end = res;
+      while (end->next) {
+        end = end->next;
+      }
     }
-    if (n->rule) {
+  }
+  if (n->rule) {
+    if (end) {
       end->next = convert_rule(n->rule, o);
+    } else {
+      res = convert_rule(n->rule, o);
     }
-  } else {
-    res = convert_rule(n->rule, o);
   }
 
   return res;
