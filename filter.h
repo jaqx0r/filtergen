@@ -73,7 +73,7 @@ enum filtertype {
   TEXT,       /* for F_LOG */
 };
 
-/* Structures which appear in both the parse tree and the output rule */
+/* Structure;s which appear in both the parse tree and the output rule */
 struct proto_spec {
   int num;
   char *name;
@@ -210,14 +210,16 @@ filter_flush flush_iptables, flush_ip6tables, flush_iptrestore,
     flush_ip6trestore, flush_ipchains;
 
 /* ("flags" arguments) */
-#define FF_NOSKEL (1 << 0) /* omit any "skeleton" rules */
-#define FF_LSTATE (1 << 1) /* lightweight state matching */
-#define FF_LOCAL (1 << 2)  /* assume packets are local only */
-#define FF_ROUTE (1 << 3)  /* assume packets are forwarded */
-#define FF_LOOKUP                                                              \
-  (1 << 4)                /* translate host and service names into             \
-                           * IP addresses and port numbers */
-#define FF_FLUSH (1 << 5) /* just flush the ruleset instead */
+enum flags {
+  FF_NOSKEL = (1 << 0),    /* omit any "skeleton" rules */
+  FF_LSTATE = (1 << 1),    /* lightweight state matching */
+  FF_LOCAL = (1 << 2),     /* assume packets are local only */
+  FF_ROUTE = (1 << 3),     /* assume packets are forwarded */
+  FF_LOOKUP = (1 << 4),    /* translate host and service names into IP addresses
+                              and port numbers */
+  FF_FLUSH = (1 << 5),     /* just flush the ruleset instead */
+  FF_NORESOLVE = (1 << 6), /* don't resolve hostnames, ports, or services */
+};
 
 /* filtergen.c */
 int oputs(const char *s);
