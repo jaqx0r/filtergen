@@ -301,12 +301,11 @@ struct filter *convert_port_argument(struct port_argument_s *n, int type) {
         printf("error: asprintf allocation failed when emitting port range "
                "%s:%s\n",
                n->port_min, n->port_max);
-      } else {
-        res = new_filter_ports(type, p);
       }
     } else {
-      res = new_filter_ports(type, n->port_min);
+      p = n->port_min;
     }
+    res = new_filter_ports(type, p);
   } else {
     printf("error: no port argument contents\n");
   }

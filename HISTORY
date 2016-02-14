@@ -4,6 +4,7 @@
 	Supports ip6tables and ip6tables-restore output format.
 	Better warnings when services don't resolve.
 	Increases include file recursion depth to 512 from 16.
+	Directory includes now have stable ordering of the files within.
 	
 	Runs tests in parallel so their output is captured, and generate more output.
 	Adds more compiler warnings.
