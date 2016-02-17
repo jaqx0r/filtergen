@@ -415,8 +415,10 @@ void filter_noneg(struct filter **f) { if (f) { };
  */
 void filter_apply_flags(struct filter *f, long flags) {
   struct filter *s;
-  if (!f)
+
+  if (!f || !flags) {
     return;
+  }
   switch (f->type) {
   /* Structural things */
   case F_SIBLIST:
