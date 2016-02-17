@@ -194,6 +194,11 @@ void include_file(const char *name) {
   char *fn;
   int n;
 
+  if (strlen(name) == 1 && name[0] == '/' && name[1] == '\0') {
+    scan_err("warning: cannot include / path; skipping");
+    return;
+  }
+
   if (stat(name, &st)) {
     if (errno == ENOENT &&
         (index(name, '*') != NULL || index(name, '?') != NULL ||
