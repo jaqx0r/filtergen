@@ -127,8 +127,12 @@ text         return TOK_TEXT;
 <include>[ \t]*       /* eat whitespace after include */
 <include>[^ \t\n;]+    { /* include file name */
 			  char * name = strdup(yytext);
-			  include_file(name);
-			  free(name);
+              if (name == NULL) {
+                scan_err("warning: internal error trying to alloc for include of %s: %s", yytext, strerror(errno));
+              } else {
+  			    include_file(name);
+			    free(name);
+              }
                           BEGIN(INITIAL);
                        }
 
@@ -161,8 +165,9 @@ static void scan_err(const char *fmt, ...) {
   va_list args;
 
   va_start(args, fmt);
-  if (inc_stackptr >= 0)
+  if (inc_stackptr >= 0) {
     fprintf(stderr, "%s:%ld: ", filename(), lineno());
+  }
   vfprintf(stderr, fmt, args);
   fprintf(stderr, "\n");
 }
@@ -238,7 +243,7 @@ void include_file(const char *name) {
         while (n--) {
           /* FIXME: assumes d_name */
           if (namelist[n]->d_name[0] == '.') {
-	    free(namelist[n]);
+            free(namelist[n]);
             continue;
           }
           if (asprintf(&fn, "%s/%s", name, namelist[n]->d_name) < 0) {
@@ -250,7 +255,7 @@ void include_file(const char *name) {
             include_file(fn);
             free(fn);
           }
-	  free(namelist[n]);
+          free(namelist[n]);
         }
         free(namelist);
       }
