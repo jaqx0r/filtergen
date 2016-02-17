@@ -21,6 +21,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <libgen.h>
 #include <string.h>
 #include <stdarg.h>
 #include <sys/types.h>
@@ -199,11 +200,6 @@ void include_file(const char *name) {
   char *fn;
   int n;
 
-  if (strlen(name) == 1 && name[0] == '/' && name[1] == '\0') {
-    scan_err("warning: cannot include / path; skipping");
-    return;
-  }
-
   if (stat(name, &st)) {
     if (errno == ENOENT &&
         (index(name, '*') != NULL || index(name, '?') != NULL ||
@@ -237,6 +233,16 @@ void include_file(const char *name) {
     }
   } else {
     if (S_ISDIR(st.st_mode)) {
+      char *b = strdup(name);
+      char *base = basename(b);
+
+      if (strcmp("/", base) == 0) {
+        scan_err("warning: cannot include / path; skipping");
+        free(b);
+        return;
+      }
+      free(b);
+
       if ((n = scandir(name, &namelist, NULL, alphasort)) < 0) {
         scan_err("warning: scandir failed on %s: %s", name, strerror(errno));
       } else {
