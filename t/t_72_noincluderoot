@@ -7,6 +7,7 @@ testdir=`dirname $0`
 
 cat >$work/in <<EOF
 include /
+include //
 EOF
 if test $? -ne 0 ; then no_result; fi
 
@@ -17,6 +18,7 @@ test "x$srcdir" = "x" && cat $work/out
 
 cat >$work/good <<EOF
 (standard input):1: warning: cannot include / path; skipping
+(standard input):2: warning: cannot include / path; skipping
 EOF
 
 compare $work/good $work/out
