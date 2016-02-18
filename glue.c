@@ -80,12 +80,15 @@ struct filter *convert_subrule_list(struct subrule_list_s *n,
 
 struct filter *convert_compound_specifier(struct compound_specifier_s *r,
                                           struct filtergen_opts *o) {
-  struct filter *res = NULL;
+  struct filter *res = NULL, *sub = NULL;
 
   eprint("converting compound_specifier\n");
 
   if (r->list) {
-    res = new_filter_sibs(convert_subrule_list(r->list, o));
+    sub = convert_subrule_list(r->list, o);
+    if (sub) {
+      res = new_filter_sibs(sub);
+    }
   }
   return res;
 }
@@ -466,8 +469,9 @@ struct filter *convert_chaingroup_specifier(struct chaingroup_specifier_s *n,
 
   if (n->list) {
     sub = convert_subrule_list(n->list, o);
-
-    res = new_filter_subgroup(name, sub);
+    if (sub) {
+      res = new_filter_subgroup(name, sub);
+    }
   } else {
     printf("error: no list in chaingroup\n");
   }
