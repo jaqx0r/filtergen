@@ -136,6 +136,5 @@ int fg_ipfilter(struct filter *filter, int flags) {
 
   filter_nogroup(filter);
   filter_unroll(&filter);
-  filter_apply_flags(filter, flags);
   return filtergen_cprod(filter, &cb_ipfilter, &misc);
 }

@@ -403,7 +403,6 @@ static int fg_iptrestore_common(struct filter *filter, int flags,
   const int nchains = 3;
 
   filter_unroll(&filter);
-  filter_apply_flags(filter, flags);
 
   if (!(flags & FF_NOSKEL)) {
     oprintf("%s <<EOF\n", iptables_restore);

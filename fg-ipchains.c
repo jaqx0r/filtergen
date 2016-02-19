@@ -266,7 +266,6 @@ int fg_ipchains(struct filter *filter, int flags) {
   };
 
   filter_unroll(&filter);
-  filter_apply_flags(filter, flags);
   if (!(flags & FF_NOSKEL)) {
     oputs("for f in INPUT OUTPUT FORWARD; do " IPCHAINS " -P $f DENY; done");
     oputs(IPCHAINS " -F; " IPCHAINS " -X");
