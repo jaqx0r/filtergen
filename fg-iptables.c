@@ -397,7 +397,6 @@ static int fg_iptables_common(struct filter *filter, int flags,
   const int nchains = 3;
 
   filter_unroll(&filter);
-  filter_apply_flags(filter, flags);
 
   if (!(flags & FF_NOSKEL)) {
     oputs("CHAINS=\"INPUT OUTPUT FORWARD\"");
