@@ -167,8 +167,8 @@ int __fg_applyone(struct filterent *e, const struct filter *f, fg_callback *cb,
     return __fg_applylist(e, f->u.sib, cb, misc);
 
   default:
-
-    abort();
+    fprintf(stderr, "invalid filter type %d\n", f->type);
+    return -1;
   }
 
   if (f->negate)
