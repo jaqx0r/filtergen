@@ -103,8 +103,8 @@ static int cb_ipchains_rule(const struct filterent *ent,
     forrevchain = strdup("forward");
     break;
   default:
-    fprintf(stderr, "unknown direction\n");
-    abort();
+    fprintf(stderr, "invalid direction: %d\n", ent->direction);
+    return -1;
   }
 
   if (ent->iface && strcmp(ent->iface, "*")) {
@@ -187,7 +187,8 @@ static int cb_ipchains_rule(const struct filterent *ent,
       forrevtarget = strdup("forw_out");
       break;
     default:
-      abort();
+      fprintf(stderr, "invalid direction: %d\n", ent->direction);
+      return -1;
     }
     break;
   case DROP:
@@ -221,11 +222,13 @@ static int cb_ipchains_rule(const struct filterent *ent,
       forrevtarget = strdup("forward");
       break;
     default:
-      abort();
+      fprintf(stderr, "invalid direction: %d\n", ent->direction);
+      return -1;
     }
     break;
   default:
-    abort();
+    fprintf(stderr, "invalid target: %d\n", ent->target);
+    return -1;
   }
 
   if (ent->oneway)
@@ -298,8 +301,8 @@ int flush_ipchains(enum filtertype policy) {
     ostr = strdup("REJECT");
     break;
   default:
-    fprintf(stderr, "invalid filtertype %d\n", policy);
-    abort();
+    fprintf(stderr, "invalid filtertype: %d\n", policy);
+    return -1;
   }
   oprintf("for f in $CHAINS; do " IPCHAINS " -P $f %s; done\n", ostr);
   oputs(IPCHAINS " -F; " IPCHAINS " -X");

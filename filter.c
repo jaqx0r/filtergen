@@ -190,8 +190,9 @@ struct filter *new_filter_host(enum filtertype type, const char *matchstr,
       }
       break;
     default:
-      fprintf(stderr, "can't parse netmask \"%s\" for unknown address family\n",
-              mask);
+      fprintf(stderr,
+              "can't parse netmask \"%s\" for invalid address family %d\n",
+              mask, family);
       return NULL;
     }
   }
