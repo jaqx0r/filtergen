@@ -117,7 +117,7 @@ int __fg_applyone(struct filterent *e, const struct filter *f, fg_callback *cb,
         fprintf(
             stderr,
             "backend doesn't support grouping, but hasn't removed groups\n");
-        abort();
+        return -1;
       }
       e->target = f->type;
       e->subgroup = f->u.sub.name;
@@ -167,6 +167,7 @@ int __fg_applyone(struct filterent *e, const struct filter *f, fg_callback *cb,
     return __fg_applylist(e, f->u.sib, cb, misc);
 
   default:
+
     abort();
   }
 

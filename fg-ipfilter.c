@@ -80,7 +80,8 @@ static int cb_ipfilter_rule(const struct filterent *ent,
       APP(rule, "block return-icmp-as-dest(port-unr)");
     break;
   default:
-    abort();
+    fprintf(stderr, "invalid target: %d\n", ent->target);
+    return -1;
   }
 
   /* in or out? */
@@ -92,8 +93,8 @@ static int cb_ipfilter_rule(const struct filterent *ent,
     APPS(rule, "out");
     break;
   default:
-    fprintf(stderr, "unknown direction\n");
-    abort();
+    fprintf(stderr, "invalid direction: %d\n", ent->direction);
+    return -1;
   }
 
   if (ESET(ent, LOG))

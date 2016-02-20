@@ -154,8 +154,8 @@ static int cb_iptrestore_rule_common(const struct filterent *ent,
     }
     break;
   default:
-    fprintf(stderr, "unknown direction\n");
-    abort();
+    fprintf(stderr, "invalid direction: %d\n", ent->direction);
+    return -1;
   }
 
   /* state and reverse rules here */
@@ -276,7 +276,8 @@ static int cb_iptrestore_rule_common(const struct filterent *ent,
       nattarget = strdup("REDIRECT");
       break;
     default:
-      abort();
+      fprintf(stderr, "invalid target: %d\n", target);
+      return -1;
     }
   }
 
@@ -293,7 +294,8 @@ static int cb_iptrestore_rule_common(const struct filterent *ent,
       forrevtarget = strdup("FORW_OUT");
       break;
     default:
-      abort();
+      fprintf(stderr, "invalid direction: %d\n", ent->direction);
+      return -1;
     }
     break;
   case DROP:
@@ -320,11 +322,13 @@ static int cb_iptrestore_rule_common(const struct filterent *ent,
       forrevtarget = strdup("FORWARD");
       break;
     default:
-      abort();
+      fprintf(stderr, "invalid direction: %d\n", ent->direction);
+      return -1;
     }
     break;
   default:
-    abort();
+    fprintf(stderr, "invalid target: %d\n", target);
+    return -1;
   }
 
   if ((misc->flags & FF_LSTATE) && (target != T_REJECT))
@@ -474,7 +478,7 @@ static int flush_iptrestore_common(enum filtertype policy) {
     break;
   default:
     fprintf(stderr, "invalid filtertype %d\n", policy);
-    abort();
+    return -1;
   }
   oprintf(":INPUT %s [0:0]\n", ostr);
   oprintf(":OUTPUT %s [0:0]\n", ostr);
