@@ -126,7 +126,8 @@ convert_direction_argument_list(struct direction_argument_list_s *n, int type) {
       printf("warning: convert_direction_argument_list returned NULL\n");
     }
   } else {
-    res = convert_direction_argument(n->arg, type);
+    if (n->arg)
+      res = convert_direction_argument(n->arg, type);
   }
 
   return res;
@@ -204,7 +205,8 @@ struct filter *convert_host_argument_list(struct host_argument_list_s *n,
       printf("warning: convert_host_argument_list returned NULL\n");
     }
   } else {
-    res = convert_host_argument(n->arg, type, o);
+    if (n->arg)
+      res = convert_host_argument(n->arg, type, o);
   }
 
   return res;
@@ -272,7 +274,8 @@ convert_protocol_argument_list(struct protocol_argument_list_s *n) {
       printf("warning: convert_protocol_argument_list returned NULL\n");
     }
   } else {
-    res = convert_protocol_argument(n->arg);
+    if (n->arg)
+      res = convert_protocol_argument(n->arg);
   }
 
   return res;
@@ -336,7 +339,8 @@ struct filter *convert_port_argument_list(struct port_argument_list_s *n,
       printf("warning: convert_port_argument_list returned NULL\n");
     }
   } else {
-    res = convert_port_argument(n->arg, type);
+    if (n->arg)
+      res = convert_port_argument(n->arg, type);
   }
 
   return res;
@@ -403,7 +407,8 @@ convert_icmptype_argument_list(struct icmptype_argument_list_s *n) {
       printf("warning: convert_icmptype_argument_list returned NULL\n");
     }
   } else {
-    res = convert_icmptype_argument(n->arg);
+    if (n->arg)
+      res = convert_icmptype_argument(n->arg);
   }
 
   return res;
@@ -576,7 +581,8 @@ struct filter *convert_specifier_list(struct specifier_list_s *n,
       printf("warning: convert_specifier_list returned NULL\n");
     }
   } else {
-    res = convert_negated_specifier(n->spec, o);
+    if (n->spec)
+      res = convert_negated_specifier(n->spec, o);
   }
 
   return res;
