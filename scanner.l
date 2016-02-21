@@ -40,10 +40,11 @@ struct inc_stack_s {
 };
 struct inc_stack_s inc_stack[MAXINCLUDES] = { { .state = 0, .filename = NULL, .lineno =  1 } };
 
+static const char kStandardInput[] = "(standard input)";
 int inc_stackptr = 0;
 
 long int lineno();
-char * filename();
+const char * filename();
 static void scan_err(const char * fmt, ...) __attribute__((format(printf, 1, 2)));
 void include_file(const char *);
 %}
@@ -156,10 +157,9 @@ long int lineno(void) {
   return inc_stack[inc_stackptr].lineno;
 }
 
-/* FIXME: make this return an immutable string */
-char *filename(void) {
+const char *filename(void) {
   return inc_stack[inc_stackptr].filename ? inc_stack[inc_stackptr].filename
-                                          : strdup("(standard input)");
+                                          : kStandardInput;
 }
 
 static void scan_err(const char *fmt, ...) {
