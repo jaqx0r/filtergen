@@ -142,6 +142,7 @@ struct filter *new_filter_host(enum filtertype, const char *, sa_family_t);
 struct filter *new_filter_oneway(void);
 
 /* filter manipulations */
+void filter_unroll(struct filter **f);
 void filter_nogroup(struct filter *f);
 void filter_noneg(struct filter **f);
 

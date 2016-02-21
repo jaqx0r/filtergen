@@ -268,6 +268,7 @@ int fg_ipchains(struct filter *filter, int flags) {
       .rule = cb_ipchains_rule, .group = cb_ipchains_group,
   };
 
+  filter_unroll(&filter);
   if (!(flags & FF_NOSKEL)) {
     oputs("for f in INPUT OUTPUT FORWARD; do " IPCHAINS " -P $f DENY; done");
     oputs(IPCHAINS " -F; " IPCHAINS " -X");

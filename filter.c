@@ -281,6 +281,45 @@ static void filter_append(struct filter *f, struct filter *x) {
     f->child = x;
 }
 
+/*
+ * The easy bit of a cross-product.  Basically we ensure that no
+ * filter node has more than one path out.
+ * 1. We push sibling->child down to the end of the component
+ *    sub-lists, and
+ * 2. Ensure that negated entries have only a single component
+ *    hanging off them.
+ */
+void __filter_unroll(struct filter *f) {
+  struct filter *c, *s;
+
+  if (!f)
+    return;
+
+  /* depth first */
+  __filter_unroll(c = f->child);
+
+  /* check this node */
+  switch (f->type) {
+  case F_SIBLIST:
+    for (s = f->u.sib; s; s = s->next) {
+      __filter_unroll(s);
+      filter_append(s, c);
+    }
+    f->child = NULL;
+    break;
+  case F_SUBGROUP:
+    __filter_unroll(f->u.sub.list);
+    break;
+  case F_NEG:
+    abort();
+  default:
+    break;
+  }
+
+  /* lastly, go sideways */
+  __filter_unroll(f->next);
+}
+
 void __filter_neg_expand(struct filter **f, int neg) {
   if (!*f)
     return;
@@ -337,6 +376,12 @@ void __filter_targets_to_end(struct filter **f) {
     __filter_targets_to_end(&(*f)->child);
     __filter_targets_to_end(&(*f)->next);
   }
+}
+
+void filter_unroll(struct filter **f) {
+  __filter_neg_expand(f, 0);
+  __filter_targets_to_end(f);
+  __filter_unroll(*f);
 }
 
 void filter_nogroup(struct filter *f) {
