@@ -17,6 +17,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <stdlib.h>
 #include <stdio.h>
 #include "filter.h"
 #include "ast.h"
@@ -75,6 +76,7 @@ struct filter *convert_subrule_list(struct subrule_list_s *n,
     printf("error: no content in subrule_list\n");
   }
 
+  free(n);
   return res;
 }
 
@@ -90,6 +92,7 @@ struct filter *convert_compound_specifier(struct compound_specifier_s *r,
       res = new_filter_sibs(sub);
     }
   }
+  free(r);
   return res;
 }
 
@@ -102,7 +105,7 @@ struct filter *convert_direction_argument(struct direction_argument_s *n,
   } else {
     printf("error: no direction argument contents\n");
   }
-
+  free(n);
   return res;
 }
 
@@ -129,7 +132,7 @@ convert_direction_argument_list(struct direction_argument_list_s *n, int type) {
     if (n->arg)
       res = convert_direction_argument(n->arg, type);
   }
-
+  free(n);
   return res;
 }
 
@@ -156,7 +159,7 @@ struct filter *convert_direction(struct direction_specifier_s *n) {
   } else {
     printf("error: no direction argument list\n");
   }
-
+  free(n);
   return res;
 }
 
@@ -181,7 +184,7 @@ struct filter *convert_host_argument(struct host_argument_s *n, int type,
   } else {
     printf("error: no host part\n");
   }
-
+  free(n);
   return res;
 }
 
@@ -208,7 +211,7 @@ struct filter *convert_host_argument_list(struct host_argument_list_s *n,
     if (n->arg)
       res = convert_host_argument(n->arg, type, o);
   }
-
+  free(n);
   return res;
 }
 
@@ -236,7 +239,7 @@ struct filter *convert_host_specifier(struct host_specifier_s *n,
   } else {
     printf("error: no host argument list\n");
   }
-
+  free(n);
   return res;
 }
 
@@ -250,7 +253,7 @@ struct filter *convert_protocol_argument(struct protocol_argument_s *n) {
   } else {
     printf("error: no protocol argument contents\n");
   }
-
+  free(n);
   return res;
 }
 
@@ -277,7 +280,7 @@ convert_protocol_argument_list(struct protocol_argument_list_s *n) {
     if (n->arg)
       res = convert_protocol_argument(n->arg);
   }
-
+  free(n);
   return res;
 }
 
@@ -291,7 +294,7 @@ struct filter *convert_protocol_specifier(struct protocol_specifier_s *n) {
   } else {
     printf("error: no protocol argument list\n");
   }
-
+  free(n);
   return res;
 }
 
@@ -315,7 +318,7 @@ struct filter *convert_port_argument(struct port_argument_s *n, int type) {
   } else {
     printf("error: no port argument contents\n");
   }
-
+  free(n);
   return res;
 }
 
@@ -342,7 +345,7 @@ struct filter *convert_port_argument_list(struct port_argument_list_s *n,
     if (n->arg)
       res = convert_port_argument(n->arg, type);
   }
-
+  free(n);
   return res;
 }
 
@@ -369,7 +372,7 @@ struct filter *convert_port_specifier(struct port_specifier_s *n) {
   } else {
     printf("error: no port argument list\n");
   }
-
+  free(n);
   return res;
 }
 
@@ -383,7 +386,7 @@ struct filter *convert_icmptype_argument(struct icmptype_argument_s *n) {
   } else {
     printf("error: no icmptype argument contents\n");
   }
-
+  free(n);
   return res;
 }
 
@@ -410,7 +413,7 @@ convert_icmptype_argument_list(struct icmptype_argument_list_s *n) {
     if (n->arg)
       res = convert_icmptype_argument(n->arg);
   }
-
+  free(n);
   return res;
 }
 
@@ -424,7 +427,7 @@ struct filter *convert_icmptype_specifier(struct icmptype_specifier_s *n) {
   } else {
     printf("error: no icmptype argument list\n");
   }
-
+  free(n);
   return res;
 }
 
@@ -450,7 +453,7 @@ struct filter *convert_option_specifier(struct option_specifier_s *n) {
     printf("error: incorrect option type encountered\n");
     break;
   }
-
+  free(n);
   return res;
 }
 
@@ -480,7 +483,7 @@ struct filter *convert_chaingroup_specifier(struct chaingroup_specifier_s *n,
   } else {
     printf("error: no list in chaingroup\n");
   }
-
+  free(n);
   return res;
 }
 
@@ -536,9 +539,10 @@ struct filter *convert_specifier(struct specifier_s *r,
     res = convert_option_specifier(r->option);
   } else if (r->chaingroup) {
     res = convert_chaingroup_specifier(r->chaingroup, o);
-  } else
+  } else {
     printf("error: no specifiers\n");
-
+  }
+  free(r);
   return res;
 }
 
@@ -558,6 +562,7 @@ struct filter *convert_negated_specifier(struct negated_specifier_s *r,
       res = spec;
     }
   }
+  free(r);
   return res;
 }
 
@@ -584,7 +589,7 @@ struct filter *convert_specifier_list(struct specifier_list_s *n,
     if (n->spec)
       res = convert_negated_specifier(n->spec, o);
   }
-
+  free(n);
   return res;
 }
 
@@ -595,6 +600,7 @@ struct filter *convert_rule(struct rule_s *r, struct filtergen_opts *o) {
 
   if (r->list)
     res = convert_specifier_list(r->list, o);
+  free(r);
   return res;
 }
 
@@ -620,7 +626,7 @@ struct filter *convert_rule_list(struct rule_list_s *n,
       res = convert_rule(n->rule, o);
     }
   }
-
+  free(n);
   return res;
 }
 
@@ -631,6 +637,7 @@ struct filter *convert(struct ast_s *ast, struct filtergen_opts *o) {
 
   if (ast->list)
     res = convert_rule_list(ast->list, o);
+
   return res;
 }
 
