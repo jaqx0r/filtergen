@@ -234,6 +234,7 @@ int main(int argc, char **argv) {
   for (ft = filter_types; ft->name; ft++)
     if (!strcmp(ftn, ft->name))
       break;
+  free(ftn);
   if (!ft->name) {
     fprintf(stderr, "%s: target filter unrecognised: %s\n", progname, ftn);
     usage(progname);
@@ -292,6 +293,9 @@ int main(int argc, char **argv) {
     if (ofn)
       unlink(ofn);
     return 1;
+  }
+  if (ofn) {
+    free(ofn);
   }
   fprintf(stderr, "generated %d rules\n", l);
   return 0;
