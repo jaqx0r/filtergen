@@ -147,5 +147,6 @@ int fg_cisco(struct filter *filter, int flags) {
   oputs("# Warning: This backend is not complete and "
         "can generate broken rulesets.");
   filter_nogroup(filter);
+  filter_unroll(&filter);
   return filtergen_cprod(filter, &cb_cisco, &misc);
 }
