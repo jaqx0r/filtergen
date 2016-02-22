@@ -1,6 +1,6 @@
 AC_PREREQ(2.50)
 
-AC_INIT(filtergen, 0.12.7, jaq@spacepants.org)
+AC_INIT(filtergen, 0.12.8, jaq@spacepants.org)
 
 AC_CONFIG_AUX_DIR(.)
 AC_CONFIG_SRCDIR(filtergen.c)
