@@ -1,3 +1,9 @@
+0.12.8:
+    Fix some easy to cause crashes.
+    Remove some obsolete code that caused long compilation times.
+    Prevents inclusion of the root filesystem path directly.
+    Test that the example programs compile.
+
 0.12.7:
 	Supports iptables-restore output format.
 	Supports IPv6 names.

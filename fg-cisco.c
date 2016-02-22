@@ -71,8 +71,8 @@ static int cb_cisco_rule(const struct filterent *ent,
     APP(rule_r, "IN");
     break;
   default:
-    fprintf(stderr, "unknown direction\n");
-    abort();
+    fprintf(stderr, "invalid direction: %d\n", ent->direction);
+    return -1;
   }
 
   /* target */
@@ -91,7 +91,8 @@ static int cb_cisco_rule(const struct filterent *ent,
     APPS(rule_r, "deny");
     break;
   default:
-    abort();
+    fprintf(stderr, "invalid target: %d\n", ent->target);
+    return -1;
   }
 
   /* protocol */
@@ -147,6 +148,5 @@ int fg_cisco(struct filter *filter, int flags) {
         "can generate broken rulesets.");
   filter_nogroup(filter);
   filter_unroll(&filter);
-  filter_apply_flags(filter, flags);
   return filtergen_cprod(filter, &cb_cisco, &misc);
 }

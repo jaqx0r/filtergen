@@ -157,8 +157,8 @@ static int cb_iptables_rule_common(const struct filterent *ent,
     }
     break;
   default:
-    fprintf(stderr, "unknown direction: %d\n", ent->direction);
-    abort();
+    fprintf(stderr, "invalid direction: %d\n", ent->direction);
+    return -1;
   }
 
   /* state and reverse rules here */
@@ -280,7 +280,8 @@ static int cb_iptables_rule_common(const struct filterent *ent,
       nattarget = strdup("REDIRECT");
       break;
     default:
-      abort();
+      fprintf(stderr, "invalid target: %d\n", target);
+      return -1;
     }
   }
 
@@ -297,7 +298,8 @@ static int cb_iptables_rule_common(const struct filterent *ent,
       forrevtarget = strdup("FORW_OUT");
       break;
     default:
-      abort();
+      fprintf(stderr, "invalid direction: %d\n", ent->direction);
+      return -1;
     }
     break;
   case DROP:
@@ -324,11 +326,13 @@ static int cb_iptables_rule_common(const struct filterent *ent,
       forrevtarget = strdup("FORWARD");
       break;
     default:
-      abort();
+      fprintf(stderr, "invalid direction: %d\n", ent->direction);
+      return -1;
     }
     break;
   default:
-    abort();
+    fprintf(stderr, "invalid target: %d\n", target);
+    return -1;
   }
 
   if ((misc->flags & FF_LSTATE) && (target != T_REJECT))
@@ -397,7 +401,6 @@ static int fg_iptables_common(struct filter *filter, int flags,
   const int nchains = 3;
 
   filter_unroll(&filter);
-  filter_apply_flags(filter, flags);
 
   if (!(flags & FF_NOSKEL)) {
     oputs("CHAINS=\"INPUT OUTPUT FORWARD\"");
@@ -481,7 +484,7 @@ static int flush_iptables_common(enum filtertype policy, sa_family_t family,
     break;
   default:
     fprintf(stderr, "invalid filtertype %d\n", policy);
-    abort();
+    return -1;
   }
   oprintf("for f in $CHAINS; do %s -P $f %s; done\n", iptables, ostr);
   oprintf("%s -F; %s -X\n", iptables, iptables);

@@ -19,7 +19,7 @@ filtergen_SOURCES = \
 	resolver.c \
 	icmpent.c
 
-filtergen_LDADD = @GETOPT_LIBS@
+filtergen_LDADD = @GETOPT_LIBS@ @LIBPROFILER@
 
 headers = filter.h util.h ast.h resolver.h icmpent.h
 
