@@ -1,6 +1,6 @@
 AC_PREREQ(2.50)
 
-AC_INIT(filtergen, 0.12.7, jaq@spacepants.org)
+AC_INIT(filtergen, 0.12.8, jaq@spacepants.org)
 
 AC_CONFIG_AUX_DIR(.)
 AC_CONFIG_SRCDIR(filtergen.c)
@@ -41,6 +41,22 @@ AC_CHECK_LIB(getopt, getopt,
 if test "x$HAVE_GETOPT" = xyes ; then
 	GETOPT_LIBS="-lgetopt"
 	AC_SUBST(GETOPT_LIBS)
+fi
+
+# Google profiler
+AC_MSG_CHECKING([whether to enable profiler])
+AC_ARG_WITH([profiler],
+  [AS_HELP_STRING([--with-profiler],[enable support for profiler [default=no]])],
+  [with_profiler=$withval],
+  [with_profiler=no]
+)
+AC_MSG_RESULT([$with_profiler])
+
+if test "x${with_profiler}" = "xyes"; then
+  AC_CHECK_LIB([profiler], [ProfilerStart],
+    [AC_SUBST([LIBPROFILER], ["-lprofiler"])],
+    [AC_MSG_FAILURE([check for profiler failed. Have you installed google-perftools-devel?])],
+  )
 fi
 
 dnl -----------------
