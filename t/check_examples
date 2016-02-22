@@ -1,0 +1,11 @@
+#!/bin/sh -ex
+
+TEST="that the example programs all compile"
+
+testdir=`dirname $0`
+. $testdir/testlib
+
+for t in $here/../examples/*.filter; do
+  echo Checking $t
+  $here/../filtergen -R -c -t iptables $t
+done

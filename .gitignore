@@ -46,3 +46,7 @@ ylwrap
 config.h.in~
 debian/autoreconf.after
 debian/autoreconf.before
+/.sconsign.dblite
+/cscope.out
+/input/libsourcepos.a
+/.sconf_temp/
