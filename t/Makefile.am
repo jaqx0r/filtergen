@@ -93,4 +93,5 @@ factorise_LDADD = ../scanner.o ../parser.o
 EXTRA_DIST = $(top_srcdir)/t/data/*.in $(top_srcdir)/t/data/*.out \
 	testlib $(TESTS)
 
-AM_CFLAGS = -g -Wall -Werror -I$(top_srcdir)
+AM_CFLAGS = -g -Wall -Werror -I$(top_srcdir) @GCOV_CFLAGS@
+LDADD = @GCOV_LIBS@
