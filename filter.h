@@ -145,7 +145,6 @@ struct filter *new_filter_oneway(void);
 void filter_unroll(struct filter **f);
 void filter_nogroup(struct filter *f);
 void filter_noneg(struct filter **f);
-void filter_apply_flags(struct filter *f, long flags);
 
 /* from generated lexer and parer in filterlex.l */
 int filter_fopen(const char *filename);
@@ -215,10 +214,8 @@ enum flags {
   FF_LSTATE = (1 << 1),    /* lightweight state matching */
   FF_LOCAL = (1 << 2),     /* assume packets are local only */
   FF_ROUTE = (1 << 3),     /* assume packets are forwarded */
-  FF_LOOKUP = (1 << 4),    /* translate host and service names into IP addresses
-                              and port numbers */
+  FF_NORESOLVE = (1 << 4), /* don't resolve hostnames, ports, or services */
   FF_FLUSH = (1 << 5),     /* just flush the ruleset instead */
-  FF_NORESOLVE = (1 << 6), /* don't resolve hostnames, ports, or services */
 };
 
 /* filtergen.c */
