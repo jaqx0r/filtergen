@@ -635,8 +635,9 @@ struct filter *convert(struct ast_s *ast, struct filtergen_opts *o) {
 
   eprint("converting ast\n");
 
-  if (ast->list)
+  if (ast->list) {
     res = convert_rule_list(ast->list, o);
+}
 
   return res;
 }
