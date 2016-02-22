@@ -1,5 +1,8 @@
 	PACKET FILTER GENERATOR
 
+[![Build Status](https://travis-ci.org/jaqx0r/filtergen.svg?branch=master)](https://travis-ci.org/jaqx0r/filtergen)
+[![Coverage Status](https://coveralls.io/repos/github/jaqx0r/filtergen/badge.svg?branch=0.12)](https://coveralls.io/github/jaqx0r/filtergen?branch=0.12)
+
 GENERAL
 
 This tool is for generating packet filtering rules from a fairly high-
