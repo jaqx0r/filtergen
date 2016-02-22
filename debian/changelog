@@ -1,3 +1,9 @@
+filtergen (0.12.8-1) UNRELEASED; urgency=medium
+
+  * New upstream release.
+
+ -- Jamie Wilkinson <jaq@debian.org>  Mon, 22 Feb 2016 23:21:19 +1100
+
 filtergen (0.12.7-1) unstable; urgency=medium
 
   * New upstream release.
