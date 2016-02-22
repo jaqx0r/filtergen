@@ -8,7 +8,7 @@ all: Makefile
 .FORCED: all
 
 Makefile: configure
-	./configure --enable-maintainer-mode
+	./configure --enable-maintainer-mode --enable-gcov
 
 configure: Makefile.in configure.ac config.h.in
 	autoconf
