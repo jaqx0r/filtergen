@@ -4,14 +4,14 @@ EnsureSConsVersion(0, 95)
 
 VERSION = "0.13"
 
-opts = Options()
-opts.AddOptions(
-	BoolOption('debug', 'debugging compiler options', 0),
-    BoolOption('profiler', 'enable support for profiler', 0),
-    BoolOption('gcov', 'enable test coverage with gcov', 0),
+vars = Variables(None, ARGUMENTS)
+vars.AddVariables(
+	BoolVariable('debug', 'debugging compiler options', 0),
+    BoolVariable('profiler', 'enable support for profiler', 0),
+    BoolVariable('gcov', 'enable test coverage with gcov', 0),
 	)
 
-env = Environment(options = opts)
+env = Environment(variables=vars)
 
 warnings = ['',
 			'all',
@@ -42,7 +42,7 @@ env.Append(CPPFLAGS = '-DVERSION=\\\"%s\\\" ' % (VERSION,))
 # compile as GNU SOURCE to get strndup
 env.Append(CPPFLAGS = '-D_GNU_SOURCE ')
 
-Help(opts.GenerateHelpText(env))
+Help(vars.GenerateHelpText(env))
 
 if not env.GetOption("clean"):
 	conf = Configure(env)
