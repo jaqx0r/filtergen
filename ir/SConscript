@@ -8,7 +8,7 @@ env.Distribute(env['DISTTREE'], sources + ['SConscript',
 										   'emit.c'
 										   ])
 
-t = env.Copy()
+t = env.Clone()
 
 iremit = t.Program('iremit', source=sources + ['emit.c'])
 t.Default(iremit)
