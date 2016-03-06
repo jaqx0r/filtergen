@@ -34,12 +34,7 @@
 #endif
 
 #include "filter.h"
-#include "ast.h"
-#include "resolver.h"
-
-int yyparse(void *);
-void yyrestart(FILE *);
-extern struct filter *convert(struct ast_s *n, struct filtergen_opts *o);
+#include "input/input.h"
 
 static FILE *outfile;
 
@@ -242,42 +237,30 @@ int main(int argc, char **argv) {
     exit(1);
   }
 
-  /* What to do, then? */
-  if (flags & FF_FLUSH) {
-    /* Just flush it */
-    l = ft->flusher(flushpol);
-  } else {
-    /* Compile from a file */
-    if (filename && !strcmp(filename, "-"))
-      filename = NULL;
+    /* What to do, then? */
+    if(flags & FF_FLUSH) {
+	/* Just flush it */
+	l = ft->flusher(flushpol);
+    } else {
+	FILE * file;
 
-    if (filter_fopen(filename))
-      return 1;
+	/* Compile from a file */
+	if(filename && !strcmp(filename, "-")) filename = NULL;
 
-    {
-      struct ast_s ast;
+	if (filename) {
+	    /** FIXME: make more effort to find the file */
+	    if (!(file = fopen(filename, "r"))) {
+		fprintf(stderr, "can't open file \"%s\"", filename);
+	    }
+	} else {
+	    file = stdin;
+	}
+     struct filtergen_opts o;
+     memset(&o, 0, sizeof o);
+     o.family = ft->family;
 
-      if (yyparse(&ast) == 0) {
-        struct filtergen_opts o;
-        memset(&o, 0, sizeof o);
-        o.family = ft->family;
-
-        if (!(flags & FF_NORESOLVE)) {
-          resolve(&ast, &o);
-        }
-
-        f = convert(&ast, &o);
-        if (!f) {
-          fprintf(stderr, "couldn't convert file\n");
-          return 1;
-        }
-      } else {
-        fprintf(stderr, "couldn't parse file\n");
-        return 1;
-      }
-    }
-
-    l = ft->compiler(f, flags);
+        f = filtergen_source_parser(file, !(flags & FF_NORESOLVE), &o);
+	l = ft->compiler(f, flags);
   }
 
   if (ofn)

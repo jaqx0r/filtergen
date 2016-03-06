@@ -20,33 +20,17 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "filter.h"
+#include "input/input.h"
 #include "ast.h"
 #include "parser.h"
+#include "resolver.h"
 
 int yyparse(void *);
 void yyrestart(FILE *);
 
 int convtrace = 0;
 
-int filter_fopen(const char *filename) {
-  FILE *file;
-
-  if (filename) {
-    /* XXX - make more effort to find file */
-    if (!(file = fopen(filename, "r"))) {
-      printf("can't open file \"%s\"", filename);
-      return -1;
-    }
-  } else {
-    file = stdin;
-  }
-  yyrestart(file);
-  return 0;
-}
-
-#define eprint(x)                                                              \
-  if (convtrace)                                                               \
-  fprintf(stderr, x)
+#define eprint(x) if (convtrace) fprintf(stderr, x)
 
 struct filter *convert_specifier_list(struct specifier_list_s *n,
                                       struct filtergen_opts *o);
@@ -110,13 +94,13 @@ struct filter *convert_direction_argument(struct direction_argument_s *n,
 }
 
 struct filter *
-convert_direction_argument_list(struct direction_argument_list_s *n, int type) {
+  convert_direction_argument_list(struct direction_argument_list_s *n, int type,struct filtergen_opts *o) {
   struct filter *res = NULL, *end = NULL;
 
   eprint("converting direction argument list\n");
 
   if (n->list) {
-    res = convert_direction_argument_list(n->list, type);
+    res = convert_direction_argument_list(n->list, type, o);
     if (res) {
       end = res;
       while (end->next) {
@@ -136,7 +120,7 @@ convert_direction_argument_list(struct direction_argument_list_s *n, int type) {
   return res;
 }
 
-struct filter *convert_direction(struct direction_specifier_s *n) {
+struct filter *convert_direction(struct direction_specifier_s *n,struct filtergen_opts *o) {
   struct filter *res = NULL;
   int type;
 
@@ -155,7 +139,7 @@ struct filter *convert_direction(struct direction_specifier_s *n) {
     break;
   }
   if (n->list) {
-    res = new_filter_sibs(convert_direction_argument_list(n->list, type));
+    res = new_filter_sibs(convert_direction_argument_list(n->list, type, o));
   } else {
     printf("error: no direction argument list\n");
   }
@@ -258,13 +242,13 @@ struct filter *convert_protocol_argument(struct protocol_argument_s *n) {
 }
 
 struct filter *
-convert_protocol_argument_list(struct protocol_argument_list_s *n) {
+  convert_protocol_argument_list(struct protocol_argument_list_s *n, struct filtergen_opts *o) {
   struct filter *res = NULL, *end = NULL;
 
   eprint("converting protocol argument list\n");
 
   if (n->list) {
-    res = convert_protocol_argument_list(n->list);
+    res = convert_protocol_argument_list(n->list, o);
     if (res) {
       end = res;
       while (end->next) {
@@ -284,13 +268,13 @@ convert_protocol_argument_list(struct protocol_argument_list_s *n) {
   return res;
 }
 
-struct filter *convert_protocol_specifier(struct protocol_specifier_s *n) {
+struct filter *convert_protocol_specifier(struct protocol_specifier_s *n, struct filtergen_opts *o) {
   struct filter *res = NULL;
 
   eprint("converting protocol specifier\n");
 
   if (n->list) {
-    res = new_filter_sibs(convert_protocol_argument_list(n->list));
+    res = new_filter_sibs(convert_protocol_argument_list(n->list, o));
   } else {
     printf("error: no protocol argument list\n");
   }
@@ -323,13 +307,13 @@ struct filter *convert_port_argument(struct port_argument_s *n, int type) {
 }
 
 struct filter *convert_port_argument_list(struct port_argument_list_s *n,
-                                          int type) {
+                                          int type, struct filtergen_opts *o) {
   struct filter *res = NULL, *end = NULL;
 
   eprint("converting port argument list\n");
 
   if (n->list) {
-    res = convert_port_argument_list(n->list, type);
+    res = convert_port_argument_list(n->list, type, o);
     if (res) {
       end = res;
       while (end->next) {
@@ -349,7 +333,7 @@ struct filter *convert_port_argument_list(struct port_argument_list_s *n,
   return res;
 }
 
-struct filter *convert_port_specifier(struct port_specifier_s *n) {
+struct filter *convert_port_specifier(struct port_specifier_s *n, struct filtergen_opts *o) {
   struct filter *res = NULL;
   enum filtertype type;
 
@@ -368,7 +352,7 @@ struct filter *convert_port_specifier(struct port_specifier_s *n) {
     break;
   }
   if (n->list) {
-    res = new_filter_sibs(convert_port_argument_list(n->list, type));
+    res = new_filter_sibs(convert_port_argument_list(n->list, type, o));
   } else {
     printf("error: no port argument list\n");
   }
@@ -391,13 +375,13 @@ struct filter *convert_icmptype_argument(struct icmptype_argument_s *n) {
 }
 
 struct filter *
-convert_icmptype_argument_list(struct icmptype_argument_list_s *n) {
+  convert_icmptype_argument_list(struct icmptype_argument_list_s *n,struct filtergen_opts *o) {
   struct filter *res = NULL, *end = NULL;
 
   eprint("converting icmptype argument list\n");
 
   if (n->list) {
-    res = convert_icmptype_argument_list(n->list);
+    res = convert_icmptype_argument_list(n->list, o);
     if (res) {
       end = res;
       while (end->next) {
@@ -417,13 +401,13 @@ convert_icmptype_argument_list(struct icmptype_argument_list_s *n) {
   return res;
 }
 
-struct filter *convert_icmptype_specifier(struct icmptype_specifier_s *n) {
+struct filter *convert_icmptype_specifier(struct icmptype_specifier_s *n,struct filtergen_opts *o) {
   struct filter *res = NULL;
 
   eprint("converting icmptype specifier\n");
 
   if (n->list) {
-    res = new_filter_sibs(convert_icmptype_argument_list(n->list));
+    res = new_filter_sibs(convert_icmptype_argument_list(n->list, o));
   } else {
     printf("error: no icmptype argument list\n");
   }
@@ -496,7 +480,7 @@ struct filter *convert_specifier(struct specifier_s *r,
     eprint("converting compound specifier\n");
     res = convert_compound_specifier(r->compound, o);
   } else if (r->direction) {
-    res = convert_direction(r->direction);
+    res = convert_direction(r->direction, o);
   } else if (r->target) {
     enum filtertype type;
 
@@ -530,11 +514,11 @@ struct filter *convert_specifier(struct specifier_s *r,
   } else if (r->host) {
     res = convert_host_specifier(r->host, o);
   } else if (r->protocol) {
-    res = convert_protocol_specifier(r->protocol);
+    res = convert_protocol_specifier(r->protocol, o);
   } else if (r->port) {
-    res = convert_port_specifier(r->port);
+    res = convert_port_specifier(r->port, o);
   } else if (r->icmptype) {
-    res = convert_icmptype_specifier(r->icmptype);
+    res = convert_icmptype_specifier(r->icmptype, o);
   } else if (r->option) {
     res = convert_option_specifier(r->option);
   } else if (r->chaingroup) {
@@ -659,4 +643,24 @@ struct filter *filter_parse_list(struct filtergen_opts *o) {
   }
 
   return f;
+}
+
+struct filter * filtergen_source_parser(FILE * file, int resolve_names, struct filtergen_opts *o) {
+    struct ast_s ast;
+    struct filter * f;
+
+    yyrestart(file);
+    if (yyparse((void *) &ast) == 0) {
+	if (resolve_names)
+      resolve(&ast, o);
+	f = convert(&ast, o);
+	if (!f) {
+	    fprintf(stderr, "couldn't convert file to IR\n");
+	    return NULL;
+	}
+    } else {
+	fprintf(stderr, "couldn't parse file\n");
+	return NULL;
+    }
+    return f;
 }

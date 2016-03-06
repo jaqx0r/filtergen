@@ -72,7 +72,7 @@ sysconfdir = '/etc/filtergen'
 pkgdocdir = '/usr/share/doc/filtergen'
 pkgexdir = pkgdocdir + '/examples'
 
-env.Append(CPPPATH = ['.', 'input/filtergen'])
+env.AppendUnique(CPPPATH=['.'])
 
 filtergen  = env.Program('filtergen', ['filtergen.c',
 									 'gen.c',
