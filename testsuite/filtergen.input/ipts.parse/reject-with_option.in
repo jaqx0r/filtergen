@@ -1,0 +1,4 @@
+*filter
+:INPUT DROP [0:0]
+[0:0] -A INPUT -j REJECT --reject-with icmp-port-unreachable
+COMMIT

@@ -1,0 +1,35 @@
+internal representation scribble sheet
+
+iptables:
+flags * sysctl, oob tuning
+filter * filter
+mangle * mangle
+nat * nat
+
+openbsd pf
+flags * set, sysctl
+filter * block, pass, antispoof
+mangle * scrub
+nat * nat, rdr, binat
+
+ipfilter http://www.obfuscation.org/ipf/ipf-howto.txt
+http://cheops.anu.edu.au/~avalon/ip-filter.html
+
+flags * no 
+filter * block, pass
+mangle * no
+nat * map, rdr
+
+cisco http://www.opennet.ru/soft/cisco-configuration.html
+http://bio3d.colorado.edu/~tor/sadocs/tcpip/firewall.html
+flags: no
+filter: access
+mangle: no
+nat: no
+
+ipchains:
+flags: sysctl, oob
+filter: yes
+mangle: no?
+nat: yes
+

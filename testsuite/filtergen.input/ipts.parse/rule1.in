@@ -1,1 +1,4 @@
+*filter
+:INPUT DROP [0:0]
 [0:0] -A INPUT -i eth0 -j ACCEPT
+COMMIT

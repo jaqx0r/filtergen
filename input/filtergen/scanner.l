@@ -3,6 +3,7 @@
 %option prefix="filtergen_"
 %option yylineno
 %x include
+%x comment
 %{
 /* input scanner for filtergen language
  *
@@ -58,19 +59,18 @@ id      {word}|({word})?:(({word})?:)+({word})?
 
 %%
 
-"/*"         { /* strip c-style comments */
-                int c;
-                do {
-                    while ((c = input()) != '*' && c != EOF && c != '\n')
-			;
-                    while (c == '*')
-                        c = input();
-                    if (c == EOF)
-                        scan_err("warning: comment reached end of file");
-                    if (c == '\n')
-                        inc_stack[inc_stackptr].lineno++;
-                } while (c != '/' && c != EOF);
-             }
+"/*"	BEGIN(comment);
+
+<comment>{
+[^*\n]*		/* eat anything that's not a '*' */
+"*"+[^*/\n]*	/* eat up '*'s not followes by '/'s */
+\n		/* eat newlines */
+"*"+"/"		BEGIN(INITIAL);
+<<EOF>>		{
+			scan_err("warning: comment reached end of file");
+			yyterminate();
+		}
+}
 
 #[^\n]*      /* strip shell style comments */
 

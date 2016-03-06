@@ -4,6 +4,7 @@
 	Added filtergen syntax emitter.
 	Added option to turn off the resolver (useful for debugging!)
 	Fixed bug with DROP targets at the end of forwaring chains.
+	Added iptables-save input parser.
 
 0.12.8:
     Fix some easy to cause crashes.

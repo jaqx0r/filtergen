@@ -9,13 +9,13 @@ program flow block diagram
 [translator]
  |            -------------------------
  v
-(IR) <-> [factoriser]    main
+(IR) <-> [factoriser]    main, ir
  |         
  v            -------------------------
 [generator]
  |
  v
-(TR) <-> [optimiser]     targets
+(TR) <-> [optimiser]     output/* targets
  |
  v
 [emitter]

@@ -26,33 +26,26 @@
 #include <string.h>
 #include "parser.h"
 
-long int ipts_ln = 1;
-
 char * ipts_filename(void);
 %}
 
 string	\"[^\n]+\"
 space	[ \t]+
-id	[[:alnum:]_+-\.\/]+
+id	[[:alnum:]_+-\.\/~]+
 
 %%
 
-#[^\n]*[\n] { /* strip shell-style comments and the trailing newline */ 
-		ipts_ln++;
-	    }
+#[^\n]* 	/* strip shell-style comments */
 
-^[*]	return TOK_TABLE;
+^[*]		return TOK_IPTS_TABLE;
 
-^:	return TOK_CHAIN;
+^:		return TOK_IPTS_CHAIN;
 
 {space}	/* ignore */
 
-\n	{
-		ipts_ln++;
-		return TOK_NEWLINE;
-	}
+\n		/* ignore */
 
-^COMMIT	return TOK_COMMIT;
+^COMMIT		return TOK_COMMIT;
 
 {string}	{
 		/* we do not store the " characters in the string, so lop
@@ -64,12 +57,74 @@ id	[[:alnum:]_+-\.\/]+
                 return TOK_IDENTIFIER;
                 }
 
--{id}	{
-		/* ignore the first character */
-		ipts_lval.u_str = strndup(ipts_text + 1, ipts_leng - 1);
-		return TOK_OPTION;
-	}
+		/* chain commands */
+-A		return TOK_IPTS_CHAIN_APPEND;
+--append	return TOK_IPTS_CHAIN_APPEND;
 
+-p		return TOK_IPTS_PROTOCOL;
+--protocol	return TOK_IPTS_PROTOCOL;
+
+-s		return TOK_IPTS_SOURCE;
+--source	return TOK_IPTS_SOURCE;
+
+-d		return TOK_IPTS_DESTINATION;
+--destination	return TOK_IPTS_DESTINATION;
+
+-j		return TOK_IPTS_JUMP;
+--jump		return TOK_IPTS_JUMP;
+
+-i		return TOK_IPTS_IN_INTERFACE;
+--in-interface	return TOK_IPTS_IN_INTERFACE;
+
+-o		return TOK_IPTS_OUT_INTERFACE;
+--out-interface	return TOK_IPTS_OUT_INTERFACE;
+
+-f		return TOK_IPTS_FRAGMENT;
+--fragment	return TOK_IPTS_FRAGMENT;
+
+-c		return TOK_IPTS_SET_COUNTERS;
+--set-counters	return TOK_IPTS_SET_COUNTERS;
+
+-m		return TOK_IPTS_MATCH;
+--match		return TOK_IPTS_MATCH;
+
+		/* match arguments */
+--dport		return TOK_IPTS_DPORT;
+--destination-port	return TOK_IPTS_DPORT;
+--sport		return TOK_IPTS_SPORT;
+--source-port	return TOK_IPTS_SPORT;
+
+--sports	return TOK_IPTS_SOURCE_PORTS;
+--source-ports	return TOK_IPTS_SOURCE_PORTS;
+--dports	return TOK_IPTS_DESTINATION_PORTS;
+--destination-ports	return TOK_IPTS_DESTINATION_PORTS;
+--ports		return TOK_IPTS_PORTS;
+
+--tcp-flags	return TOK_IPTS_TCP_FLAGS;
+--syn		return TOK_IPTS_SYN;
+--tcp-option	return TOK_IPTS_TCP_OPTION;
+--mss		return TOK_IPTS_MSS;
+
+--state		return TOK_IPTS_STATE;
+
+--icmp-type	return TOK_IPTS_ICMP_TYPE;
+
+--to-ports	return TOK_IPTS_TO_PORTS;
+--to-source	return TOK_IPTS_TO_SOURCE;
+
+--limit		return TOK_IPTS_LIMIT;
+
+--log-prefix	return TOK_IPTS_LOG_PREFIX;
+
+--uid-owner	return TOK_IPTS_UID_OWNER;
+
+--reject-with	return TOK_IPTS_REJECT_WITH;
+
+--clamp-mss-to-pmtu	return TOK_IPTS_CLAMP_MSS_TO_PMTU;
+
+--helper	return TOK_IPTS_HELPER;
+
+	/* everything else */
 {id}	{
 		ipts_lval.u_str = strndup(ipts_text, ipts_leng);
 		return TOK_IDENTIFIER;
@@ -77,7 +132,7 @@ id	[[:alnum:]_+-\.\/]+
 
 "["	return TOK_LSQUARE;
 "]"	return TOK_RSQUARE;
-":"	return TOK_COLON;
+":"	return TOK_COLON; 
 "!"	return TOK_BANG;
 
 \"	return TOK_QUOTE;

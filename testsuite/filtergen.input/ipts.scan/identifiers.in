@@ -1,0 +1,3 @@
+:ipac~fi
+# { dg-warning "kind = CHAIN" "" { target *-*-* } 1 }
+# { dg-warning "kind = identifier, spelling = \"ipac~fi\"" "" { target *-*-* } 1 }

@@ -1,1 +1,3 @@
+*filter
 :INPUT DROP [0:0]
+COMMIT

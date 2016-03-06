@@ -1,7 +1,7 @@
 TODO for filtergen
 ==================
 
-milestones for version 1.3
+milestones for version 0.13
 --------------------------
 
 * Fixup and maintain the cisco and ipfilter backends
@@ -27,7 +27,7 @@ milestones for version 1.3
     http://www.bluetack.co.uk/convert.html
 
 
-milestones for version 1.4
+milestones for version 0.14
 --------------------------
 
 * Factoriser for intermediate representation.
@@ -47,6 +47,7 @@ milestones for version 1.4
 * Peephold optimiser for target representation.
   Remove redundant rules.   Split common subsets into separate chains
   (if chaining available).
+
 
 other items
 -----------
@@ -95,3 +96,5 @@ other items
 
 * forward/local specifiers in filtergen language removed.  add them
   back?
+
+* scons distcheck to emulate make distcheck

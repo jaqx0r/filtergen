@@ -57,3 +57,4 @@ debian/autoreconf.before
 input/iptables-save/t/emit
 input/iptables-save/t/parse
 input/iptables-save/t/scan
+/ir/iremit

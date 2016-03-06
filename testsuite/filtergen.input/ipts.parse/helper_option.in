@@ -1,0 +1,5 @@
+*filter
+:OUTPUT DROP [0:0]
+-A OUTPUT -m state --state RELATED -m helper --helper "ftp" -j ACCEPT
+COMMIT
+

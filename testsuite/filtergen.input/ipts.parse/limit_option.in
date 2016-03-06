@@ -1,0 +1,4 @@
+*filter
+:INPUT DROP [0:0]
+[0:0] -A INPUT -m limit --limit 2/hour -j DROP
+COMMIT

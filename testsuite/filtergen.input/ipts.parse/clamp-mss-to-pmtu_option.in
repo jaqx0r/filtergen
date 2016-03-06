@@ -1,0 +1,4 @@
+*filter
+:FORWARD DROP [0:0]
+-A FORWARD -p tcp -m tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu
+COMMIT

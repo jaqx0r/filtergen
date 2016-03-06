@@ -1,11 +1,19 @@
 Import('env')
 
-env.Library('in_iptables_save',
-			source=['parser.y',
-					'scanner.l',
-					'glue.c'
-					]
-			)
-env.SideEffect('parser.h', 'parser.c')
+sources=['parser.y',
+		 'scanner.l',
+		 'glue.c',
+		 ]
+env.Library('in_iptables_save', sources)
+
+# ship the sources
+env.Distribute(env['DISTTREE'], sources + ['SConscript',
+										   'ast.h',
+										   # these included so bison and flex aren't
+										   # required by users
+										   'parser.c',
+										   'parser.h',
+										   'scanner.c'
+										   ])
 
 SConscript('t/SConscript', 'env')

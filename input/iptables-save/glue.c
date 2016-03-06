@@ -31,19 +31,20 @@ int ipts_convtrace = 1;
 
 #define eprint(x) if (ipts_convtrace) fprintf(stderr, x)
 
-void ipts_convert_identifier(struct identifier_s * n) {
+#define CONVERT(x) struct filter * ipts_convert_##x(struct x##_s * n)
 
+CONVERT(identifier) {
   eprint("converting identifier\n");
 
-  if (n->id1) {
-    /* do soemthing with first arg */
+  if (n->string) {
+      printf("%s", n->string);
+    /* do something with string value */
   }
-  if (n->id2) {
-    /* do something with second arg */
-  }
+
+  return NULL;
 }
 
-void ipts_convert_not_identifier(struct not_identifier_s * n) {
+CONVERT(not_identifier) {
   eprint("converting not_identifier\n");
 
   if (n->neg) {
@@ -52,6 +53,58 @@ void ipts_convert_not_identifier(struct not_identifier_s * n) {
   if (n->identifier) {
     ipts_convert_identifier(n->identifier);
   }
+
+  return NULL;
+}
+
+CONVERT(range) {
+    eprint("converting range\n");
+
+    if (n->start) {
+	ipts_convert_identifier(n->start);
+    }
+    if (n->end) {
+	ipts_convert_identifier(n->end);
+    }
+
+    return NULL;
+}
+
+CONVERT(not_range) {
+    eprint("converting not_range\n");
+
+    if (n->neg) {
+	/* neg is boolean */
+    }
+    if (n->range) {
+	ipts_convert_range(n->range);
+    }
+
+    return NULL;
+}
+
+CONVERT(in_interface_option) {
+  struct filter * res = NULL;
+
+  eprint("converting in_interface_option\n");
+
+  if (n->not_identifier) {
+    ipts_convert_not_identifier(n->not_identifier);
+  }
+
+  return res;
+}
+
+struct filter * ipts_convert_jump_option(struct jump_option_s * n) {
+  struct filter * res = NULL;
+
+  eprint("converting jump_option\n");
+
+  if (n->identifier) {
+    ipts_convert_identifier(n->identifier);
+  }
+
+  return res;
 }
 
 struct filter * ipts_convert_option(struct option_s * n) {
@@ -59,14 +112,10 @@ struct filter * ipts_convert_option(struct option_s * n) {
 
   eprint("converting option\n");
   
-
-  if (n->option) {
-
-    fprintf(stderr, "n->option is %s\n", n->option);
-    /* option is a string representing the option */
-  }
-  if (n->not_identifier) {
-    ipts_convert_not_identifier(n->not_identifier);
+  if (n->in_interface_option) {
+    ipts_convert_in_interface_option(n->in_interface_option);
+  } else if (n->jump_option) {
+    ipts_convert_jump_option(n->jump_option);
   }
 
   return res;
@@ -122,15 +171,13 @@ struct filter * ipts_convert_rule(struct rule_s * n) {
 
   eprint("converting rule\n");
 
-  if (n->table) {
-    /* do something with the table declaration */
-    /* nat vs filter */
-  } else if (n->chain) {
+  if (n->policy) {
     /* do something with the chain declaration */
     /* chain, policy, pkt_count are set */
     /* FIXME: somehow append the chain default policy to the end of the
      * rule list */
-    int direction;
+    int direction = 0;
+    enum filtertype type;
 
     if (!strcasecmp(n->chain, "input")) {
       direction = INPUT;
@@ -141,20 +188,18 @@ struct filter * ipts_convert_rule(struct rule_s * n) {
     }
     res = new_filter_device(direction, "eth0");
 
-    if (n->policy) {
-      enum filtertype type;
-      if (!strcasecmp(n->policy, "accept")) {
+    if (!strcasecmp(n->policy, "accept")) {
 	type = T_ACCEPT;
-      } else if (!strcasecmp(n->policy, "drop")) {
+    } else if (!strcasecmp(n->policy, "drop")) {
 	type = DROP;
-      } else if (!strcasecmp(n->policy, "reject")) {
+    } else if (!strcasecmp(n->policy, "reject")) {
 	type = T_REJECT;
-      } else {
+    } else {
 	fprintf(stderr, "warning: invalid chain policy %s\n", n->policy);
 	type = YYEOF;
-      }
-      res->child = new_filter_target(type);
     }
+    res->child = new_filter_target(type);
+
   } else if (n->option_list) {
     /* do something with the option list */
     /* option list, and optionally pkt_count, are set */
@@ -192,13 +237,37 @@ struct filter * ipts_convert_rule_list(struct rule_list_s * n) {
     return res;
 }
 
+struct filter * ipts_convert_table(struct table_s * n) {
+  struct filter * res = NULL;
+
+  eprint("converting table\n");
+
+  if (n->rule_list)
+    res = ipts_convert_rule_list(n->rule_list);
+
+  return res;
+}
+
+struct filter * ipts_convert_table_list(struct table_list_s * n) {
+  struct filter * res = NULL;
+
+  eprint("converting table_list\n");
+
+  if (n->list)
+    res = ipts_convert_table_list(n->list);
+  if (n->table)
+    res = ipts_convert_table(n->table);
+
+  return res;
+}
+
 struct filter * ipts_convert(struct ast_s * ast) {
   struct filter * res = NULL;
 
     eprint("converting ast\n");
 
     if (ast->list)
-      res = ipts_convert_rule_list(ast->list);
+      res = ipts_convert_table_list(ast->list);
 
     return res;
 }

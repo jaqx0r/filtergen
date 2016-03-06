@@ -3,3 +3,7 @@ Import('env')
 env.Library('out_ipchains',
 			source=['fg-ipchains.c'],
 			CPPPATH='../..')
+
+env.Distribute(env['DISTTREE'], ['SConscript',
+								 'fg-ipchains.c',
+								 ])

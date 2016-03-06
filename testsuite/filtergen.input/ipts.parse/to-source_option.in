@@ -1,0 +1,4 @@
+*nat
+:POSTROUTING DROP [0:0]
+[0:0] -A POSTROUTING -j SNAT --to-source 127.0.0.1
+COMMIT
