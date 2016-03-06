@@ -105,9 +105,9 @@ text         return TOK_TEXT;
 "*"          return TOK_STAR;
 
 {id}(\.{id})*	{
-			filtergen_lval.u_str = strndup(filtergen_text, filtergen_leng);
-			return TOK_IDENTIFIER;
-		}
+    filtergen_lval.u_str = strndup(filtergen_text, filtergen_leng);
+    return TOK_IDENTIFIER;
+}
 
 "/"          return TOK_SLASH;
 
@@ -126,18 +126,20 @@ text         return TOK_TEXT;
 }
 
 <<EOF>>                {
-                          scan_err("eof! popping state");
-                           yypop_buffer_state();
+    scan_err("eof! popping state");
+    yypop_buffer_state();
 
-                           if (!YY_CURRENT_BUFFER) {
-                              yyterminate();
-                           }
-			}
+    if (!YY_CURRENT_BUFFER) {
+	yyterminate();
+    }
+}
+
 %%
 
 
 const char * filtergen_filename(void) {
-    return strdup("(unknown)");
+    char * fn = NULL;
+    return fn ? fn : strdup("(unknown)");
 }
 
 static void scan_err(const char *fmt, ...) {
