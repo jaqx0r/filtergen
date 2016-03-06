@@ -53,3 +53,7 @@ debian/autoreconf.before
 *.gcda
 *.gcno
 *.gcov
+*.a
+input/iptables-save/t/emit
+input/iptables-save/t/parse
+input/iptables-save/t/scan
