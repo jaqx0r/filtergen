@@ -1,7 +1,7 @@
 %option noyywrap
 %option nounput
 %option prefix="filtergen_"
-%option yylineno
+%option noyylineno
 %x include
 %x comment
 %{
@@ -46,8 +46,6 @@ struct inc_stack_s inc_stack[MAXINCLUDES] = { { .state = 0, .filename = NULL, .l
 static const char kStandardInput[] = "(standard input)";
 int inc_stackptr = 0;
 
-long int lineno();
-const char * filename();
 static void scan_err(const char * fmt, ...) __attribute__((format(printf, 1, 2)));
 void include_file(const char *);
 %}
@@ -155,11 +153,9 @@ text         return TOK_TEXT;
 			}
 %%
 
-/*
-long int filtergen_lineno() {
+long int filtergen_linenumber() {
 	return inc_stack[inc_stackptr].lineno;
 }
-*/
 
 const char * filtergen_filename(void) {
     return inc_stack[inc_stackptr].filename ? inc_stack[inc_stackptr].filename
@@ -171,7 +167,7 @@ static void scan_err(const char *fmt, ...) {
 
     va_start(args, fmt);
     if (inc_stackptr >= 0)
-	fprintf(stderr, "%s:%d: ", filtergen_filename(), filtergen_lineno);
+	fprintf(stderr, "%s:%ld: ", filtergen_filename(), filtergen_linenumber());
     vfprintf(stderr, fmt, args);
     fprintf(stderr, "\n");
 }

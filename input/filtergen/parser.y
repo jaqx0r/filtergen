@@ -566,11 +566,11 @@ chaingroup_specifier: TOK_LSQUARE TOK_IDENTIFIER subrule_list TOK_RSQUARE
 
 %%
 char * filtergen_filename();
-long int filtergen_lineno();
+long int filtergen_linenumber();
 extern char * filtergen_text;
 
 void filtergen_error(void * parse_arg __attribute__((unused)), const char * s) {
-    fprintf(stderr, "%s:%ld: %s\n", filtergen_filename(), filtergen_lineno(), s);
+    fprintf(stderr, "%s:%ld: %s\n", filtergen_filename(), filtergen_linenumber(), s);
 }
 
 int filtergen_print(FILE * f, int type, YYSTYPE v) {
