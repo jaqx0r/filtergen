@@ -1,3 +1,5 @@
+# { dg-do compile }
+
 input eth0 {
 	source foo accept;
 	source bar/24 accept;

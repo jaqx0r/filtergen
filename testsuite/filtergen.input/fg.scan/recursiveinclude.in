@@ -1,0 +1,5 @@
+# test recursive includes
+include testsuite/filtergen.input/fg.scan/recursiveinclude.in
+# { dg-warning "too many nested includes" "" { target *-*-* } 18 }
+# { dg-warning "skipping include of file" "" { target *-*-* } 18 }
+

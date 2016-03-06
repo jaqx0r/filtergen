@@ -1,0 +1,10 @@
+/* test double includes with other directives */
+input # { dg-warning "kind = input" "" }
+include testsuite/filtergen.input/fg.scan/include # { dg-warning "kind = identifier" "" }
+accept # { dg-warning "kind = accept" "" { target *-*-* } 5 }
+; # { dg-warning "kind = semicolon" "" { target *-*-* } 6 }
+output  # { dg-warning "kind = output" "" { target *-*-* } 7 }
+include testsuite/filtergen.input/fg.scan/include # { dg-warning "kind = identifier" "" { target *-*-* } 8 }
+accept;
+# { dg-warning "kind = accept" "" { target *-*-* } 10 }
+# { dg-warning "kind = semicolon" "" { target *-*-* } 10 }

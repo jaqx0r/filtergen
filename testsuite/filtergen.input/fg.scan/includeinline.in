@@ -1,0 +1,11 @@
+/* test includes that are inline with other directives */
+input include testsuite/filtergen.input/fg.scan/include accept;
+# { dg-warning "kind = input" "" { target *-*-* } 2 }
+# { dg-warning "kind = identifier" "" { target *-*-* } 2 }
+# { dg-warning "kind = accept" "" { target *-*-* } 3 }
+# { dg-warning "kind = semicolon" "" { target *-*-* } 3 }
+output include testsuite/filtergen.input/fg.scan/include accept;
+# { dg-warning "kind = output" "" { target *-*-* } 8 }
+# { dg-warning "kind = identifier" "" { target *-*-* } 8 }
+# { dg-warning "kind = accept" "" { target *-*-* } 9 }
+# { dg-warning "kind = semicolon" "" { target *-*-* } 9 }
