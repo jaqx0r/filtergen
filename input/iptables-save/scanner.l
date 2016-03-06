@@ -1,5 +1,7 @@
 %option noyywrap
 %option nounput
+%option prefix="ipts_"
+%option yylineno
 
 %{
 /* input scanner for iptables-save format
@@ -24,10 +26,9 @@
 #include <string.h>
 #include "parser.h"
 
-long int ln = 1;
+long int ipts_ln = 1;
 
-long int lineno(void);
-char * filename(void);
+char * ipts_filename(void);
 %}
 
 string	\"[^\n]+\"
@@ -37,7 +38,7 @@ id	[[:alnum:]_+-\.\/]+
 %%
 
 #[^\n]*[\n] { /* strip shell-style comments and the trailing newline */ 
-		ln++;
+		ipts_ln++;
 	    }
 
 ^[*]	return TOK_TABLE;
@@ -47,7 +48,7 @@ id	[[:alnum:]_+-\.\/]+
 {space}	/* ignore */
 
 \n	{
-		ln++;
+		ipts_ln++;
 		return TOK_NEWLINE;
 	}
 
@@ -59,18 +60,18 @@ id	[[:alnum:]_+-\.\/]+
                  * characters in this regex are ", otherwise there's a bug
                  * in flex...  The result is somethign that is syntactically
                  * identical to an identifier for our purposes. */
-                yylval.u_str = strndup(yytext + 1, yyleng - 2);
+                ipts_lval.u_str = strndup(ipts_text + 1, ipts_leng - 2);
                 return TOK_IDENTIFIER;
                 }
 
 -{id}	{
 		/* ignore the first character */
-		yylval.u_str = strndup(yytext + 1, yyleng - 1);
+		ipts_lval.u_str = strndup(ipts_text + 1, ipts_leng - 1);
 		return TOK_OPTION;
 	}
 
 {id}	{
-		yylval.u_str = strndup(yytext, yyleng);
+		ipts_lval.u_str = strndup(ipts_text, ipts_leng);
 		return TOK_IDENTIFIER;
 	}
 
@@ -83,10 +84,6 @@ id	[[:alnum:]_+-\.\/]+
 
 %%
 
-long int lineno(void) {
-	return ln;
-}
-
-char * filename(void) {
+char * ipts_filename(void) {
 	return NULL;
 }

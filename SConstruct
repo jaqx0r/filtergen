@@ -29,25 +29,24 @@ warnings = ['',
             'pointer-arith',
             'strict-aliasing', 
 ]
-for w in warnings:
-	env.Append(CPPFLAGS='-W%s ' % (w,))
+env.AppendUnique(CCFLAGS=['-W%s' % (w,) for w in warnings])
 
 # Paired with -Wstrict-aliasing
 if 'strict-aliasing' in warnings:
-	env.Append(CPPLAGS='-fstrict-aliasing ')
+	env.AppendUnique(CCFLAGS=['-fstrict-aliasing'])
 
 # set the version
-env.Append(CPPFLAGS = '-DVERSION=\\\"%s\\\" ' % (VERSION,))
+env.AppendUnique(CPPFLAGS=['-DVERSION=\\\"%s\\\"' % (VERSION,)])
 
 # compile as GNU SOURCE to get strndup
-env.Append(CPPFLAGS = '-D_GNU_SOURCE ')
+env.AppendUnique(CPPFLAGS=['-D_GNU_SOURCE'])
 
 Help(vars.GenerateHelpText(env))
 
 if not env.GetOption("clean"):
 	conf = Configure(env)
 	if conf.CheckCHeader('getopt.h'):
-		conf.env.Append(CPPFLAGS = '-DHAVE_GETOPT_H ')
+		conf.env.AppendUnique(CPPFLAGS=['-DHAVE_GETOPT_H'])
 	conf.CheckLib('getopt', 'getopt')
 
 	if ARGUMENTS.get('profiler', 0):
@@ -55,7 +54,7 @@ if not env.GetOption("clean"):
 
 	if ARGUMENTS.get('gcov', 0):
 		if conf.CheckLib('gcov'):
-			env.Append(CFLAGS = '-fprofile-arcs -ftest-coverage ')
+			env.AppendUnique(CCFLAGS = ['-fprofile-arcs','-ftest-coverage'])
 
 	env = conf.Finish()
 
@@ -72,7 +71,8 @@ sysconfdir = '/etc/filtergen'
 pkgdocdir = '/usr/share/doc/filtergen'
 pkgexdir = pkgdocdir + '/examples'
 
-env.AppendUnique(CPPPATH=['.'])
+# Add the top level directory to the include path
+env.AppendUnique(CPPPATH=['#'])
 
 filtergen  = env.Program('filtergen', ['filtergen.c',
 									 'gen.c',

@@ -4,8 +4,7 @@ env.Library('in_iptables_save',
 			source=['parser.y',
 					'scanner.l',
 					'glue.c'
-					],
-			CPPPATH='../..',
+					]
 			)
 env.SideEffect('parser.h', 'parser.c')
 

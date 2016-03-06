@@ -304,10 +304,32 @@ static int cb_iptables_rule_common(const struct filterent *ent,
     break;
   case DROP:
     ruletarget = fortarget = strdup("DROP");
+	switch (ent->direction) {
+	  case INPUT:
+	    fortarget = strdup("FORW_OUT");
+	    break;
+	  case OUTPUT:
+	    /* nothing, fortarget is already DROP */
+	    break;
+	  default:
+      fprintf(stderr, "invalid direction: %d\n", ent->direction);
+      return -1;
+	}
     needret = 0;
     break;
   case T_REJECT:
     ruletarget = fortarget = strdup("REJECT");
+	switch (ent->direction) {
+	  case INPUT:
+	    fortarget = strdup("FORW_OUT");
+	    break;
+	  case OUTPUT:
+	    /* nothing, fortarget is already DROP */
+	    break;
+	  default:
+      fprintf(stderr, "invalid direction: %d\n", ent->direction);
+      return -1;
+	}
     needret = 0;
     *feat |= T_REJECT;
     break;

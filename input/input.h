@@ -9,5 +9,6 @@
 typedef struct filter * source_parser(FILE * file, int resolve_names, struct filtergen_opts *o);
 
 source_parser filtergen_source_parser;
+source_parser ipts_source_parser;
 
 #endif /* FILTERGEN_INPUT_H */
