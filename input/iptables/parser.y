@@ -187,7 +187,10 @@ identifier: TOK_IDENTIFIER TOK_IDENTIFIER
 | TOK_IDENTIFIER TOK_COLON TOK_IDENTIFIER
 {
     $$ = malloc(sizeof(struct identifier_s));
-    asprintf(&($$->id), "%s:%s", $1, $3);
+    if (asprintf(&($$->id), "%s:%s", $1, $3) < 0) {
+      yyerror(parse_arg, "Could not allocate memory for asprintf.");
+      YYERROR;
+    } 
 }
 | TOK_QUOTE TOK_IDENTIFIER TOK_QUOTE
 {
