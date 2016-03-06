@@ -30,7 +30,7 @@
 #define _PRINTF_ATTR(s, e)
 #endif
 
-/*
+/**
  * If it doesn't begin with "F_", it's a simple token, not an
  * filter type
  */
@@ -73,7 +73,7 @@ enum filtertype {
   TEXT,       /* for F_LOG */
 };
 
-/* Structure;s which appear in both the parse tree and the output rule */
+/** Structures which appear in both the parse tree and the output rule */
 struct proto_spec {
   int num;
   char *name;
@@ -97,7 +97,7 @@ struct port_spec {
   char *minstr, *maxstr;
 };
 
-/* This is basically just a parse tree */
+/** This is basically just a parse tree */
 struct filter {
   enum filtertype type;
   union {
@@ -200,7 +200,7 @@ char *strapp(char *s, const char *n);
 int str_to_int(const char *s, int *i);
 char *int_to_str_dup(int i);
 
-/* various drivers */
+/** various drivers */
 typedef int filtergen(struct filter *filter, int flags);
 filtergen fg_iptables, fg_ip6tables, fg_iptrestore, fg_ip6trestore, fg_ipchains,
   fg_ipfilter, fg_cisco, emit_filtergen;
@@ -208,7 +208,7 @@ typedef int filter_flush(enum filtertype policy);
 filter_flush flush_iptables, flush_ip6tables, flush_iptrestore,
     flush_ip6trestore, flush_ipchains;
 
-/* ("flags" arguments) */
+/** ("flags" arguments) */
 enum flags {
   FF_NOSKEL = (1 << 0),    /* omit any "skeleton" rules */
   FF_LSTATE = (1 << 1),    /* lightweight state matching */

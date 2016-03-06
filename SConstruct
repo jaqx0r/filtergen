@@ -1,6 +1,6 @@
 import glob
 
-EnsureSConsVersion(0, 96)
+EnsureSConsVersion(0, 95)
 
 VERSION = "0.13"
 
