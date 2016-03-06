@@ -5,9 +5,9 @@
 filtergen \- packet filter compiler
 
 .SH SYNOPSIS
-\fBfiltergen\fR [ \fB-h\fR | \fB--help\fR ] [ \fB-V\fR | \fB--version\fR ] [ \fB-c\fR | \fB--compile\fR ] [ \fB-t \fItarget\fB\fR | \fB--target=\fItarget\fB\fR ] [ \fB-o \fIoutfile\fB\fR | \fB--output=\fIoutfile\fB\fR ] \fIinfile\fR
+\fBfiltergen\fR [ \fB-h\fR | \fB--help\fR ] [ \fB-V\fR | \fB--version\fR ] [ \fB-c\fR | \fB--compile\fR ] [ \fB-r\fR | \fB--no-resolve\fR ] [ \fB-t \fItarget\fB\fR | \fB--target=\fItarget\fB\fR ] [ \fB-o \fIoutfile\fB\fR | \fB--output=\fIoutfile\fB\fR ] \fIinfile\fR
 
-\fBfiltergen\fR [ \fB-h\fR | \fB--help\fR ] [ \fB-V\fR | \fB--version\fR ] [ \fB-c\fR | \fB--compile\fR ] [ \fB-t \fItarget\fB\fR | \fB--target=\fItarget\fB\fR ] [ \fB-o \fIoutfile\fB\fR | \fB--output=\fIoutfile\fB\fR ] [ \fB-F \fIpolicy\fB\fR | \fB--flush=\fIpolicy\fB\fR ]
+\fBfiltergen\fR [ \fB-h\fR | \fB--help\fR ] [ \fB-V\fR | \fB--version\fR ] [ \fB-c\fR | \fB--compile\fR ] [ \fB-r\fR | \fB--no-resolve\fR ] [ \fB-t \fItarget\fB\fR | \fB--target=\fItarget\fB\fR ] [ \fB-o \fIoutfile\fB\fR | \fB--output=\fIoutfile\fB\fR ] [ \fB-F \fIpolicy\fB\fR | \fB--flush=\fIpolicy\fB\fR ]
 
 .SH DESCRIPTION
 \fBfiltergen\fR compiles a high-level filtering description language into a
@@ -26,6 +26,16 @@ Both short and GNU-style long option options are accepted:
 Only try to "compile" the input, and do not generate any output.  This may be
 useful to check that an input file has no syntax errors in it before one
 attempts to use the result on a live server.
+
+.TP
+\fB-r, --no-resolve\fR
+Don't try to resolve hostnames, protocol names, port names, icmp type
+names, or any other human-readable names.  This is useful for
+debugging where you can't guarantee the resolver will correctly
+mogrify each name.  One side-effect of this option is that names that
+resolve to two or more numbers normally won't be expanded, which may
+affect what you let through or block on your packet filter.  Use with
+caution.
 
 .TP
 \fB-t \fItarget-filter\fB, --target=\fItarget-filter\fB\fR

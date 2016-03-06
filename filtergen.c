@@ -134,14 +134,16 @@ struct filtyp {
 };
 
 #ifdef HAVE_GETOPT_H
-static struct option long_options[] = {{"help", no_argument, 0, 'h'},
-                                       {"compile", no_argument, 0, 'c'},
-                                       {"target", required_argument, 0, 't'},
-                                       {"output", required_argument, 0, 'o'},
-                                       {"no-resolve", no_argument, 0, 'R'},
-                                       {"flush", required_argument, 0, 'F'},
-                                       {"version", no_argument, 0, 'V'},
-                                       {0, 0, 0, 0}};
+static struct option long_options[] = {
+    {"help", no_argument, 0, 'h'},
+    {"compile", no_argument, 0, 'c'},
+    {"target", required_argument, 0, 't'},
+    {"output", required_argument, 0, 'o'},
+    {"flush", required_argument, 0, 'F'},
+    {"version", no_argument, 0, 'V'},
+    {"no-resolve", no_argument, 0, 'R'},
+    {0, 0, 0, 0}
+};
 #define GETOPT(x, y, z) getopt_long(x, y, z, long_options, NULL)
 #else
 #define GETOPT(x, y, z) getopt(x, y, z)
