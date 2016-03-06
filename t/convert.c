@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "stdlib.h"
-#include "../filter.h"
-#include "../ast.h"
+#include "filter.h"
+#include "ast.h"
 
 int indent = -2;
 

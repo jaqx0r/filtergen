@@ -6,3 +6,6 @@ env.Append(CPPPATH = '..', LIBPATH = '..', LIBS = 'in_iptables_save')
 env.Program('scan.c')
 env.Program('parse.c')
 env.Program('emit.c')
+env.Program('convert', source='../../../t/convert.c',
+			CPPPATH=['../../..', '..'],
+			CPPFLAGS=['-Dconvert=ipts_convert', '-Dconvtrace=ipts_convtrace'])
