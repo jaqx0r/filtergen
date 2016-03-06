@@ -72,22 +72,28 @@ sysconfdir = '/etc/filtergen'
 pkgdocdir = '/usr/share/doc/filtergen'
 pkgexdir = pkgdocdir + '/examples'
 
+env.Append(CPPPATH = ['.', 'input/filtergen'])
+
 filtergen  = env.Program('filtergen', ['filtergen.c',
 									 'gen.c',
 									 'filter.c',
 									 'fg-util.c',
-									 'fg-iptables.c',
-									 'fg-ipchains.c',
-									 'fg-ipfilter.c',
                                      'fg-iptrestore.c',
-									 'fg-cisco.c',
-									 'parser.y',
-									 'scanner.l',
-									 'glue.c',
-									 'resolver.c',
 									 'icmpent.c',
-									 ])
-env.SideEffect('parser.h', 'parser.c')
+									 ],
+						 LIBS=['in_filtergen',
+							   'out_iptables',
+							   'out_ipchains',
+							   'out_ipfilter',
+							   'out_cisco'
+							   ],
+						 LIBPATH=['input/filtergen',
+								  'output/iptables',
+								  'output/ipchains',
+								  'output/ipfilter',
+								  'output/cisco'
+								  ]
+						 )
 
 def sed(target, source, env):
 	expandos = {
@@ -110,9 +116,15 @@ env.Command(['fgadm.conf', 'rules.filter'],
 		  ['fgadm.conf.in', 'rules.filter.in'],
 		  sed)
 
-SConscript(['input/iptables/SConscript',
-			't/SConscript'
-			], 'env')
+SConscript([
+	'input/filtergen/SConscript',
+	'input/iptables-save/SConscript',
+	#'input/ipchains-save/SConscript',
+	'output/iptables/SConscript',
+	'output/ipchains/SConscript',
+	'output/ipfilter/SConscript',
+	'output/cisco/SConscript',
+	], 'env')
 
 env.Install(DESTDIR + sbindir, [filtergen, fgadm])
 bin = env.Alias('install-bin', DESTDIR + sbindir)
