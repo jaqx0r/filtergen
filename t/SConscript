@@ -1,6 +1,6 @@
 Import('env')
 
-env = env.Copy()
+env = env.Clone()
 env.Append(CPPPATH = '..')
 
 env.Program('scan', ['scan.c', '../scanner.o', '../parser.o'])

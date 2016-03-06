@@ -1,6 +1,6 @@
 Import('env')
 
-env = env.Copy()
+env = env.Clone()
 env.Append(CPPPATH = '..', LIBPATH = '..', LIBS = 'in_filtergen')
 
 env.Program('scan.c')
