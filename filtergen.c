@@ -129,6 +129,7 @@ struct filtyp {
     {"ipchains", AF_INET, fg_ipchains, flush_ipchains},
     {"ipfilter", AF_INET, fg_ipfilter, NULL},
     {"cisco", AF_INET, fg_cisco, NULL},
+    {"filtergen", 0, emit_filtergen, NULL},
     {NULL, 0, NULL, NULL},
 };
 

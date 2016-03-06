@@ -203,7 +203,7 @@ char *int_to_str_dup(int i);
 /* various drivers */
 typedef int filtergen(struct filter *filter, int flags);
 filtergen fg_iptables, fg_ip6tables, fg_iptrestore, fg_ip6trestore, fg_ipchains,
-    fg_ipfilter, fg_cisco;
+  fg_ipfilter, fg_cisco, emit_filtergen;
 typedef int filter_flush(enum filtertype policy);
 filter_flush flush_iptables, flush_ip6tables, flush_iptrestore,
     flush_ip6trestore, flush_ipchains;

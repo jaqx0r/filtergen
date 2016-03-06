@@ -1,5 +1,7 @@
 0.13:
 	Changed build system to SCons.
+	Reorganised code structure.
+	Added filtergen syntax emitter.
 
 0.12.8:
     Fix some easy to cause crashes.
