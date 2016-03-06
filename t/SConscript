@@ -1,0 +1,10 @@
+Import('env')
+
+env = env.Copy()
+env.Append(CPPPATH = '..')
+
+env.Program('scan', ['scan.c', '../scanner.o', '../parser.o'])
+env.Program('parse', ['parse.c', '../scanner.o', '../parser.o'])
+env.Program('emit', ['emit.c', '../scanner.o', '../parser.o'])
+env.Program('convert', ['convert.c', '../scanner.o', '../parser.o', '../glue.o', '../filter.o', '../fg-util.o'])
+env.Program('factorise', ['factorise.c', '../scanner.o', '../parser.o'])

@@ -1,3 +1,6 @@
+0.13:
+	Changed build system to SCons.
+
 0.12.8:
     Fix some easy to cause crashes.
     Remove some obsolete code that caused long compilation times.
