@@ -441,6 +441,7 @@ static int fg_iptables_common(struct filter *filter, int flags,
 
     oputs("# Setup INVALID chain");
     oprintf("%s -N INVALID\n", iptables);
+
 #if 0
 	oprintf("%s -A INVALID -j LOG --log-prefix \"invalid \"\n", iptables);
 #endif
