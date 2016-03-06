@@ -39,222 +39,264 @@
 
 int yyparse(void *);
 void yyrestart(FILE *);
-extern struct filter * convert(struct ast_s * n);
+extern struct filter *convert(struct ast_s *n, struct filtergen_opts *o);
 
 static FILE *outfile;
 
-void usage(char * prog) {
-    fprintf(stderr, "Usage: %s [-chV] [-t backend] [-o output] input\n", prog);
-    fprintf(stderr, "       %s [-chV] [-t backend] [-o output] -F policy\n\n", prog);
-    fprintf(stderr, "Options:\n");
+void usage(char *prog) {
+  fprintf(stderr, "Usage: %s [-chV] [-t backend] [-o output] input\n", prog);
+  fprintf(stderr, "       %s [-chV] [-t backend] [-o output] -F policy\n\n",
+          prog);
+  fprintf(stderr, "Options:\n");
 
 #ifdef HAVE_GETOPT_H
-    fprintf(stderr, " --compile/-c              compile only, no generate\n");
+  fprintf(stderr, " --compile/-c              compile only, no generate\n");
 #else
-    fprintf(stderr, "           -c              compile only, no generate\n");
+  fprintf(stderr, "           -c              compile only, no generate\n");
 #endif
 
 #ifdef HAVE_GETOPT_H
-    fprintf(stderr, " --target/-t target        generate for target (default: iptables)\n");
+  fprintf(stderr,
+          " --no-resolve/-R           don't resolve hostnames or portnames\n");
 #else
-    fprintf(stderr, "          -t target        generate for target (default: iptables)\n");
+  fprintf(stderr,
+          "              -R           don't resolve hostnames or portnames\n");
 #endif
 
 #ifdef HAVE_GETOPT_H
-    fprintf(stderr, " --flush/-F policy         don't process input, generate flush rules\n");
+  fprintf(
+      stderr,
+      " --target/-t target        generate for target (default: iptables)\n");
 #else
-    fprintf(stderr, "         -F policy         don't process input, generate flush rules\n");
+  fprintf(
+      stderr,
+      "          -t target        generate for target (default: iptables)\n");
 #endif
 
 #ifdef HAVE_GETOPT_H
-    fprintf(stderr, " --output/-o filename      write the generated packet filter to filename\n");
+  fprintf(
+      stderr,
+      " --flush/-F policy         don't process input, generate flush rules\n");
 #else
-    fprintf(stderr, "          -o filename      write the generated packet filter to filename\n");
+  fprintf(
+      stderr,
+      "         -F policy         don't process input, generate flush rules\n");
 #endif
 
 #ifdef HAVE_GETOPT_H
-    fprintf(stderr, " --help/-h                 show this help\n");
+  fprintf(stderr, " --output/-o filename      write the generated packet "
+                  "filter to filename\n");
 #else
-    fprintf(stderr, "        -h                 show this help\n");
+  fprintf(stderr, "          -o filename      write the generated packet "
+                  "filter to filename\n");
 #endif
 
 #ifdef HAVE_GETOPT_H
-    fprintf(stderr, " --version/-V              show program version\n");
+  fprintf(stderr, " --help/-h                 show this help\n");
 #else
-    fprintf(stderr, "           -V              show program version\n");
+  fprintf(stderr, "        -h                 show this help\n");
+#endif
+
+#ifdef HAVE_GETOPT_H
+  fprintf(stderr, " --version/-V              show program version\n");
+#else
+  fprintf(stderr, "           -V              show program version\n");
 #endif
 }
 
-int oputs(const char *s)
-{
-    int r = 0;
-    if(s) {
-	r = fputs(s, outfile);
-	if(r > 0) {
-	    fputc('\n', outfile);
-	    r++;
-	}
+int oputs(const char *s) {
+  int r = 0;
+  if (s) {
+    r = fputs(s, outfile);
+    if (r > 0) {
+      fputc('\n', outfile);
+      r++;
     }
-    return r;
+  }
+  return r;
 }
 
-int oprintf(const char *fmt, ...)
-{
-    va_list args;
-    va_start(args, fmt);
-    return vfprintf(outfile, fmt, args);
+int oprintf(const char *fmt, ...) {
+  va_list args;
+  va_start(args, fmt);
+  return vfprintf(outfile, fmt, args);
 }
 
 struct filtyp {
-    const char * name;
-    filtergen * compiler;
-    filter_flush * flusher;
+  const char *name;
+  sa_family_t family;
+  filtergen *compiler;
+  filter_flush *flusher;
 } filter_types[] = {
-    { "iptables", fg_iptables, flush_iptables, },
-    { "ipchains", fg_ipchains, flush_ipchains, },
-    { "ipfilter", fg_ipfilter, NULL },
-    { "cisco", fg_cisco, NULL },
-    { NULL, NULL, NULL },
+    {"iptables", AF_INET, fg_iptables, flush_iptables},
+    {"ip6tables", AF_INET6, fg_ip6tables, flush_ip6tables},
+    {"iptables-restore", AF_INET, fg_iptrestore, flush_iptrestore},
+    {"ip6tables-restore", AF_INET6, fg_ip6trestore, flush_ip6trestore},
+    {"ipchains", AF_INET, fg_ipchains, flush_ipchains},
+    {"ipfilter", AF_INET, fg_ipfilter, NULL},
+    {"cisco", AF_INET, fg_cisco, NULL},
+    {NULL, 0, NULL, NULL},
 };
 
 #ifdef HAVE_GETOPT_H
-static struct option long_options[] = {
-    {"help", no_argument, 0, 'h'},
-    {"compile", no_argument, 0, 'c'},
-    {"target", required_argument, 0, 't'},
-    {"output", required_argument, 0, 'o'},
-    {"flush", required_argument, 0, 'F'},
-    {"version", no_argument, 0, 'V'},
-    {0, 0, 0, 0}
-};
-# define GETOPT(x, y, z) getopt_long(x, y, z, long_options, NULL)
+static struct option long_options[] = {{"help", no_argument, 0, 'h'},
+                                       {"compile", no_argument, 0, 'c'},
+                                       {"target", required_argument, 0, 't'},
+                                       {"output", required_argument, 0, 'o'},
+                                       {"no-resolve", no_argument, 0, 'R'},
+                                       {"flush", required_argument, 0, 'F'},
+                                       {"version", no_argument, 0, 'V'},
+                                       {0, 0, 0, 0}};
+#define GETOPT(x, y, z) getopt_long(x, y, z, long_options, NULL)
 #else
-# define GETOPT(x, y, z) getopt(x, y, z)
+#define GETOPT(x, y, z) getopt(x, y, z)
 #endif
 
 int main(int argc, char **argv) {
-    struct filter *f;
-    int l;
-    time_t t;
-    char buf[100];
-    char *filename = NULL, *ftn = NULL, *ofn = NULL;
-    struct filtyp *ft = NULL; 
-    int flags = 0;
-    char *progname;
-    int arg;
-    enum filtertype flushpol = T_ACCEPT;
+  struct filter *f;
+  int l;
+  time_t t;
+  char buf[100];
+  char *filename = NULL, *ftn = NULL, *ofn = NULL;
+  struct filtyp *ft = NULL;
+  int flags = 0;
+  char *progname;
+  int arg;
+  enum filtertype flushpol = T_ACCEPT;
 
-    progname = argv[0];
+  progname = argv[0];
 
-    while ((arg = GETOPT(argc, argv, "hco:t:F:V")) > 0) {
-	switch (arg) {
-	  case ':':
-	    usage(progname);
-	    exit(1);
-	    break;
-	  case 'h':
-	    usage(progname);
-	    exit(0);
-	    break;
-	  case 'c':
-	    flags |= FF_NOSKEL;
-	    break;
-	  case 'o':
-	    ofn = strdup(optarg);
-	    break;
-	  case 't':
-	    ftn = strdup(optarg);
-	    break;
-	  case 'F':
-	    flags |= FF_FLUSH;
-	    if (!strcasecmp(optarg, "accept")) {
-		flushpol = T_ACCEPT;
-	    } else if (!strcasecmp(optarg, "drop")) {
-		flushpol = DROP;
-	    } else if (!strcasecmp(optarg, "reject")) {
-		flushpol = T_REJECT;
-	    } else {
-		fprintf(stderr, "%s: flush policy unrecofgnised: %s\n", progname, optarg);
-		usage(progname);
-		exit(1);
-	    }
-	    break;
-	  case 'V':
-	    printf(PACKAGE " " VERSION "\n");
-	    exit(0);
-	    break;
-	  default:
-	    break;
-	}
+  while ((arg = GETOPT(argc, argv, "hco:t:F:VR")) > 0) {
+    switch (arg) {
+    case ':':
+      usage(progname);
+      exit(1);
+      break;
+    case 'h':
+      usage(progname);
+      exit(0);
+      break;
+    case 'c':
+      flags |= FF_NOSKEL;
+      break;
+    case 'o':
+      ofn = strdup(optarg);
+      break;
+    case 'R':
+      flags |= FF_NORESOLVE;
+      break;
+    case 't':
+      ftn = strdup(optarg);
+      break;
+    case 'F':
+      flags |= FF_FLUSH;
+      if (!strcasecmp(optarg, "accept")) {
+        flushpol = T_ACCEPT;
+      } else if (!strcasecmp(optarg, "drop")) {
+        flushpol = DROP;
+      } else if (!strcasecmp(optarg, "reject")) {
+        flushpol = T_REJECT;
+      } else {
+        fprintf(stderr, "%s: flush policy unrecofgnised: %s\n", progname,
+                optarg);
+        usage(progname);
+        exit(1);
+      }
+      break;
+    case 'V':
+      printf(PACKAGE " " VERSION "\n");
+      exit(0);
+      break;
+    default:
+      break;
     }
-    if (!(flags & FF_FLUSH)) {
-	if (optind >= argc) {
-	    usage(progname);
-	    exit(1);
-	} else
-	    filename = argv[optind++];
-    }
-
-    if (ofn) {
-	/* XXX - open a different tempfile, and rename on success */
-	outfile = fopen(ofn, "w");
-	if(!outfile) {
-	    fprintf(stderr, "%s: can't open output file \"%s\"\n", progname, ofn);
-	    return 1;
-	}
+  }
+  if (!(flags & FF_FLUSH)) {
+    if (optind >= argc) {
+      usage(progname);
+      exit(1);
     } else
-	outfile = stdout;
+      filename = argv[optind++];
+  }
 
-    if(!ftn || !*ftn) ftn = strdup("iptables");
-    for (ft = filter_types; ft->name; ft++)
-	if (!strcmp(ftn, ft->name))
-	    break;
-    if (!ft->name) {
-	fprintf(stderr, "%s: target filter unrecognised: %s\n", progname, ftn);
-	usage(progname);
-	exit(1);
+  if (ofn) {
+    /* XXX - open a different tempfile, and rename on success */
+    outfile = fopen(ofn, "w");
+    if (!outfile) {
+      fprintf(stderr, "%s: can't open output file \"%s\"\n", progname, ofn);
+      return 1;
+    }
+  } else
+    outfile = stdout;
+
+  if (!ftn || !*ftn)
+    ftn = strdup("iptables");
+  for (ft = filter_types; ft->name; ft++)
+    if (!strcmp(ftn, ft->name))
+      break;
+  free(ftn);
+  if (!ft->name) {
+    fprintf(stderr, "%s: target filter unrecognised: %s\n", progname, ftn);
+    usage(progname);
+    exit(1);
+  }
+
+  /* What to do, then? */
+  if (flags & FF_FLUSH) {
+    /* Just flush it */
+    l = ft->flusher(flushpol);
+  } else {
+    /* Compile from a file */
+    if (filename && !strcmp(filename, "-"))
+      filename = NULL;
+
+    if (filter_fopen(filename))
+      return 1;
+
+    {
+      struct ast_s ast;
+
+      if (yyparse(&ast) == 0) {
+        struct filtergen_opts o;
+        memset(&o, 0, sizeof o);
+        o.family = ft->family;
+
+        if (!(flags & FF_NORESOLVE)) {
+          resolve(&ast, &o);
+        }
+
+        f = convert(&ast, &o);
+        if (!f) {
+          fprintf(stderr, "couldn't convert file\n");
+          return 1;
+        }
+      } else {
+        fprintf(stderr, "couldn't parse file\n");
+        return 1;
+      }
     }
 
-    /* What to do, then? */
-    if(flags & FF_FLUSH) {
-	/* Just flush it */
-	l = ft->flusher(flushpol);
-    } else {
-	/* Compile from a file */
-	if(filename && !strcmp(filename, "-")) filename = NULL;
+    strftime(buf, sizeof(buf) - 1, "%a %b %e %H:%M:%S %Z %Y",
+             localtime((time(&t), &t)));
+    oprintf("# filter generated from %s via %s backend at %s\n",
+            filename ? filename : "standard input", ft->name, buf);
+    l = ft->compiler(f, flags);
+  }
 
-	if(filter_fopen(filename)) return 1;
+  if (ofn)
+    fclose(outfile);
 
-	{
-	    struct ast_s ast;
-
-	    if (yyparse((void *) &ast) == 0) {
-		resolve(&ast);
-		f = convert(&ast);
-		if (!f) {
-		    fprintf(stderr, "couldn't convert file\n");
-		    return 1;
-		}
-	    } else {
-		fprintf(stderr, "couldn't parse file\n");
-		return 1;
-	    }
-	}
-
-	strftime(buf, sizeof(buf)-1, "%a %b %e %H:%M:%S %Z %Y",
-		 localtime((time(&t),&t)));
-	oprintf("# filter generated from %s via %s backend at %s\n",
-		filename ?: "standard input", ft->name, buf);
-	l = ft->compiler(f, flags);
-    }
-
-    if(ofn) fclose(outfile);
-
-    if(l < 0) {
-	fprintf(stderr, "an error occurred: most likely the filters defined make no sense\n");
-	if(ofn) unlink(ofn);
-	return 1;
-    }
-    fprintf(stderr, "generated %d rules\n", l);
-    return 0;
+  if (l < 0) {
+    fprintf(
+        stderr,
+        "an error occurred: most likely the filters defined make no sense\n");
+    if (ofn)
+      unlink(ofn);
+    return 1;
+  }
+  if (ofn) {
+    free(ofn);
+  }
+  fprintf(stderr, "generated %d rules\n", l);
+  return 0;
 }

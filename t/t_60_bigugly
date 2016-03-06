@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -x
 
 TEST="that the converter can convert a mess of filters"
 DATA=converter12

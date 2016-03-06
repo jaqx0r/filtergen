@@ -6,3 +6,4 @@ kind = semicolon, spelling = ";", file = "(standard input)", line = 5
 kind = slash, spelling = "/", file = "(standard input)", line = 6
 kind = colon, spelling = ":", file = "(standard input)", line = 7
 kind = bang, spelling = "!", file = "(standard input)", line = 8
+kind = star, spelling = "*", file = "(standard input)", line = 9

@@ -1,11 +1,12 @@
 AC_PREREQ(2.50)
 
-AC_INIT(filtergen, 0.13, jaq@spacepants.org)
-AM_INIT_AUTOMAKE([foreign dist-bzip2])
+AC_INIT(filtergen, 0.12.8, jaq@spacepants.org)
 
 AC_CONFIG_AUX_DIR(.)
 AC_CONFIG_SRCDIR(filtergen.c)
 AM_CONFIG_HEADER(config.h)
+
+AM_INIT_AUTOMAKE([foreign dist-bzip2 parallel-tests color-tests])
 
 AM_MAINTAINER_MODE
 
@@ -23,7 +24,7 @@ dnl checks for programs
 dnl -------------------
 
 AC_PROG_CC
-AC_PROG_LEX
+AM_PROG_LEX
 AC_PROG_YACC
 AC_PROG_RANLIB
 
@@ -43,6 +44,46 @@ if test "x$HAVE_GETOPT" = xyes ; then
 	AC_SUBST(GETOPT_LIBS)
 fi
 
+AC_ARG_ENABLE(gcov,
+	      AS_HELP_STRING([--enable-gcov],
+                             [enable test coverage with gcov @<:@default=no@:>@]),
+              [case "${enableval}" in
+                 yes) enable_gcov=true ;;
+                 no)  enable_gcov=false ;;
+                 *)   AC_MSG_ERROR([bad value ${enableval} for --enable-gcov]) ;;
+               esac],
+              [enable_gcov=false])
+
+if test "x$enable_gcov" = "xtrue"; then
+  GCOV_CFLAGS="-fprofile-arcs -ftest-coverage"
+  AC_SUBST(GCOV_CFLAGS)
+
+  dnl libtool 1.5.22 and lower strip -fprofile-arcs from the flags
+  dnl passed to the linker, which is a bug; -fprofile-arcs implicitly
+  dnl links in -lgcov, so we do it explicitly here for the same effect
+  GCOV_LIBS=-lgcov
+  AC_SUBST(GCOV_LIBS)
+fi
+
+AM_CONDITIONAL(ENABLE_GCOV, test x"$gcov" = "xtrue")
+
+
+# Google profiler
+AC_MSG_CHECKING([whether to enable profiler])
+AC_ARG_WITH([profiler],
+  [AS_HELP_STRING([--with-profiler],[enable support for profiler [default=no]])],
+  [with_profiler=$withval],
+  [with_profiler=no]
+)
+AC_MSG_RESULT([$with_profiler])
+
+if test "x${with_profiler}" = "xyes"; then
+  AC_CHECK_LIB([profiler], [ProfilerStart],
+    [AC_SUBST([LIBPROFILER], ["-lprofiler"])],
+    [AC_MSG_FAILURE([check for profiler failed. Have you installed google-perftools-devel?])],
+  )
+fi
+
 dnl -----------------
 dnl set warning level
 dnl -----------------
@@ -51,6 +92,9 @@ if test "x$ac_cv_c_compiler_gnu" = xyes ; then
 	CFLAGS="$CFLAGS -W -Wall -Werror -Waggregate-return"
 	CFLAGS="$CFLAGS -Wcast-align -Wcast-qual -Wnested-externs"
 	CFLAGS="$CFLAGS -Wshadow -Wbad-function-cast -Wwrite-strings"
+	CFLAGS="$CFLAGS -Winit-self -Wformat=2 -Wuninitialized"
+	CFLAGS="$CFLAGS -Wpointer-arith"
+	CFLAGS="$CFLAGS -Wstrict-aliasing -fstrict-aliasing"
 fi
 
 dnl ---------------
@@ -65,6 +109,9 @@ AC_ARG_ENABLE(debug,
 	CFLAGS="$tmp_CFLAGS",
 	AC_MSG_RESULT(no)
 )
+
+AC_CHECK_PROGS(GCOV, gcov, false)
+AC_CHECK_PROGS(LCOV, lcov, false)
 
 dnl ------------------------------
 dnl fill in path variable expandos

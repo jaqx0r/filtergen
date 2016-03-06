@@ -1,3 +1,32 @@
+0.12.8:
+    Fix some easy to cause crashes.
+    Remove some obsolete code that caused long compilation times.
+    Prevents inclusion of the root filesystem path directly.
+    Test that the example programs compile.
+
+0.12.7:
+	Supports iptables-restore output format.
+	Supports IPv6 names.
+	Supports ip6tables and ip6tables-restore output format.
+	Better warnings when services don't resolve.
+	Increases include file recursion depth to 512 from 16.
+	Directory includes now have stable ordering of the files within.
+	
+	Runs tests in parallel so their output is captured, and generate more output.
+	Adds more compiler warnings.
+	Compiles clean under clang.
+
+0.12.6:
+	Support shell globbing in include directives.
+	Allow '*' as a network interface name.
+
+	Modernise build environment:
+	Fix many compiler warnings.
+	Finish migration to Git as upstream host.
+
+0.12.5:
+	Small fixes to test correctness.
+
 0.12.4:
 	Added directory include support.
 	Fixed relative-path include error in fgadm.

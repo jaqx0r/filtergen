@@ -1,0 +1,267 @@
+filtergen (0.12.6-3) unstable; urgency=medium
+
+  * Fix the way the test suite log is printed after test failure. 
+  * Run the tests in parallel so their output is captured.
+  * Run all tests in verbose (sh -x) mode. 
+
+ -- Jamie Wilkinson <jaq@debian.org>  Sat, 13 Feb 2016 19:05:56 +1100
+
+filtergen (0.12.6-2) unstable; urgency=medium
+
+  * Cat the test suite log after running the tests.
+
+ -- Jamie Wilkinson <jaq@debian.org>  Sat, 13 Feb 2016 10:51:16 +1100
+
+filtergen (0.12.6-1) unstable; urgency=medium
+
+  * New upstream release.
+    - Fixes return type in external declaration of yyrestart (Closes: #749636).
+  * Use dh-autoreconf to fix up the autotools blah at build time. 
+
+ -- Jamie Wilkinson <jaq@debian.org>  Sat, 13 Feb 2016 04:26:16 +1100
+
+filtergen (0.12.5-1) unstable; urgency=low
+
+  * New upstream release.
+  * New Maintainer, per private mail to mpalmer@.
+  * Updated standards version to 3.8.3.
+  * Updated to use debhelper 7.
+   - Specify misc:Depends.
+   - Update debian/compat.
+   - Update build dependency.
+  * Updated watch file for googlecode.com upstream location change.
+  * Bug fix: "Allow '*' as an interface name", thanks to Matthew
+    Palmer (Closes: #549891).
+  * Fix build failues when using clang instead of GCC (Closes: #751443). 
+  * Support globbing in include directives (Closes: #549892).
+  * Update parser.y use of the parse-param directive to support modern bison. 
+  * Update debhelper and debian/compat.
+  * Update watch file to new location.
+  * Add VCS headers to control file.
+  * Use debian/source options to build from git, add gbp.conf to debian dir. 
+  * Convert debian/rules to dh style. 
+  * Fix compiler warnings as errors to build with modern compiler.
+  * Update address of FSF.
+  * Add more example filters to examples. 
+
+ -- Jamie Wilkinson <jaq@debian.org>  Sat, 13 Feb 2016 03:04:52 +1100
+
+filtergen (0.12.4-5.1) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Fix "ftbfs with gcc-4.6 -Werror": add patch from peter green that removes
+    some unused variables.
+    (Closes: #625327)
+
+ -- gregor herrmann <gregoa@debian.org>  Mon, 12 Dec 2011 17:06:03 +0100
+
+filtergen (0.12.4-5) unstable; urgency=low
+
+  * New maintainer.  Closes: #543434.
+  * Bump standards version:
+    - Added Homepage field.
+
+ -- Matt Palmer <mpalmer@debian.org>  Tue, 02 Feb 2010 16:51:39 +1100
+
+filtergen (0.12.4-4.1) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * scanner.l: Fix buffer overflow with nested include files.
+    Closes: #324908.
+  * debian/rules: Make sure clean doesn't accidentally run makefile
+    (and consequently autoconf).
+
+ -- Matej Vela <vela@debian.org>  Wed,  5 Jul 2006 08:40:35 +0200
+
+filtergen (0.12.4-4) unstable; urgency=low
+
+  * Apply patch from Andreas Jochens to fix build failure on amd64.
+    (Closes: #285935)
+  * Added flex and bison to the build dependencies.
+  * Updated standards version, no other changes required.
+
+ -- Jamie Wilkinson <jaq@debian.org>  Tue, 23 Aug 2005 14:09:04 +1000
+
+filtergen (0.12.4-3) unstable; urgency=high
+
+  * Call the distclean target instead of clean, in our debian/rules clean
+    target, so that created files are cleaned up.  Yes this is dumb, I
+    blame autogoats.   (Closes: #273371)
+
+ -- Jamie Wilkinson <jaq@debian.org>  Wed, 13 Oct 2004 14:10:26 +1000
+
+filtergen (0.12.4-2) unstable; urgency=low
+
+  * Updated copyright to reflect new upstream location and author.
+
+ -- Jamie Wilkinson <jaq@debian.org>  Tue, 24 Aug 2004 12:34:16 +1000
+
+filtergen (0.12.4-1) unstable; urgency=low
+
+  * New upstream release.
+    - Fixes behavioural bugs in fgadm script.
+
+ -- Jamie Wilkinson <jaq@debian.org>  Tue, 24 Aug 2004 11:49:16 +1000
+
+filtergen (0.12.3-2) unstable; urgency=low
+
+  * Added watch file.
+
+ -- Jamie Wilkinson <jaq@debian.org>  Fri, 13 Aug 2004 16:47:45 +1000
+
+filtergen (0.12.3-1) unstable; urgency=low
+
+  * New upstream release.
+    - fixes critical port number resolver bug.
+
+ -- Jamie Wilkinson <jaq@debian.org>  Thu, 24 Jun 2004 11:35:03 +1000
+
+filtergen (0.12.1-6) unstable; urgency=low
+
+  * The Sixth Time Lucky release.
+  * Re-add netbase to the build dependencies.  (Closes: #253631)
+
+ -- Jamie Wilkinson <jaq@debian.org>  Fri, 11 Jun 2004 10:05:34 +1000
+
+filtergen (0.12.1-5) unstable; urgency=low
+
+  * Removed unnecessary build dependency on flex.
+  * Fix path to filtergen in fgadm script.
+  * Alter test scripts to print diff output.
+
+ -- Jamie Wilkinson <jaq@debian.org>  Thu, 10 Jun 2004 20:04:17 +1000
+
+filtergen (0.12.1-4) unstable; urgency=low
+
+  * Applied a patch from upstream that fixes the test suite so it's not using
+    protocols that have more than one name in /etc/protocols.  This really fixes
+    the build daemon errors (fingers crossed) so also remove netbase from the
+    build dependencies.
+
+ -- Jamie Wilkinson <jaq@debian.org>  Thu, 10 Jun 2004 18:54:42 +1000
+
+filtergen (0.12.1-3) unstable; urgency=low
+
+  * Add netbase to the build dependencies for /etc/protocols and /etc/services.
+
+ -- Jamie Wilkinson <jaq@debian.org>  Thu, 10 Jun 2004 18:14:38 +1000
+
+filtergen (0.12.1-2) unstable; urgency=low
+
+  * Regenerate the makefile so that -Wcast-align is gone.  (Closes: #253432)
+
+ -- Jamie Wilkinson <jaq@debian.org>  Thu, 10 Jun 2004 09:09:56 +1000
+
+filtergen (0.12.1-1) unstable; urgency=low
+
+  * New upstream release.
+    + Fixes compiler errors on 64 bit platforms.
+
+ -- Jamie Wilkinson <jaq@debian.org>  Wed,  9 Jun 2004 23:52:22 +1000
+
+filtergen (0.12-2) unstable; urgency=low
+
+  * Remove an ugly and incorrect cast around gethosybyname and inet_ntoa
+    to fix builds on 64 bit systems.
+  * Added make check to the build target of rules.
+
+ -- Jamie Wilkinson <jaq@debian.org>  Wed,  9 Jun 2004 19:28:30 +1000
+
+filtergen (0.12-1) unstable; urgency=low
+
+  * New upstream release.
+  * Bumped standards version to 3.6.1.
+  * Moved DH_COMPAT to debian/compat.
+  * Upstream now uses configure, modified configure target.
+
+ -- Jamie Wilkinson <jaq@debian.org>  Wed,  9 Jun 2004 11:44:48 +1000
+
+filtergen (0.11-4) unstable; urgency=low
+
+  * Added "%option nounput" to the flex scanner to fix a build failure
+    with the new flex, thanks to Bastian Kleineidam.  (Closes: #191188)
+  * Bumped standards version to 3.5.9.
+
+ -- Jamie Wilkinson <jaq@spacepants.org>  Mon, 12 May 2003 20:10:14 +1000
+
+filtergen (0.11-3) unstable; urgency=low
+
+  * Removed initscript, README.Debian, postinst, and debconf stuff.
+    Reverted to just the basic program, not trying to provide a
+    super-firewall-tool, just a filter generator.  (Closes: #171951)
+
+ -- Jamie Wilkinson <jaq@debian.org>  Wed, 12 Feb 2003 18:38:43 +1100
+
+filtergen (0.11-2) unstable; urgency=low
+
+  * Bumped standards version to 3.5.8.0.
+  * Set DH_COMPAT to 4.
+  * Set versioned depends on debconf 1.2.9 for dpkg-reconfigure,
+    making lintian happy.
+
+ -- Jamie Wilkinson <jaq@debian.org>  Sat, 30 Nov 2002 12:14:22 +1100
+
+filtergen (0.11-1) unstable; urgency=low
+
+  * New upstream release.  (Closes: #168985)
+    - Fixes documentation error (patch removed).
+    - Adds flush option (patch removed).
+    - Fixes compilation on 64 bit archs (patch removed).
+  * Bathed by the lint siblings.
+  * Bumped standards version to 3.5.7.0.
+
+ -- Jamie Wilkinson <jaq@debian.org>  Wed, 20 Nov 2002 14:12:35 +1100
+
+filtergen (0.10-7) unstable; urgency=low
+
+  * Fix builds on alpha and ia64.  (Closes: #168352)
+
+ -- Jamie Wilkinson <jaq@debian.org>  Sat,  9 Nov 2002 10:14:02 +1100
+
+filtergen (0.10-6) unstable; urgency=low
+
+  * Mention the lack of a firewall on upgrade from a pre-0.10-5 version.
+    (Closes: #167561)
+  * Initscript cosmetic change, hack around stderr from filtergen.
+
+ -- Jamie Wilkinson <jaq@debian.org>  Sun,  3 Nov 2002 01:14:29 +1100
+
+filtergen (0.10-5) unstable; urgency=low
+
+  * Only `stop' the filter if GENERATE is true.  (Closes: #167232)
+
+ -- Jamie Wilkinson <jaq@debian.org>  Sat,  2 Nov 2002 18:18:32 +1100
+
+filtergen (0.10-4) unstable; urgency=low
+
+  * Reworded an error message to be nicer.  (s/permitted/supported)
+  * Removed debhelper templates from source.
+
+ -- Jamie Wilkinson <jaq@debian.org>  Wed, 30 Oct 2002 21:53:07 +1100
+
+filtergen (0.10-3) unstable; urgency=low
+
+  * Patched filtergen to add a command to generate flush rules, thus cleaning
+    the initscript a little.
+
+ -- Jamie Wilkinson <jaq@debian.org>  Wed, 30 Oct 2002 20:39:37 +1100
+
+filtergen (0.10-2) unstable; urgency=low
+
+  * Added a `check' argument to /etc/init.d/filtergen.
+  * Removed `ipfilter' from the backends that get piped into a shell.
+    Instead it should get piped into ipfilter somehow.  I will worry about
+    that when ipfilter gets packaged.
+
+ -- Jamie Wilkinson <jaq@debian.org>  Wed, 30 Oct 2002 00:39:17 +1100
+
+filtergen (0.10-1) unstable; urgency=low
+
+  * Initial Release.  (Closes: #166170)
+  * Applied patch from upstream fixing documentation error.
+  * Added NAME section to filter_backends.7, lintian clean.
+  * Depends on iptables or ipchains.
+  * Created initsctipt and filtergen.conf config file to control what
+    filtergen will do to your firewall.
+
+ -- Jamie Wilkinson <jaq@debian.org>  Sat, 26 Oct 2002 11:15:16 +1000

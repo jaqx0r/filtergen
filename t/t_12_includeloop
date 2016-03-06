@@ -1,12 +1,13 @@
-#!/bin/sh
+#!/bin/sh -x
 
-TEST="that c style comments are scanned and ignored"
+TEST="that exceeding the stack depth for includes prints an error"
 
 testdir=`dirname $0`
 . $testdir/testlib
 
 ./scan < $testdir/data/scanner12.in > $work/out 2>&1
 if test $? -ne 0 ; then no_result ; fi
+cat $work/out
 
 compare $testdir/data/scanner12.out $work/out
 

@@ -1,0 +1,17 @@
+Source: filtergen
+Section: net
+Priority: optional
+Maintainer: Jamie Wilkinson <jaq@debian.org>
+Build-Depends: debhelper (>= 9), netbase, flex, bison, dh-autoreconf
+Standards-Version: 3.9.6
+Homepage: http://spacepants.org/src/filtergen/
+VCS-Browser: https://github.com/jaqx0r/filtergen/tree/debian
+VCS-Git: https://github.com/jaqx0r/filtergen.git -b debian
+
+Package: filtergen
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: packet filter generator for various firewall systems
+ filtergen is a packet filter generator.  It compiles a fairly high-level
+ description language into iptables, ipchains, or ipfilter scripts (and has
+ bits of support for Cisco IOS access lists).

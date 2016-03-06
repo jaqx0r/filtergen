@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -x
 
 TEST="that hash style comments with no newline are scanned and ignored"
 

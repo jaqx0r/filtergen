@@ -23,14 +23,13 @@
 #include <string.h>
 #include "ast.h"
 
-#define YYPARSE_PARAM parm
-
-void yyerror(const char * s);
+void yyerror(void *parse_arg, const char * s);
 extern int yylex(void);
 
 #define YYPRINT(f, t, v) yyprint(f, t, v)
 %}
 %debug
+%parse-param {void *parse_arg}
 
 %union {
 	struct rule_list_s * u_rule_list;
@@ -123,6 +122,7 @@ extern int yylex(void);
 %token TOK_ERR
 %token TOK_BANG
 %token TOK_COLON
+%token TOK_STAR
 %{
 int yyprint(FILE * f, int t, YYSTYPE v);
 %}
@@ -130,9 +130,9 @@ int yyprint(FILE * f, int t, YYSTYPE v);
 %%
 ast: rule_list
 	{
-		/* we expect parm to be already allocated, and that
+		/* we expect parse_arg to be already allocated, and that
 		 * it is of type (struct ast_s *) */
-		((struct ast_s *) parm)->list = $1;
+		((struct ast_s *) parse_arg)->list = $1;
 	}
 
 rule_list: /* empty */
@@ -257,6 +257,13 @@ direction_argument_list: direction_argument_list_
 	| TOK_LCURLY direction_argument_list_ TOK_RCURLY
 	{
 		$$ = $2;
+	}
+	| TOK_STAR
+	{
+		$$ = malloc(sizeof(struct direction_argument_list_s));
+		$$->list = NULL;
+		$$->arg = malloc(sizeof(struct direction_argument_s));
+		$$->arg->direction = strdup("*");
 	}
 	;
 
@@ -556,11 +563,11 @@ char * filename();
 long int lineno();
 extern char * yytext;
 
-void yyerror(const char * s) {
+void yyerror(void * parse_arg __attribute__((unused)), const char * s) {
 	fprintf(stderr, "%s:%ld: %s\n", filename(), lineno(), s);
 }
 
 int yyprint(FILE * f, int type, YYSTYPE v) {
-	fprintf(f, "%d:\"%s\":%p", type, yytext, &v);
+	fprintf(f, "%d:\"%s\":%p", type, yytext, (void *) &v);
 	return 0;
 }
