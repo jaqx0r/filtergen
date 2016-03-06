@@ -1,7 +1,6 @@
 %option noyywrap
 %option nounput
 %option prefix="filtergen_"
-%option noyylineno
 %x include
 %x comment
 %{
@@ -34,17 +33,7 @@
 #include <glob.h>
 #include "parser.h"
 
-/* include file stack */
-#define MAXINCLUDES 512
-struct inc_stack_s {
-    YY_BUFFER_STATE state;
-    char * filename;
-    long int lineno;
-};
-struct inc_stack_s inc_stack[MAXINCLUDES] = { { .state = 0, .filename = NULL, .lineno =  1 } };
-
 static const char kStandardInput[] = "(standard input)";
-int inc_stackptr = 0;
 
 static void scan_err(const char * fmt, ...) __attribute__((format(printf, 1, 2)));
 void include_file(const char *);
@@ -83,8 +72,6 @@ id      {word}|({word})?:(({word})?:)+({word})?
              }
 
 {space}      /* ignore */
-
-\n           inc_stack[inc_stackptr].lineno++;
 
 include      BEGIN(include);
 
@@ -128,68 +115,38 @@ text         return TOK_TEXT;
 
 <include>[ \t]*       /* eat whitespace after include */
 <include>[^ \t\n;]+    { /* include file name */
-			  char * name = strdup(filtergen_text);
-              if (name == NULL) {
-                scan_err("warning: internal error trying to alloc for include of %s: %s", yytext, strerror(errno));
-              } else {
-  			    include_file(name);
-			    free(name);
-              }
-                          BEGIN(INITIAL);
-                       }
+    char * name;
+
+    name = strdup(yytext);
+    scan_err("including %s", name);
+    include_file(name);
+    free(name);
+    
+    BEGIN(INITIAL);
+}
 
 <<EOF>>                {
-                           if (!inc_stackptr) {
+                          scan_err("eof! popping state");
+                           yypop_buffer_state();
+
+                           if (!YY_CURRENT_BUFFER) {
                               yyterminate();
-			   } else {
-                             if (inc_stack[inc_stackptr].filename) {
-                               free(inc_stack[inc_stackptr].filename);
-                               inc_stack[inc_stackptr].filename = NULL;
-                             }
-                             inc_stackptr--;
-                             yy_delete_buffer(YY_CURRENT_BUFFER);
-                             yy_switch_to_buffer(inc_stack[inc_stackptr].state);
                            }
 			}
 %%
 
-long int filtergen_linenumber() {
-	return inc_stack[inc_stackptr].lineno;
-}
 
 const char * filtergen_filename(void) {
-    return inc_stack[inc_stackptr].filename ? inc_stack[inc_stackptr].filename
-                                          : kStandardInput;
+    return strdup("(unknown)");
 }
 
 static void scan_err(const char *fmt, ...) {
   va_list args;
 
     va_start(args, fmt);
-    if (inc_stackptr >= 0)
-	fprintf(stderr, "%s:%ld: ", filtergen_filename(), filtergen_linenumber());
+    fprintf(stderr, "%s:%d: ", filtergen_filename(), filtergen_get_lineno());
     vfprintf(stderr, fmt, args);
     fprintf(stderr, "\n");
-}
-
-void step_into_include_file(const char *fn) {
-  FILE *f;
-
-  if (inc_stackptr >= MAXINCLUDES - 1) {
-    scan_err("warning: too many nested includes");
-    scan_err("warning: skipping include of file \"%s\"", fn);
-    return;
-  }
-
-  if (!(f = fopen(fn, "r"))) {
-    scan_err("warning: can't open file \"%s\"", fn);
-  } else {
-    inc_stack[inc_stackptr++].state = YY_CURRENT_BUFFER;
-    inc_stack[inc_stackptr].lineno = 1;
-    inc_stack[inc_stackptr].filename = strdup(fn);
-    yyin = f;
-    yy_switch_to_buffer(yy_create_buffer(yyin, YY_BUF_SIZE));
-  }
 }
 
 /* include a file or directory */
@@ -221,7 +178,12 @@ void include_file(const char *name) {
             scan_err("warning: stat failed on globbed %s: %s",
                      glob_buf.gl_pathv[n], strerror(errno));
           } else if (S_ISREG(st.st_mode) || S_ISLNK(st.st_mode)) {
-            step_into_include_file(glob_buf.gl_pathv[n]);
+            scan_err("opening %s as file", glob_buf.gl_pathv[n]);
+yyin = fopen(glob_buf.gl_pathv[n], "r");
+if (!yyin) {
+scan_err("failed to open %s: %s", glob_buf.gl_pathv[n], strerror(errno));
+}
+		     yypush_buffer_state(yy_create_buffer(yyin, YY_BUF_SIZE));
           }
         }
       }
@@ -265,7 +227,15 @@ void include_file(const char *name) {
         free(namelist);
       }
     } else {
-      step_into_include_file(name);
+                     scan_err("opening %s as file", name);
+		     
+                     yyin = fopen(name, "r");
+		     if ( !yyin ) {
+			 scan_err("failed to open %s: %s", yytext, strerror(errno));
+		     }
+
+		     yypush_buffer_state(yy_create_buffer(yyin, YY_BUF_SIZE));
+		     
     }
   }
 }

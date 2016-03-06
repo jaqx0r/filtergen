@@ -75,12 +75,13 @@ if not env.GetOption("clean"):
 	env = conf.Finish()
 
 # choose debugging level
-if ARGUMENTS.get("debug") in ('yes', 'gcov'):
-	env.AppendUnique(CCFLAGS=['-g', '-O0'])
-	if ARGUMENTS.get("debug") in ('gcov'):
-		env.AppendUnique(CCFLAGS=['-fprofile-arcs', '-ftest-coverage'])
+if ARGUMENTS.get("debug") in ('no',):
+    env.AppendUnique(CCFLAGS=['-O2'])
 else:
-	env.AppendUnique(CCFLAGS=['-O2'])
+    env.AppendUnique(CCFLAGS=['-g', '-O0'])
+    if ARGUMENTS.get("debug") in ('gcov',):
+        env.AppendUnique(CCFLAGS=['-fprofile-arcs', '-ftest-coverage'])
+
 
 # set warning flags
 warnings = ['',
