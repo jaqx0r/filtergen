@@ -2,6 +2,7 @@
 %option nounput
 %option noinput
 %option prefix="filtergen_"
+%option yylineno
 %x include
 %x comment
 %{
@@ -51,7 +52,7 @@ id      {word}|({word})?:(({word})?:)+({word})?
 
 <comment>{
 [^*\n]*		/* eat anything that's not a '*' */
-"*"+[^*/\n]*	/* eat up '*'s not followes by '/'s */
+"*"+[^*/\n]*	/* eat up '*'s not followed by '/'s */
 \n		/* eat newlines */
 "*"+"/"		BEGIN(INITIAL);
 <<EOF>>		{
@@ -119,7 +120,6 @@ text         return TOK_TEXT;
     char * name;
 
     name = strdup(yytext);
-    scan_err("including %s", name);
     include_file(name);
     free(name);
     
@@ -127,16 +127,13 @@ text         return TOK_TEXT;
 }
 
 <<EOF>>                {
-    scan_err("eof! popping state");
     yypop_buffer_state();
-
     if (!YY_CURRENT_BUFFER) {
-	yyterminate();
+        yyterminate();
     }
 }
 
 %%
-
 
 const char * filtergen_filename(void) {
     char * fn = NULL;
@@ -144,8 +141,7 @@ const char * filtergen_filename(void) {
 }
 
 static void scan_err(const char *fmt, ...) {
-  va_list args;
-
+    va_list args;
     va_start(args, fmt);
     fprintf(stderr, "%s:%d: ", filtergen_filename(), filtergen_get_lineno());
     vfprintf(stderr, fmt, args);
