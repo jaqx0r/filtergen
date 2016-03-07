@@ -30,12 +30,12 @@ send "word\#blah\rword\r"
 expect {
     "kind = identifier, spelling = \"word\#\"" { fail $test }
     "kind = identifier, spelling = \"word\"" {
-	expect {
-	    "kind = UNRECOGNISED" { fail $test }
-	    "kind = identifier, spelling = \"word\"" { pass $test }
-	    timeout { fail $test }
-	    eof { fail "$test (eof)" }
-	}
+        expect {
+            "kind = UNRECOGNISED" { fail $test }
+            "kind = identifier, spelling = \"word\"" { pass $test }
+            timeout { fail $test }
+            eof { fail "$test (eof)" }
+        }
     }
     timeout { fail $test }
     eof { fail "$test (eof)" }
@@ -47,23 +47,23 @@ send "/* c comments can't nest */ ***/\r"
 
 expect {
     "kind = UNRECOGNISED" {
-	expect {
-	    "kind = UNRECOGNISED" {
-		expect {
-		    "kind = UNRECOGNISED" {
-			expect {
-			    "kind = slash" { pass $test }
-			    timeout { fail $test }
-			    eof { fail "$test (eof)" }
-			}
-		    }
-		    timeout { fail $test }
-		    eof { fail "$test (eof)" }
-		}
-	    }
-	    timeout { fail $test }
-	    eof { fail "$test (eof)" }
-	}
+        expect {
+            "kind = UNRECOGNISED" {
+                expect {
+                    "kind = UNRECOGNISED" {
+                        expect {
+                            "kind = slash" { pass $test }
+                            timeout { fail $test }
+                            eof { fail "$test (eof)" }
+                        }
+                    }
+                    timeout { fail $test }
+                    eof { fail "$test (eof)" }
+                }
+            }
+            timeout { fail $test }
+            eof { fail "$test (eof)" }
+        }
     }
     timeout { fail $test }
     eof { fail "$test (eof)" }

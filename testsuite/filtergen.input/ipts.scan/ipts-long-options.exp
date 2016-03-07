@@ -3,48 +3,48 @@ spawn input/iptables-save/t/scan
 set timeout 3
 
 set options [list \
-		 { "append" "CHAIN_APPEND" } \
-		 "protocol" \
-		 "source" \
-		 "destination" \
-		 "jump" \
-		 "in-interface" \
-		 "out-interface" \
-		 "fragment" \
-		 "set-counters" \
-		 "match" \
-		 "dport" \
-		 "sport" \
-		 { "destination-port" "DPORT" } \
-		 { "source-port" "SPORT" } \
-		 "syn" \
-		 "state" \
-		 "icmp-type" \
-		 "tcp-flags" \
-		 "tcp-option" \
-		 "mss" \
-		 "source-ports" \
-		 "destination-ports" \
-		 "ports" \
-		 { "sports" "SOURCE_PORTS" } \
-		 { "dports" "DESTINATION_PORTS" } \
-		 "to-ports" \
-		 "to-source" \
-		 "limit" \
-		 "log-prefix" \
-		 "uid-owner" \
-		 "reject-with" \
-		 "clamp-mss-to-pmtu" \
-		 "helper"
-		]
+                 { "append" "CHAIN_APPEND" } \
+                 "protocol" \
+                 "source" \
+                 "destination" \
+                 "jump" \
+                 "in-interface" \
+                 "out-interface" \
+                 "fragment" \
+                 "set-counters" \
+                 "match" \
+                 "dport" \
+                 "sport" \
+                 { "destination-port" "DPORT" } \
+                 { "source-port" "SPORT" } \
+                 "syn" \
+                 "state" \
+                 "icmp-type" \
+                 "tcp-flags" \
+                 "tcp-option" \
+                 "mss" \
+                 "source-ports" \
+                 "destination-ports" \
+                 "ports" \
+                 { "sports" "SOURCE_PORTS" } \
+                 { "dports" "DESTINATION_PORTS" } \
+                 "to-ports" \
+                 "to-source" \
+                 "limit" \
+                 "log-prefix" \
+                 "uid-owner" \
+                 "reject-with" \
+                 "clamp-mss-to-pmtu" \
+                 "helper"
+            ]
 
 foreach option_pair $options {
     if {[llength $option_pair] == 2} {
-	set option [lindex $option_pair 0]
-	set name [lindex $option_pair 1]
+        set option [lindex $option_pair 0]
+        set name [lindex $option_pair 1]
     } else {
-	set option $option_pair
-	set name [string map {"-" "_"} [string toupper $option]]
+        set option $option_pair
+        set name [string map {"-" "_"} [string toupper $option]]
     }
 
     verbose "option --$option name $name"
@@ -54,8 +54,8 @@ foreach option_pair $options {
     send -- "--$option\r"
 
     expect {
-	"kind = $name" { pass $test }
-	timeout { fail $test }
-	eof { fail "$test (eof)" }
+        "kind = $name" { pass $test }
+        timeout { fail $test }
+        eof { fail "$test (eof)" }
     }
 }

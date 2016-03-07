@@ -3,27 +3,27 @@ spawn input/filtergen/t/scan
 set timeout 3
 
 set punctuations [list \
-	{ "{" "lcurly" } \
-	{ "}" "rcurly" } \
-	{ "[" "lsquare" } \
-	{ "]" "rsquare" } \
-	{ ";" "semi" } \
-	{ "/" "slash" } \
-	{ ":" "colon" } \
-	{ "!" "bang" } \
-	]
+                      { "{" "lcurly" } \
+                      { "}" "rcurly" } \
+                      { "[" "lsquare" } \
+                      { "]" "rsquare" } \
+                      { ";" "semi" } \
+                      { "/" "slash" } \
+                      { ":" "colon" } \
+                      { "!" "bang" } \
+                     ]
 
 foreach punctpair $punctuations {
-	set punct [lindex punctpair 0]
-	set name [lindex punctpair 1]
+    set punct [lindex punctpair 0]
+    set name [lindex punctpair 1]
 
-	set test "$name token"
+    set test "$name token"
 
-	send "$punct\r"
+    send "$punct\r"
 
-	expect {
-		"kind = $name" { pass $test }
-		timeout { fail $test }
-		eof { fail "$test (eof)" }
-	}
+    expect {
+        "kind = $name" { pass $test }
+        timeout { fail $test }
+        eof { fail "$test (eof)" }
+    }
 }
