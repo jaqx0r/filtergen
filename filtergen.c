@@ -48,7 +48,7 @@ void usage(char *prog) {
 #ifdef HAVE_GETOPT_H
   fprintf(stderr, " --compile/-c              compile only, no generate\n");
 #else
-    fprintf(stderr, "\t-c\t\tcompile only, no generate\n");
+  fprintf(stderr, "\t-c\t\tcompile only, no generate\n");
 #endif
 
 #ifdef HAVE_GETOPT_H
@@ -59,15 +59,18 @@ void usage(char *prog) {
 #endif
 
 #ifdef HAVE_GETOPT_H
-    fprintf(stderr, " --source/-s source        source language (default: filtergen)\n");
+  fprintf(stderr,
+          " --source/-s source        source language (default: filtergen)\n");
 #else
-    fprintf(stderr, "\t-s source\tsource language (default: filtergen)\n");
+  fprintf(stderr, "\t-s source\tsource language (default: filtergen)\n");
 #endif
 
 #ifdef HAVE_GETOPT_H
-    fprintf(stderr, " --target/-t target        generate for target (default: iptables)\n");
+  fprintf(
+      stderr,
+      " --target/-t target        generate for target (default: iptables)\n");
 #else
-    fprintf(stderr, "\t-t target\tgenerate for target (default: iptables)\n");
+  fprintf(stderr, "\t-t target\tgenerate for target (default: iptables)\n");
 #endif
 
 #ifdef HAVE_GETOPT_H
@@ -75,26 +78,27 @@ void usage(char *prog) {
       stderr,
       " --flush/-F policy         don't process input, generate flush rules\n");
 #else
-    fprintf(stderr, "\t-F policy\tdon't process input, generate flush rules\n");
+  fprintf(stderr, "\t-F policy\tdon't process input, generate flush rules\n");
 #endif
 
 #ifdef HAVE_GETOPT_H
   fprintf(stderr, " --output/-o filename      write the generated packet "
                   "filter to filename\n");
 #else
-    fprintf(stderr, "\t-o filename\twrite the generated packet filter to filename\n");
+  fprintf(stderr,
+          "\t-o filename\twrite the generated packet filter to filename\n");
 #endif
 
 #ifdef HAVE_GETOPT_H
   fprintf(stderr, " --help/-h                 show this help\n");
 #else
-    fprintf(stderr, "\t-h\t\tshow this help\n");
+  fprintf(stderr, "\t-h\t\tshow this help\n");
 #endif
 
 #ifdef HAVE_GETOPT_H
   fprintf(stderr, " --version/-V              show program version\n");
 #else
-    fprintf(stderr, "\t-V\t\tshow program version\n");
+  fprintf(stderr, "\t-V\t\tshow program version\n");
 #endif
 }
 
@@ -113,20 +117,18 @@ int oputs(const char *s) {
 
 /** Write a string, printf style, to the target file. */
 int oprintf(const char *fmt, ...) {
-    va_list args;
-    va_start(args, fmt);
-    return vfprintf(outfile, fmt, args);
+  va_list args;
+  va_start(args, fmt);
+  return vfprintf(outfile, fmt, args);
 }
 
 /** Function pointer table containing source parsers */
 struct source_parser_s {
-    const char * name;
-    source_parser * parser;
-} source_parsers[] = {
-    { "filtergen", filtergen_source_parser },
-    { "iptables-save", ipts_source_parser },
-    { NULL, NULL }
-};
+  const char *name;
+  source_parser *parser;
+} source_parsers[] = {{"filtergen", filtergen_source_parser},
+                      {"iptables-save", ipts_source_parser},
+                      {NULL, NULL}};
 
 /** Function pointer table containing target filter types and the emitter
  * functions */
@@ -148,17 +150,15 @@ struct filtyp {
 };
 
 #ifdef HAVE_GETOPT_H
-static struct option long_options[] = {
-    {"help", no_argument, 0, 'h'},
-    {"compile", no_argument, 0, 'c'},
-    {"target", required_argument, 0, 't'},
-    {"output", required_argument, 0, 'o'},
-    {"flush", required_argument, 0, 'F'},
-    {"version", no_argument, 0, 'V'},
-    {"no-resolve", no_argument, 0, 'R'},
-    {"source", required_argument, 0, 's'},
-    {0, 0, 0, 0}
-};
+static struct option long_options[] = {{"help", no_argument, 0, 'h'},
+                                       {"compile", no_argument, 0, 'c'},
+                                       {"target", required_argument, 0, 't'},
+                                       {"output", required_argument, 0, 'o'},
+                                       {"flush", required_argument, 0, 'F'},
+                                       {"version", no_argument, 0, 'V'},
+                                       {"no-resolve", no_argument, 0, 'R'},
+                                       {"source", required_argument, 0, 's'},
+                                       {0, 0, 0, 0}};
 #define GETOPT(x, y, z) getopt_long(x, y, z, long_options, NULL)
 #else
 #define GETOPT(x, y, z) getopt(x, y, z)
@@ -166,15 +166,15 @@ static struct option long_options[] = {
 
 /** Program entry point. */
 int main(int argc, char **argv) {
-    struct filter *f;
-    int l;
-    char *filename = NULL, *ftn = NULL, *ofn = NULL, * source_name = NULL;
-    struct source_parser_s * sp;
-    struct filtyp *ft = NULL; 
-    int flags = 0;
-    char *progname;
-    int arg;
-    enum filtertype flushpol = T_ACCEPT;
+  struct filter *f;
+  int l;
+  char *filename = NULL, *ftn = NULL, *ofn = NULL, *source_name = NULL;
+  struct source_parser_s *sp;
+  struct filtyp *ft = NULL;
+  int flags = 0;
+  char *progname;
+  int arg;
+  enum filtertype flushpol = T_ACCEPT;
 
   progname = argv[0];
 
@@ -197,9 +197,9 @@ int main(int argc, char **argv) {
     case 'R':
       flags |= FF_NORESOLVE;
       break;
-	  case 's':
-	    source_name = strdup(optarg);
-	    break;
+    case 's':
+      source_name = strdup(optarg);
+      break;
     case 't':
       ftn = strdup(optarg);
       break;
@@ -244,29 +244,31 @@ int main(int argc, char **argv) {
   } else
     outfile = stdout;
 
-    /* work out which source parser to use */
-    if (!source_name || !*source_name) source_name = strdup("filtergen");
-    for (sp = source_parsers; sp->name; ++sp) {
-	if (!strcmp(source_name, sp->name))
-	    break;
-    }
-    if (!sp->name) {
-	fprintf(stderr, "%s: source parser unrecognised: %s", progname, source_name);
-	usage(progname);
-	exit(1);
-    }
+  /* work out which source parser to use */
+  if (!source_name || !*source_name)
+    source_name = strdup("filtergen");
+  for (sp = source_parsers; sp->name; ++sp) {
+    if (!strcmp(source_name, sp->name))
+      break;
+  }
+  if (!sp->name) {
+    fprintf(stderr, "%s: source parser unrecognised: %s", progname,
+            source_name);
+    usage(progname);
+    exit(1);
+  }
 
-    /* work out which target emitter to use */
-    if(!ftn || !*ftn) ftn = strdup("iptables");
-    for (ft = filter_types; ft->name; ft++)
-	if (!strcmp(ftn, ft->name))
-	    break;
-    if (!ft->name) {
-	fprintf(stderr, "%s: target filter unrecognised: %s\n", progname, ftn);
-	usage(progname);
-	exit(1);
-    }
-
+  /* work out which target emitter to use */
+  if (!ftn || !*ftn)
+    ftn = strdup("iptables");
+  for (ft = filter_types; ft->name; ft++)
+    if (!strcmp(ftn, ft->name))
+      break;
+  if (!ft->name) {
+    fprintf(stderr, "%s: target filter unrecognised: %s\n", progname, ftn);
+    usage(progname);
+    exit(1);
+  }
 
   if (!ftn || !*ftn)
     ftn = strdup("iptables");
@@ -280,31 +282,32 @@ int main(int argc, char **argv) {
     exit(1);
   }
 
-    /* What to do, then? */
-    if(flags & FF_FLUSH) {
-	/* Just flush it */
-	l = ft->flusher(flushpol);
+  /* What to do, then? */
+  if (flags & FF_FLUSH) {
+    /* Just flush it */
+    l = ft->flusher(flushpol);
+  } else {
+    FILE *file;
+
+    /* Compile from a file */
+    if (filename && !strcmp(filename, "-"))
+      filename = NULL;
+
+    if (filename) {
+      /** FIXME: make more effort to find the file */
+      if (!(file = fopen(filename, "r"))) {
+        fprintf(stderr, "can't open file \"%s\"", filename);
+      }
     } else {
-	FILE * file;
+      file = stdin;
+    }
 
-	/* Compile from a file */
-	if(filename && !strcmp(filename, "-")) filename = NULL;
+    struct filtergen_opts o;
+    memset(&o, 0, sizeof o);
+    o.family = ft->family;
 
-	if (filename) {
-	    /** FIXME: make more effort to find the file */
-	    if (!(file = fopen(filename, "r"))) {
-		fprintf(stderr, "can't open file \"%s\"", filename);
-	    }
-	} else {
-	    file = stdin;
-	}
-
-     struct filtergen_opts o;
-     memset(&o, 0, sizeof o);
-     o.family = ft->family;
-
-     f = sp->parser(file,  !(flags & FF_NORESOLVE), &o);
-	l = ft->compiler(f, flags);
+    f = sp->parser(file, !(flags & FF_NORESOLVE), &o);
+    l = ft->compiler(f, flags);
   }
 
   if (ofn)

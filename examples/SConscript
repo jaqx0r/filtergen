@@ -2,5 +2,4 @@ Import('env')
 
 import glob
 
-env.Distribute(env['DISTTREE'], ['SConscript',
-								 ] + glob.glob('*.filter'))
+env.Distribute(env['DISTTREE'], ['SConscript', ] + glob.glob('*.filter'))

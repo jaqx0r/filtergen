@@ -1,8 +1,8 @@
 Import('env')
 
 env.Library('out_ipfilter',
-			source=['fg-ipfilter.c'],
-			CPPPATH='../..')
+            source=['fg-ipfilter.c'],
+            CPPPATH='../..')
 
 env.Distribute(env['DISTTREE'], ['SConscript',
-								 'fg-ipfilter.c'])
+                                 'fg-ipfilter.c'])

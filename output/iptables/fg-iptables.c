@@ -304,32 +304,32 @@ static int cb_iptables_rule_common(const struct filterent *ent,
     break;
   case DROP:
     ruletarget = fortarget = strdup("DROP");
-	switch (ent->direction) {
-	  case INPUT:
-	    fortarget = strdup("FORW_OUT");
-	    break;
-	  case OUTPUT:
-	    /* nothing, fortarget is already DROP */
-	    break;
-	  default:
+    switch (ent->direction) {
+    case INPUT:
+      fortarget = strdup("FORW_OUT");
+      break;
+    case OUTPUT:
+      /* nothing, fortarget is already DROP */
+      break;
+    default:
       fprintf(stderr, "invalid direction: %d\n", ent->direction);
       return -1;
-	}
+    }
     needret = 0;
     break;
   case T_REJECT:
     ruletarget = fortarget = strdup("REJECT");
-	switch (ent->direction) {
-	  case INPUT:
-	    fortarget = strdup("FORW_OUT");
-	    break;
-	  case OUTPUT:
-	    /* nothing, fortarget is already DROP */
-	    break;
-	  default:
+    switch (ent->direction) {
+    case INPUT:
+      fortarget = strdup("FORW_OUT");
+      break;
+    case OUTPUT:
+      /* nothing, fortarget is already DROP */
+      break;
+    default:
       fprintf(stderr, "invalid direction: %d\n", ent->direction);
       return -1;
-	}
+    }
     needret = 0;
     *feat |= T_REJECT;
     break;
@@ -460,14 +460,16 @@ static int fg_iptables_common(struct filter *filter, int flags,
       oputs("for f in $CHAINS; do");
       if (feat & A_TCP) {
         r += nchains;
-        oprintf("\t%s -I $f -p tcp ! --syn -m conntrack --ctstate ESTABLISHED -j "
-                "ACCEPT;\n",
-                iptables);
+        oprintf(
+            "\t%s -I $f -p tcp ! --syn -m conntrack --ctstate ESTABLISHED -j "
+            "ACCEPT;\n",
+            iptables);
       }
       if (feat & A_UDP) {
         r += nchains;
-        oprintf("\t%s -I $f -p udp -m conntrack --ctstate ESTABLISHED -j ACCEPT;\n",
-                iptables);
+        oprintf(
+            "\t%s -I $f -p udp -m conntrack --ctstate ESTABLISHED -j ACCEPT;\n",
+            iptables);
       }
       oputs("done");
     }

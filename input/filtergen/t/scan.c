@@ -7,11 +7,11 @@
 #include "../parser.h"
 #include "../../sourcepos.h"
 
-extern char * filtergen_text;
+extern char *filtergen_text;
 int filtergen_lex();
 int filtergen_get_lineno();
 int filtergen_set_debug(int);
-char * filtergen_filename();
+char *filtergen_filename();
 
 char *tok_map(int c) {
   char *r;
@@ -113,31 +113,33 @@ char *tok_map(int c) {
   return r;
 }
 
-extern FILE* filtergen_in;
+extern FILE *filtergen_in;
 extern int yycolumn;
 extern int filtergen_lineno;
 
 int main(int argc __attribute__((unused)),
          char **argv __attribute__((unused))) {
-    int c;
+  int c;
 
-    char * YYDEBUGTRACE;
+  char *YYDEBUGTRACE;
 
-    YYDEBUGTRACE = getenv("YYDEBUGTRACE");
-    filtergen_set_debug(YYDEBUGTRACE ? atoi(YYDEBUGTRACE) : 0);
+  YYDEBUGTRACE = getenv("YYDEBUGTRACE");
+  filtergen_set_debug(YYDEBUGTRACE ? atoi(YYDEBUGTRACE) : 0);
 
-    if (argc > 1) {
-        sourcefile_push(argv[1]);
-    } else {
-        sourcefile_push("-");
-    }
-    filtergen_in = current_srcfile->f;
-    filtergen_lineno = current_srcfile->lineno;
-    yycolumn = current_srcfile->column;
+  if (argc > 1) {
+    sourcefile_push(argv[1]);
+  } else {
+    sourcefile_push("-");
+  }
+  filtergen_in = current_srcfile->f;
+  filtergen_lineno = current_srcfile->lineno;
+  yycolumn = current_srcfile->column;
 
-    /* all output is considered a compiler message by dejagnu */
-    while ((c = filtergen_lex())) {
-        fprintf(stderr, "%s:%d: kind = %s, spelling = \"%s\"\n", current_srcfile->pathname, current_srcfile->lineno, tok_map(c), filtergen_text);
-    }
-    return 0;
+  /* all output is considered a compiler message by dejagnu */
+  while ((c = filtergen_lex())) {
+    fprintf(stderr, "%s:%d: kind = %s, spelling = \"%s\"\n",
+            current_srcfile->pathname, current_srcfile->lineno, tok_map(c),
+            filtergen_text);
+  }
+  return 0;
 }

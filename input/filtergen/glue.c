@@ -25,12 +25,14 @@
 #include "parser.h"
 #include "resolver.h"
 
-int filtergen_parse(struct ast_s*);
+int filtergen_parse(struct ast_s *);
 int filtergen_restart(FILE *);
 
 int convtrace = 0;
 
-#define eprint(x) if (convtrace) fprintf(stderr, x)
+#define eprint(x)                                                              \
+  if (convtrace)                                                               \
+  fprintf(stderr, x)
 
 struct filter *convert_specifier_list(struct specifier_list_s *n,
                                       struct filtergen_opts *o);
@@ -94,7 +96,8 @@ struct filter *convert_direction_argument(struct direction_argument_s *n,
 }
 
 struct filter *
-  convert_direction_argument_list(struct direction_argument_list_s *n, int type,struct filtergen_opts *o) {
+convert_direction_argument_list(struct direction_argument_list_s *n, int type,
+                                struct filtergen_opts *o) {
   struct filter *res = NULL, *end = NULL;
 
   eprint("converting direction argument list\n");
@@ -120,7 +123,8 @@ struct filter *
   return res;
 }
 
-struct filter *convert_direction(struct direction_specifier_s *n,struct filtergen_opts *o) {
+struct filter *convert_direction(struct direction_specifier_s *n,
+                                 struct filtergen_opts *o) {
   struct filter *res = NULL;
   int type;
 
@@ -242,7 +246,8 @@ struct filter *convert_protocol_argument(struct protocol_argument_s *n) {
 }
 
 struct filter *
-  convert_protocol_argument_list(struct protocol_argument_list_s *n, struct filtergen_opts *o) {
+convert_protocol_argument_list(struct protocol_argument_list_s *n,
+                               struct filtergen_opts *o) {
   struct filter *res = NULL, *end = NULL;
 
   eprint("converting protocol argument list\n");
@@ -268,7 +273,8 @@ struct filter *
   return res;
 }
 
-struct filter *convert_protocol_specifier(struct protocol_specifier_s *n, struct filtergen_opts *o) {
+struct filter *convert_protocol_specifier(struct protocol_specifier_s *n,
+                                          struct filtergen_opts *o) {
   struct filter *res = NULL;
 
   eprint("converting protocol specifier\n");
@@ -333,7 +339,8 @@ struct filter *convert_port_argument_list(struct port_argument_list_s *n,
   return res;
 }
 
-struct filter *convert_port_specifier(struct port_specifier_s *n, struct filtergen_opts *o) {
+struct filter *convert_port_specifier(struct port_specifier_s *n,
+                                      struct filtergen_opts *o) {
   struct filter *res = NULL;
   enum filtertype type;
 
@@ -375,7 +382,8 @@ struct filter *convert_icmptype_argument(struct icmptype_argument_s *n) {
 }
 
 struct filter *
-  convert_icmptype_argument_list(struct icmptype_argument_list_s *n,struct filtergen_opts *o) {
+convert_icmptype_argument_list(struct icmptype_argument_list_s *n,
+                               struct filtergen_opts *o) {
   struct filter *res = NULL, *end = NULL;
 
   eprint("converting icmptype argument list\n");
@@ -401,7 +409,8 @@ struct filter *
   return res;
 }
 
-struct filter *convert_icmptype_specifier(struct icmptype_specifier_s *n,struct filtergen_opts *o) {
+struct filter *convert_icmptype_specifier(struct icmptype_specifier_s *n,
+                                          struct filtergen_opts *o) {
   struct filter *res = NULL;
 
   eprint("converting icmptype specifier\n");
@@ -621,27 +630,28 @@ struct filter *convert(struct ast_s *ast, struct filtergen_opts *o) {
 
   if (ast->list) {
     res = convert_rule_list(ast->list, o);
-}
+  }
 
   return res;
 }
 
-struct filter * filtergen_source_parser(FILE * file, int resolve_names, struct filtergen_opts *o) {
-    struct ast_s ast;
-    struct filter * f;
+struct filter *filtergen_source_parser(FILE *file, int resolve_names,
+                                       struct filtergen_opts *o) {
+  struct ast_s ast;
+  struct filter *f;
 
-    filtergen_restart(file);
-    if (filtergen_parse(&ast) == 0) {
-	if (resolve_names)
+  filtergen_restart(file);
+  if (filtergen_parse(&ast) == 0) {
+    if (resolve_names)
       resolve(&ast, o);
-	f = convert(&ast, o);
-	if (!f) {
-	    fprintf(stderr, "couldn't convert file to IR\n");
-	    return NULL;
-	}
-    } else {
-	fprintf(stderr, "couldn't parse file\n");
-	return NULL;
+    f = convert(&ast, o);
+    if (!f) {
+      fprintf(stderr, "couldn't convert file to IR\n");
+      return NULL;
     }
-    return f;
+  } else {
+    fprintf(stderr, "couldn't parse file\n");
+    return NULL;
+  }
+  return f;
 }

@@ -25,82 +25,82 @@
 #include "util.h"
 
 /** Callback for emitting filterents containing rules. */
-static int out_filtergen_rule(const struct filterent * ent, struct fg_misc * misc __attribute__((unused))) {
+static int out_filtergen_rule(const struct filterent *ent,
+                              struct fg_misc *misc __attribute__((unused))) {
 
-    char * rule = NULL;
+  char *rule = NULL;
 
-    switch (ent->direction) {
-      case INPUT:
-	APPSS2(rule, "input", ent->iface);
-	break;
-      case OUTPUT:
-	APPSS2(rule, "output", ent->iface);
-	break;
-      default:
-	break;
-    }
+  switch (ent->direction) {
+  case INPUT:
+    APPSS2(rule, "input", ent->iface);
+    break;
+  case OUTPUT:
+    APPSS2(rule, "output", ent->iface);
+    break;
+  default:
+    break;
+  }
 
-    if (ent->srcaddr.addrstr) {
-	APPSS2(rule, "source", ent->srcaddr.addrstr);
-	if (ent->srcaddr.maskstr)
-	    APP2(rule, "/", ent->srcaddr.maskstr);
-    }
+  if (ent->srcaddr.addrstr) {
+    APPSS2(rule, "source", ent->srcaddr.addrstr);
+    if (ent->srcaddr.maskstr)
+      APP2(rule, "/", ent->srcaddr.maskstr);
+  }
 
-    if (ent->dstaddr.addrstr) {
-	APPSS2(rule, "dest", ent->dstaddr.addrstr);
-	if (ent->dstaddr.maskstr)
-	    APP2(rule, "/", ent->dstaddr.maskstr);
-    }
+  if (ent->dstaddr.addrstr) {
+    APPSS2(rule, "dest", ent->dstaddr.addrstr);
+    if (ent->dstaddr.maskstr)
+      APP2(rule, "/", ent->dstaddr.maskstr);
+  }
 
-    if (ent->proto.name)
-	APPSS2(rule, "proto", ent->proto.name);
+  if (ent->proto.name)
+    APPSS2(rule, "proto", ent->proto.name);
 
-    if (ent->u.ports.src.minstr) {
-	APPSS2(rule, "sport", ent->u.ports.src.minstr);
-	if (ent->u.ports.src.maxstr)
-	    APP2(rule, ":", ent->u.ports.src.maxstr);
-    }
+  if (ent->u.ports.src.minstr) {
+    APPSS2(rule, "sport", ent->u.ports.src.minstr);
+    if (ent->u.ports.src.maxstr)
+      APP2(rule, ":", ent->u.ports.src.maxstr);
+  }
 
-    if (ent->u.ports.dst.minstr) {
-	APPSS2(rule, "dport", ent->u.ports.dst.minstr);
-	if (ent->u.ports.dst.maxstr)
-	    APP2(rule, ":", ent->u.ports.dst.maxstr);
-    }
+  if (ent->u.ports.dst.minstr) {
+    APPSS2(rule, "dport", ent->u.ports.dst.minstr);
+    if (ent->u.ports.dst.maxstr)
+      APP2(rule, ":", ent->u.ports.dst.maxstr);
+  }
 
-    if (ent->u.icmp)
-	APPSS2(rule, "icmptype", ent->u.icmp);
+  if (ent->u.icmp)
+    APPSS2(rule, "icmptype", ent->u.icmp);
 
-    if (ESET(ent,LOG)) APPS(rule, "log");
+  if (ESET(ent, LOG))
+    APPS(rule, "log");
 
-    switch (ent->target) {
-      case T_ACCEPT:
-	APPS(rule, "accept");
-	break;
-      case DROP:
-	APPS(rule, "drop");
-	break;
-      case T_REJECT:
-	APPS(rule, "reject");
-	break;
-      default:
-	break;
-    }
+  switch (ent->target) {
+  case T_ACCEPT:
+    APPS(rule, "accept");
+    break;
+  case DROP:
+    APPS(rule, "drop");
+    break;
+  case T_REJECT:
+    APPS(rule, "reject");
+    break;
+  default:
+    break;
+  }
 
-    APPS(rule, ";");
-    oputs(rule);
-    free(rule);
-    return 1;
+  APPS(rule, ";");
+  oputs(rule);
+  free(rule);
+  return 1;
 }
 
 /** Emit the filter's internal representation into the filtergen language */
-int emit_filtergen(struct filter * filter, int flags) {
-    struct fg_misc misc = { flags, NULL };
-    fg_callback out_filtergen_cb = {
-	rule: out_filtergen_rule, NULL
-    };
+int emit_filtergen(struct filter *filter, int flags) {
+  struct fg_misc misc = {flags, NULL};
+  fg_callback out_filtergen_cb = {rule : out_filtergen_rule, NULL};
 
-    filter_nogroup(filter);
-    filter_unroll(&filter);
+  filter_nogroup(filter);
+  filter_unroll(&filter);
 
-    return filtergen_cprod(filter, &out_filtergen_cb, &misc);
+  return filtergen_cprod(filter, &out_filtergen_cb, &misc);
 }

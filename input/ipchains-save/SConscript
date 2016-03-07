@@ -1,5 +1,4 @@
 Import('env')
 
 env.Library('in_ipchains_save',
-			source=['parser.y', 'scanner.l']
-			)
+            source=['parser.y', 'scanner.l'])

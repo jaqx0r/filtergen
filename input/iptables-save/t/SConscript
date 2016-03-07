@@ -1,21 +1,19 @@
 Import('env')
 
 env.Distribute(env['DISTTREE'], ['SConscript',
-								 'scan.c',
-								 'parse.c',
-								 'emit.c',
-								 ])
+                                 'scan.c',
+                                 'parse.c',
+                                 'emit.c', ])
 
 env = env.Clone()
 env.AppendUnique(CPPPATH=['../../..', '..'],
-				 LIBPATH=['..'],
-				 LIBS=['in_iptables_save'],
-				 CPPFLAGS=['-Dyyparse=ipts_parse',
-						   '-Dconvert=ipts_convert',
-						   '-Dconvtrace=ipts_convtrace',
-						   '-Dyydebug=ipts_debug',
-						   '-Dyyrestart=ipts_restart',
-						   ])
+                 LIBPATH=['..'],
+                 LIBS=['in_iptables_save'],
+                 CPPFLAGS=['-Dyyparse=ipts_parse',
+                           '-Dconvert=ipts_convert',
+                           '-Dconvtrace=ipts_convtrace',
+                           '-Dyydebug=ipts_debug',
+                           '-Dyyrestart=ipts_restart', ])
 
 env.Program('scan.c')
 env.Program('parse.c')

@@ -434,11 +434,12 @@ static int fg_iptrestore_common(struct filter *filter, int flags,
     if ((flags & FF_LSTATE) && (feat & (A_TCP | A_UDP))) {
       if (feat & A_TCP) {
         r += nchains;
-        oputs("-I INPUT -p tcp ! --syn -m conntrack --ctstate ESTABLISHED -j ACCEPT");
-        oputs(
-            "-I OUTPUT -p tcp ! --syn -m conntrack --ctstate ESTABLISHED -j ACCEPT");
-        oputs(
-            "-I FORWARD -p tcp ! --syn -m conntrack --ctstate ESTABLISHED -j ACCEPT");
+        oputs("-I INPUT -p tcp ! --syn -m conntrack --ctstate ESTABLISHED -j "
+              "ACCEPT");
+        oputs("-I OUTPUT -p tcp ! --syn -m conntrack --ctstate ESTABLISHED -j "
+              "ACCEPT");
+        oputs("-I FORWARD -p tcp ! --syn -m conntrack --ctstate ESTABLISHED -j "
+              "ACCEPT");
       }
       if (feat & A_UDP) {
         r += nchains;

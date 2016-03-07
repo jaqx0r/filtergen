@@ -1,12 +1,10 @@
 Import('env')
 
-sources = ['ir.c',
-		   ]
+sources = ['ir.c', ]
 
 env.Distribute(env['DISTTREE'], sources + ['SConscript',
-										   'ir.h',
-										   'emit.c'
-										   ])
+                                           'ir.h',
+                                           'emit.c'])
 
 t = env.Clone()
 

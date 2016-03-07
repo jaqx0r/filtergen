@@ -1,9 +1,8 @@
 Import('env')
 
 env.Library('out_cisco',
-			source=['fg-cisco.c'],
-			CPPPATH='../..')
+            source=['fg-cisco.c'],
+            CPPPATH='../..')
 
 env.Distribute(env['DISTTREE'], ['SConscript',
-								 'fg-cisco.c',
-								 ])
+                                 'fg-cisco.c', ])

@@ -24,64 +24,73 @@
 #include "sourcepos.h"
 
 /* Top of source file stack during parse. */
-struct sourcefile* current_srcfile = NULL;
+struct sourcefile *current_srcfile = NULL;
 
 /* Limit infinite recursion. */
 #define MAX_SRCFILE_DEPTH 100
 static int srcfile_depth = 0;
 
-extern void filtergen_error(const char* s, ...);
-extern void filtergen_warn(const char* s, ...);
+extern void filtergen_error(const char *s, ...);
+extern void filtergen_warn(const char *s, ...);
 
-void sourcefile_push(const char* pathname) {
-    struct sourcefile* sf;
+void sourcefile_push(const char *pathname) {
+  struct sourcefile *sf;
 
-    if (srcfile_depth++ > MAX_SRCFILE_DEPTH) {
-        filtergen_warn("too many nested includes.  skipping include of file %s\n", pathname);
-        return;
+  if (srcfile_depth++ > MAX_SRCFILE_DEPTH) {
+    filtergen_warn("too many nested includes.  skipping include of file %s\n",
+                   pathname);
+    return;
+  }
+
+  if ((sf = malloc(sizeof(*sf))) == NULL) {
+    fprintf(stderr, "malloc failed attempting to push new sourcefile onto "
+                    "stack when opening %s: %s\n",
+            pathname, strerror(errno));
+    return;
+  }
+
+  if (strncmp(pathname, "-", 1) == 0) {
+    sf->f = stdin;
+    if (asprintf(&sf->pathname, "<stdin>") < 0) {
+      fprintf(stderr, "error: asprintf allocation failed when constructing "
+                      "sourcefile pathname for %s\n",
+              pathname);
+      free(sf);
+      return;
     }
-
-    if ((sf = malloc(sizeof(*sf))) == NULL) {
-        fprintf(stderr, "malloc failed attempting to push new sourcefile onto stack when opening %s: %s\n", pathname, strerror(errno));
-        return;
+  } else {
+    sf->f = fopen(pathname, "r");
+    if (!sf->f) {
+      fprintf(stderr, "fopen failed reading %s: %s\n", pathname,
+              strerror(errno));
+      free(sf);
+      return;
     }
-
-    if (strncmp(pathname, "-", 1) == 0) {
-        sf->f = stdin;
-        if (asprintf(&sf->pathname, "<stdin>") < 0) {
-            fprintf(stderr, "error: asprintf allocation failed when constructing sourcefile pathname for %s\n", pathname);
-            free(sf);
-            return;
-        }
-    } else  {
-        sf->f = fopen(pathname, "r");
-        if (!sf->f) {
-            fprintf(stderr, "fopen failed reading %s: %s\n", pathname, strerror(errno));
-            free(sf);
-            return;
-        }
-        if (asprintf(&sf->pathname, "%s", pathname) < 0) {
-            fprintf(stderr, "error: asprintf allocation failed when constructing sourcefile pathname for %s\n", pathname);
-            free(sf);
-            return;
-        }
+    if (asprintf(&sf->pathname, "%s", pathname) < 0) {
+      fprintf(stderr, "error: asprintf allocation failed when constructing "
+                      "sourcefile pathname for %s\n",
+              pathname);
+      free(sf);
+      return;
     }
-    sf->next = current_srcfile;
-    sf->lineno = 1;
-    sf->column = 1;
+  }
+  sf->next = current_srcfile;
+  sf->lineno = 1;
+  sf->column = 1;
 
-    current_srcfile = sf;
+  current_srcfile = sf;
 }
 
 void sourcefile_pop() {
-    struct sourcefile* sf = current_srcfile;
+  struct sourcefile *sf = current_srcfile;
 
-    current_srcfile = sf->next;
+  current_srcfile = sf->next;
 
-    if (fclose(sf->f)) {
-        fprintf(stderr, "failed to close file when popping sourcefile stack: %s\n", strerror(errno));
-        return;
-    }
-    free(sf);
-    srcfile_depth--;
+  if (fclose(sf->f)) {
+    fprintf(stderr, "failed to close file when popping sourcefile stack: %s\n",
+            strerror(errno));
+    return;
+  }
+  free(sf);
+  srcfile_depth--;
 }

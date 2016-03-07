@@ -1,20 +1,18 @@
 Import('env')
 
 env.Distribute(env['DISTTREE'], ['SConscript',
-								'scan.c',
-								'parse.c',
-								'emit.c',
-								])
+                                 'scan.c',
+                                 'parse.c',
+                                 'emit.c', ])
 
 env = env.Clone()
 env.AppendUnique(CPPPATH=['../../..', '..'],
-				 LIBPATH=['..', '#input'],
-				 LIBS=['in_filtergen', 'sourcepos'],
-				 CPPFLAGS=['-Dyyparse=filtergen_parse',
-						   '-Dyydebug=filtergen_debug',
-						   ])
+                 LIBPATH=['..', '#input'],
+                 LIBS=['in_filtergen', 'sourcepos'],
+                 CPPFLAGS=['-Dyyparse=filtergen_parse',
+                           '-Dyydebug=filtergen_debug', ])
 
 env.Program('scan.c')
 env.Program('parse.c')
 env.Program('emit.c')
-#env.Program('convert', source=['#t/convert.c', '#filter.o', '#fg-util.o'])
+# env.Program('convert', source=['#t/convert.c', '#filter.o', '#fg-util.o'])
