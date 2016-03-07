@@ -184,8 +184,8 @@ static int cb_iptables_rule_common(const struct filterent *ent,
       break;
     }
     if (needstate) {
-      APPS(rule, "-m state --state NEW,ESTABLISHED");
-      APPS(rule_r, "-m state --state ESTABLISHED");
+      APPS(rule, "-m conntrack --ctstate NEW,ESTABLISHED");
+      APPS(rule_r, "-m conntrack --ctstate ESTABLISHED");
     }
   }
 
@@ -447,7 +447,7 @@ static int fg_iptables_common(struct filter *filter, int flags,
 #endif
     oprintf("%s -A INVALID -j DROP\n", iptables);
     oprintf("for f in $CHAINS; do\n"
-            "\t%s -I $f -m state --state INVALID -j INVALID;\n"
+            "\t%s -I $f -m conntrack --ctstate INVALID -j INVALID;\n"
             "done\n",
             iptables);
     oputs("");
@@ -460,13 +460,13 @@ static int fg_iptables_common(struct filter *filter, int flags,
       oputs("for f in $CHAINS; do");
       if (feat & A_TCP) {
         r += nchains;
-        oprintf("\t%s -I $f -p tcp ! --syn -m state --state ESTABLISHED -j "
+        oprintf("\t%s -I $f -p tcp ! --syn -m conntrack --ctstate ESTABLISHED -j "
                 "ACCEPT;\n",
                 iptables);
       }
       if (feat & A_UDP) {
         r += nchains;
-        oprintf("\t%s -I $f -p udp -m state --state ESTABLISHED -j ACCEPT;\n",
+        oprintf("\t%s -I $f -p udp -m conntrack --ctstate ESTABLISHED -j ACCEPT;\n",
                 iptables);
       }
       oputs("done");

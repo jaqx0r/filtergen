@@ -181,8 +181,8 @@ static int cb_iptrestore_rule_common(const struct filterent *ent,
       break;
     }
     if (needstate) {
-      APPS(rule, "-m state --state NEW,ESTABLISHED");
-      APPS(rule_r, "-m state --state ESTABLISHED");
+      APPS(rule, "-m conntrack --ctstate NEW,ESTABLISHED");
+      APPS(rule_r, "-m conntrack --ctstate ESTABLISHED");
     }
   }
 
@@ -422,9 +422,9 @@ static int fg_iptrestore_common(struct filter *filter, int flags,
     oputs("-N INVALID");
     oputs("-A INVALID -j DROP");
 
-    oputs("-I INPUT -m state --state INVALID -j INVALID");
-    oputs("-I OUTPUT -m state --state INVALID -j INVALID");
-    oputs("-I FORWARD -m state --state INVALID -j INVALID");
+    oputs("-I INPUT -m conntrack --ctstate INVALID -j INVALID");
+    oputs("-I OUTPUT -m conntrack --ctstate INVALID -j INVALID");
+    oputs("-I FORWARD -m conntrack --ctstate INVALID -j INVALID");
     oputs("");
     r += nchains;
   }
@@ -434,17 +434,17 @@ static int fg_iptrestore_common(struct filter *filter, int flags,
     if ((flags & FF_LSTATE) && (feat & (A_TCP | A_UDP))) {
       if (feat & A_TCP) {
         r += nchains;
-        oputs("-I INPUT -p tcp ! --syn -m state --state ESTABLISHED -j ACCEPT");
+        oputs("-I INPUT -p tcp ! --syn -m conntrack --ctstate ESTABLISHED -j ACCEPT");
         oputs(
-            "-I OUTPUT -p tcp ! --syn -m state --state ESTABLISHED -j ACCEPT");
+            "-I OUTPUT -p tcp ! --syn -m conntrack --ctstate ESTABLISHED -j ACCEPT");
         oputs(
-            "-I FORWARD -p tcp ! --syn -m state --state ESTABLISHED -j ACCEPT");
+            "-I FORWARD -p tcp ! --syn -m conntrack --ctstate ESTABLISHED -j ACCEPT");
       }
       if (feat & A_UDP) {
         r += nchains;
-        oputs("-I INPUT -p udp -m state --state ESTABLISHED -j ACCEPT");
-        oputs("-I OUTPUT -p udp -m state --state ESTABLISHED -j ACCEPT");
-        oputs("-I FORWARD -p udp -m state --state ESTABLISHED -j ACCEPT");
+        oputs("-I INPUT -p udp -m conntrack --ctstate ESTABLISHED -j ACCEPT");
+        oputs("-I OUTPUT -p udp -m conntrack --ctstate ESTABLISHED -j ACCEPT");
+        oputs("-I FORWARD -p udp -m conntrack --ctstate ESTABLISHED -j ACCEPT");
       }
     }
   }
