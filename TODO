@@ -4,6 +4,9 @@ TODO for filtergen
 milestones for version 0.13
 --------------------------
 
+* Make the test suite work.
+* Resolve fg-iptrestore.c and output/iptables-restore.
+  - Two contributors created the same thing; fix the subtle differences.
 * Fixup and maintain the cisco and ipfilter backends
 
   - Cisco needs testing, negation fixes and options for reflexive
