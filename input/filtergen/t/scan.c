@@ -126,7 +126,7 @@ int main(int argc __attribute__((unused)),
   YYDEBUGTRACE = getenv("YYDEBUGTRACE");
   filtergen_set_debug(YYDEBUGTRACE ? atoi(YYDEBUGTRACE) : 0);
 
-  if (argc > 1) {
+  if (argc > 0) {
     sourcefile_push(argv[1]);
   } else {
     sourcefile_push("-");

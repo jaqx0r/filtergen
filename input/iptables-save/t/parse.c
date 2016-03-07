@@ -15,7 +15,7 @@ int main(int argc __attribute__((unused)),
   YYDEBUGTRACE = getenv("YYDEBUGTRACE");
   yydebug = YYDEBUGTRACE ? atoi(YYDEBUGTRACE) : 0;
 
-  if (argc > 1) {
+  if (argc > 0) {
     FILE *f = fopen(argv[1], "r");
     yyrestart(f);
   }

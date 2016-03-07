@@ -82,7 +82,7 @@ int main(int argc __attribute__((unused)),
          char **argv __attribute__((unused))) {
   int c;
 
-  if (argc > 1) {
+  if (argc > 0) {
     ipts_in = fopen(argv[1], "r");
   }
 
