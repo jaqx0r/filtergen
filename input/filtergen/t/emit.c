@@ -4,10 +4,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "../ast.h"
+#include "ast.h"
 #include "../parser.h"
 
-int yyparse(void *);
 int emittrace = 0;
 
 #define EMIT(x) void emit_##x(struct x##_s *n)

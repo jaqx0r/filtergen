@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "ast.h"
 #include "../parser.h"
 #include "../../sourcepos.h"
 
