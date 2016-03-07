@@ -163,8 +163,7 @@ filtergen = env.Program('filtergen', filtergen_sources,
 Default(filtergen)
 env.Distribute(env['DISTTREE'], filtergen_sources + ['filter.h',
                                                      'icmpent.h',
-                                                     'util.h',
-                                                     'factoriser.h', ])
+                                                     'util.h'])
 
 
 def sed(target, source, env):
