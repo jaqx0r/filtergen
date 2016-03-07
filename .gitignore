@@ -78,3 +78,9 @@ input/filtergen/t/scan
 input/iptables-save/t/parse
 input/iptables-save/t/scan
 /dbg.log
+/input/iptables-save/t/convert
+/testsuite/filtergen.input/fg.scan/dbg.log
+/testsuite/filtergen.input/fg.scan/testrun.log
+/testsuite/filtergen.input/fg.scan/testrun.sum
+/testsuite/filtergen.input/ipts.scan/testrun.log
+/testsuite/filtergen.input/ipts.scan/testrun.sum
