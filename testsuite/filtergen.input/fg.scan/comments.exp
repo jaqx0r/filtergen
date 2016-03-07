@@ -1,4 +1,4 @@
-spawn input/filtergen/t/scan
+spawn input/filtergen/t/scan -
 
 set timeout 3
 
@@ -46,11 +46,11 @@ set test "nested end comment"
 send "/* c comments can't nest */ ***/\r"
 
 expect {
-    "kind = UNRECOGNISED" {
+    "kind = star" {
         expect {
-            "kind = UNRECOGNISED" {
+            "kind = star" {
                 expect {
-                    "kind = UNRECOGNISED" {
+                    "kind = star" {
                         expect {
                             "kind = slash" { pass $test }
                             timeout { fail $test }

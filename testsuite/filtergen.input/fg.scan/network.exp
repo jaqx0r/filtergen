@@ -3,7 +3,7 @@ set networks [list \
 		  "http" \
 		  ]
 
-spawn input/filtergen/t/scan
+spawn input/filtergen/t/scan -
 
 set timeout 3
 

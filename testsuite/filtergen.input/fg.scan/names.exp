@@ -6,7 +6,7 @@ set names [list \
 	"mail.example.com" \
 	]
 
-spawn input/filtergen/t/scan
+spawn input/filtergen/t/scan -
 
 set timeout 3
 
