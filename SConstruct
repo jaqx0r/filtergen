@@ -9,9 +9,7 @@ VERSION = '0.13'
 
 vars = Variables(None, ARGUMENTS)
 vars.AddVariables(
-    EnumVariable('debug', 'debugging compiler options', 'no',
-                 allowed_values=('yes', 'no', 'gcov'),
-                 map={}),
+    BoolVariable('debug', 'debugging compiler options', 1),
     BoolVariable('profiler', 'enable support for profiler', 0),
     BoolVariable('gcov', 'enable test coverage with gcov', 0),
 )
@@ -75,18 +73,15 @@ if not env.GetOption('clean'):
 
     if ARGUMENTS.get('gcov', 0):
         if conf.CheckLib('gcov'):
-            env.AppendUnique(CCFLAGS=['-fprofile-arcs', '-ftest-coverage'])
+            conf.env.AppendUnique(CCFLAGS=['-fprofile-arcs', '-ftest-coverage'])
 
     env = conf.Finish()
 
 # choose debugging level
-if ARGUMENTS.get('debug') in ('no',):
-    env.AppendUnique(CCFLAGS=['-O2'])
-else:
+if ARGUMENTS.get('debug', 1):
     env.AppendUnique(CCFLAGS=['-g', '-O0'])
-    if ARGUMENTS.get('debug') in ('gcov',):
-        env.AppendUnique(CCFLAGS=['-fprofile-arcs', '-ftest-coverage'])
-
+else:
+    env.AppendUnique(CCFLAGS=['-O2'])
 
 # set warning flags
 warnings = ['',
@@ -135,23 +130,8 @@ pkgexdir = pkgdocdir + '/examples'
 # Add the top level directory to the include path
 env.AppendUnique(CPPPATH=['#'])
 
-filtergen_sources = ['filtergen.c',
-                     'gen.c',
-                     'filter.c',
-                     'fg-util.c',
-                     'fg-iptrestore.c',
-                     'icmpent.c', ]
-filtergen = env.Program('filtergen', filtergen_sources,
-                        LIBS=['in_filtergen',
-                              'in_iptables_save',
-                              'sourcepos',
-                              'out_iptables',
-                              'out_iptablesrestore',
-                              'out_ipchains',
-                              'out_ipfilter',
-                              'out_cisco',
-                              'out_filtergen', ],
-                        LIBPATH=['input',
+env.AppendUnique(LIBPATH=
+                        ['input',
                                  'input/filtergen',
                                  'input/iptables-save',
                                  'output/iptables',
@@ -160,6 +140,26 @@ filtergen = env.Program('filtergen', filtergen_sources,
                                  'output/ipfilter',
                                  'output/cisco',
                                  'output/filtergen', ])
+
+filtergen_sources = ['filtergen.c',
+                     'gen.c',
+                     'filter.c',
+                     'fg-util.c',
+                     'fg-iptrestore.c',
+                     'icmpent.c', ]
+fg_env = env.Clone()
+fg_env.AppendUnique(
+                        LIBS=['in_filtergen',
+                              'in_iptables_save',
+                              'sourcepos',
+                              'out_iptables',
+                              'out_iptablesrestore',
+                              'out_ipchains',
+                              'out_ipfilter',
+                              'out_cisco',
+                              'out_filtergen', ])
+filtergen = fg_env.Program('filtergen', filtergen_sources)
+
 Default(filtergen)
 env.Distribute(env['DISTTREE'], filtergen_sources + ['filter.h',
                                                      'icmpent.h',
@@ -233,8 +233,8 @@ Precious(env['DISTTREE'])
 
 env.Distribute(
     env['DISTTREE'],
-    ['SConstruct', 'Doxyfile', 'AUTHORS', 'THANKS', 'README', 'INSTALL',
-     'HISTORY', 'HONESTY', 'HACKING', 'TODO', 'filtergen.8', 'fgadm.8',
+    ['SConstruct', 'Doxyfile', 'AUTHORS', 'THANKS', 'README.md',
+     'HISTORY', 'HONESTY', 'TODO', 'filtergen.8', 'fgadm.8',
      'filter_syntax.5', 'filter_backends.7', 'filtergen.spec.in', ])
 
 srcdist = env.Tarball(env['TARBALL'], env['DISTTREE'])
