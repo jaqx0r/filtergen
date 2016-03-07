@@ -45,13 +45,13 @@ def tarballer (target, source, env):
 	return p.close ()
 
 dist_bld = Builder(action = distcopy,
-				   target_factory = SCons.Node.FS.default_fs.Entry,
-				   source_factory = SCons.Node.FS.default_fs.Entry,
-				   multi = 1)
+                   target_factory = SCons.Node.FS.default_fs.Entry,
+                   source_factory = SCons.Node.FS.default_fs.Entry,
+                   multi = 1)
 
 tarball_bld = Builder(action = tarballer,
-					  target_factory = SCons.Node.FS.default_fs.Entry,
-					  source_factory = SCons.Node.FS.default_fs.Entry)
+                      target_factory = SCons.Node.FS.default_fs.Entry,
+                      source_factory = SCons.Node.FS.default_fs.Entry)
 
 env.Append(BUILDERS = {'Distribute': dist_bld})
 env.Append(BUILDERS = {'Tarball': tarball_bld})
@@ -139,30 +139,31 @@ filtergen_sources = ['filtergen.c',
 					 'icmpent.c',
 					 ]
 filtergen  = env.Program('filtergen', filtergen_sources,
-						 LIBS=['in_filtergen',
-							   'in_iptables_save',
-							   'out_iptables',
-							   'out_ipchains',
-							   'out_ipfilter',
-							   'out_cisco',
-							   'out_filtergen',
-							   ],
-						 LIBPATH=['input/filtergen',
-								  'input/iptables-save',
-								  'output/iptables',
-								  'output/ipchains',
-								  'output/ipfilter',
-								  'output/cisco',
-								  'output/filtergen',
-								  ]
-						 )
+                         LIBS=['in_filtergen',
+                               'in_iptables_save',
+                               'sourcepos',
+                               'out_iptables',
+                               'out_ipchains',
+                               'out_ipfilter',
+                               'out_cisco',
+                               'out_filtergen',
+                               ],
+                         LIBPATH=['input',
+                                  'input/filtergen',
+                                  'input/iptables-save',
+                                  'output/iptables',
+                                  'output/ipchains',
+                                  'output/ipfilter',
+                                  'output/cisco',
+                                  'output/filtergen',
+                                  ]
+                         )
 Default(filtergen)
 env.Distribute(env['DISTTREE'], filtergen_sources + ['filter.h',
-													 'icmpent.h',
-													 'util.h',
-													 'factoriser.h',
-													 'input/input.h',
-													 ])
+                                                     'icmpent.h',
+                                                     'util.h',
+                                                     'factoriser.h',
+                                                     ])
 
 def sed(target, source, env):
 	expandos = {
@@ -182,23 +183,22 @@ def sed(target, source, env):
 fgadm = env.Command('fgadm', 'fgadm.in', [sed, Chmod('fgadm', 0755)])
 
 env.Command(['fgadm.conf', 'rules.filter'],
-		  ['fgadm.conf.in', 'rules.filter.in'],
-		  sed)
+            ['fgadm.conf.in', 'rules.filter.in'],
+            sed)
 Default(fgadm)
 env.Distribute(env['DISTTREE'], ['fgadm.in', 'rules.filter.in', 'fgadm.conf.in'])
 
 SConscript([
-	'input/filtergen/SConscript',
-	'input/iptables-save/SConscript',
-	'ir/SConscript',
-	'output/iptables/SConscript',
-	'output/ipchains/SConscript',
-	'output/ipfilter/SConscript',
-	'output/cisco/SConscript',
-	'output/filtergen/SConscript',
-	'examples/SConscript',
-	'doc/SConscript',
-	], 'env')
+    'input/SConscript',
+    'ir/SConscript',
+    'output/iptables/SConscript',
+    'output/ipchains/SConscript',
+    'output/ipfilter/SConscript',
+    'output/cisco/SConscript',
+    'output/filtergen/SConscript',
+    'examples/SConscript',
+    'doc/SConscript',
+    ], 'env')
 
 env.Install(DESTDIR + sbindir, [filtergen, fgadm])
 bin = env.Alias('install-bin', DESTDIR + sbindir)
@@ -228,12 +228,12 @@ env.Alias('install', [bin, man, sysconf, pkgdoc, pkgex])
 Precious(env['DISTTREE'])
 
 env.Distribute(env['DISTTREE'],
-			   ['SConstruct', 'Doxyfile',
-				'AUTHORS', 'THANKS',
-				'README', 'INSTALL', 'HISTORY', 'HONESTY', 'HACKING', 'TODO',
-				'filtergen.8', 'fgadm.8', 'filter_syntax.5', 'filter_backends.7',
-				'filtergen.spec.in',
-				])
+               ['SConstruct', 'Doxyfile',
+                'AUTHORS', 'THANKS',
+                'README', 'INSTALL', 'HISTORY', 'HONESTY', 'HACKING', 'TODO',
+                'filtergen.8', 'fgadm.8', 'filter_syntax.5', 'filter_backends.7',
+                'filtergen.spec.in',
+                ])
 
 srcdist = env.Tarball(env['TARBALL'], env['DISTTREE'])
 env.Alias('dist', srcdist)

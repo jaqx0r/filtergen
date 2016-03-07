@@ -24,7 +24,7 @@
 #include "ast.h"
 #include "parser.h"
 
-int ipts_parse(void *);
+int ipts_parse(struct ast_s *ast);
 int ipts_restart(FILE *);
 
 int ipts_convtrace = 1;

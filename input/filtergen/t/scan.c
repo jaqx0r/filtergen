@@ -5,10 +5,12 @@
 #include <string.h>
 
 #include "../parser.h"
+#include "../../sourcepos.h"
 
 extern char * filtergen_text;
 int filtergen_lex();
-extern int filtergen_lineno;
+int filtergen_get_lineno();
+int filtergen_set_debug(int);
 char * filtergen_filename();
 
 char *tok_map(int c) {
@@ -111,18 +113,31 @@ char *tok_map(int c) {
   return r;
 }
 
-extern FILE * filtergen_in;
+extern FILE* filtergen_in;
+extern int yycolumn;
+extern int filtergen_lineno;
 
 int main(int argc __attribute__((unused)),
          char **argv __attribute__((unused))) {
     int c;
 
+    char * YYDEBUGTRACE;
+
+    YYDEBUGTRACE = getenv("YYDEBUGTRACE");
+    filtergen_set_debug(YYDEBUGTRACE ? atoi(YYDEBUGTRACE) : 0);
+
     if (argc > 1) {
-	filtergen_in = fopen(argv[1], "r");
+        sourcefile_push(argv[1]);
+    } else {
+        sourcefile_push("-");
     }
-    /* all output is considered a compiler message */
+    filtergen_in = current_srcfile->f;
+    filtergen_lineno = current_srcfile->lineno;
+    yycolumn = current_srcfile->column;
+
+    /* all output is considered a compiler message by dejagnu */
     while ((c = filtergen_lex())) {
-	fprintf(stderr, "%s:%d: kind = %s, spelling = \"%s\"\n", filtergen_filename(), filtergen_lineno, tok_map(c), filtergen_text);
+        fprintf(stderr, "%s:%d: kind = %s, spelling = \"%s\"\n", current_srcfile->pathname, current_srcfile->lineno, tok_map(c), filtergen_text);
     }
     return 0;
 }

@@ -19,23 +19,22 @@
 
 /* prepend all functions with ipts_ to keep the namespace separate
  * from other parsers */
-%name-prefix="ipts_"
+%name-prefix "ipts_"
 /* verbose error messages */
 %error-verbose
-
+%parse-param {struct ast_s *ast}
 %{
 #include <stdio.h>
 #include <stdlib.h>
 #include "ast.h"
 
-void ipts_error(void *parse_arg, const char *);
+void ipts_error(struct ast_s *ast, const char * msg);
 extern int ipts_lineno;
 extern int ipts_lex(void);
 
 #define YYPRINT(f, t, v) ipts_print(f, t, v)
 %}
 %debug
-%parse-param {void* parse_arg}
 
 %union {
   struct table_list_s * u_table_list;
@@ -181,9 +180,8 @@ int ipts_print(FILE * f, int t, YYSTYPE v);
 %%
 ast: table_list
 {
-    /* we expect parse_arg to be already allocated, and that
-     * it is of type (struct ast_s *) */
-    ((struct ast_s *) parse_arg)->list = $1;
+    /* we expect ast to be already allocated */
+    ast->list = $1;
 }
 
 table_list: /* empty */
@@ -597,8 +595,8 @@ pkt_count: TOK_LSQUARE TOK_IDENTIFIER TOK_COLON TOK_IDENTIFIER TOK_RSQUARE
 char * ipts_filename();
 extern char * ipts_text;
 
-void ipts_error(void * parse_arg __attribute__((unused)), const char * s) {
-    fprintf(stderr, "%s:%d: %s\n", ipts_filename(), ipts_lineno, s);
+void ipts_error(struct ast_s __attribute__((__unused__)) *ast, const char * msg) {
+  fprintf(stderr, "%s:%d: %s\n", ipts_filename(), ipts_lineno, msg);
 }
 
 int ipts_print(FILE * f, int type, YYSTYPE v) {

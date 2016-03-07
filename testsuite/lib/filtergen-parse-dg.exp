@@ -3,7 +3,7 @@ load_lib dg.exp
 proc filtergen-dg-test { filter do_what extra_tool_flags } {
     set output_file "[file rootname $filter].out"
 
-    set comp_output [exec input/filtergen/t/parse < $filter > $output_file 2>@stdout]
+    set comp_output [exec input/filtergen/t/parse $filter > $output_file 2>@stdout]
 
     return [list $comp_output $output_file]
 }

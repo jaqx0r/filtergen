@@ -3,6 +3,7 @@
 %option noinput
 %option prefix="filtergen_"
 %option yylineno
+%option debug
 %x include
 %x comment
 %{
@@ -33,11 +34,25 @@
 #include <unistd.h>
 #include <dirent.h>
 #include <glob.h>
+
+#include "ast.h"
+#include "../sourcepos.h"
 #include "parser.h"
 
-static const char kStandardInput[] = "(standard input)";
+int yycolumn = 1;
 
-static void scan_err(const char * fmt, ...) __attribute__((format(printf, 1, 2)));
+#define YY_USER_ACTION                                          \
+    {                                                           \
+        filtergen_lloc.first_line = filtergen_lloc.last_line = yylineno; \
+        filtergen_lloc.first_column = yycolumn ;                \
+        filtergen_lloc.last_column = yycolumn+yyleng-1;         \
+        filtergen_lloc.srcfile = current_srcfile;               \
+        current_srcfile->lineno = yylineno;                     \
+        yycolumn += yyleng;                                     \
+    }
+
+void filtergen_error(const char * s, ...);
+void filtergen_warn(const char * s, ...);
 void include_file(const char *);
 %}
 
@@ -48,30 +63,32 @@ id      {word}|({word})?:(({word})?:)+({word})?
 
 %%
 
+\n		/* eat newlines */ { yycolumn = 1; }
+
 "/*"	BEGIN(comment);
 
 <comment>{
 [^*\n]*		/* eat anything that's not a '*' */
 "*"+[^*/\n]*	/* eat up '*'s not followed by '/'s */
-\n		/* eat newlines */
+\n		/* eat newlines */ { yycolumn = 1; }
 "*"+"/"		BEGIN(INITIAL);
 <<EOF>>		{
-			scan_err("warning: comment reached end of file");
-			yyterminate();
-		}
-}
+  filtergen_warn("comment reached end of file");
+  yyterminate();
+            }
+} /* end comment */
 
 #[^\n]*      /* strip shell style comments */
 
 {string}     {
-		/* we do not store the " characters in the string, so lop
-		 * them off.  We can "safely" assume that the first and last
-		 * characters in this regex are ", otherwise there's a bug
-		 * in flex...  The result is somethign that is syntactically
-		 * identical to an identifier for our purposes. */
-		filtergen_lval.u_str = strndup(filtergen_text + 1, filtergen_leng - 2);
-		return TOK_IDENTIFIER;
-             }
+  /* we do not store the " characters in the string, so lop
+   * them off.  We can "safely" assume that the first and last
+   * characters in this regex are ", otherwise there's a bug
+   * in flex...  The result is somethign that is syntactically
+   * identical to an identifier for our purposes. */
+  filtergen_lval.u_str = strndup(filtergen_text + 1, filtergen_leng - 2);
+  return TOK_IDENTIFIER;
+}
 
 {space}      /* ignore */
 
@@ -113,8 +130,6 @@ text         return TOK_TEXT;
 
 "/"          return TOK_SLASH;
 
-.            return TOK_ERR;
-
 <include>[ \t]*       /* eat whitespace after include */
 <include>[^ \t\n;]+    { /* include file name */
     char * name;
@@ -127,26 +142,21 @@ text         return TOK_TEXT;
 }
 
 <<EOF>>                {
+    sourcefile_pop();
     yypop_buffer_state();
     if (!YY_CURRENT_BUFFER) {
         yyterminate();
+    } else {
+        yyin = current_srcfile->f;
+        yylineno = current_srcfile->lineno;
+        yycolumn = current_srcfile->column;
     }
 }
 
+.  { filtergen_error("unexpected input: %s\n", yytext);
+        return TOK_UNEXPECTED; }
+
 %%
-
-const char * filtergen_filename(void) {
-    char * fn = NULL;
-    return fn ? fn : strdup("(unknown)");
-}
-
-static void scan_err(const char *fmt, ...) {
-    va_list args;
-    va_start(args, fmt);
-    fprintf(stderr, "%s:%d: ", filtergen_filename(), filtergen_get_lineno());
-    vfprintf(stderr, fmt, args);
-    fprintf(stderr, "\n");
-}
 
 /* include a file or directory */
 void include_file(const char *name) {
@@ -162,7 +172,7 @@ void include_file(const char *name) {
       /* Globbing fiesta! */
       glob_t glob_buf;
       if (glob(name, 0, NULL, &glob_buf) != 0) {
-        scan_err("warning: failed to glob %s: %s", name, strerror(errno));
+        filtergen_warn("failed to glob \"%s\": %s", name, strerror(errno));
       } else {
         /* We go through the list of files backwards, because
          * step_into_include_file() creates a stack of all the
@@ -174,22 +184,25 @@ void include_file(const char *name) {
          */
         for (n = glob_buf.gl_pathc - 1; n >= 0; n--) {
           if (stat(glob_buf.gl_pathv[n], &st)) {
-            scan_err("warning: stat failed on globbed %s: %s",
+            filtergen_warn("stat failed on globbed \"%s\": %s",
                      glob_buf.gl_pathv[n], strerror(errno));
           } else if (S_ISREG(st.st_mode) || S_ISLNK(st.st_mode)) {
-            scan_err("opening %s as file", glob_buf.gl_pathv[n]);
-yyin = fopen(glob_buf.gl_pathv[n], "r");
-if (!yyin) {
-scan_err("failed to open %s: %s", glob_buf.gl_pathv[n], strerror(errno));
-}
-		     yypush_buffer_state(yy_create_buffer(yyin, YY_BUF_SIZE));
+            sourcefile_push(glob_buf.gl_pathv[n]);
+            yyin = current_srcfile->f;
+            yylineno = current_srcfile->lineno;
+            yycolumn = current_srcfile->column;
+            if (!yyin) {
+                filtergen_error("failed to open %s", glob_buf.gl_pathv[n]);
+            } else {
+                yypush_buffer_state(yy_create_buffer(yyin, YY_BUF_SIZE));
+            }
           }
         }
       }
 
       globfree(&glob_buf);
     } else {
-      scan_err("warning: stat failed on %s: %s", name, strerror(errno));
+      filtergen_warn("stat failed on \"%s\": %s", name, strerror(errno));
     }
   } else {
     if (S_ISDIR(st.st_mode)) {
@@ -197,14 +210,14 @@ scan_err("failed to open %s: %s", glob_buf.gl_pathv[n], strerror(errno));
       char *base = basename(b);
 
       if (strcmp("/", base) == 0) {
-        scan_err("warning: cannot include / path; skipping");
+        filtergen_warn("cannot include / path; skipping");
         free(b);
         return;
       }
       free(b);
 
       if ((n = scandir(name, &namelist, NULL, alphasort)) < 0) {
-        scan_err("warning: scandir failed on %s: %s", name, strerror(errno));
+        filtergen_warn("scandir failed on \"%s\": %s", name, strerror(errno));
       } else {
         while (n--) {
           /* FIXME: assumes d_name */
@@ -213,8 +226,8 @@ scan_err("failed to open %s: %s", glob_buf.gl_pathv[n], strerror(errno));
             continue;
           }
           if (asprintf(&fn, "%s/%s", name, namelist[n]->d_name) < 0) {
-            scan_err("internal error: asprintf failed constructing pathname "
-                     "for included file %s",
+            filtergen_error("internal error: asprintf failed constructing pathname "
+                     "for included file \"%s\"",
                      namelist[n]->d_name);
             free(fn);
           } else {
@@ -226,15 +239,15 @@ scan_err("failed to open %s: %s", glob_buf.gl_pathv[n], strerror(errno));
         free(namelist);
       }
     } else {
-                     scan_err("opening %s as file", name);
-		     
-                     yyin = fopen(name, "r");
-		     if ( !yyin ) {
-			 scan_err("failed to open %s: %s", yytext, strerror(errno));
-		     }
-
-		     yypush_buffer_state(yy_create_buffer(yyin, YY_BUF_SIZE));
-		     
+            sourcefile_push(name);
+            yyin = current_srcfile->f;
+            yylineno = current_srcfile->lineno;
+            yycolumn = current_srcfile->column;
+            if (!yyin) {
+                filtergen_error("failed to open %s", name);
+            } else {
+                yypush_buffer_state(yy_create_buffer(yyin, YY_BUF_SIZE));
+            }
     }
   }
 }

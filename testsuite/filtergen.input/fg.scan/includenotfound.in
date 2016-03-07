@@ -1,1 +1,1 @@
-include nonexistentfile # { dg-warning "stat failed on nonexistentfile" "" }
+include nonexistentfile # { dg-warning "stat failed on \"nonexistentfile\"" }
