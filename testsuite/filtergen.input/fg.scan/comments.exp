@@ -6,7 +6,7 @@ set test "c-style comment"
 
 send "/* blah */word\r"
 
-expect { 
+expect {
     "kind = slash" { fail $test }
     "kind = identifier, spelling = \"word\"" { pass $test }
     timeout { fail $test }
