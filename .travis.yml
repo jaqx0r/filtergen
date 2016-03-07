@@ -14,5 +14,5 @@ before_install:
 after_success:
  - coveralls --exclude t --exclude testsuite --gcov-options '\-lp'
 script:
-  - scons -k gcov=yes debug=yes
+  - scons -k gcov=yes debug=yes filtergen test-binaries
   - runtest --all --debug -v -v
