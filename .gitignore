@@ -77,3 +77,4 @@ input/filtergen/t/parse
 input/filtergen/t/scan
 input/iptables-save/t/parse
 input/iptables-save/t/scan
+/dbg.log
