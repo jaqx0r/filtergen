@@ -73,7 +73,8 @@ if not env.GetOption('clean'):
 
     if ARGUMENTS.get('gcov', 0):
         if conf.CheckLib('gcov'):
-            conf.env.AppendUnique(CCFLAGS=['-fprofile-arcs', '-ftest-coverage'])
+            conf.env.AppendUnique(
+                CCFLAGS=['-fprofile-arcs', '-ftest-coverage'])
 
     env = conf.Finish()
 
@@ -132,26 +133,25 @@ env.AppendUnique(CPPPATH=['#'])
 
 
 fg_env = env.Clone()
-fg_env.AppendUnique(LIBPATH=
-                        ['input',
-                                 'input/filtergen',
-                                 'input/iptables-save',
-                                 'output/iptables',
-                                 'output/iptablesrestore',
-                                 'output/ipchains',
-                                 'output/ipfilter',
-                                 'output/cisco',
-                                 'output/filtergen', ])
+fg_env.AppendUnique(LIBPATH=['input',
+                             'input/filtergen',
+                             'input/iptables-save',
+                             'output/iptables',
+                             'output/iptablesrestore',
+                             'output/ipchains',
+                             'output/ipfilter',
+                             'output/cisco',
+                             'output/filtergen', ])
 fg_env.AppendUnique(
-                        LIBS=['in_filtergen',
-                              'in_iptables_save',
-                              'sourcepos',
-                              'out_iptables',
-                              'out_iptablesrestore',
-                              'out_ipchains',
-                              'out_ipfilter',
-                              'out_cisco',
-                              'out_filtergen', ])
+    LIBS=['in_filtergen',
+          'in_iptables_save',
+          'sourcepos',
+          'out_iptables',
+          'out_iptablesrestore',
+          'out_ipchains',
+          'out_ipfilter',
+          'out_cisco',
+          'out_filtergen', ])
 filtergen_sources = ['filtergen.c',
                      'gen.c',
                      'filter.c',
