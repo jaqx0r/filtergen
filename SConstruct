@@ -1,3 +1,4 @@
+# -*- python -*-
 import glob
 import os
 import SCons.Node.FS
