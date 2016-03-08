@@ -16,8 +16,12 @@ vars.AddVariables(
 
 env = Environment(variables=vars)
 
-# all below thanks to Paul Davis and his ardour build system
+if os.environ.get('CC', None):
+  env['CC'] = os.environ['CC']
 
+
+
+# all below thanks to Paul Davis and his ardour build system
 
 def distcopy(target, source, env):
     treedir = str(target[0])
@@ -64,6 +68,7 @@ Help(vars.GenerateHelpText(env))
 
 if not env.GetOption('clean'):
     conf = Configure(env)
+    conf.CheckCC()
     if conf.CheckCHeader('getopt.h'):
         conf.env.AppendUnique(CPPFLAGS=['-DHAVE_GETOPT_H'])
     conf.CheckLib('getopt', 'getopt')
