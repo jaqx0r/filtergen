@@ -7,15 +7,14 @@ env.Distribute(env['DISTTREE'], ['SConscript',
 
 env = env.Clone()
 env.AppendUnique(CPPPATH=['.', '..'],
-                 LIBPATH=['..'],
                  LIBS=['in_iptables_save'],
-                 CPPFLAGS=['-Dyyparse=ipts_parse',
-                           '-Dconvert=ipts_convert',
+                 CPPFLAGS=['-Dconvert=ipts_convert',
                            '-Dconvtrace=ipts_convtrace',
                            '-Dyydebug=ipts_debug',
-                           '-Dyyrestart=ipts_restart', ])
+                           '-Dyyrestart=ipts_restart'])
 
 env.Alias('test-binaries', [env.Program('scan.c'),
                             env.Program('parse.c'),
                             env.Program('emit.c'),
-                            env.Program('convert', source=['#t/convert.c', '#filter.o', '#fg-util.o']), ])
+                            # env.Program('convert', source=['#t/convert.c', '#filter.o', '#fg-util.o']),
+                            ])

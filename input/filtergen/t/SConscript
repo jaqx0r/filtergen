@@ -7,10 +7,8 @@ env.Distribute(env['DISTTREE'], ['SConscript',
 
 env = env.Clone()
 env.AppendUnique(CPPPATH=['.', '..'],
-                 # LIBPATH=['..', '#input'],
                  LIBS=['in_filtergen', 'sourcepos'],
-                 CPPFLAGS=['-Dyyparse=filtergen_parse',
-                           '-Dyydebug=filtergen_debug', ])
+                 CPPFLAGS=['-Dyydebug=filtergen_debug'])
 
 env.Alias('test-binaries', [env.Program('scan.c'),
                             env.Program('parse.c'),
