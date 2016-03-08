@@ -1,3 +1,4 @@
+# -*- mode: python -*-
 Import('env')
 
 sources = ['fg-iptablesrestore.c']

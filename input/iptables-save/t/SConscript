@@ -1,3 +1,4 @@
+# -*- mode: python -*-
 Import('env')
 
 env.Distribute(env['DISTTREE'], ['SConscript',
