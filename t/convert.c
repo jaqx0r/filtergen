@@ -2,13 +2,13 @@
 #include "stdlib.h"
 #include "filter.h"
 #include "ast.h"
+#include "../parser.h"
 
 int indent = -2;
 
 #ifndef FILTER_EMIT
 extern int convtrace;
 
-int yyparse(void *);
 struct filter *convert(struct ast_s *, struct filtergen_opts *);
 #endif
 
@@ -167,7 +167,7 @@ int main(int argc __attribute__((unused)),
   CONVTRACE = getenv("CONVTRACE");
   convtrace = CONVTRACE ? atoi(CONVTRACE) : 0;
 
-  r = yyparse((void *)&ast);
+  r = yyparse(&ast);
 
   if (r != 0) {
     printf("yyparse returned %d\n", r);

@@ -1,10 +1,9 @@
 #include <stdlib.h>
-
 #include "../ast.h"
+#include "../parser.h"
 #include "../../sourcepos.h"
 
 extern char *yytext;
-int yyparse(void *);
 extern int yydebug;
 extern char *filtergen_text;
 int filtergen_lex();
@@ -33,7 +32,7 @@ int main(int argc __attribute__((unused)),
   filtergen_lineno = current_srcfile->lineno;
   yycolumn = current_srcfile->column;
 
-  yyparse(&ast);
+  filtergen_parse(&ast);
 
   return 0;
 }

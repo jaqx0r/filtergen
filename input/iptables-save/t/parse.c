@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "../ast.h"
+#include "../parser.h"
 
 extern char *yytext;
-int yyparse(void *);
 extern int yydebug;
 int yyrestart(FILE *);
 
@@ -20,7 +20,7 @@ int main(int argc __attribute__((unused)),
     yyrestart(f);
   }
 
-  yyparse(&ast);
+  ipts_parse(&ast);
 
   return 0;
 }

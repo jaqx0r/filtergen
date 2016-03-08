@@ -357,7 +357,7 @@ int main(int argc __attribute__((unused)),
   EMITTRACE = getenv("EMITTRACE");
   emittrace = EMITTRACE ? atoi(EMITTRACE) : 0;
 
-  res = yyparse((void *)&ast);
+  res = ipts_parse(&ast);
 
   if (res != 0) {
     printf("yyparse returned %d\n", res);
