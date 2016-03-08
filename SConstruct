@@ -129,19 +129,20 @@ pkgdocdir = '/usr/share/doc/filtergen'
 pkgexdir = pkgdocdir + '/examples'
 
 # Add the top level directory to the include path
-env.AppendUnique(CPPPATH=['#'])
+env.AppendUnique(CPPPATH=['#'],
+
+                 LIBPATH=['#input',
+                          '#input/filtergen',
+                          '#input/iptables-save',
+                          '#output/iptables',
+                          '#output/iptablesrestore',
+                          '#output/ipchains',
+                          '#output/ipfilter',
+                          '#output/cisco',
+                          '#output/filtergen'])
 
 
 fg_env = env.Clone()
-fg_env.AppendUnique(LIBPATH=['input',
-                             'input/filtergen',
-                             'input/iptables-save',
-                             'output/iptables',
-                             'output/iptablesrestore',
-                             'output/ipchains',
-                             'output/ipfilter',
-                             'output/cisco',
-                             'output/filtergen', ])
 fg_env.AppendUnique(
     LIBS=['in_filtergen',
           'in_iptables_save',
@@ -151,13 +152,13 @@ fg_env.AppendUnique(
           'out_ipchains',
           'out_ipfilter',
           'out_cisco',
-          'out_filtergen', ])
+          'out_filtergen'])
 filtergen_sources = ['filtergen.c',
                      'gen.c',
                      'filter.c',
                      'fg-util.c',
                      'fg-iptrestore.c',
-                     'icmpent.c', ]
+                     'icmpent.c']
 filtergen = fg_env.Program('filtergen', filtergen_sources)
 
 env.Distribute(env['DISTTREE'], filtergen_sources + ['filter.h',

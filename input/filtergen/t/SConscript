@@ -6,8 +6,8 @@ env.Distribute(env['DISTTREE'], ['SConscript',
                                  'emit.c', ])
 
 env = env.Clone()
-env.AppendUnique(CPPPATH=['../../..', '..'],
-                 LIBPATH=['..', '#input'],
+env.AppendUnique(CPPPATH=['.', '..'],
+                 # LIBPATH=['..', '#input'],
                  LIBS=['in_filtergen', 'sourcepos'],
                  CPPFLAGS=['-Dyyparse=filtergen_parse',
                            '-Dyydebug=filtergen_debug', ])
