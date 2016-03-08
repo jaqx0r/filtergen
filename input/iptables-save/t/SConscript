@@ -16,5 +16,6 @@ env.AppendUnique(CPPPATH=['.', '..'],
 env.Alias('test-binaries', [env.Program('scan.c'),
                             env.Program('parse.c'),
                             env.Program('emit.c'),
-                            # env.Program('convert', source=['#t/convert.c', '#filter.o', '#fg-util.o']),
+                            # env.Program('convert', source=['#t/convert.c',
+                            # '#filter.o', '#fg-util.o']),
                             ])

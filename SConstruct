@@ -17,8 +17,7 @@ vars.AddVariables(
 env = Environment(variables=vars)
 
 if os.environ.get('CC', None):
-  env['CC'] = os.environ['CC']
-
+    env['CC'] = os.environ['CC']
 
 
 # all below thanks to Paul Davis and his ardour build system
