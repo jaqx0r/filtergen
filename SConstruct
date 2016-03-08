@@ -160,7 +160,6 @@ filtergen_sources = ['filtergen.c',
                      'icmpent.c', ]
 filtergen = fg_env.Program('filtergen', filtergen_sources)
 
-Default(filtergen)
 env.Distribute(env['DISTTREE'], filtergen_sources + ['filter.h',
                                                      'icmpent.h',
                                                      'util.h'])
@@ -243,3 +242,6 @@ env.Alias('dist', srcdist)
 env.AddPreAction(
     env['DISTTREE'], Action('rm -rf ' + str(File(env['DISTTREE']))))
 env.AddPostAction(srcdist, Action('rm -rf ' + str(File(env['DISTTREE']))))
+
+env.Alias('all', [filtergen, 'test-binaries'])
+Default('all')
