@@ -6,9 +6,7 @@ env.Distribute(env['DISTTREE'], ['SConscript',
                                  'emit.c', ])
 
 env = env.Clone()
-env.AppendUnique(CPPPATH=['.', '..'],
-                 LIBS=['in_filtergen', 'sourcepos'],
-                 CPPFLAGS=['-Dyydebug=filtergen_debug'])
+env.AppendUnique(LIBS=['in_filtergen', 'sourcepos'])
 
 env.Alias('test-binaries', [env.Program('scan.c'),
                             env.Program('parse.c'),

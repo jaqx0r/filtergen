@@ -4,8 +4,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "ast.h"
-#include "../parser.h"
+#include "input/filtergen/ast.h"
+#include "input/filtergen/parser.h"
 
 int emittrace = 0;
 

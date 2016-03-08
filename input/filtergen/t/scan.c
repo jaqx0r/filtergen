@@ -4,9 +4,9 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "ast.h"
-#include "../parser.h"
-#include "../../sourcepos.h"
+#include "input/filtergen/ast.h"
+#include "input/filtergen/parser.h"
+#include "input/sourcepos.h"
 
 extern char *filtergen_text;
 int filtergen_lex();

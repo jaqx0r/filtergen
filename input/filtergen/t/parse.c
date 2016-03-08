@@ -1,10 +1,9 @@
 #include <stdlib.h>
-#include "../ast.h"
-#include "../parser.h"
-#include "../../sourcepos.h"
+#include "input/filtergen/ast.h"
+#include "input/filtergen/parser.h"
+#include "input/sourcepos.h"
 
-extern char *yytext;
-extern int yydebug;
+extern int filtergen_debug;
 extern char *filtergen_text;
 int filtergen_lex();
 int filtergen_get_lineno();
@@ -21,7 +20,7 @@ int main(int argc __attribute__((unused)),
   struct ast_s ast;
 
   YYDEBUGTRACE = getenv("YYDEBUGTRACE");
-  yydebug = YYDEBUGTRACE ? atoi(YYDEBUGTRACE) : 0;
+  filtergen_debug = YYDEBUGTRACE ? atoi(YYDEBUGTRACE) : 0;
 
   if (argc > 0) {
     sourcefile_push(argv[1]);
