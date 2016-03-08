@@ -318,7 +318,7 @@ int main(int argc __attribute__((unused)),
   res = filtergen_parse(&ast);
 
   if (res != 0) {
-    printf("yyparse returned %d\n", res);
+    printf("parse returned %d\n", res);
     return 1;
   }
 
