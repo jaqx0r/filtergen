@@ -20,11 +20,12 @@
 
 #include <stdio.h>
 #include <string.h>
+
 #include "filter.h"
 #include "input/input.h"
-#include "ast.h"
-#include "parser.h"
-#include "scanner.h"
+#include "input/iptables-save/ast.h"
+#include "input/iptables-save/parser.h"
+#include "input/iptables-save/scanner.h"
 
 int ipts_convtrace = 1;
 

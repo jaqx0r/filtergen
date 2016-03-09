@@ -19,12 +19,13 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+
 #include "filter.h"
+#include "input/filtergen/ast.h"
+#include "input/filtergen/parser.h"
+#include "input/filtergen/resolver.h"
+#include "input/filtergen/scanner.h"
 #include "input/input.h"
-#include "ast.h"
-#include "parser.h"
-#include "resolver.h"
-#include "scanner.h"
 
 int convtrace = 0;
 
