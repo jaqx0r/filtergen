@@ -24,9 +24,7 @@
 #include "ast.h"
 #include "parser.h"
 #include "resolver.h"
-
-int filtergen_parse(struct ast_s *);
-int filtergen_restart(FILE *);
+#include "scanner.h"
 
 int convtrace = 0;
 

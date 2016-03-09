@@ -24,9 +24,7 @@
 #include "input/input.h"
 #include "ast.h"
 #include "parser.h"
-
-int ipts_parse(struct ast_s *ast);
-int ipts_restart(FILE *);
+#include "scanner.h"
 
 int ipts_convtrace = 1;
 
