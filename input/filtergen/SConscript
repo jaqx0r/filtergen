@@ -7,6 +7,8 @@ sources = ['parser.y',
            'glue.c']
 
 env.Library('in_filtergen', sources)
+env.Clean('scanner.o', ['scanner.c', 'scanner.h'])
+env.Clean('parser.o', ['parser.c', 'parser.h'])
 
 env.Distribute(env['DISTTREE'], sources + ['SConscript',
                                            'ast.h',

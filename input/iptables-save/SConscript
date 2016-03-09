@@ -5,6 +5,8 @@ sources = ['parser.y',
            'scanner.l',
            'glue.c', ]
 env.Library('in_iptables_save', sources)
+env.Clean('scanner.o', ['scanner.c', 'scanner.h'])
+env.Clean('parser.o', ['parser.c', 'parser.h'])
 
 # ship the sources
 env.Distribute(env['DISTTREE'], sources + ['SConscript',
