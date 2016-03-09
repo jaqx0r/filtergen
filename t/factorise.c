@@ -2,8 +2,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "../ast.h"
-#include "../factoriser.h"
+#include "ast.h"
+#include "factoriser.h"
 
 int yyparse(void *);
 int facttrace;

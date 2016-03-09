@@ -30,8 +30,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "ast.h"
-#include "../sourcepos.h"
+#include "input/filtergen/ast.h"
+#include "input/sourcepos.h"
 
 void filtergen_error(struct ast_s *ast, const char * s, ...);
 extern int filtergen_lex(void);

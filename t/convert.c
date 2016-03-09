@@ -2,7 +2,7 @@
 #include "stdlib.h"
 #include "filter.h"
 #include "ast.h"
-#include "../parser.h"
+#include "parser.h"
 
 int indent = -2;
 

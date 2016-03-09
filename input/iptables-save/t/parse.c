@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "../ast.h"
-#include "../parser.h"
+#include "input/iptables-save/ast.h"
+#include "input/iptables-save/parser.h"
 
 extern char *yytext;
 extern int yydebug;

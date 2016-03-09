@@ -26,7 +26,7 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
-#include "ast.h"
+#include "input/iptables-save/ast.h"
 
 void ipts_error(struct ast_s *ast, const char * msg);
 extern int ipts_lineno;

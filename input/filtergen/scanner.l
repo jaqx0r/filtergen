@@ -35,9 +35,9 @@
 #include <dirent.h>
 #include <glob.h>
 
-#include "ast.h"
-#include "../sourcepos.h"
-#include "parser.h"
+#include "input/filtergen/ast.h"
+#include "input/sourcepos.h"
+#include "input/filtergen/parser.h"
 
 int yycolumn = 1;
 

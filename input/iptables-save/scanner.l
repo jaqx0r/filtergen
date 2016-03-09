@@ -25,8 +25,8 @@
  */
 
 #include <string.h>
-#include "ast.h"
-#include "parser.h"
+#include "input/iptables-save/ast.h"
+#include "input/iptables-save/parser.h"
 
 char * ipts_filename(void);
 %}
