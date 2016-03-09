@@ -82,3 +82,4 @@ t/scan
 t/test-suite.log
 t/*.trs
 ylwrap
+/input/iptables-save/scanner.h

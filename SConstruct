@@ -118,6 +118,10 @@ env.AppendUnique(CPPFLAGS=['-D_GNU_SOURCE'])
 
 # tell yacc to create a header file
 env.AppendUnique(YACCFLAGS=['-d'])
+# tell lex to create a header file and set the name in #line directives
+# correctly
+env.AppendUnique(LEXFLAGS=['--header-file=${TARGET.dir}/scanner.h',
+                           '-o$TARGET'])
 
 # set up the disttree and tarball names
 env.AppendUnique(DISTTREE='#filtergen-%s' % (VERSION,))

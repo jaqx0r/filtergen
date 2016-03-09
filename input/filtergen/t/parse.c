@@ -1,18 +1,8 @@
 #include <stdlib.h>
 #include "input/filtergen/ast.h"
 #include "input/filtergen/parser.h"
+#include "input/filtergen/scanner.h"
 #include "input/sourcepos.h"
-
-extern int filtergen_debug;
-extern char *filtergen_text;
-int filtergen_lex();
-int filtergen_get_lineno();
-int filtergen_set_debug(int);
-char *filtergen_filename();
-
-extern FILE *filtergen_in;
-extern int yycolumn;
-extern int filtergen_lineno;
 
 int main(int argc __attribute__((unused)),
          char **argv __attribute__((unused))) {
@@ -27,9 +17,6 @@ int main(int argc __attribute__((unused)),
   } else {
     sourcefile_push("-");
   }
-  filtergen_in = current_srcfile->f;
-  filtergen_lineno = current_srcfile->lineno;
-  yycolumn = current_srcfile->column;
 
   filtergen_parse(&ast);
 

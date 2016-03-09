@@ -2,10 +2,7 @@
 #include <stdlib.h>
 #include "input/iptables-save/ast.h"
 #include "input/iptables-save/parser.h"
-
-extern char *yytext;
-extern int yydebug;
-int yyrestart(FILE *);
+#include "input/iptables-save/scanner.h"
 
 int main(int argc __attribute__((unused)),
          char **argv __attribute__((unused))) {
@@ -13,11 +10,11 @@ int main(int argc __attribute__((unused)),
   struct ast_s ast;
 
   YYDEBUGTRACE = getenv("YYDEBUGTRACE");
-  yydebug = YYDEBUGTRACE ? atoi(YYDEBUGTRACE) : 0;
+  ipts_debug = YYDEBUGTRACE ? atoi(YYDEBUGTRACE) : 0;
 
   if (argc > 0) {
     FILE *f = fopen(argv[1], "r");
-    yyrestart(f);
+    ipts_restart(f);
   }
 
   ipts_parse(&ast);
