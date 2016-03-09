@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include "input/filtergen/ast.h"
 #include "input/filtergen/parser.h"
+#include "input/filtergen/scanner.h"
 
 int emittrace = 0;
 

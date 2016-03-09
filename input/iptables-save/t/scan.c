@@ -5,11 +5,9 @@
 
 #include "input/iptables-save/ast.h"
 #include "input/iptables-save/parser.h"
+#include "input/iptables-save/scanner.h"
 
-extern char *ipts_text;
-extern int ipts_lineno;
-int ipts_lex();
-char *ipts_filename();
+char * ipts_filename(void);
 
 #define tok(x)                                                                 \
   case TOK_IPTS_##x:                                                           \
@@ -76,8 +74,6 @@ char *tok_map(int c) {
   }
   return r;
 }
-
-extern FILE *ipts_in;
 
 int main(int argc __attribute__((unused)),
          char **argv __attribute__((unused))) {

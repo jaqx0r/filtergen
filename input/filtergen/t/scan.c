@@ -6,13 +6,8 @@
 
 #include "input/filtergen/ast.h"
 #include "input/filtergen/parser.h"
+#include "input/filtergen/scanner.h"
 #include "input/sourcepos.h"
-
-extern char *filtergen_text;
-int filtergen_lex();
-int filtergen_get_lineno();
-int filtergen_set_debug(int);
-char *filtergen_filename();
 
 char *tok_map(int c) {
   char *r;
