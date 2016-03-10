@@ -3,52 +3,20 @@ sudo: true
 dist: trusty
 before_install:
  - pip install --user cpp-coveralls
- - sudo apt-get update -qq
- - sudo apt-get install -yy scons bison flex dejagnu
+addons:
+  apt:
+    packages:
+    - scons
+    - bison
+    - flex
+    - dejagnu
 after_success:
  - coveralls --exclude t --exclude testsuite --gcov-options '\-lp'
-script:
+before_script:
  - scons --version
- - $COMPILER --version
  - flex --version
  - bison --version
  - runtest --version
- - CC=$COMPILER scons -k gcov=yes debug=yes
+script:
+ - scons -k gcov=yes debug=yes
  - runtest --all --debug -v -v
-
-matrix:
-  include:
-    - compiler: gcc
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - gcc-4.9
-      env: COMPILER=gcc-4.9
-    - compiler: gcc
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - gcc-5
-      env: COMPILER=gcc-5
-    - compiler: clang
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-            - llvm-toolchain-precise-3.6
-          packages:
-            - clang-3.6
-      env: COMPILER=clang-3.6
-    - compiler: clang
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-            - llvm-toolchain-precise-3.7
-          packages:
-            - clang-3.7
-      env: COMPILER=clang-3.7
