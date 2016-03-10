@@ -22,3 +22,6 @@ before_script:
 script:
  - scons -k gcov=yes debug=yes
  - runtest --all --debug -v -v
+compiler:
+  - gcc
+  - clang
