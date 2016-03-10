@@ -67,7 +67,9 @@ Help(vars.GenerateHelpText(env))
 
 if not env.GetOption('clean'):
     conf = Configure(env)
-    conf.CheckCC()
+    if not conf.CheckCC():
+      print os.environ['CC'] + " is not executable."
+      Exit(1)
     if conf.CheckCHeader('getopt.h'):
         conf.env.AppendUnique(CPPFLAGS=['-DHAVE_GETOPT_H'])
     conf.CheckLib('getopt', 'getopt')
