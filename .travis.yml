@@ -4,7 +4,7 @@ dist: trusty
 before_install:
  - pip install --user cpp-coveralls
  - sudo apt-get update -qq
- - sudo apt-get install scons bison flex dejagnu
+ - sudo apt-get install -yy scons bison flex dejagnu
 after_success:
  - coveralls --exclude t --exclude testsuite --gcov-options '\-lp'
 script:
