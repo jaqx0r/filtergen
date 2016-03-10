@@ -83,3 +83,6 @@ t/test-suite.log
 t/*.trs
 ylwrap
 /input/iptables-save/scanner.h
+/testsuite/config/dbg.log
+/testsuite/config/testrun.log
+/testsuite/config/testrun.sum
