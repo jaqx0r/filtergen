@@ -17,7 +17,7 @@ addons:
     - dejagnu
     - gcov
 after_success:
- - coveralls --exclude t --exclude testsuite --gcov-options '\-lp'
+ - coveralls --exclude input/filtergen/t --exclude input/iptables-save/t --exclude testsuite --gcov-options '\-lp'
 before_script:
  - scons --version
  - flex --version
