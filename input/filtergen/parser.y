@@ -601,7 +601,12 @@ chaingroup_specifier: TOK_LSQUARE TOK_IDENTIFIER subrule_list TOK_RSQUARE
 
 extern char * filtergen_text;
 
-void filtergen_error(struct ast_s __attribute__((__unused__)) *ast, const char *s, ...) {
+
+
+void
+ __attribute__((__format__ (__printf__, 2, 3)))
+filtergen_error(struct ast_s __attribute__((__unused__)) *ast, const char *s, ...)  
+{
     va_list ap;
     va_start(ap, s);
 
@@ -612,7 +617,9 @@ void filtergen_error(struct ast_s __attribute__((__unused__)) *ast, const char *
     fprintf(stderr, "\n");
 }
 
-void filtergen_warn(const char *s, ...) {
+void 
+ __attribute__((__format__ (__printf__, 1, 2)))
+filtergen_warn(const char *s, ...) {
     va_list ap;
     va_start(ap, s);
 
@@ -623,7 +630,9 @@ void filtergen_warn(const char *s, ...) {
     fprintf(stderr, "\n");
 }
 
-void lyyerror(YYLTYPE t, struct ast_s __attribute__((__unused__)) *ast, char *s, ...) {
+void
+ __attribute__((__format__ (__printf__, 3,4)))
+ lyyerror(YYLTYPE t, struct ast_s __attribute__((__unused__)) *ast, char *s, ...) {
     va_list ap;
     va_start(ap, s);
 

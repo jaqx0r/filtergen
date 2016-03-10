@@ -429,8 +429,8 @@ int fg_iptablesrestore(struct filter *filter, int flags) {
   int r = 0;
   struct fg_misc misc = {flags, &feat};
   fg_callback cb_iptablesrestore = {
-    rule : cb_iptablesrestore_rule,
-    group : cb_iptablesrestore_group,
+    .rule = cb_iptablesrestore_rule,
+    .group = cb_iptablesrestore_group,
   };
   const int nchains = 3;
 

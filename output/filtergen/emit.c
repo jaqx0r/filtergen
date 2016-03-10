@@ -97,7 +97,7 @@ static int out_filtergen_rule(const struct filterent *ent,
 /** Emit the filter's internal representation into the filtergen language */
 int emit_filtergen(struct filter *filter, int flags) {
   struct fg_misc misc = {flags, NULL};
-  fg_callback out_filtergen_cb = {rule : out_filtergen_rule, NULL};
+  fg_callback out_filtergen_cb = {.rule = out_filtergen_rule, NULL};
 
   filter_nogroup(filter);
   filter_unroll(&filter);
