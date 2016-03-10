@@ -1,5 +1,5 @@
 language: c
-sudo: false
+sudo: true
 dist: trusty
 addons:
   apt:
@@ -9,6 +9,8 @@ addons:
     - dejagnu
 before_install:
  - pip install --user cpp-coveralls
+ - sudo apt-get update -qq
+ - sudo apt-get install scons
 after_success:
  - coveralls --exclude t --exclude testsuite --gcov-options '\-lp'
 script:
