@@ -10,12 +10,14 @@ addons:
     - bison
     - flex
     - dejagnu
+    - gcov
 after_success:
  - coveralls --exclude t --exclude testsuite --gcov-options '\-lp'
 before_script:
  - scons --version
  - flex --version
  - bison --version
+ - gcov --version
  - runtest --version
 script:
  - scons -k gcov=yes debug=yes
