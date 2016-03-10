@@ -66,10 +66,11 @@ env.Append(BUILDERS={'Tarball': tarball_bld})
 Help(vars.GenerateHelpText(env))
 
 if not env.GetOption('clean'):
+    confOK = True
     conf = Configure(env)
     if not conf.CheckCC():
-      print os.environ['CC'] + " is not executable."
-      Exit(1)
+        print os.environ['CC'] + ' is not executable.'
+        confOK = False
     if conf.CheckCHeader('getopt.h'):
         conf.env.AppendUnique(CPPFLAGS=['-DHAVE_GETOPT_H'])
     conf.CheckLib('getopt', 'getopt')
@@ -83,6 +84,9 @@ if not env.GetOption('clean'):
                 CCFLAGS=['-fprofile-arcs', '-ftest-coverage'])
             conf.env.AppendUnique(
                 LINKFLAGS=['--coverage'])
+
+    if not confOK:
+        Exit(1)
 
     env = conf.Finish()
 
