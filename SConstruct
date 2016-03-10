@@ -79,6 +79,8 @@ if not env.GetOption('clean'):
         if conf.CheckLib('gcov'):
             conf.env.AppendUnique(
                 CCFLAGS=['-fprofile-arcs', '-ftest-coverage'])
+            conf.env.AppendUnique(
+                LINKFLAGS=['--coverage'])
 
     env = conf.Finish()
 
