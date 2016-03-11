@@ -12,6 +12,7 @@ vars.AddVariables(
     BoolVariable('debug', 'debugging compiler options', 1),
     BoolVariable('profiler', 'enable support for profiler', 0),
     BoolVariable('gcov', 'enable test coverage with gcov', 0),
+    BoolVariable('asan', 'enable compilation with AddressSanitizer', 0),
 )
 
 env = Environment(variables=vars)
@@ -84,6 +85,10 @@ if not env.GetOption('clean'):
                 CCFLAGS=['-fprofile-arcs', '-ftest-coverage'])
             conf.env.AppendUnique(
                 LINKFLAGS=['--coverage'])
+
+    if ARGUMENTS.get('asan', 0):
+      conf.env.AppendUnique(CCFLAGS=['-fsanitize=address', '-fno-omit-frame-pointer'])
+      conf.env.AppendUnique(LIBS=['asan'])
 
     if not confOK:
         Exit(1)
