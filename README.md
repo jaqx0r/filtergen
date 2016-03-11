@@ -1,7 +1,7 @@
 	PACKET FILTER GENERATOR
 
 [![Build Status](https://travis-ci.org/jaqx0r/filtergen.svg?branch=master)](https://travis-ci.org/jaqx0r/filtergen)
-[![Coverage Status](https://coveralls.io/repos/github/jaqx0r/filtergen/badge.svg?branch=0.12)](https://coveralls.io/github/jaqx0r/filtergen?branch=0.12)
+[![Coverage Status](https://coveralls.io/repos/github/jaqx0r/filtergen/badge.svg?branch=master)](https://coveralls.io/github/jaqx0r/filtergen?branch=master)
 
 GENERAL
 
