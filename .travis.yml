@@ -2,7 +2,7 @@ language: c
 sudo: false
 before_install:
  - pip install --user cpp-coveralls
-addons: {apt: {packages: &native_deps [scons bison flex dejagnu gcov]}}
+addons: {apt: {packages: &native_deps [scons, bison, flex, dejagnu, gcov]}}
 after_success:
  - coveralls --exclude input/filtergen/t --exclude input/iptables-save/t --exclude testsuite --gcov-options '\-lp'
 before_script:
