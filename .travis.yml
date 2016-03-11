@@ -15,9 +15,6 @@ before_script:
 script:
  - CC=$COMPILER scons -k gcov=yes debug=yes
  - runtest --all --debug -v -v
-compiler:
-  - gcc
-  - clang
 matrix:
   include:
     - compiler: gcc
