@@ -79,9 +79,11 @@ int main(int argc __attribute__((unused)),
          char **argv __attribute__((unused))) {
   int c;
 
-  if (argc > 0) {
+  if (argc > 1) {
     ipts_in = fopen(argv[1], "r");
-  }
+  } else {
+    ipts_in = stdin;
+      }
 
   while ((c = ipts_lex())) {
     fprintf(stderr, "%s:%d: kind = %s, spelling = \"%s\"\n", ipts_filename(),

@@ -12,9 +12,11 @@ int main(int argc __attribute__((unused)),
   YYDEBUGTRACE = getenv("YYDEBUGTRACE");
   ipts_debug = YYDEBUGTRACE ? atoi(YYDEBUGTRACE) : 0;
 
-  if (argc > 0) {
+  if (argc > 1) {
     FILE *f = fopen(argv[1], "r");
     ipts_restart(f);
+  } else {
+    ipts_restart(stdin);
   }
 
   ipts_parse(&ast);
