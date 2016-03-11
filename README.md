@@ -1,9 +1,9 @@
-	PACKET FILTER GENERATOR
+#	PACKET FILTER GENERATOR
 
 [![Build Status](https://travis-ci.org/jaqx0r/filtergen.svg?branch=master)](https://travis-ci.org/jaqx0r/filtergen)
 [![Coverage Status](https://coveralls.io/repos/github/jaqx0r/filtergen/badge.svg?branch=master)](https://coveralls.io/github/jaqx0r/filtergen?branch=master)
 
-GENERAL
+## GENERAL
 
 This tool is for generating packet filtering rules from a fairly high-
 level description language.  It doesn't support all of the whizz-bang
@@ -15,23 +15,21 @@ been begun, but is incomplete.  Darren Reed's ipfilter may be supported
 at some stage.  It doesn't generate optimal rulesets, and has a few
 limitations which need to be removed, but is still a useful tool.
 
-There's a basic webpage at http://hairy.beasts.org/filter/
 
-
-WARNING!
+## WARNING!
 
 This package isn't perfect.  Nevertheless, I don't believe that the
 ipchains or iptables drivers leak packets.
 
 
-LICENCE
+## LICENCE
 
 It was written, and is copyrighted by me <matthew@hairy.beasts.org>,
 and made available you you under the terms of the GNU General Public
 Licence.
 
 
-WHY?
+## WHY?
 
 Not many large softare projects are written entirely in assembly
 language these days.  It's not difficult to be, and the results can
@@ -46,35 +44,35 @@ Hence this package -- my intent is that "filter" will be to iptables
 and shell what a C compiler (but not a 4GL) is to assembly.
 
 
-USAGE
+## USAGE
 
 The filter generator is called "filtergen".  It can be invoked as:
 
-$ filtergen source.file > output.rules
+    $ filtergen source.file > output.rules
 
 or as a filter itself:
 
-$ cat source.file | filtergen > output.rules
+    $ cat source.file | filtergen > output.rules
 
 The default output mode is for iptables, but you can override this
 by giving an extra argument on the command-line:
 
-$ filtergen oldbox.filter ipchains > oldbox.rules
+    $ filtergen oldbox.filter ipchains > oldbox.rules
 
 and using "-" to imply standard input:
 
-$ cat oldbox.filter | filtergen - ipchains > oldbox.rules
+    $ cat oldbox.filter | filtergen - ipchains > oldbox.rules
 
 Some of the backends (notably iptables and ipchains) generate a "skeleton"
 around the rules that they output.  This can be disabled with "-n":
 
-$ filtergen -n tests/ticmp.filter ipchains
+    $ filtergen -n tests/ticmp.filter ipchains
 
 The rulesets generated with this option may not be complete, but the
 flag is useful to allow one to see what sort of output is generated.
 
 
-SYNTAX
+## SYNTAX
 
 The syntax looks not entirely unlike that of "fk"s ACL facility ("fk"
 is another project of mine which lives at http://hairy.beasts.org/fk/),
@@ -143,10 +141,10 @@ The same rule might generate iptables rule resembling:
 		--sport=http -j ACCEPT
 
 Note the explicit state checking here (which, in theory, makes the
-"! --syn" bit unnecessary, but a bit of defence in depth never hurt).
+`! --syn` bit unnecessary, but a bit of defence in depth never hurt).
 
 
-SIGNIFICANT DIFFERENCES FROM ACL SYNTAX
+## SIGNIFICANT DIFFERENCES FROM ACL SYNTAX
 
 There are a number of places where the filter language differs from
 the ACL language.  They are not (well, not all) as gratuitous as one
