@@ -11,6 +11,7 @@ set punctuations [list \
                       { "/" "slash" } \
                       { ":" "colon" } \
                       { "!" "bang" } \
+                      { "*" "star" } \
                      ]
 
 foreach punctpair $punctuations {
