@@ -1,21 +1,8 @@
 language: c
-sudo: true
-dist: trusty
+sudo: false
 before_install:
  - pip install --user cpp-coveralls
-addons:
-  apt:
-    sources:
-    # add PPAs with more up-to-date toolchains
-    - ubuntu-toolchain-r-test
-    packages:
-    # install toolchains
-    - clang-3.6
-    - scons
-    - bison
-    - flex
-    - dejagnu
-    - gcov
+addons: {apt: {packages: &native_deps [scons bison flex dejagnu gcov]}}
 after_success:
  - coveralls --exclude input/filtergen/t --exclude input/iptables-save/t --exclude testsuite --gcov-options '\-lp'
 before_script:
@@ -25,11 +12,44 @@ before_script:
  - gcov --version
  - runtest --version
 script:
- - scons -k gcov=yes debug=yes
+ - CC=$COMPILER scons -k gcov=yes debug=yes
  - runtest --all --debug -v -v
 compiler:
   - gcc
   - clang
 matrix:
+  include:
+    - compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages: [gcc-4.9, *native_deps]
+      env: COMPILER=gcc-4.9
+    - compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages: [gcc-5, *native_deps]
+      env: COMPILER=gcc-5
+    - compiler: clang
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.6
+          packages: [clang-3.6, *native_deps]
+      env: COMPILER=clang-3.6
+    - compiler: clang
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.7
+          packages: [clang-3.7, *native_deps]
+      env: COMPILER=clang-3.7
   allow_failures:
     - compiler: clang
+    - compiler: gcc
+      env: COMPILER=gcc-5
