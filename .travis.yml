@@ -52,5 +52,3 @@ matrix:
       env: COMPILER=clang-3.7
   allow_failures:
     - compiler: clang
-    - compiler: gcc
-      env: COMPILER=gcc-5
