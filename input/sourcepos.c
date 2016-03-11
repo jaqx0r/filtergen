@@ -49,7 +49,7 @@ void sourcefile_push(const char *pathname) {
     return;
   }
 
-  if (strncmp(pathname, "-", 1) == 0) {
+  if (pathname == NULL || strncmp(pathname, "-", 1) == 0) {
     sf->f = stdin;
     if (asprintf(&sf->pathname, "<stdin>") < 0) {
       fprintf(stderr, "error: asprintf allocation failed when constructing "
