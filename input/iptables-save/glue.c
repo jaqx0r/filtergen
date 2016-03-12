@@ -274,12 +274,22 @@ struct filter *ipts_convert(struct ast_s *ast) {
   return res;
 }
 
-struct filter *ipts_source_parser(FILE *file,
+struct filter *ipts_source_parser(const char *filename,
                                   int resolve_names __attribute__((unused)),
                                   struct filtergen_opts *o
                                   __attribute__((unused))) {
   struct ast_s ast;
   struct filter *f = NULL;
+  FILE *file;
+
+  if (filename) {
+    /** FIXME: make more effort to find the file */
+    if (!(file = fopen(filename, "r"))) {
+      fprintf(stderr, "can't open file \"%s\"", filename);
+    }
+  } else {
+    file = stdin;
+  }
 
   ipts_restart(file);
   if (ipts_parse((void *)&ast) != 0) {

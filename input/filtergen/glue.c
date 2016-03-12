@@ -26,6 +26,7 @@
 #include "input/filtergen/resolver.h"
 #include "input/filtergen/scanner.h"
 #include "input/input.h"
+#include "input/sourcepos.h"
 
 int convtrace = 0;
 
@@ -634,12 +635,15 @@ struct filter *convert(struct ast_s *ast, struct filtergen_opts *o) {
   return res;
 }
 
-struct filter *filtergen_source_parser(FILE *file, int resolve_names,
+struct filter *filtergen_source_parser(const char *filename, int resolve_names,
                                        struct filtergen_opts *o) {
   struct ast_s ast;
   struct filter *f;
 
-  filtergen_restart(file);
+  if (!sourcefile_push(filename)) {
+    return NULL;
+  }
+  filtergen_in = current_srcfile->f;
   if (filtergen_parse(&ast) == 0) {
     if (resolve_names)
       resolve(&ast, o);

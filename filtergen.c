@@ -287,26 +287,15 @@ int main(int argc, char **argv) {
     /* Just flush it */
     l = ft->flusher(flushpol);
   } else {
-    FILE *file;
-
     /* Compile from a file */
     if (filename && !strcmp(filename, "-"))
       filename = NULL;
-
-    if (filename) {
-      /** FIXME: make more effort to find the file */
-      if (!(file = fopen(filename, "r"))) {
-        fprintf(stderr, "can't open file \"%s\"", filename);
-      }
-    } else {
-      file = stdin;
-    }
 
     struct filtergen_opts o;
     memset(&o, 0, sizeof o);
     o.family = ft->family;
 
-    f = sp->parser(file, !(flags & FF_NORESOLVE), &o);
+    f = sp->parser(filename, !(flags & FF_NORESOLVE), &o);
     l = ft->compiler(f, flags);
   }
 
