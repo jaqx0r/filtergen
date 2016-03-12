@@ -185,16 +185,17 @@ void include_file(const char *name) {
         for (n = glob_buf.gl_pathc - 1; n >= 0; n--) {
           if (stat(glob_buf.gl_pathv[n], &st)) {
             filtergen_warn("stat failed on globbed \"%s\": %s",
-                     glob_buf.gl_pathv[n], strerror(errno));
+                           glob_buf.gl_pathv[n], strerror(errno));
           } else if (S_ISREG(st.st_mode) || S_ISLNK(st.st_mode)) {
-            sourcefile_push(glob_buf.gl_pathv[n]);
-            yyin = current_srcfile->f;
-            yylineno = current_srcfile->lineno;
-            yycolumn = current_srcfile->column;
-            if (!yyin) {
+            if (sourcefile_push(glob_buf.gl_pathv[n])) {
+              yyin = current_srcfile->f;
+              yylineno = current_srcfile->lineno;
+              yycolumn = current_srcfile->column;
+              if (!yyin) {
                 filtergen_error("failed to open %s", glob_buf.gl_pathv[n]);
-            } else {
+              } else {
                 yypush_buffer_state(yy_create_buffer(yyin, YY_BUF_SIZE));
+              }
             }
           }
         }
@@ -226,9 +227,10 @@ void include_file(const char *name) {
             continue;
           }
           if (asprintf(&fn, "%s/%s", name, namelist[n]->d_name) < 0) {
-            filtergen_error("internal error: asprintf failed constructing pathname "
-                     "for included file \"%s\"",
-                     namelist[n]->d_name);
+            filtergen_error(
+                "internal error: asprintf failed constructing pathname "
+                "for included file \"%s\"",
+                namelist[n]->d_name);
             free(fn);
           } else {
             include_file(fn);
@@ -239,15 +241,16 @@ void include_file(const char *name) {
         free(namelist);
       }
     } else {
-            sourcefile_push(name);
-            yyin = current_srcfile->f;
-            yylineno = current_srcfile->lineno;
-            yycolumn = current_srcfile->column;
-            if (!yyin) {
-                filtergen_error("failed to open %s", name);
-            } else {
-                yypush_buffer_state(yy_create_buffer(yyin, YY_BUF_SIZE));
-            }
+      if (sourcefile_push(name)) {
+        yyin = current_srcfile->f;
+        yylineno = current_srcfile->lineno;
+        yycolumn = current_srcfile->column;
+        if (!yyin) {
+          filtergen_error("failed to open %s", name);
+        } else {
+          yypush_buffer_state(yy_create_buffer(yyin, YY_BUF_SIZE));
+        }
+      }
     }
   }
 }

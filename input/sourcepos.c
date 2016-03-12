@@ -33,20 +33,20 @@ static int srcfile_depth = 0;
 extern void filtergen_error(const char *s, ...);
 extern void filtergen_warn(const char *s, ...);
 
-void sourcefile_push(const char *pathname) {
+int sourcefile_push(const char *pathname) {
   struct sourcefile *sf;
 
   if (srcfile_depth++ > MAX_SRCFILE_DEPTH) {
     filtergen_warn("too many nested includes.  skipping include of file %s\n",
                    pathname);
-    return;
+    return 0;
   }
 
   if ((sf = malloc(sizeof(*sf))) == NULL) {
     fprintf(stderr, "malloc failed attempting to push new sourcefile onto "
                     "stack when opening %s: %s\n",
             pathname, strerror(errno));
-    return;
+    return 0;
   }
 
   if (pathname == NULL || strncmp(pathname, "-", 1) == 0) {
@@ -56,7 +56,7 @@ void sourcefile_push(const char *pathname) {
                       "sourcefile pathname for %s\n",
               pathname);
       free(sf);
-      return;
+      return 0;
     }
   } else {
     sf->f = fopen(pathname, "r");
@@ -64,14 +64,14 @@ void sourcefile_push(const char *pathname) {
       fprintf(stderr, "fopen failed reading %s: %s\n", pathname,
               strerror(errno));
       free(sf);
-      return;
+      return 0;
     }
     if (asprintf(&sf->pathname, "%s", pathname) < 0) {
       fprintf(stderr, "error: asprintf allocation failed when constructing "
                       "sourcefile pathname for %s\n",
               pathname);
       free(sf);
-      return;
+      return 0;
     }
   }
   sf->next = current_srcfile;
@@ -79,9 +79,10 @@ void sourcefile_push(const char *pathname) {
   sf->column = 1;
 
   current_srcfile = sf;
+  return 1;
 }
 
-void sourcefile_pop() {
+int sourcefile_pop() {
   struct sourcefile *sf = current_srcfile;
 
   current_srcfile = sf->next;
@@ -89,8 +90,9 @@ void sourcefile_pop() {
   if (fclose(sf->f)) {
     fprintf(stderr, "failed to close file when popping sourcefile stack: %s\n",
             strerror(errno));
-    return;
+    return 0;
   }
   free(sf);
   srcfile_depth--;
+  return 1;
 }

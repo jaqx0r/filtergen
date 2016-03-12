@@ -33,11 +33,12 @@ struct sourcefile {
 extern struct sourcefile *current_srcfile;
 
 /* sourcefile_push opens a new file and pushes a struct sourcefile onto the
- * current_srcfile stack. */
-void sourcefile_push(const char *pathname);
+ * current_srcfile stack. It returns true on success and false on error. */
+int sourcefile_push(const char *pathname);
 
-/* sourcefile_pop removes the struct sourcfeil from the top of the stack */
-void sourcefile_pop();
+/* sourcefile_pop removes the struct sourcefile from the top of the stack.  It
+ * returns true on success and false on error. */
+int sourcefile_pop();
 
 struct sourceposition {
   int first_l;
