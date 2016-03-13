@@ -1,8 +1,10 @@
 load_lib dg.exp
 
+set tool fg-scan
+
 set dg-linenum-format ":%d(\.\[0-9\]+-\[0-9\]+\.\[0-9\]+)?:"
 
-proc filtergen-dg-test { filter do_what extra_tool_flags } {
+proc fg-scan-dg-test { filter do_what extra_tool_flags } {
     set output_file "[file rootname $filter].out"
 
     set status [remote_exec "" input/filtergen/t/scan "$filter $output_file"]

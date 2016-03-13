@@ -1,0 +1,5 @@
+load_lib filtergen-dg.exp
+
+dg-init
+dg-runtest [lsort [glob -nocomplain $srcdir/$subdir/*.filter]] "" ""
+dg-finish

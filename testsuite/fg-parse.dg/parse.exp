@@ -1,4 +1,4 @@
-load_lib filtergen-scan-dg.exp
+load_lib fg-parse-dg.exp
 
 dg-init
 

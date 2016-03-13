@@ -1,6 +1,8 @@
 load_lib dg.exp
 
-proc filtergen-dg-test { filter do_what extra_tool_flags } {
+set tool ipts-scan
+
+proc ipts-scan-dg-test { filter do_what extra_tool_flags } {
     set output_file "[file rootname $filter].out"
 
     set status [remote_exec "" input/iptables-save/t/scan "$filter $output_file"]

@@ -1,0 +1,19 @@
+load_lib dg.exp
+
+set dg-linenum-format ":%d(\.\[0-9\]+-\[0-9\]+\.\[0-9\]+)?:"
+
+proc filtergen-dg-test { filter do_what extra_tool_flags } {
+    set output_file "[file rootname $filter].out"
+
+    set status [remote_exec "" ./filtergen "-R -c $filter -o $output_file"]
+
+    set comp_output [lindex $status 1]
+
+    return [list $comp_output $output_file]
+}
+
+proc filtergen-dg-prune { target_triplet text } {
+    regsub -all "(^|\n)\[^\n\]*generated \[0-9\]+ rules\[^\n\]*" $text "" text
+
+    return $text
+}

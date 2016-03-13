@@ -1,2 +1,0 @@
-# test include directive
-include testsuite/filtergen.input/fg.scan/ccomment.in
