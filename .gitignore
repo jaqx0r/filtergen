@@ -27,7 +27,6 @@ depcomp
 fgadm
 /fgadm
 fgadm.conf
-filtergen
 /filtergen
 filtergen.log
 filtergen.spec
