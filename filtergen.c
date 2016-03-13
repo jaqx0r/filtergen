@@ -295,7 +295,7 @@ int main(int argc, char **argv) {
     memset(&o, 0, sizeof o);
     o.family = ft->family;
 
-    f = sp->parser(filename, !(flags & FF_NORESOLVE), &o);
+    f = sp->parser(filename, flags, &o);
     l = ft->compiler(f, flags);
   }
 

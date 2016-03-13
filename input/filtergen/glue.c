@@ -635,7 +635,7 @@ struct filter *convert(struct ast_s *ast, struct filtergen_opts *o) {
   return res;
 }
 
-struct filter *filtergen_source_parser(const char *filename, int resolve_names,
+struct filter *filtergen_source_parser(const char *filename, int flags,
                                        struct filtergen_opts *o) {
   struct ast_s ast;
   struct filter *f = NULL;
@@ -647,8 +647,9 @@ struct filter *filtergen_source_parser(const char *filename, int resolve_names,
   }
   filtergen_in = current_srcfile->f;
   if (filtergen_parse(&ast) == 0) {
-    if (resolve_names)
+    if (!(flags & FF_NORESOLVE)) {
       resolve(&ast, o);
+    }
     f = convert(&ast, o);
   } else {
     fprintf(stderr, "couldn't parse file\n");

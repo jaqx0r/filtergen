@@ -6,7 +6,7 @@
 
 /** A source parser turns the input file into the Internal
     Representation, i.e. the filter * structure. */
-typedef struct filter *source_parser(const char *filename, int resolve_names,
+typedef struct filter *source_parser(const char *filename, int flags,
                                      struct filtergen_opts *o);
 
 source_parser filtergen_source_parser;

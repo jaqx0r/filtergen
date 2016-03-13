@@ -275,7 +275,7 @@ struct filter *ipts_convert(struct ast_s *ast) {
 }
 
 struct filter *ipts_source_parser(const char *filename,
-                                  int resolve_names __attribute__((unused)),
+                                  int flags __attribute__((unused)),
                                   struct filtergen_opts *o
                                   __attribute__((unused))) {
   struct ast_s ast;
