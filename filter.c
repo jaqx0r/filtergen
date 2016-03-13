@@ -386,8 +386,8 @@ void __filter_targets_to_end(struct filter **f) {
 
 void filter_unroll(struct filter **f) {
   __filter_neg_expand(f, 0);
-  __filter_targets_to_end(f);
   __filter_unroll(*f);
+  __filter_targets_to_end(f);
 }
 
 void filter_nogroup(struct filter *f) {
