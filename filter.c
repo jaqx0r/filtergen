@@ -258,8 +258,10 @@ struct filter *new_filter_icmp(enum filtertype type, const char *matchstr) {
  */
 
 static void filter_append(struct filter *f, struct filter *x) {
-  if (!f)
-    abort();
+  if (!f) {
+    fprintf(stderr, "filter not defined");
+    return;
+  }
   if (!x)
     return;
 
@@ -273,8 +275,12 @@ static void filter_append(struct filter *f, struct filter *x) {
     return;
 
   if (f->type == F_SIBLIST) {
-    if (f->child)
+    if (f->child) {
+      fprintf(
+          stderr,
+          "corrupt siblist contains child node, __filter_unroll not called?\n");
       abort();
+    }
     for (f = f->u.sib; f; f = f->next)
       filter_append(f, x);
   } else
