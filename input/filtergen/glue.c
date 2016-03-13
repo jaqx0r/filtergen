@@ -638,7 +638,7 @@ struct filter *convert(struct ast_s *ast, struct filtergen_opts *o) {
 struct filter *filtergen_source_parser(const char *filename, int resolve_names,
                                        struct filtergen_opts *o) {
   struct ast_s ast;
-  struct filter *f;
+  struct filter *f = NULL;
 
   if (!sourcefile_push(filename)) {
     return NULL;
@@ -648,13 +648,8 @@ struct filter *filtergen_source_parser(const char *filename, int resolve_names,
     if (resolve_names)
       resolve(&ast, o);
     f = convert(&ast, o);
-    if (!f) {
-      fprintf(stderr, "couldn't convert file to IR\n");
-      return NULL;
-    }
   } else {
     fprintf(stderr, "couldn't parse file\n");
-    return NULL;
   }
   return f;
 }
