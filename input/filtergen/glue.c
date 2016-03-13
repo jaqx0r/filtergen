@@ -640,6 +640,8 @@ struct filter *filtergen_source_parser(const char *filename, int resolve_names,
   struct ast_s ast;
   struct filter *f = NULL;
 
+  filtergen_set_debug(0);
+
   if (!sourcefile_push(filename)) {
     return NULL;
   }
