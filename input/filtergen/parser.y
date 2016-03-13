@@ -17,7 +17,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-/* prepent all functions with filtergen_ to keep the namespace separate
+/* prepend all functions with filtergen_ to keep the namespace separate
  * from other parsers */
 %name-prefix "filtergen_"
 /* verbose parser errors */
