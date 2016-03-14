@@ -24,6 +24,8 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 
+#include "input/sourcepos.h"
+
 #ifdef __GNUC__
 #define _PRINTF_ATTR(s, e) __attribute__((__format__(__printf__, (s), (e))))
 #else
@@ -123,6 +125,8 @@ struct filter {
 
   /* infernal use only */
   int negate;
+
+  struct sourceposition *pos;
 };
 
 struct filtergen_opts {
@@ -130,16 +134,19 @@ struct filtergen_opts {
 };
 
 /* from filter.c */
-typedef struct filter *filter_tctor(enum filtertype);
+typedef struct filter *filter_tctor(enum filtertype,
+                                    struct sourceposition *pos);
 filter_tctor new_filter_target, new_filter_rtype;
 struct filter *new_filter_neg(struct filter *sub);
 struct filter *new_filter_sibs(struct filter *list);
 struct filter *new_filter_subgroup(char *name, struct filter *list);
-typedef struct filter *filter_ctor(enum filtertype, const char *);
+typedef struct filter *filter_ctor(enum filtertype, const char *,
+                                   struct sourceposition *pos);
 filter_ctor new_filter_device, new_filter_ports, new_filter_icmp,
     new_filter_proto, new_filter_log;
-struct filter *new_filter_host(enum filtertype, const char *, sa_family_t);
-struct filter *new_filter_oneway(void);
+struct filter *new_filter_host(enum filtertype, const char *, sa_family_t,
+                               struct sourceposition *pos);
+struct filter *new_filter_oneway(struct sourceposition *pos);
 
 /* filter manipulations */
 void filter_unroll(struct filter **f);
@@ -179,6 +186,7 @@ struct filterent {
     } ports;
     char *icmp;
   } u;
+  struct sourceposition *pos;
 };
 
 struct fg_misc {
@@ -221,5 +229,7 @@ enum flags {
 /* filtergen.c */
 int oputs(const char *s);
 int oprintf(const char *fmt, ...) _PRINTF_ATTR(1, 2);
+
+void filter_error(struct sourceposition *pos, const char *fmt, ...);
 
 #endif /* _FK_FILTER_H */

@@ -20,44 +20,51 @@
 #include "filter.h"
 
 #include <arpa/inet.h>
-
 #include <errno.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
 #include <netdb.h>
+#include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-static struct filter *__new_filter(enum filtertype type) {
+#include "input/sourcepos.h"
+
+static struct filter *__new_filter(enum filtertype type,
+                                   struct sourceposition *pos) {
   struct filter *f;
   if ((f = calloc(1, sizeof(*f)))) {
     f->type = type;
+    f->pos = pos;
   }
   return f;
 }
 
-struct filter *new_filter_oneway(void) {
-  return __new_filter(F_ONEWAY);
+struct filter *new_filter_oneway(struct sourceposition *pos) {
+  return __new_filter(F_ONEWAY, pos);
 }
 
-struct filter *new_filter_target(enum filtertype target) {
+struct filter *new_filter_target(enum filtertype target,
+                                 struct sourceposition *pos) {
   struct filter *f;
-  if ((f = __new_filter(F_TARGET))) {
+  if ((f = __new_filter(F_TARGET, pos))) {
     f->u.target = target;
   }
   return f;
 }
 
-struct filter *new_filter_log(enum filtertype type, const char *text) {
+struct filter *new_filter_log(enum filtertype type, const char *text,
+                              struct sourceposition *pos) {
   struct filter *f;
-  if ((f = __new_filter(type))) {
+  if ((f = __new_filter(type, pos))) {
     f->u.logmsg = text ? strdup(text) : NULL;
   }
   return f;
 }
 
-struct filter *new_filter_rtype(enum filtertype rtype) {
+struct filter *new_filter_rtype(enum filtertype rtype,
+                                struct sourceposition *pos) {
   struct filter *f;
-  if ((f = __new_filter(F_RTYPE))) {
+  if ((f = __new_filter(F_RTYPE, pos))) {
     f->u.rtype = rtype;
   }
   return f;
@@ -65,7 +72,7 @@ struct filter *new_filter_rtype(enum filtertype rtype) {
 
 struct filter *new_filter_neg(struct filter *sub) {
   struct filter *f;
-  if ((f = __new_filter(F_NEG))) {
+  if ((f = __new_filter(F_NEG, sub->pos))) {
     f->u.neg = sub;
   }
   return f;
@@ -73,7 +80,7 @@ struct filter *new_filter_neg(struct filter *sub) {
 
 struct filter *new_filter_sibs(struct filter *list) {
   struct filter *f;
-  if ((f = __new_filter(F_SIBLIST))) {
+  if ((f = __new_filter(F_SIBLIST, list->pos))) {
     f->u.sib = list;
   }
   return f;
@@ -81,14 +88,15 @@ struct filter *new_filter_sibs(struct filter *list) {
 
 struct filter *new_filter_subgroup(char *name, struct filter *list) {
   struct filter *f;
-  if ((f = __new_filter(F_SUBGROUP))) {
+  if ((f = __new_filter(F_SUBGROUP, list->pos))) {
     f->u.sub.name = name;
     f->u.sub.list = list;
   }
   return f;
 }
 
-struct filter *new_filter_proto(enum filtertype type, const char *name) {
+struct filter *new_filter_proto(enum filtertype type, const char *name,
+                                struct sourceposition *pos) {
   struct filter *f;
   struct protoent *e;
   int pn;
@@ -99,20 +107,21 @@ struct filter *new_filter_proto(enum filtertype type, const char *name) {
     e = getprotobyname(name);
 
   if (!e) {
-    fprintf(stderr, "don't know protocol \"%s\"\n", name);
+    filter_error(pos, "don't know protocol \"%s\"", name);
     return NULL;
   }
 
-  if ((f = __new_filter(type))) {
+  if ((f = __new_filter(type, pos))) {
     f->u.proto.num = e->p_proto;
     f->u.proto.name = strdup(e->p_name);
   }
   return f;
 }
 
-struct filter *new_filter_device(enum filtertype type, const char *iface) {
+struct filter *new_filter_device(enum filtertype type, const char *iface,
+                                 struct sourceposition *pos) {
   struct filter *f;
-  if ((f = __new_filter(F_DIRECTION))) {
+  if ((f = __new_filter(F_DIRECTION, pos))) {
     f->u.ifinfo.direction = type;
     f->u.ifinfo.iface = strdup(iface);
   }
@@ -120,12 +129,12 @@ struct filter *new_filter_device(enum filtertype type, const char *iface) {
 }
 
 struct filter *new_filter_host(enum filtertype type, const char *matchstr,
-                               sa_family_t family) {
+                               sa_family_t family, struct sourceposition *pos) {
   struct filter *f;
   char *mask;
   int i;
 
-  if (!(f = __new_filter(type)))
+  if (!(f = __new_filter(type, pos)))
     return f;
 
   f->u.addrs.family = family;
@@ -200,7 +209,8 @@ struct filter *new_filter_host(enum filtertype type, const char *matchstr,
   return f;
 }
 
-struct filter *new_filter_ports(enum filtertype type, const char *matchstr) {
+struct filter *new_filter_ports(enum filtertype type, const char *matchstr,
+                                struct sourceposition *pos) {
   struct filter *f;
   struct servent *s;
   char *min, *max;
@@ -234,7 +244,7 @@ struct filter *new_filter_ports(enum filtertype type, const char *matchstr) {
   } else
     imax = imin;
 
-  if ((f = __new_filter(type))) {
+  if ((f = __new_filter(type, pos))) {
     f->u.ports.min = imin;
     f->u.ports.max = imax;
     f->u.ports.minstr = min;
@@ -243,9 +253,10 @@ struct filter *new_filter_ports(enum filtertype type, const char *matchstr) {
   return f;
 }
 
-struct filter *new_filter_icmp(enum filtertype type, const char *matchstr) {
+struct filter *new_filter_icmp(enum filtertype type, const char *matchstr,
+                               struct sourceposition *pos) {
   struct filter *f;
-  if ((f = __new_filter(type))) {
+  if ((f = __new_filter(type, pos))) {
     f->u.icmp = strdup(matchstr);
   }
   return f;
@@ -335,14 +346,14 @@ void __filter_neg_expand(struct filter **f, int neg) {
   switch ((*f)->type) {
   case F_SIBLIST:
     if (neg && (*f)->u.sib && (*f)->u.sib->next) {
-      fprintf(stderr, "error: can't negate conjunctions\n");
+      filter_error((*f)->pos, "can't negate conjunctions");
       exit(1);
     }
     __filter_neg_expand(&(*f)->u.sib, neg);
     break;
   case F_SUBGROUP:
     if (neg) {
-      fprintf(stderr, "error: can't negate subgroups\n");
+      filter_error((*f)->pos, "can't negate subgroups");
       exit(1);
     }
     __filter_neg_expand(&(*f)->u.sub.list, neg);
@@ -415,4 +426,17 @@ void filter_nogroup(struct filter *f) {
  */
 void filter_noneg(struct filter **f) { if (f) { };
   return;
+}
+
+void __attribute__((__format__(__printf__, 2, 3)))
+filter_error(struct sourceposition *pos, const char *fmt, ...) {
+  va_list ap;
+
+  va_start(ap, fmt);
+  if (pos && pos->first_line) {
+    fprintf(stderr, "%s:%d.%d-%d.%d: error: ", pos->filename, pos->first_line,
+            pos->first_column, pos->last_line, pos->last_column);
+  }
+  vfprintf(stderr, fmt, ap);
+  fprintf(stderr, "\n");
 }

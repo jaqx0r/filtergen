@@ -37,7 +37,7 @@ int checkmatch(const struct filterent *e) {
 #define MUST(t)                                                                \
   do                                                                           \
     if (!(e->t)) {                                                             \
-      fprintf(stderr, "%s missing from filter\n", #t);                         \
+      filter_error(e->pos, "%s missing from filter", #t);                      \
       r++;                                                                     \
     }                                                                          \
   while (0)
@@ -51,17 +51,17 @@ int checkmatch(const struct filterent *e) {
 
   if ((e->u.ports.src.minstr || e->u.ports.dst.minstr) &&
       (e->proto.num != IPPROTO_TCP) && (e->proto.num != IPPROTO_UDP)) {
-    fprintf(stderr, "can only use ports with tcp or udp\n");
+    filter_error(e->pos, "can only use ports with tcp or udp");
     r++;
   }
 
   if (e->u.icmp && (e->proto.num != IPPROTO_ICMP)) {
-    fprintf(stderr, "icmptype can only be used with icmp\n");
+    filter_error(e->pos, "icmptype can only be used with icmp");
     r++;
   }
 
   if ((e->rtype == LOCALONLY) && (e->target == MASQ)) {
-    fprintf(stderr, "\"local\" and masquerading are incompatible\n");
+    filter_error(e->pos, "\"local\" and masquerading are incompatible");
     r++;
   }
 
@@ -90,7 +90,7 @@ int __fg_applyone(struct filterent *e, const struct filter *f, fg_callback *cb,
                   struct fg_misc *misc) {
 #define _NA(t, f)                                                              \
   if (f) {                                                                     \
-    fprintf(stderr, "filter has already defined a %s\n", t);                   \
+    filter_error(e->pos, "filter has already defined a %s", t);                \
     return -1;                                                                 \
   }
 #define NA(t) _NA(#t, e->t)
@@ -110,13 +110,13 @@ int __fg_applyone(struct filterent *e, const struct filter *f, fg_callback *cb,
       int r;
 
       if (e->subgroup) {
-        fprintf(stderr, "cannot compose subgroups\n");
+        filter_error(e->pos, "cannot compose subgroups");
         return -1;
       }
       if (!cb->group) {
-        fprintf(
-            stderr,
-            "backend doesn't support grouping, but hasn't removed groups\n");
+        filter_error(
+            e->pos,
+            "backend doesn't support grouping, but hasn't removed groups");
         return -1;
       }
       e->target = f->type;
@@ -167,7 +167,7 @@ int __fg_applyone(struct filterent *e, const struct filter *f, fg_callback *cb,
     return __fg_applylist(e, f->u.sib, cb, misc);
 
   default:
-    fprintf(stderr, "invalid filter type %d\n", f->type);
+    filter_error(e->pos, "invalid filter type %d", f->type);
     return -1;
   }
 
@@ -185,7 +185,7 @@ int __fg_apply(struct filterent *_e, const struct filter *f, fg_callback *cb,
   if (!f) {
     applydefaults(&e, misc->flags);
     if (checkmatch(&e)) {
-      fprintf(stderr, "filter definition incomplete\n");
+      filter_error(e.pos, "filter definition incomplete");
       return -1;
     }
     return cb->rule(&e, misc);
@@ -199,5 +199,6 @@ int filtergen_cprod(struct filter *filter, fg_callback *cb,
                     struct fg_misc *misc) {
   struct filterent e;
   memset(&e, 0, sizeof(e));
+  e.pos = filter->pos;
   return __fg_applylist(&e, filter, cb, misc);
 }

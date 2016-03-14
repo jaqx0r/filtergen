@@ -20,99 +20,121 @@
 #ifndef __AST_H__
 #define __AST_H__
 
+#include "input/sourcepos.h"
+
 struct specifier_list_s;
 
 struct subrule_list_s {
   struct subrule_list_s *subrule_list;
   struct specifier_list_s *specifier_list;
+  struct sourceposition *pos;
 };
 
 struct chaingroup_specifier_s {
   char *name;
   struct subrule_list_s *list;
+  struct sourceposition *pos;
 };
 
 struct compound_specifier_s {
   struct subrule_list_s *list;
+  struct sourceposition *pos;
 };
 
 struct option_specifier_s {
   int type;
   char *logmsg;
+  struct sourceposition *pos;
 };
 
 struct icmptype_argument_s {
   char *icmptype;
+  struct sourceposition *pos;
 };
 
 struct icmptype_argument_list_s {
   struct icmptype_argument_list_s *list;
   struct icmptype_argument_s *arg;
+  struct sourceposition *pos;
 };
 
 struct icmptype_specifier_s {
   struct icmptype_argument_list_s *list;
+  struct sourceposition *pos;
 };
 
 struct protocol_argument_s {
   char *proto;
+  struct sourceposition *pos;
 };
 
 struct protocol_argument_list_s {
   struct protocol_argument_list_s *list;
   struct protocol_argument_s *arg;
+  struct sourceposition *pos;
 };
 
 struct protocol_specifier_s {
   struct protocol_argument_list_s *list;
+  struct sourceposition *pos;
 };
 
 struct port_argument_s {
   char *port_min;
   char *port_max;
+  struct sourceposition *pos;
 };
 
 struct port_argument_list_s {
   struct port_argument_list_s *list;
   struct port_argument_s *arg;
+  struct sourceposition *pos;
 };
 
 struct port_specifier_s {
   int type;
   struct port_argument_list_s *list;
+  struct sourceposition *pos;
 };
 
 struct host_argument_s {
   char *host;
   char *mask;
+  struct sourceposition *pos;
 };
 
 struct host_argument_list_s {
   struct host_argument_list_s *list;
   struct host_argument_s *arg;
+  struct sourceposition *pos;
 };
 
 struct host_specifier_s {
   int type;
   struct host_argument_list_s *list;
+  struct sourceposition *pos;
 };
 
 struct target_specifier_s {
   int type;
+  struct sourceposition *pos;
 };
 
 struct direction_argument_s {
   char *direction;
+  struct sourceposition *pos;
 };
 
 struct direction_argument_list_s {
   struct direction_argument_list_s *list;
   struct direction_argument_s *arg;
+  struct sourceposition *pos;
 };
 
 struct direction_specifier_s {
   int type;
   struct direction_argument_list_s *list;
+  struct sourceposition *pos;
 };
 
 struct specifier_s {
@@ -125,29 +147,35 @@ struct specifier_s {
   struct icmptype_specifier_s *icmptype;
   struct option_specifier_s *option;
   struct chaingroup_specifier_s *chaingroup;
+  struct sourceposition *pos;
 };
 
 struct negated_specifier_s {
   int negated;
   struct specifier_s *spec;
+  struct sourceposition *pos;
 };
 
 struct specifier_list_s {
   struct specifier_list_s *list;
   struct negated_specifier_s *spec;
+  struct sourceposition *pos;
 };
 
 struct rule_s {
   struct specifier_list_s *list;
+  struct sourceposition *pos;
 };
 
 struct rule_list_s {
   struct rule_list_s *list;
   struct rule_s *rule;
+  struct sourceposition *pos;
 };
 
 struct ast_s {
   struct rule_list_s *list;
+  struct sourceposition *pos;
 };
 
 #endif /* __AST_H__ */

@@ -57,7 +57,7 @@ typedef struct YYLTYPE {
           (Current).first_column = YYRHSLOC (Rhs, 1).first_column;     \
           (Current).last_line    = YYRHSLOC (Rhs, N).last_line;        \
           (Current).last_column  = YYRHSLOC (Rhs, N).last_column;      \
-          (Current).srcfile     = YYRHSLOC (Rhs, 1).srcfile;         \
+          (Current).srcfile      = YYRHSLOC (Rhs, 1).srcfile;          \
         }                                                              \
       else                                                             \
         { /* empty RHS */                                              \
@@ -65,7 +65,7 @@ typedef struct YYLTYPE {
             YYRHSLOC (Rhs, 0).last_line;                               \
           (Current).first_column = (Current).last_column =             \
             YYRHSLOC (Rhs, 0).last_column;                             \
-          (Current).srcfile  = NULL;                        /* new */ \
+          (Current).srcfile  = NULL;                        /* new */  \
         }                                                              \
     while (0)
 }
@@ -165,6 +165,7 @@ typedef struct YYLTYPE {
 %token TOK_STAR
 %{
 int filtergen_print(FILE * f, int t, YYSTYPE v);
+struct sourceposition* make_sourcepos(YYLTYPE);
 %}
 %start ast
 %%
@@ -172,7 +173,8 @@ ast: rule_list
 	{
         /* we expect ast to be already allocated */
 	    ast->list = $1;
-	}
+        ast->pos = make_sourcepos(yylloc);
+    }
 
 rule_list: /* empty */
 	{
@@ -183,6 +185,7 @@ rule_list: /* empty */
 	    $$ = malloc(sizeof(struct rule_list_s));
 	    $$->list = $1;
 	    $$->rule = $2;
+        $$->pos = make_sourcepos(yylloc);
 	}
 	;
 
@@ -190,6 +193,7 @@ rule:	  specifier_list TOK_SEMICOLON
 	{
 	    $$ = malloc(sizeof(struct rule_s));
 	    $$->list = $1;
+        $$->pos = make_sourcepos(yylloc);
 	}
 	;
 
@@ -202,6 +206,7 @@ specifier_list: /* empty */
 	    $$ = malloc(sizeof(struct specifier_list_s));
 	    $$->list = $1;
 	    $$->spec = $2;
+        $$->pos = make_sourcepos(yylloc);
 	}
 	;
 
@@ -210,12 +215,14 @@ negated_specifier: specifier
 	    $$ = malloc(sizeof(struct negated_specifier_s));
 	    $$->negated = 0;
 	    $$->spec = $1;
+        $$->pos = make_sourcepos(yylloc);
 	}
 	| TOK_BANG specifier
 	{
 	    $$ = malloc(sizeof(struct negated_specifier_s));
 	    $$->negated = 1;
 	    $$->spec = $2;
+        $$->pos = make_sourcepos(yylloc);
 	}
 	;
 
@@ -224,54 +231,63 @@ specifier: compound_specifier
 	    $$ = malloc(sizeof(struct specifier_s));
 	    memset($$, 0, sizeof(struct specifier_s));
 	    $$->compound = $1;
+        $$->pos = make_sourcepos(yylloc);
 	}
 	| direction_specifier
 	{
 	    $$ = malloc(sizeof(struct specifier_s));
 	    memset($$, 0, sizeof(struct specifier_s));
 	    $$->direction = $1;
+        $$->pos = make_sourcepos(yylloc);
 	}		
 	| target_specifier
 	{
 	    $$ = malloc(sizeof(struct specifier_s));
 	    memset($$, 0, sizeof(struct specifier_s));
 	    $$->target = $1;
+        $$->pos = make_sourcepos(yylloc);
 	}
 	| host_specifier
 	{
 	    $$ = malloc(sizeof(struct specifier_s));
 	    memset($$, 0, sizeof(struct specifier_s));
 	    $$->host = $1;
+        $$->pos = make_sourcepos(yylloc);
 	}
 	| port_specifier
 	{
 	    $$ = malloc(sizeof(struct specifier_s));
 	    memset($$, 0, sizeof(struct specifier_s));
 	    $$->port = $1;
+        $$->pos = make_sourcepos(yylloc);
 	}
 	| protocol_specifier
 	{
 	    $$ = malloc(sizeof(struct specifier_s));
 	    memset($$, 0, sizeof(struct specifier_s));
 	    $$->protocol = $1;
+        $$->pos = make_sourcepos(yylloc);
 	}
 	| icmptype_specifier
 	{
 	    $$ = malloc(sizeof(struct specifier_s));
 	    memset($$, 0, sizeof(struct specifier_s));
 	    $$->icmptype = $1;
+        $$->pos = make_sourcepos(yylloc);
 	}
 	| option_specifier
 	{
 	    $$ = malloc(sizeof(struct specifier_s));
 	    memset($$, 0, sizeof(struct specifier_s));
 	    $$->option = $1;
+        $$->pos = make_sourcepos(yylloc);
 	}
 	| chaingroup_specifier
 	{
 	    $$ = malloc(sizeof(struct specifier_s));
 	    memset($$, 0, sizeof(struct specifier_s));
 	    $$->chaingroup = $1;
+        $$->pos = make_sourcepos(yylloc);
 	}
 	;
 
@@ -280,12 +296,14 @@ direction_specifier: TOK_INPUT direction_argument_list
 	    $$ = malloc(sizeof(struct direction_specifier_s));
 	    $$->type = TOK_INPUT;
 	    $$->list = $2;
+        $$->pos = make_sourcepos(yylloc);
 	}
 	| TOK_OUTPUT direction_argument_list
 	{
 	    $$ = malloc(sizeof(struct direction_specifier_s));
 	    $$->type = TOK_OUTPUT;
 	    $$->list = $2;
+        $$->pos = make_sourcepos(yylloc);
 	}
 	;
 
@@ -303,6 +321,7 @@ direction_argument_list: direction_argument_list_
 		$$->list = NULL;
 		$$->arg = malloc(sizeof(struct direction_argument_s));
 		$$->arg->direction = strdup("*");
+        $$->pos = make_sourcepos(yylloc);
 	}
 	;
 
@@ -315,6 +334,7 @@ direction_argument_list_: /* empty */
 	    $$ = malloc(sizeof(struct direction_argument_list_s));
 	    $$->list = $1;
 	    $$->arg = $2;
+        $$->pos = make_sourcepos(yylloc);
 	}
 	;
 
@@ -322,6 +342,7 @@ direction_argument: TOK_IDENTIFIER
 	{
 	    $$ = malloc(sizeof(struct direction_argument_s));
 	    $$->direction = $1;
+        $$->pos = make_sourcepos(yylloc);
 	}
 	;
 
@@ -329,31 +350,37 @@ target_specifier: TOK_ACCEPT
 	{
 	    $$ = malloc(sizeof(struct target_specifier_s));
 	    $$->type = TOK_ACCEPT;
+        $$->pos = make_sourcepos(yylloc);
 	}
 	| TOK_REJECT
 	{
 	    $$ = malloc(sizeof(struct target_specifier_s));
 	    $$->type = TOK_REJECT;
+        $$->pos = make_sourcepos(yylloc);
 	}
 	| TOK_DROP
 	{
 	    $$ = malloc(sizeof(struct target_specifier_s));
 	    $$->type = TOK_DROP;
+        $$->pos = make_sourcepos(yylloc);
 	}
 	| TOK_MASQ
 	{
 	    $$ = malloc(sizeof(struct target_specifier_s));
 	    $$->type = TOK_MASQ;
+        $$->pos = make_sourcepos(yylloc);
 	}
 	| TOK_PROXY
 	{
 	    $$ = malloc(sizeof(struct target_specifier_s));
 	    $$->type = TOK_PROXY;
+        $$->pos = make_sourcepos(yylloc);
 	}
 	| TOK_REDIRECT
 	{
 	    $$ = malloc(sizeof(struct target_specifier_s));
 	    $$->type = TOK_REDIRECT;
+        $$->pos = make_sourcepos(yylloc);
 	}
 	;
 
@@ -362,12 +389,14 @@ host_specifier: TOK_SOURCE host_argument_list
 	    $$ = malloc(sizeof(struct host_specifier_s));
 	    $$->type = TOK_SOURCE;
 	    $$->list = $2;
+        $$->pos = make_sourcepos(yylloc);
 	}
 	| TOK_DEST host_argument_list
 	{
 	    $$ = malloc(sizeof(struct host_specifier_s));
 	    $$->type = TOK_DEST;
 	    $$->list = $2;
+        $$->pos = make_sourcepos(yylloc);
 	}
 	;
 
@@ -390,6 +419,7 @@ host_argument_list_: /* empty */
 	    $$ = malloc(sizeof(struct host_argument_list_s));
 	    $$->list = $1;
 	    $$->arg = $2;
+        $$->pos = make_sourcepos(yylloc);
 	}
 	;
 
@@ -398,12 +428,14 @@ host_argument: TOK_IDENTIFIER TOK_SLASH TOK_IDENTIFIER
 	    $$ = malloc(sizeof(struct host_argument_s));
 	    $$->host = $1;
 	    $$->mask = $3;
+        $$->pos = make_sourcepos(yylloc);
 	}
-        | TOK_IDENTIFIER
-        {
+    | TOK_IDENTIFIER
+    {
 	    $$ = malloc(sizeof(struct host_argument_s));
 	    $$->host = $1;
 	    $$->mask = 0;
+        $$->pos = make_sourcepos(yylloc);
 	}
 	;
 
@@ -412,12 +444,14 @@ port_specifier: TOK_SPORT port_argument_list
 	    $$ = malloc(sizeof(struct port_specifier_s));
 	    $$->type = TOK_SPORT;
 	    $$->list = $2;
+        $$->pos = make_sourcepos(yylloc);
 	}
 	| TOK_DPORT port_argument_list
 	{
 	    $$ = malloc(sizeof(struct port_specifier_s));
 	    $$->type = TOK_DPORT;
 	    $$->list = $2;
+        $$->pos = make_sourcepos(yylloc);
 	}
 	;
 
@@ -435,12 +469,14 @@ port_argument_list_: port_argument
 	    $$ = malloc(sizeof(struct port_argument_list_s));
 	    $$->list = NULL;
 	    $$->arg = $1;
+        $$->pos = make_sourcepos(yylloc);
 	}
 	| port_argument_list_ port_argument
 	{
 	    $$ = malloc(sizeof(struct port_argument_list_s));
 	    $$->list = $1;
 	    $$->arg = $2;
+        $$->pos = make_sourcepos(yylloc);
 	}
 	;
 
@@ -449,12 +485,14 @@ port_argument: TOK_IDENTIFIER TOK_COLON TOK_IDENTIFIER
 	    $$ = malloc(sizeof(struct port_argument_s));
 	    $$->port_min = $1;
 	    $$->port_max = $3;
+        $$->pos = make_sourcepos(yylloc);
 	}
 	| TOK_IDENTIFIER
 	{
 	    $$ = malloc(sizeof(struct port_argument_s));
 	    $$->port_min = $1;
 	    $$->port_max = NULL;
+        $$->pos = make_sourcepos(yylloc);
 	}
 	;
 
@@ -462,6 +500,7 @@ protocol_specifier: TOK_PROTO protocol_argument_list
 	{
 	    $$ = malloc(sizeof(struct protocol_specifier_s));
 	    $$->list = $2;
+        $$->pos = make_sourcepos(yylloc);
 	}
 	;
 
@@ -483,7 +522,8 @@ protocol_argument_list_: /* empty */
 	{
 	    $$ = malloc(sizeof(struct protocol_argument_list_s));
 	    $$->list = $1;
-	    $$->arg = $2;
+        $$->arg = $2;
+        $$->pos = make_sourcepos(yylloc);
 	}
 	;
 
@@ -491,6 +531,7 @@ protocol_argument: TOK_IDENTIFIER
 	{
 	    $$ = malloc(sizeof(struct protocol_argument_s));
 	    $$->proto = strdup($1);
+        $$->pos = make_sourcepos(yylloc);
 	}
 	;
 
@@ -498,6 +539,7 @@ icmptype_specifier: TOK_ICMPTYPE icmptype_argument_list
 	{
 	    $$ = malloc(sizeof(struct icmptype_specifier_s));
 	    $$->list = $2;
+        $$->pos = make_sourcepos(yylloc);
 	}
 	;
 
@@ -520,6 +562,7 @@ icmptype_argument_list_: /* empty */
 	    $$ = malloc(sizeof(struct icmptype_argument_list_s));
 	    $$->list = $1;
 	    $$->arg = $2;
+        $$->pos = make_sourcepos(yylloc);
 	}
 	;
 
@@ -527,6 +570,7 @@ icmptype_argument: TOK_IDENTIFIER
 	{
 	    $$ = malloc(sizeof(struct icmptype_argument_s));
 	    $$->icmptype = $1;
+        $$->pos = make_sourcepos(yylloc);
 	}
 	;
 
@@ -535,30 +579,35 @@ option_specifier: TOK_LOCAL
 	    $$ = malloc(sizeof(struct option_specifier_s));
 	    $$->type = TOK_LOCAL;
 	    $$->logmsg = 0;
+        $$->pos = make_sourcepos(yylloc);
 	}
 	| TOK_FORWARD
 	{
 	    $$ = malloc(sizeof(struct option_specifier_s));
 	    $$->type = TOK_FORWARD;
 	    $$->logmsg = 0;
+        $$->pos = make_sourcepos(yylloc);
 	}
 	| TOK_ONEWAY
 	{
 	    $$ = malloc(sizeof(struct option_specifier_s));
 	    $$->type = TOK_ONEWAY;
 	    $$->logmsg = 0;
+        $$->pos = make_sourcepos(yylloc);
 	}
-        | TOK_LOG TOK_TEXT TOK_IDENTIFIER
-        {
+    | TOK_LOG TOK_TEXT TOK_IDENTIFIER
+    {
 	    $$ = malloc(sizeof(struct option_specifier_s));
 	    $$->type = TOK_LOG;
 	    $$->logmsg = $3;
+        $$->pos = make_sourcepos(yylloc);
 	}
 	| TOK_LOG
 	{
 	    $$ = malloc(sizeof(struct option_specifier_s));	
 	    $$->type = TOK_LOG;
 	    $$->logmsg = 0;
+        $$->pos = make_sourcepos(yylloc);
 	}
 	;
 
@@ -566,6 +615,7 @@ compound_specifier: TOK_LCURLY subrule_list TOK_RCURLY
 	{
 	    $$ = malloc(sizeof(struct compound_specifier_s));
 	    $$->list = $2;
+        $$->pos = make_sourcepos(yylloc);
 	}
 	;
 
@@ -574,12 +624,14 @@ subrule_list: specifier_list
 	    $$ = malloc(sizeof(struct subrule_list_s));
 	    $$->subrule_list = NULL;
 	    $$->specifier_list = $1;
+        $$->pos = make_sourcepos(yylloc);
 	}
 	| subrule_list TOK_SEMICOLON specifier_list
 	{
 	    $$ = malloc(sizeof(struct subrule_list_s));
 	    $$->subrule_list = $1;
 	    $$->specifier_list = $3;
+        $$->pos = make_sourcepos(yylloc);
 	}
 	;
 
@@ -588,12 +640,14 @@ chaingroup_specifier: TOK_LSQUARE TOK_IDENTIFIER subrule_list TOK_RSQUARE
 	    $$ = malloc(sizeof(struct chaingroup_specifier_s));
 	    $$->name = $2;
 	    $$->list = $3;
+        $$->pos = make_sourcepos(yylloc);
 	}
 	| TOK_LSQUARE subrule_list TOK_RSQUARE
 	{
 	    $$ = malloc(sizeof(struct chaingroup_specifier_s));
 	    $$->name = NULL;
 	    $$->list = $2;
+        $$->pos = make_sourcepos(yylloc);
 	}
 	;
 
@@ -646,4 +700,16 @@ void
 int filtergen_print(FILE * f, int type, YYSTYPE v) {
     fprintf(f, "%d:\"%s\":%p", type, filtergen_text, (void *) &v);
 	return 0;
+}
+
+struct sourceposition *make_sourcepos(YYLTYPE loc) {
+  struct sourceposition *pos;
+  pos = malloc(sizeof(struct sourceposition));
+
+  pos->first_line = loc.first_line;
+  pos->first_column = loc.first_column;
+  pos->last_line = loc.last_line;
+  pos->last_column = loc.last_column;
+  pos->filename = loc.srcfile->pathname;
+  return pos;
 }

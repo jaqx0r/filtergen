@@ -41,11 +41,11 @@ int sourcefile_push(const char *pathname);
 int sourcefile_pop();
 
 struct sourceposition {
-  int first_l;
-  int first_c;
-  int last_l;
-  int last_c;
-  struct sourcefile *srcfile;
+  int first_line;
+  int first_column;
+  int last_line;
+  int last_column;
+  char *filename;
 };
 
 #endif /* FILTERGEN_INPUT_SOURCEPOS_H */

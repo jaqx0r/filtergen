@@ -188,7 +188,7 @@ struct filter *ipts_convert_rule(struct rule_s *n) {
     } else {
       fprintf(stderr, "warning: unhandled chain name %s\n", n->chain);
     }
-    res = new_filter_device(direction, "eth0");
+    res = new_filter_device(direction, "eth0", NULL);
 
     if (!strcasecmp(n->policy, "accept")) {
       type = T_ACCEPT;
@@ -200,7 +200,7 @@ struct filter *ipts_convert_rule(struct rule_s *n) {
       fprintf(stderr, "warning: invalid chain policy %s\n", n->policy);
       type = YYEOF;
     }
-    res->child = new_filter_target(type);
+    res->child = new_filter_target(type, NULL);
 
   } else if (n->option_list) {
     /* do something with the option list */
