@@ -1,5 +1,7 @@
 load_lib dg.exp
 
+set tool filtergen
+
 set dg-linenum-format ":%d(\.\[0-9\]+-\[0-9\]+\.\[0-9\]+)?:"
 
 proc filtergen-dg-test { filter do_what extra_tool_flags } {
