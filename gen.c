@@ -100,6 +100,8 @@ int __fg_applyone(struct filterent *e, const struct filter *f, fg_callback *cb,
     _NA(str, ESET(e, type));                                                   \
     e->whats_set |= (1 << F_##type);
 
+  e->pos = f->pos;
+
   switch (f->type) {
     NC(TARGET, "target")
     e->target = f->u.target;
@@ -199,6 +201,5 @@ int filtergen_cprod(struct filter *filter, fg_callback *cb,
                     struct fg_misc *misc) {
   struct filterent e;
   memset(&e, 0, sizeof(e));
-  e.pos = filter->pos;
   return __fg_applylist(&e, filter, cb, misc);
 }
