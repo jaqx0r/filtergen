@@ -686,7 +686,7 @@ struct filter *filtergen_source_parser(const char *filename, int flags,
     }
     f = convert(&ast, o);
   } else {
-    fprintf(stderr, "couldn't parse file\n");
+    fprintf(stderr, "couldn't parse file: %s\n", filename);
   }
   return f;
 }
