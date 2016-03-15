@@ -61,7 +61,8 @@ struct filter *convert_subrule_list(struct subrule_list_s *n,
   } else {
     filter_error(n->pos, "no content in subrule_list");
   }
-  res->pos = n->pos;
+  if (res)
+    res->pos = n->pos;
   free(n);
   return res;
 }
@@ -78,7 +79,8 @@ struct filter *convert_compound_specifier(struct compound_specifier_s *r,
       res = new_filter_sibs(sub);
     }
   }
-  res->pos = r->pos;
+  if (res)
+    res->pos = r->pos;
   free(r);
   return res;
 }
@@ -92,7 +94,8 @@ struct filter *convert_direction_argument(struct direction_argument_s *n,
   } else {
     filter_error(n->pos, "no direction argument contents");
   }
-  res->pos = n->pos;
+  if (res)
+    res->pos = n->pos;
   free(n);
   return res;
 }
@@ -122,7 +125,8 @@ convert_direction_argument_list(struct direction_argument_list_s *n, int type,
     if (n->arg)
       res = convert_direction_argument(n->arg, type);
   }
-  res->pos = n->pos;
+  if (res)
+    res->pos = n->pos;
   free(n);
   return res;
 }
@@ -151,7 +155,8 @@ struct filter *convert_direction(struct direction_specifier_s *n,
   } else {
     filter_error(n->pos, "no direction argument list");
   }
-  res->pos = n->pos;
+  if (res)
+    res->pos = n->pos;
   free(n);
   return res;
 }
@@ -178,7 +183,8 @@ struct filter *convert_host_argument(struct host_argument_s *n, int type,
   } else {
     filter_error(n->pos, "no host part");
   }
-  res->pos = n->pos;
+  if (res)
+    res->pos = n->pos;
   free(n);
   return res;
 }
@@ -207,7 +213,8 @@ struct filter *convert_host_argument_list(struct host_argument_list_s *n,
     if (n->arg)
       res = convert_host_argument(n->arg, type, o);
   }
-  res->pos = n->pos;
+  if (res)
+    res->pos = n->pos;
   free(n);
   return res;
 }
@@ -236,7 +243,8 @@ struct filter *convert_host_specifier(struct host_specifier_s *n,
   } else {
     filter_error(n->pos, "no host argument list");
   }
-  res->pos = n->pos;
+  if (res)
+    res->pos = n->pos;
   free(n);
   return res;
 }
@@ -251,7 +259,8 @@ struct filter *convert_protocol_argument(struct protocol_argument_s *n) {
   } else {
     filter_error(n->pos, "no protocol argument contents");
   }
-  res->pos = n->pos;
+  if (res)
+    res->pos = n->pos;
   free(n);
   return res;
 }
@@ -281,7 +290,8 @@ convert_protocol_argument_list(struct protocol_argument_list_s *n,
     if (n->arg)
       res = convert_protocol_argument(n->arg);
   }
-  res->pos = n->pos;
+  if (res)
+    res->pos = n->pos;
   free(n);
   return res;
 }
@@ -297,7 +307,8 @@ struct filter *convert_protocol_specifier(struct protocol_specifier_s *n,
   } else {
     filter_error(n->pos, "no protocol argument list");
   }
-  res->pos = n->pos;
+  if (res)
+    res->pos = n->pos;
   free(n);
   return res;
 }
@@ -324,7 +335,8 @@ struct filter *convert_port_argument(struct port_argument_s *n, int type) {
   } else {
     filter_error(n->pos, "no port argument contents");
   }
-  res->pos = n->pos;
+  if (res)
+    res->pos = n->pos;
   free(n);
   return res;
 }
@@ -353,7 +365,8 @@ struct filter *convert_port_argument_list(struct port_argument_list_s *n,
     if (n->arg)
       res = convert_port_argument(n->arg, type);
   }
-  res->pos = n->pos;
+  if (res)
+    res->pos = n->pos;
   free(n);
   return res;
 }
@@ -382,7 +395,8 @@ struct filter *convert_port_specifier(struct port_specifier_s *n,
   } else {
     filter_error(n->pos, "no port argument list");
   }
-  res->pos = n->pos;
+  if (res)
+    res->pos = n->pos;
   free(n);
   return res;
 }
@@ -397,7 +411,8 @@ struct filter *convert_icmptype_argument(struct icmptype_argument_s *n) {
   } else {
     filter_error(n->pos, "no icmptype argument contents");
   }
-  res->pos = n->pos;
+  if (res)
+    res->pos = n->pos;
   free(n);
   return res;
 }
@@ -427,7 +442,8 @@ convert_icmptype_argument_list(struct icmptype_argument_list_s *n,
     if (n->arg)
       res = convert_icmptype_argument(n->arg);
   }
-  res->pos = n->pos;
+  if (res)
+    res->pos = n->pos;
   free(n);
   return res;
 }
@@ -443,7 +459,8 @@ struct filter *convert_icmptype_specifier(struct icmptype_specifier_s *n,
   } else {
     filter_error(n->pos, "no icmptype argument list");
   }
-  res->pos = n->pos;
+  if (res)
+    res->pos = n->pos;
   free(n);
   return res;
 }
@@ -470,7 +487,8 @@ struct filter *convert_option_specifier(struct option_specifier_s *n) {
     filter_error(n->pos, "incorrect option type encountered");
     break;
   }
-  res->pos = n->pos;
+  if (res)
+    res->pos = n->pos;
   free(n);
   return res;
 }
@@ -503,7 +521,8 @@ struct filter *convert_chaingroup_specifier(struct chaingroup_specifier_s *n,
   } else {
     filter_error(n->pos, "no list in chaingroup");
   }
-  res->pos = n->pos;
+  if (res)
+    res->pos = n->pos;
   free(n);
   return res;
 }
@@ -563,7 +582,8 @@ struct filter *convert_specifier(struct specifier_s *r,
   } else {
     filter_error(r->pos, "no specifiers");
   }
-  res->pos = r->pos;
+  if (res)
+    res->pos = r->pos;
   free(r);
   return res;
 }
@@ -584,7 +604,8 @@ struct filter *convert_negated_specifier(struct negated_specifier_s *r,
       res = spec;
     }
   }
-  res->pos = r->pos;
+  if (res)
+    res->pos = r->pos;
   free(r);
   return res;
 }
@@ -612,7 +633,8 @@ struct filter *convert_specifier_list(struct specifier_list_s *n,
     if (n->spec)
       res = convert_negated_specifier(n->spec, o);
   }
-  res->pos = n->pos;
+  if (res)
+    res->pos = n->pos;
   free(n);
   return res;
 }
@@ -624,7 +646,8 @@ struct filter *convert_rule(struct rule_s *r, struct filtergen_opts *o) {
 
   if (r->list)
     res = convert_specifier_list(r->list, o);
-  res->pos = r->pos;
+  if (res)
+    res->pos = r->pos;
   free(r);
   return res;
 }
@@ -651,7 +674,8 @@ struct filter *convert_rule_list(struct rule_list_s *n,
       res = convert_rule(n->rule, o);
     }
   }
-  res->pos = n->pos;
+  if (res)
+    res->pos = n->pos;
   free(n);
   return res;
 }
@@ -664,7 +688,8 @@ struct filter *convert(struct ast_s *ast, struct filtergen_opts *o) {
   if (ast->list) {
     res = convert_rule_list(ast->list, o);
   }
-  res->pos = ast->pos;
+  if (res)
+    res->pos = ast->pos;
 
   return res;
 }
