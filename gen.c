@@ -104,7 +104,7 @@ int __fg_applyone(struct filterent *e, const struct filter *f, fg_callback *cb,
   e->pos = f->pos;
 
   switch (f->type) {
-    NC(TARGET, "target", "%s")
+    NC(TARGET, "target", "%d")
     e->target = f->u.target;
     break;
 
