@@ -72,6 +72,8 @@ struct filter *new_filter_rtype(enum filtertype rtype,
 
 struct filter *new_filter_neg(struct filter *sub) {
   struct filter *f;
+  if (!sub)
+    return NULL;
   if ((f = __new_filter(F_NEG, sub->pos))) {
     f->u.neg = sub;
   }
@@ -90,6 +92,8 @@ struct filter *new_filter_sibs(struct filter *list) {
 
 struct filter *new_filter_subgroup(char *name, struct filter *list) {
   struct filter *f;
+  if (!list)
+    return NULL;
   if ((f = __new_filter(F_SUBGROUP, list->pos))) {
     f->u.sub.name = name;
     f->u.sub.list = list;
