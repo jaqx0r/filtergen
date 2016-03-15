@@ -193,8 +193,11 @@ int __fg_apply(struct filterent *_e, const struct filter *f, fg_callback *cb,
     return cb->rule(&e, misc);
   }
 
-  return __fg_applyone(&e, f, cb, misc) ? __fg_applyone(&e, f, cb, misc)
-                                        : __fg_apply(&e, f->child, cb, misc);
+  int r = __fg_applyone(&e, f, cb, misc);
+  if (r) {
+    return r;
+  }
+  return __fg_apply(&e, f->child, cb, misc);
 }
 
 int filtergen_cprod(struct filter *filter, fg_callback *cb,
