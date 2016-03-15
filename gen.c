@@ -88,26 +88,27 @@ int __fg_applylist(struct filterent *e, const struct filter *f, fg_callback *cb,
 
 int __fg_applyone(struct filterent *e, const struct filter *f, fg_callback *cb,
                   struct fg_misc *misc) {
-#define _NA(t, x)                                                              \
+#define _NA(t, x, fmt)                                                         \
   if (x) {                                                                     \
-    filter_error(f->pos, "filter has already defined a %s: \"%s\"", t, x);     \
+    filter_error(f->pos, "filter has already defined a %s: \"" fmt "\"", t,    \
+                 x);                                                           \
     return -1;                                                                 \
   }
-#define NA(t) _NA(#t, e->t)
+#define NA(t, fmt) _NA(#t, e->t, fmt)
 
-#define NC(type, str)                                                          \
+#define NC(type, str, fmt)                                                     \
   case F_##type:                                                               \
-    _NA(str, ESET(e, type));                                                   \
+    _NA(str, ESET(e, type), fmt);                                              \
     e->whats_set |= (1 << F_##type);
 
   e->pos = f->pos;
 
   switch (f->type) {
-    NC(TARGET, "target")
+    NC(TARGET, "target", "%s")
     e->target = f->u.target;
     break;
 
-    NC(SUBGROUP, "subgroup") {
+    NC(SUBGROUP, "subgroup", "%s") {
       struct filterent fe;
       int r;
 
@@ -135,8 +136,8 @@ int __fg_applyone(struct filterent *e, const struct filter *f, fg_callback *cb,
       break;
     }
 
-    NC(DIRECTION, "direction and interface")
-    NA(iface);
+    NC(DIRECTION, "direction and interface", "%d")
+    NA(iface, "%s");
     e->direction = f->u.ifinfo.direction;
     e->iface = f->u.ifinfo.iface;
     break;
@@ -148,7 +149,7 @@ int __fg_applyone(struct filterent *e, const struct filter *f, fg_callback *cb,
 
 #define _DV(tag, str, test, targ, source)                                      \
   case F_##tag:                                                                \
-    _NA(str, e->test);                                                         \
+    _NA(str, e->test, "%s");                                                   \
     e->targ = f->u.source;                                                     \
     break
 #define DV(tag, targ, source) _DV(tag, #targ, targ, targ, source)
