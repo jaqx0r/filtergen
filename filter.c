@@ -147,7 +147,7 @@ struct filter *new_filter_host(enum filtertype type, const char *matchstr,
         /* Netmask like foo/24 */
         uint32_t l = 0xffffffff;
         if (i < 0 || i > 32) {
-          fprintf(stderr, "can't parse netmask \"%s\"\n", mask);
+          filter_error(pos, "can't parse netmask \"%s\"", mask);
           return NULL;
         }
         if (!i)
@@ -161,7 +161,7 @@ struct filter *new_filter_host(enum filtertype type, const char *matchstr,
       } else {
         /* Better be a /255.255.255.0 mask */
         if (!inet_aton(mask, &f->u.addrs.u.inet.mask)) {
-          fprintf(stderr, "can't parse netmask \"%s\"\n", mask);
+          filter_error(pos, "can't parse netmask \"%s\"", mask);
           return NULL;
         }
       }
@@ -175,7 +175,7 @@ struct filter *new_filter_host(enum filtertype type, const char *matchstr,
         unsigned char *p = l + 15;
         int o;
         if (i < 0 || i > 128) {
-          fprintf(stderr, "can't parse netmask \"%s\"\n", mask);
+          filter_error(pos, "can't parse netmask \"%s\"", mask);
           return NULL;
         }
         if (i != 0) {
@@ -194,14 +194,14 @@ struct filter *new_filter_host(enum filtertype type, const char *matchstr,
         memcpy(f->u.addrs.u.inet6.mask.s6_addr, l, sizeof l);
         f->u.addrs.maskstr = int_to_str_dup(i);
       } else {
-        fprintf(stderr, "can't parse netmask \"%s\"\n", mask);
+        filter_error(pos, "can't parse netmask \"%s\"", mask);
         return NULL;
       }
       break;
     default:
-      fprintf(stderr,
-              "can't parse netmask \"%s\" for invalid address family %d\n",
-              mask, family);
+      filter_error(pos,
+                   "can't parse netmask \"%s\" for invalid address family %d",
+                   mask, family);
       return NULL;
     }
   }
@@ -287,9 +287,9 @@ static void filter_append(struct filter *f, struct filter *x) {
 
   if (f->type == F_SIBLIST) {
     if (f->child) {
-      fprintf(
-          stderr,
-          "corrupt siblist contains child node, __filter_unroll not called?\n");
+      filter_error(
+          f->pos,
+          "corrupt siblist contains child node, __filter_unroll not called?");
       abort();
     }
     for (f = f->u.sib; f; f = f->next)
