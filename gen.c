@@ -88,9 +88,9 @@ int __fg_applylist(struct filterent *e, const struct filter *f, fg_callback *cb,
 
 int __fg_applyone(struct filterent *e, const struct filter *f, fg_callback *cb,
                   struct fg_misc *misc) {
-#define _NA(t, f)                                                              \
-  if (f) {                                                                     \
-    filter_error(e->pos, "filter has already defined a %s", t);                \
+#define _NA(t, x)                                                              \
+  if (x) {                                                                     \
+    filter_error(f->pos, "filter has already defined a %s: \"%s\"", t, x);     \
     return -1;                                                                 \
   }
 #define NA(t) _NA(#t, e->t)
