@@ -80,6 +80,8 @@ struct filter *new_filter_neg(struct filter *sub) {
 
 struct filter *new_filter_sibs(struct filter *list) {
   struct filter *f;
+  if (!list)
+    return NULL;
   if ((f = __new_filter(F_SIBLIST, list->pos))) {
     f->u.sib = list;
   }
