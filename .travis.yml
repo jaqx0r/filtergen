@@ -56,4 +56,5 @@ matrix:
           packages: [clang-3.8, *native_deps]
       env: COMPILER=clang-3.8
   allow_failures:
-    - compiler: clang
+    - env: COMPILER=clang-3.7
+    - env: COMPILER=clang-3.8
