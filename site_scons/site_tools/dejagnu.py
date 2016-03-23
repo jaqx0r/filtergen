@@ -1,31 +1,41 @@
+"""SCons.Tool.dejagnu.
+
+A Tool for executing runtest against dejagnu testsuites.
+
+foo = env.DejaGnu('test')
+env.Alias('check', foo)
+"""
+
 import re
 import os
 import os.path
 import glob
+import SCons.Action
+import SCons.Builder
 
 
-def dejagnuAction(target, source, env):
-    if env['with_runtest'] == None:
-        print "Testing disabled because 'runtest' not found"
-        return 0
-
-    context = os.path.basename(env.File(target[0]).path)
-    context = re.sub('(.*?)\..*', '\\1', context)
-    os.system('cd ' + os.path.join(env['BuildDir'], 'test') +
-              '; DEJAGNU="' +
-              os.path.join(env['AbsObjRoot'], 'test', 'site.exp') + '" ' +
-              env['with_runtest'] + ' --tool ' + context)
-    return 0
+def dejagnuEmitter(target, source, env):
+    """Rewrite source and targets."""
+    new_t = []
+    for t in target:
+        new_t.extend([env.File(t.dirname[:-1] + '.sum'),
+                      env.File(t.dirname[:-1] + '.log')])
+    new_s = []
+    for s in source:
+        new_s.extend(s.glob('*.exp'))
+    return new_t, new_s
 
 
 def dejagnuMessage(target, source, env):
     return 'Running DejaGNU Test Suite'
 
+
 def generate(env):
-  dgAction = env.Action(dejagnuAction, dejagnuMessage)
-  dgBuilder = env.Builder(action=dgAction, suffix='results')
-  env.Append(BUILDERS={'DejaGnu': dgBuilder})
+    dgAction = 'cd # && runtest --tool ${SOURCE.dir}'
+    dgBuilder = SCons.Builder.Builder(
+        action=dgAction, emitter=dejagnuEmitter, source_factory=env.fs.Dir, target_factory=env.fs.Entry)
+    env.Append(BUILDERS={'DejaGnu': dgBuilder})
 
 
 def exists(env):
-  env.Detect("runtest")
+    return env.Detect('runtest')
