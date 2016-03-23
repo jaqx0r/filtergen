@@ -3,6 +3,7 @@
 A Tool for executing runtest against dejagnu testsuites.
 
 foo = env.DejaGnu('test')
+env.Depends(foo, '#test-binary')
 env.Alias('check', foo)
 """
 
