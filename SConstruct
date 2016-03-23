@@ -222,6 +222,7 @@ SConscript([
     'output/filtergen/SConscript',
     'examples/SConscript',
     'doc/SConscript',
+  'testsuite/SConscript',
 ], 'env')
 
 env.Install(DESTDIR + sbindir, [filtergen, fgadm])

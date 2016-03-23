@@ -1,0 +1,8 @@
+# -*- mode: python -*-
+Import('env')
+
+dg = env.DejaGnu('filtergen.dg')
+env.Alias('check', dg)
+# dg = dejagnu.DejaGnu(env, ['fg-scan.dg', 'fg-parse.dg', 'ipts-scan.dg',
+# 'ipts-parse.dg', 'filtergen.dg'])
+# env.Alias('check', dg)

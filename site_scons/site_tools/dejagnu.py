@@ -21,9 +21,11 @@ def dejagnuAction(target, source, env):
 def dejagnuMessage(target, source, env):
     return 'Running DejaGNU Test Suite'
 
+def generate(env):
+  dgAction = env.Action(dejagnuAction, dejagnuMessage)
+  dgBuilder = env.Builder(action=dgAction, suffix='results')
+  env.Append(BUILDERS={'DejaGnu': dgBuilder})
 
-def DejaGnu(env, dirs):
-    dgAction = env.Action(dejagnuAction, dejagnuMessage)
-    dgBuilder = env.Builder(action=dgAction, suffix='results')
-    env.Append(BUILDERS={'DejaGnu': dgBuilder})
-    return 1
+
+def exists(env):
+  env.Detect("runtest")
