@@ -3,7 +3,7 @@ import glob
 import os
 import SCons.Node.FS
 
-EnsureSConsVersion(0, 95)
+EnsureSConsVersion(2, 3)
 
 VERSION = '0.13'
 
