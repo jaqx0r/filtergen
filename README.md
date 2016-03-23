@@ -57,16 +57,16 @@ or as a filter itself:
 The default output mode is for iptables, but you can override this
 by giving an extra argument on the command-line:
 
-    $ filtergen oldbox.filter ipchains > oldbox.rules
+    $ filtergen oldbox.filter -t iptables > oldbox.rules
 
 and using "-" to imply standard input:
 
-    $ cat oldbox.filter | filtergen - ipchains > oldbox.rules
+    $ cat oldbox.filter | filtergen -t iptables - > oldbox.rules
 
-Some of the backends (notably iptables and ipchains) generate a "skeleton"
+Some of the backends (notably iptables and iptables) generate a "skeleton"
 around the rules that they output.  This can be disabled with "-n":
 
-    $ filtergen -n tests/ticmp.filter ipchains
+    $ filtergen -c examples/example.filter -t iptables
 
 The rulesets generated with this option may not be complete, but the
 flag is useful to allow one to see what sort of output is generated.
@@ -135,9 +135,9 @@ attack program to port 80 on his machine.
 
 The same rule might generate iptables rule resembling:
 
-	iptables -A OUTPUT -o eth0 -p tcp -m state --state=NEW,ESTABLISHED \
+	iptables -A OUTPUT -o eth0 -p tcp -m conntrack --ctstate=NEW,ESTABLISHED \
 		--dport=http -j ACCEPT
-	iptables -A INPUT -i eth0 -p tcp -m state --state=ESTABLISHED ! --syn \
+	iptables -A INPUT -i eth0 -p tcp -m conntrack --ctstate=ESTABLISHED ! --syn \
 		--sport=http -j ACCEPT
 
 Note the explicit state checking here (which, in theory, makes the
@@ -169,7 +169,7 @@ Installing filtergen is easy.  If you don't find it easy, that's a bug.  Send
 bug reports to jaq@spacepants.org.
 
 If you're on a Red Hat-like RPM-based system, you should be able just to run
-"rpm -ta" on the tarball.
+"rpm -ta" on the tarball.  Debian users can fetch released versions from `apt`.
 
 filtergen's build system uses SCons, rather than the GNU autotools or a custom
 Makefile.  To build and install, ensure you have SCons, gcc, flex, and bison
