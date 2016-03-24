@@ -4,6 +4,7 @@ import os
 import SCons.Node.FS
 
 EnsureSConsVersion(2, 3)
+Decider('MD5-timestamp')
 
 VERSION = '0.13'
 
