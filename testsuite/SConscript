@@ -1,10 +1,21 @@
 # -*- mode: python -*-
 Import('env')
 
-dg = env.DejaGnu('filtergen')
-env.Depends(dg, '#filtergen')
 
-env.Alias('check', dg)
+f = env.DejaGnu('filtergen')
+env.Depends(f, '#filtergen')
+
+fgp = env.DejaGnu('fg-parse.dg')
+env.Depends(fgp, '#input/filtergen/t/parse')
+fgs = env.DejaGnu('fg-scan.dg')
+env.Depends(fgs, '#input/filtergen/t/scan')
+iptsp = env.DejaGnu('ipts-parse.dg')
+env.Depends(iptsp, '#input/iptables-save/t/parse')
+iptss = env.DejaGnu('ipts-scan.dg')
+env.Depends(iptss, '#input/iptables-save/t/scan')
+
+env.Alias('check', [f, fgp, fgs, iptsp, iptss])
+
 # dg = dejagnu.DejaGnu(env, ['fg-scan.dg', 'fg-parse.dg', 'ipts-scan.dg',
 # 'ipts-parse.dg', 'filtergen.dg'])
 # env.Alias('check', dg)
