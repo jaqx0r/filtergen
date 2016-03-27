@@ -19,6 +19,12 @@ behaviour of running 'runtest' manually from the top level.
 
 """
 
+## TODO:
+# Support passing in extra arguments to dejagnu with the environment, e.g.
+# * override assumed defaults for output dir, srcdir, objdir
+# * create the site.exp automatically, or allow it to be added as a dependency
+# * detect the tool dependency automatically with Scanners
+
 import SCons.Action
 import SCons.Builder
 import glob
