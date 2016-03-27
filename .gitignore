@@ -69,14 +69,5 @@ t/*.log
 t/test-suite.log
 t/*.trs
 ylwrap
-dbg.log
-testrun.log
-testrun.sum
-fg-parse.log
-fg-parse.sum
-fg-scan.log
-fg-scan.sum
-ipts-parse.log
-ipts-parse.sum
-ipts-scan.log
-ipts-scan.sum
+**/*.log
+**/*.sum
