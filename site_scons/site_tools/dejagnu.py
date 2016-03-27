@@ -19,7 +19,7 @@ behaviour of running 'runtest' manually from the top level.
 
 """
 
-## TODO:
+# TODO:
 # Support passing in extra arguments to dejagnu with the environment, e.g.
 # * override assumed defaults for output dir, srcdir, objdir
 # * create the site.exp automatically, or allow it to be added as a dependency
@@ -46,18 +46,21 @@ def dejagnuEmitter(target, source, env):
     # Look in all "${source}.*" paths for *.exp files, they comprise all the
     # tests to execute and thus are dependencies of the target.
     for s in source:
-      # The first path must be the tool name, so transfer this without modification.
-      new_s.append(s)
-      if s.isdir():
-        # If this source is a path, we can glob in it
-        new_s.extend(s.glob('*.exp'))
-      else:
-        # Otherwise, check for more test suites that start with the tool name and glob
-        # in them too
-        for p in env.Glob(str(s) + '.*'):
-          #print str(p)
-          if p.isdir():
-            new_s.extend(p.glob('*.exp'))
+        # The first path must be the tool name, so transfer this without
+        # modification.
+        new_s.append(s)
+        if s.isdir():
+            # If this source is a path, we can glob in it
+            new_s.extend(s.glob('*.exp'))
+        else:
+            # Otherwise, check for more test suites that start with the tool name
+            # and glob in them too.  We need to check each element is a directory
+            # because previous runs will create a tool.log and tool.sum in this
+            # directory which we cannot glob.
+            for p in env.Glob(str(s) + '.*'):
+                # print str(p)
+                if p.isdir():
+                    new_s.extend(p.glob('*.exp'))
     # print 'returning', [x.abspath for x in new_t], [x.abspath for x in new_s]
     # print new_t, new_s
     return new_t, new_s
@@ -75,10 +78,12 @@ def dejagnuActionGenerator(target, source, env, for_signature):
     # The Emitter above emits the directory as the first source argument; we
     # use the directory name to deter
     tool = os.path.splitext(os.path.basename(str(source[0])))[0]
-    # 
+    # Put the output in the testsuite directory, to match what the Emitter has
+    # declared already.
     outdir = os.path.dirname(str(source[0]))
-    #print 'tool', tool
-    #return 'runtest --all --debug -v -v --outdir %s --tool %s' % (outdir, tool)
+    # print 'tool', tool
+    # return 'runtest --all --debug -v -v --outdir %s --tool %s' % (outdir,
+    # tool)
     return 'runtest --outdir %s --tool %s' % (outdir, tool)
 
 
