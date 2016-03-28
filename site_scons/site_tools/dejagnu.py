@@ -66,10 +66,6 @@ def dejagnuEmitter(target, source, env):
     return new_t, new_s
 
 
-def dejagnuMessage(target, source, env):
-    return 'Running DejaGNU test suite'
-
-
 def dejagnuActionGenerator(target, source, env, for_signature):
     # for t in target:
     #     print 'action target', t.abspath
