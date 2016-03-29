@@ -144,12 +144,12 @@ env.AppendUnique(TARBALL='filtergen-%s.tar.gz' % (VERSION,))
 
 
 DESTDIR = ARGUMENTS.get('DESTDIR', '')
-
-sbindir = '/usr/sbin'
-mandir = '/usr/share/man'
-sysconfdir = '/etc/filtergen'
-pkgdocdir = '/usr/share/doc/filtergen'
-pkgexdir = pkgdocdir + '/examples'
+# Individual paths can be overridden
+sbindir = ARGUMENTS.get('SBINDIR', '/usr/sbin')
+mandir = ARGUMENTS.get('MANDIR', '/usr/share/man')
+sysconfdir = ARGUMENTS.get('SYSCONFDIR', '/etc/filtergen')
+pkgdocdir = ARGUMENTS.get('PKGDOCDIR', '/usr/share/doc/filtergen')
+pkgexdir = ARGUMENTS.get('PKGEXDIR', pkgdocdir + '/examples')
 
 # Add the top level directory to the include path
 env.AppendUnique(CPPPATH=['#'],
