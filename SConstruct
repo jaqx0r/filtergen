@@ -255,7 +255,8 @@ env.Distribute(
     env['DISTTREE'],
     ['SConstruct', 'Doxyfile', 'AUTHORS', 'THANKS', 'README.md',
      'HISTORY', 'HONESTY', 'TODO', 'filtergen.8', 'fgadm.8',
-     'filter_syntax.5', 'filter_backends.7', 'filtergen.spec.in', ])
+     'filter_syntax.5', 'filter_backends.7', 'filtergen.spec.in',
+     'filtergen.spec'])
 
 srcdist = env.Tarball(env['TARBALL'], env['DISTTREE'])
 env.Alias('dist', srcdist)
