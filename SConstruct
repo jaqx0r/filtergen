@@ -16,7 +16,7 @@ vars.AddVariables(
     BoolVariable('asan', 'enable compilation with AddressSanitizer', 0),
 )
 
-env = Environment(variables=vars, tools=['default', 'dejagnu'])
+env = Environment(variables=vars, tools=['default', 'dejagnu', 'textfile'])
 
 if os.environ.get('CC', None):
     env['CC'] = os.environ['CC']
@@ -188,30 +188,25 @@ env.Distribute(env['DISTTREE'], filtergen_sources + ['filter.h',
                                                      'icmpent.h',
                                                      'util.h'])
 
+subst_dict = {
+  '@sysconfdir@': sysconfdir,
+  '@pkgexdir@': pkgexdir,
+  '@sbindir@': sbindir,
+  '@VERSION@': VERSION,
+  }
 
-def sed(target, source, env):
-    expandos = {
-        'SYSCONFDIR': sysconfdir,
-        'PKGEXDIR': pkgexdir,
-        'SBINDIR': sbindir,
-        'VERSION': VERSION
-    }
-    for (t, s) in zip(target, source):
-        o = file(str(t), 'w')
-        i = file(str(s), 'r')
-        o.write(i.read() % expandos)
-        i.close()
-        o.close()
-    return None
-
-fgadm = env.Command('fgadm', 'fgadm.in', [sed, Chmod('fgadm', 0755)])
-
-env.Command(['fgadm.conf', 'rules.filter'],
-            ['fgadm.conf.in', 'rules.filter.in'],
-            sed)
+fgadm = env.Substfile('fgadm.in', SUBST_DICT = subst_dict)
+env.AddPostAction(fgadm, Chmod('fgadm', 0755))
 Default(fgadm)
+  
+env.Substfile('fgadm.conf.in', SUBST_DICT = subst_dict)
+env.Substfile('rules.filter.in', SUBST_DICT = subst_dict)
+  
 env.Distribute(
     env['DISTTREE'], ['fgadm.in', 'rules.filter.in', 'fgadm.conf.in'])
+
+env.Substfile('filtergen.spec.in', SUBST_DICT = subst_dict)
+env.Distribute(env['DISTTREE'], ['filtergen.spec', 'filtergen.spec.in'])
 
 SConscript([
     'input/SConscript',
@@ -255,8 +250,7 @@ env.Distribute(
     env['DISTTREE'],
     ['SConstruct', 'Doxyfile', 'AUTHORS', 'THANKS', 'README.md',
      'HISTORY', 'HONESTY', 'TODO', 'filtergen.8', 'fgadm.8',
-     'filter_syntax.5', 'filter_backends.7', 'filtergen.spec.in',
-     'filtergen.spec'])
+     'filter_syntax.5', 'filter_backends.7', 'filtergen.spec.in'])
 
 srcdist = env.Tarball(env['TARBALL'], env['DISTTREE'])
 env.Alias('dist', srcdist)

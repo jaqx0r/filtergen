@@ -1,6 +1,6 @@
 Summary: packet filter generator for various firewall systems
 Name: filtergen
-Version: %(VERSION)s
+Version: @VERSION@
 Release: 1
 License: GPL
 Group: Applications/System
@@ -28,7 +28,7 @@ make CFLAGS="${RPM_OPT_FLAGS}"
 
 %install
 rm -rf $RPM_BUILD_ROOT
-make PREFIX=${RPM_BUILD_ROOT}/usr BINDIR=${RPM_BUILD_ROOT}/sbin install
+scons DESTDIR=$RPM_BUILD_ROOT install
 
 %post
 /sbin/chkconfig --add filtergen
@@ -43,11 +43,10 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)
-/sbin/filtergen
-/etc/init.d/filtergen
-/etc/filter/
+@sbindir@/filtergen
+@sysconfdir@
 %{_mandir}/*
-%doc HISTORY HONESTY README TODO tests/*.filter
+%doc HISTORY HONESTY README.md TODO examples/*.filter
 
 %changelog
 * Wed Aug 18 2004 Jamie Wilkinsin <jamie@anchor.net.au> - 0.12.4-1

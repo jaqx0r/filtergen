@@ -1,4 +1,4 @@
-# %(SYSCONFDIR)s/fgadm.conf
+# @sysconfdir@/fgadm.conf
 
 # Set BACKEND to one of `iptables', `ipchains', `ipfilter', or `cisco', for
 # your particular packet filter target.  The default is `iptables'.
