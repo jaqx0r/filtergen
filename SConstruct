@@ -99,6 +99,7 @@ if not env.GetOption('clean'):
 # choose debugging level
 if ARGUMENTS.get('debug', 1):
     env.AppendUnique(CCFLAGS=['-g', '-O0'])
+    env.AppendUnique(LINKFLAGS=['-g'])
 else:
     env.AppendUnique(CCFLAGS=['-O2'])
 

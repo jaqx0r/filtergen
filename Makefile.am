@@ -34,7 +34,3 @@ dist_pkgex_DATA = $(top_srcdir)/examples/*.filter
 dist_pkgdoc_DATA = $(top_srcdir)/doc/*
 
 EXTRA_DIST = HISTORY HONESTY README TODO $(headers) $(mans) filtergen.spec extras/*
-
-AM_CFLAGS = -D_GNU_SOURCE @GCOV_CFLAGS@
-AM_LDFLAGS = -g
-AM_YFLAGS = -d
