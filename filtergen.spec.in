@@ -44,6 +44,7 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(-,root,root)
 @sbindir@/filtergen
+@sbindir@/fgadm
 @sysconfdir@
 %{_mandir}/*
 %doc HISTORY HONESTY README.md TODO examples/*.filter
