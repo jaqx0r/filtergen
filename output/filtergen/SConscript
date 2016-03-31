@@ -5,5 +5,5 @@ env.Library('out_filtergen',
             source=['emit.c'],
             CPPPATH='../..')
 
-env.Tar(env['TARNAME'], ['SConscript',
+env.Tar(env['TARBALL'], ['SConscript',
                          'emit.c', ])

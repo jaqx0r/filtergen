@@ -9,7 +9,7 @@ env.Clean('scanner.o', ['scanner.c', 'scanner.h'])
 env.Clean('parser.o', ['parser.c', 'parser.h'])
 
 # ship the sources
-env.Tar(env['TARNAME'], sources + ['SConscript',
+env.Tar(env['TARBALL'], sources + ['SConscript',
                                    'ast.h',
                                    # these included so bison and flex aren't
                                    # required by users

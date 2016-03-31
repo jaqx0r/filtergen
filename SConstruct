@@ -99,11 +99,14 @@ env.AppendUnique(LEXFLAGS=['--header-file=${TARGET.dir}/scanner.h',
 # Compress, zip, and transform the tar contents when creating, so that we
 # create a distribution tarball that is prefixed by filtergen-VERSION, to match
 # common practice.
-env.AppendUnique(TARNAME='filtergen-%s' % (VERSION,))
+env.Replace(TARNAME='filtergen-%s' % (VERSION,))
+env.Replace(TARBALL='#$TARNAME')
+env.Replace(TARSUFFIX='.tar.gz')
 env.AppendUnique(TARFLAGS=['-c',
                            '-z',
-                           '--xform=s,^,$TARNAME/,'],
-                 TARSUFFIX='.gz')
+                           '--xform=s,^,$TARNAME/,'])
+
+
 DESTDIR = ARGUMENTS.get('DESTDIR', '')
 # Individual paths can be overridden
 sbindir = ARGUMENTS.get('SBINDIR', '/usr/sbin')
@@ -144,9 +147,12 @@ filtergen_sources = ['filtergen.c',
                      'icmpent.c']
 filtergen = fg_env.Program('filtergen', filtergen_sources)
 
-env.Tar(env['TARNAME'], filtergen_sources + ['filter.h',
+tar = env.Tar(env['TARBALL'], filtergen_sources + ['filter.h',
                                                     'icmpent.h',
                                                     'util.h'])
+
+print str(tar)
+
 subst_dict = {
     '@sysconfdir@': sysconfdir,
     '@pkgexdir@': pkgexdir,
@@ -162,11 +168,11 @@ env.Substfile('fgadm.conf.in', SUBST_DICT=subst_dict)
 env.Substfile('rules.filter.in', SUBST_DICT=subst_dict)
 
 env.Tar(
-    env['TARNAME'], ['fgadm.in', 'rules.filter.in', 'fgadm.conf.in'])
+    env['TARBALL'], ['fgadm.in', 'rules.filter.in', 'fgadm.conf.in'])
 
 env.Substfile('filtergen.spec.in', SUBST_DICT=subst_dict)
 
-env.Tar(env['TARNAME'], ['filtergen.spec', 'filtergen.spec.in'])
+env.Tar(env['TARBALL'], ['filtergen.spec', 'filtergen.spec.in'])
 
 SConscript([
     'input/SConscript',
@@ -205,7 +211,7 @@ pkgdoc = env.Alias('install-doc', DESTDIR + pkgdocdir)
 env.Alias('install', [bin, man, sysconf, pkgdoc, pkgex])
 
 env.Tar(
-    env['TARNAME'],
+    env['TARBALL'],
     ['SConstruct', 'Doxyfile', 'AUTHORS', 'THANKS', 'README.md',
      'HISTORY', 'HONESTY', 'TODO', 'filtergen.8', 'fgadm.8',
      'filter_syntax.5', 'filter_backends.7', 'filtergen.spec.in'])
@@ -214,12 +220,13 @@ env.Alias('all', [filtergen, 'test-binaries'])
 Default('all')
 
 # Pack up the build system extensions as well.
-env.Tar(env['TARNAME'],
+env.Tar(env['TARBALL'],
         env.Glob('site_scons/site_tools/*.py'))
 
-env.Alias('dist', env['TARNAME'] + '.tar.gz')
+env.Alias('dist', tar)
 
 distcheck = env.Command('distcheck',
-                        env['TARNAME'] + '.tar.gz',
+                        tar,
                         'tar zxf $SOURCE && scons -C $TARNAME check')
 env.Alias('distcheck', distcheck)
+print env.Dump()

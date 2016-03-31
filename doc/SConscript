@@ -1,7 +1,7 @@
 # -*- mode: python -*-
 Import('env')
 
-env.Tar(env['TARNAME'], ['SConscript',
+env.Tar(env['TARBALL'], ['SConscript',
                          'flow',
                          'generator.notes',
                          'notes', ])

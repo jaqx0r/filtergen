@@ -3,7 +3,7 @@ Import('env')
 
 sources = ['ir.c', ]
 
-env.Tar(env['TARNAME'], sources + ['SConscript',
+env.Tar(env['TARBALL'], sources + ['SConscript',
                                    'ir.h',
                                    'emit.c'])
 

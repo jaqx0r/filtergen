@@ -5,4 +5,4 @@ sources = ['fg-iptables.c']
 
 env.Library('out_iptables', source=sources, CPPPATH='../..')
 
-env.Tar(env['TARNAME'], ['SConscript', ] + sources)
+env.Tar(env['TARBALL'], ['SConscript', ] + sources)
