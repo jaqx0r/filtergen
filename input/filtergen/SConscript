@@ -10,7 +10,7 @@ env.Library('in_filtergen', sources)
 env.Clean('scanner.o', ['scanner.c', 'scanner.h'])
 env.Clean('parser.o', ['parser.c', 'parser.h'])
 
-env.Tar(env['TARBALL'], sources + ['SConscript',
+env.Tar(env['TARNAME'], sources + ['SConscript',
                                    'ast.h',
                                    'resolver.h',
                                    # build these so users don't have to
