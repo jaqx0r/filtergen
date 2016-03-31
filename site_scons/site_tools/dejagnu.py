@@ -80,7 +80,7 @@ def dejagnuActionGenerator(target, source, env, for_signature):
     # print 'tool', tool
     # return 'runtest --all --debug -v -v --outdir %s --tool %s' % (outdir,
     # tool)
-    return 'runtest --debug -v -v --outdir %s --tool %s' % (outdir, tool)
+    return 'runtest --outdir %s --tool %s' % (outdir, tool)
 
 
 def generate(env):
