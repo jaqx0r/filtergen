@@ -26,3 +26,4 @@ env.Depends(suites, env.Glob('config/*.exp'))
 env.Depends(suites, env.Glob('lib/*.exp'))
 
 env.Alias('check', suites)
+env.AlwaysBuild(suites)
