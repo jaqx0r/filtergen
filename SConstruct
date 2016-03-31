@@ -182,6 +182,7 @@ SConscript([
     'output/filtergen/SConscript',
     'examples/SConscript',
     'doc/SConscript',
+  't/SConscript',
     'testsuite/SConscript',
 ], 'env')
 
