@@ -54,8 +54,6 @@ if not env.GetOption('clean'):
 
     env = conf.Finish()
 
-print 'hi'
-
 # choose debugging level
 if ARGUMENTS.get('debug', 1):
     env.AppendUnique(CCFLAGS=['-g', '-O0'])
@@ -106,7 +104,6 @@ env.AppendUnique(TARFLAGS=['-c',
                            '-z',
                            '--xform=s,^,$TARNAME/,'],
                  TARSUFFIX='.tar.gz')
-print 'hi'
 DESTDIR = ARGUMENTS.get('DESTDIR', '')
 # Individual paths can be overridden
 sbindir = ARGUMENTS.get('SBINDIR', '/usr/sbin')
@@ -114,8 +111,6 @@ mandir = ARGUMENTS.get('MANDIR', '/usr/share/man')
 sysconfdir = ARGUMENTS.get('SYSCONFDIR', '/etc/filtergen')
 pkgdocdir = ARGUMENTS.get('PKGDOCDIR', '/usr/share/doc/filtergen')
 pkgexdir = ARGUMENTS.get('PKGEXDIR', pkgdocdir + '/examples')
-
-print 'hi'
 
 # Add the top level directory to the include path
 env.AppendUnique(CPPPATH=['#'],
@@ -129,8 +124,6 @@ env.AppendUnique(CPPPATH=['#'],
                           '#output/ipfilter',
                           '#output/cisco',
                           '#output/filtergen'])
-
-print 'hi'
 
 fg_env = env.Clone()
 fg_env.AppendUnique(
@@ -151,15 +144,9 @@ filtergen_sources = ['filtergen.c',
                      'icmpent.c']
 filtergen = fg_env.Program('filtergen', filtergen_sources)
 
-print 'hi'
-print 'hi'
-dist = env.Tar(env['TARNAME'], filtergen_sources + ['filter.h',
+env.Tar(env['TARNAME'], filtergen_sources + ['filter.h',
                                                     'icmpent.h',
                                                     'util.h'])
-env.Alias('dist', dist)
-
-print 'hi'
-
 subst_dict = {
     '@sysconfdir@': sysconfdir,
     '@pkgexdir@': pkgexdir,
@@ -223,22 +210,18 @@ env.Tar(
      'HISTORY', 'HONESTY', 'TODO', 'filtergen.8', 'fgadm.8',
      'filter_syntax.5', 'filter_backends.7', 'filtergen.spec.in'])
 
-print 'hi'
-
 env.Alias('all', [filtergen, 'test-binaries'])
 Default('all')
 
 # Pack up the build system extensions as well.
-env.Tar(env['TARNAME'],
+dist = env.Tar(env['TARNAME'],
         env.Glob('site_scons/site_tools/*.py'))
 
-#env.Alias('dist', env['TARNAME'])
+env.Alias('dist', dist)
 
-distcheck = env.Command('#distcheck',
-                        env['TARNAME'] + '.tar.gz',
+distcheck = env.Command('distcheck',
+                        env['TARNAME'],
                         'tar zxf $SOURCE && scons -C $TARNAME check')
-env.Depends(distcheck, env['TARNAME'] + '.tar.gz')
+env.Depends(distcheck, env['TARNAME'])
 env.Alias('distcheck', distcheck)
-env.NoCache(env['TARNAME'])
 
-print 'hi'
