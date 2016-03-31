@@ -71,3 +71,4 @@ t/*.trs
 ylwrap
 **/*.log
 **/*.sum
+/filtergen-*.tar.gz
