@@ -226,4 +226,4 @@ distcheck = env.Command('#distcheck',
                         tar,
                         'tar zxf $SOURCE && scons -C $TARNAME check --debug=explain --tree=prune')
 env.Alias('distcheck', distcheck)
-print env.Dump()
+env.AddPostAction(distcheck, 'rm -rf $TARNAME')
