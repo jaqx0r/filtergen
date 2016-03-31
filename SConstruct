@@ -117,7 +117,6 @@ pkgexdir = ARGUMENTS.get('PKGEXDIR', pkgdocdir + '/examples')
 
 # Add the top level directory to the include path
 env.AppendUnique(CPPPATH=['#'],
-
                  LIBPATH=['#input',
                           '#input/filtergen',
                           '#input/iptables-save',
