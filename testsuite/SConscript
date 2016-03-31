@@ -14,4 +14,11 @@ env.Depends(iptsp, '#input/iptables-save/t/parse')
 iptss = env.DejaGnu('ipts-scan')
 env.Depends(iptss, '#input/iptables-save/t/scan')
 
-env.Alias('check', [f, fgp, fgs, iptsp, iptss])
+suites = [f, fgp, fgs, iptsp, iptss]
+
+env.Depends(suites, '#site.exp')
+env.Depends(suites, env.Glob('config/*.exp'))
+# This one's too broad; one lib per suite.
+env.Depends(suites, env.Glob('lib/*.exp'))
+
+env.Alias('check', suites)
