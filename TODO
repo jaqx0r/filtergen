@@ -99,4 +99,3 @@ other items
 * forward/local specifiers in filtergen language removed.  add them
   back?
 
-* scons distcheck to emulate make distcheck
