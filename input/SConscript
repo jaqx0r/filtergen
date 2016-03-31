@@ -5,7 +5,7 @@ sources = ['sourcepos.c']
 
 env.Library('sourcepos', sources)
 
-env.Distribute(env['DISTTREE'],
+env.Tar(env['TARNAME'],
                sources + ['SConscript',
                           'input.h',
                           'sourcepos.h'])

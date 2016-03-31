@@ -5,5 +5,5 @@ env.Library('out_cisco',
             source=['fg-cisco.c'],
             CPPPATH='../..')
 
-env.Distribute(env['DISTTREE'], ['SConscript',
+env.Tar(env['TARNAME'], ['SConscript',
                                  'fg-cisco.c', ])

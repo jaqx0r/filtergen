@@ -3,4 +3,4 @@ Import('env')
 
 import glob
 
-env.Distribute(env['DISTTREE'], ['SConscript', ] + glob.glob('*.filter'))
+env.Tar(env['TARNAME'], ['SConscript', ] + glob.glob('*.filter'))

@@ -3,7 +3,7 @@ Import('env')
 
 sources = ['ir.c', ]
 
-env.Distribute(env['DISTTREE'], sources + ['SConscript',
+env.Tar(env['TARNAME'], sources + ['SConscript',
                                            'ir.h',
                                            'emit.c'])
 

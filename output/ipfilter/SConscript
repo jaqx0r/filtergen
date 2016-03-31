@@ -5,5 +5,5 @@ env.Library('out_ipfilter',
             source=['fg-ipfilter.c'],
             CPPPATH='../..')
 
-env.Distribute(env['DISTTREE'], ['SConscript',
+env.Tar(env['TARNAME'], ['SConscript',
                                  'fg-ipfilter.c'])

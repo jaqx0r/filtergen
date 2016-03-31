@@ -1,7 +1,7 @@
 # -*- mode: python -*-
 Import('env')
 
-env.Distribute(env['DISTTREE'], ['SConscript',
+env.Tar(env['TARNAME'], ['SConscript',
                                  'scan.c',
                                  'parse.c',
                                  'emit.c', ])

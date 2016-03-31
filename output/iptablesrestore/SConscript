@@ -5,4 +5,4 @@ sources = ['fg-iptablesrestore.c']
 
 env.Library('out_iptablesrestore', source=sources, CPPPATH='../..')
 
-env.Distribute(env['DISTTREE'], ['SConscript', ] + sources)
+env.Tar(env['TARNAME'], ['SConscript', ] + sources)
