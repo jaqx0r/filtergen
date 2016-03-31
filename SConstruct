@@ -103,7 +103,7 @@ env.AppendUnique(TARNAME='filtergen-%s' % (VERSION,))
 env.AppendUnique(TARFLAGS=['-c',
                            '-z',
                            '--xform=s,^,$TARNAME/,'],
-                 TARSUFFIX='.tar.gz')
+                 TARSUFFIX='.gz')
 DESTDIR = ARGUMENTS.get('DESTDIR', '')
 # Individual paths can be overridden
 sbindir = ARGUMENTS.get('SBINDIR', '/usr/sbin')
@@ -214,14 +214,12 @@ env.Alias('all', [filtergen, 'test-binaries'])
 Default('all')
 
 # Pack up the build system extensions as well.
-dist = env.Tar(env['TARNAME'],
+env.Tar(env['TARNAME'],
         env.Glob('site_scons/site_tools/*.py'))
 
-env.Alias('dist', dist)
+env.Alias('dist', env['TARNAME'] + '.tar.gz')
 
 distcheck = env.Command('distcheck',
-                        env['TARNAME'],
+                        env['TARNAME'] + '.tar.gz',
                         'tar zxf $SOURCE && scons -C $TARNAME check')
-env.Depends(distcheck, env['TARNAME'])
 env.Alias('distcheck', distcheck)
-
