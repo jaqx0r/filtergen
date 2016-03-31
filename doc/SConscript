@@ -2,6 +2,6 @@
 Import('env')
 
 env.Tar(env['TARNAME'], ['SConscript',
-                                 'flow',
-                                 'generator.notes',
-                                 'notes', ])
+                         'flow',
+                         'generator.notes',
+                         'notes', ])

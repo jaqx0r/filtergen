@@ -10,11 +10,11 @@ env.Clean('parser.o', ['parser.c', 'parser.h'])
 
 # ship the sources
 env.Tar(env['TARNAME'], sources + ['SConscript',
-                                           'ast.h',
-                                           # these included so bison and flex aren't
-                                           # required by users
-                                           'parser.c',
-                                           'parser.h',
-                                           'scanner.c'])
+                                   'ast.h',
+                                   # these included so bison and flex aren't
+                                   # required by users
+                                   'parser.c',
+                                   'parser.h',
+                                   'scanner.c'])
 
 SConscript('t/SConscript', 'env')

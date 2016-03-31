@@ -22,7 +22,6 @@ if os.environ.get('CC', None):
     env['CC'] = os.environ['CC']
 
 
-
 Help(vars.GenerateHelpText(env))
 
 if not env.GetOption('clean'):
@@ -46,15 +45,16 @@ if not env.GetOption('clean'):
                 LINKFLAGS=['--coverage'])
 
     if ARGUMENTS.get('asan', 0):
-      conf.env.AppendUnique(CCFLAGS=['-fsanitize=address', '-fno-omit-frame-pointer'])
-      conf.env.AppendUnique(LIBS=['asan'])
+        conf.env.AppendUnique(
+            CCFLAGS=['-fsanitize=address', '-fno-omit-frame-pointer'])
+        conf.env.AppendUnique(LIBS=['asan'])
 
     if not confOK:
         Exit(1)
 
     env = conf.Finish()
 
-print "hi"
+print 'hi'
 
 # choose debugging level
 if ARGUMENTS.get('debug', 1):
@@ -106,7 +106,7 @@ env.AppendUnique(TARFLAGS=['-c',
                            '-z',
                            '--xform=s,^,$TARNAME/,'],
                  TARSUFFIX='.tar.gz')
-print "hi"
+print 'hi'
 DESTDIR = ARGUMENTS.get('DESTDIR', '')
 # Individual paths can be overridden
 sbindir = ARGUMENTS.get('SBINDIR', '/usr/sbin')
@@ -115,7 +115,7 @@ sysconfdir = ARGUMENTS.get('SYSCONFDIR', '/etc/filtergen')
 pkgdocdir = ARGUMENTS.get('PKGDOCDIR', '/usr/share/doc/filtergen')
 pkgexdir = ARGUMENTS.get('PKGEXDIR', pkgdocdir + '/examples')
 
-print "hi"
+print 'hi'
 
 # Add the top level directory to the include path
 env.AppendUnique(CPPPATH=['#'],
@@ -130,7 +130,7 @@ env.AppendUnique(CPPPATH=['#'],
                           '#output/cisco',
                           '#output/filtergen'])
 
-print "hi"
+print 'hi'
 
 fg_env = env.Clone()
 fg_env.AppendUnique(
@@ -151,33 +151,33 @@ filtergen_sources = ['filtergen.c',
                      'icmpent.c']
 filtergen = fg_env.Program('filtergen', filtergen_sources)
 
-print "hi"
-print "hi"
+print 'hi'
+print 'hi'
 dist = env.Tar(env['TARNAME'], filtergen_sources + ['filter.h',
-                                         'icmpent.h',
-                                         'util.h'])
+                                                    'icmpent.h',
+                                                    'util.h'])
 env.Alias('dist', dist)
 
-print "hi"
+print 'hi'
 
 subst_dict = {
-  '@sysconfdir@': sysconfdir,
-  '@pkgexdir@': pkgexdir,
-  '@sbindir@': sbindir,
-  '@VERSION@': VERSION,
-  }
+    '@sysconfdir@': sysconfdir,
+    '@pkgexdir@': pkgexdir,
+    '@sbindir@': sbindir,
+    '@VERSION@': VERSION,
+}
 
-fgadm = env.Substfile('fgadm.in', SUBST_DICT = subst_dict)
+fgadm = env.Substfile('fgadm.in', SUBST_DICT=subst_dict)
 env.AddPostAction(fgadm, Chmod('fgadm', 0755))
 Default(fgadm)
-  
-env.Substfile('fgadm.conf.in', SUBST_DICT = subst_dict)
-env.Substfile('rules.filter.in', SUBST_DICT = subst_dict)
-  
+
+env.Substfile('fgadm.conf.in', SUBST_DICT=subst_dict)
+env.Substfile('rules.filter.in', SUBST_DICT=subst_dict)
+
 env.Tar(
     env['TARNAME'], ['fgadm.in', 'rules.filter.in', 'fgadm.conf.in'])
 
-env.Substfile('filtergen.spec.in', SUBST_DICT = subst_dict)
+env.Substfile('filtergen.spec.in', SUBST_DICT=subst_dict)
 
 env.Tar(env['TARNAME'], ['filtergen.spec', 'filtergen.spec.in'])
 
@@ -192,7 +192,7 @@ SConscript([
     'output/filtergen/SConscript',
     'examples/SConscript',
     'doc/SConscript',
-  'testsuite/SConscript',
+    'testsuite/SConscript',
 ], 'env')
 
 env.Install(DESTDIR + sbindir, [filtergen, fgadm])

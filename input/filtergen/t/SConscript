@@ -2,9 +2,9 @@
 Import('env')
 
 env.Tar(env['TARNAME'], ['SConscript',
-                                 'scan.c',
-                                 'parse.c',
-                                 'emit.c', ])
+                         'scan.c',
+                         'parse.c',
+                         'emit.c', ])
 
 env = env.Clone()
 env.AppendUnique(LIBS=['in_filtergen', 'sourcepos'])

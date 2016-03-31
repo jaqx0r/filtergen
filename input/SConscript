@@ -6,9 +6,9 @@ sources = ['sourcepos.c']
 env.Library('sourcepos', sources)
 
 env.Tar(env['TARNAME'],
-               sources + ['SConscript',
-                          'input.h',
-                          'sourcepos.h'])
+        sources + ['SConscript',
+                   'input.h',
+                   'sourcepos.h'])
 
 SConscript(['filtergen/SConscript',
             'iptables-save/SConscript'], 'env')
