@@ -100,7 +100,7 @@ env.AppendUnique(LEXFLAGS=['--header-file=${TARGET.dir}/scanner.h',
 # create a distribution tarball that is prefixed by filtergen-VERSION, to match
 # common practice.
 env.Replace(TARNAME='filtergen-%s' % (VERSION,))
-env.Replace(TARBALL='#$TARNAME')
+env.Replace(TARBALL='#filtergen-%s' % (VERSION,))
 env.Replace(TARSUFFIX='.tar.gz')
 env.AppendUnique(TARFLAGS=['-c',
                            '-z',
@@ -221,12 +221,12 @@ Default('all')
 
 # Pack up the build system extensions as well.
 env.Tar(env['TARBALL'],
-        env.Glob('site_scons/site_tools/*.py'))
+        env.Glob('site_scons/site_tools/*.py') + ['site.exp'])
 
 env.Alias('dist', tar)
 
-distcheck = env.Command('distcheck',
+distcheck = env.Command('#distcheck',
                         tar,
-                        'tar zxf $SOURCE && scons -C $TARNAME check')
+                        'tar zxf $SOURCE && scons -C $TARNAME check --debug=explain --tree=prune')
 env.Alias('distcheck', distcheck)
 print env.Dump()
