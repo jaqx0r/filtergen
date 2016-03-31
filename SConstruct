@@ -139,7 +139,7 @@ env.AppendUnique(LEXFLAGS=['--header-file=${TARGET.dir}/scanner.h',
                            '-o$TARGET'])
 
 # set up the disttree and tarball names
-env.AppendUnique(DISTTREE='#filtergen-%s' % (VERSION,))
+env.AppendUnique(DISTTREE=env.Dir('#filtergen-%s' % (VERSION,)))
 env.AppendUnique(TARBALL='filtergen-%s.tar.gz' % (VERSION,))
 
 
@@ -256,8 +256,19 @@ srcdist = env.Tarball(env['TARBALL'], env['DISTTREE'])
 env.Alias('dist', srcdist)
 # don't leave the disttree around
 env.AddPreAction(
-    env['DISTTREE'], Action('rm -rf ' + str(File(env['DISTTREE']))))
-env.AddPostAction(srcdist, Action('rm -rf ' + str(File(env['DISTTREE']))))
+    env['DISTTREE'], Action('rm -rf ' + str((env['DISTTREE']))))
+#env.AddPostAction(srcdist, Action('rm -rf ' + str(env['DISTTREE'])))
 
 env.Alias('all', [filtergen, 'test-binaries'])
 Default('all')
+
+env.Distribute(env['DISTTREE'],
+               env.Glob('site_scons/site_tools/*'))
+
+distcheck = env.Command('distcheck',
+                        env['DISTTREE'],
+                        'scons -C $SOURCE check')
+# #env.AddPostAction(distcheck, 'rm -f $DISTTREE/testsuite/filtergen.log')
+env.Depends(distcheck, srcdist)
+                                 
+#env.Alias('distcheck', distcheck)
