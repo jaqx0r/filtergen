@@ -148,8 +148,8 @@ filtergen_sources = ['filtergen.c',
 filtergen = fg_env.Program('filtergen', filtergen_sources)
 
 tar = env.Tar(env['TARBALL'], filtergen_sources + ['filter.h',
-                                                    'icmpent.h',
-                                                    'util.h'])
+                                                   'icmpent.h',
+                                                   'util.h'])
 
 print str(tar)
 
