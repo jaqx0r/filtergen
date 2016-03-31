@@ -1,6 +1,4 @@
 # -*- mode: python -*-
 Import('env')
 
-import glob
-
-env.Tar(env['TARNAME'], ['SConscript', ] + glob.glob('*.filter'))
+env.Tar(env['TARNAME'], ['SConscript'] + env.Glob('*.filter'))
