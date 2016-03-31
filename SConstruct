@@ -97,8 +97,8 @@ env.AppendUnique(LEXFLAGS=['--header-file=${TARGET.dir}/scanner.h',
                            '-o$TARGET'])
 
 # Compress, zip, and transform the tar contents when creating, so that we
-# create a distribution tarball that is prefixed by filtergen-VERSION, to match
-# common practice.
+# create a distribution tarball that unpacks to a directory named
+# filtergen-VERSION, to match common practice.
 env.Replace(TARNAME='filtergen-%s' % (VERSION,))
 env.Replace(TARBALL='#filtergen-%s' % (VERSION,))
 env.Replace(TARSUFFIX='.tar.gz')
