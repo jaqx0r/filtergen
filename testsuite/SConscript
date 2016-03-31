@@ -1,8 +1,10 @@
 # -*- mode: python -*-
 Import('env')
 
-env.Tar(env['TARBALL'], ['SConscript', 'config',
-                         'lib', 'filtergen'] + env.Glob('*.dg'))
+env.Tar(env['TARBALL'], ['SConscript', 'config',                        'lib'])
+
+for d in ('filtergen', 'fg-parse.dg', 'fg-scan.dg', 'ipts-parse.dg', 'ipts-scan.dg'):
+  env.Tar(env['TARBALL'], env.Glob(d + '/*.exp') + env.Glob(d + '/*.in'))
 
 f = env.DejaGnu('filtergen')
 env.Depends(f, '#filtergen')
