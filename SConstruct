@@ -151,8 +151,6 @@ tar = env.Tar(env['TARBALL'], filtergen_sources + ['filter.h',
                                                    'icmpent.h',
                                                    'util.h'])
 
-print str(tar)
-
 subst_dict = {
     '@sysconfdir@': sysconfdir,
     '@pkgexdir@': pkgexdir,
