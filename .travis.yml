@@ -13,7 +13,7 @@ before_script:
  - bison --version
  - runtest --version
 script:
- - CC=$COMPILER scons -k gcov=yes debug=yes check
+ - CC=$COMPILER scons -k gcov=yes debug=yes check distcheck
 matrix:
   include:
     - compiler: gcc
