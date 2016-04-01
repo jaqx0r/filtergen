@@ -4,12 +4,13 @@ Import('env')
 env.Tar(env['TARBALL'], ['SConscript',
                          'scan.c',
                          'parse.c',
-                         'emit.c', ])
+                         'emit.c', 'convert.c'])
 
 env = env.Clone()
-env.AppendUnique(LIBS=['in_filtergen', 'sourcepos'])
+env.AppendUnique(LIBS=['in_filtergen', 'sourcepos', 'core'])
 
 env.Alias('test-binaries', [env.Program('scan.c'),
                             env.Program('parse.c'),
                             env.Program('emit.c'),
+                            env.Program('convert.c'),
                             ])

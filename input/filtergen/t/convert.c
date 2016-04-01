@@ -1,16 +1,17 @@
 #include <stdio.h>
-#include "stdlib.h"
+#include <stdlib.h>
+
 #include "filter.h"
-#include "ast.h"
-#include "parser.h"
+#include "input/filtergen/ast.h"
+#include "input/filtergen/parser.h"
+#include "input/filtergen/scanner.h"
 
 int indent = -2;
 
-#ifndef FILTER_EMIT
+extern int yycolumn;
 extern int convtrace;
 
 struct filter *convert(struct ast_s *, struct filtergen_opts *);
-#endif
 
 void emit_filter(struct filter *f) {
   int i;
@@ -159,27 +160,34 @@ int main(int argc __attribute__((unused)),
   struct filter *f = NULL;
   struct filtergen_opts o = {AF_INET};
 
-#ifndef FILTER_EMIT
   char *CONVTRACE;
   struct ast_s ast;
   int r;
+  char *YYDEBUGTRACE;
 
+  YYDEBUGTRACE = getenv("YYDEBUGTRACE");
+  filtergen_set_debug(YYDEBUGTRACE ? atoi(YYDEBUGTRACE) : 0);
   CONVTRACE = getenv("CONVTRACE");
   convtrace = CONVTRACE ? atoi(CONVTRACE) : 0;
 
-  r = yyparse(&ast);
+  if (argc > 1) {
+    sourcefile_push(argv[1]);
+  } else {
+    sourcefile_push("-");
+  }
+  filtergen_in = current_srcfile->f;
+  filtergen_lineno = current_srcfile->lineno;
+  yycolumn = current_srcfile->column;
+
+  r = filtergen_parse(&ast);
 
   if (r != 0) {
-    printf("yyparse returned %d\n", r);
+    printf("parse returned %d\n", r);
     return 1;
   }
 
   f = convert(&ast, &o);
-#else
-  filter_fopen(NULL);
 
-  f = filter_parse_list();
-#endif
   if (!f) {
     printf("convert returned NULL\n");
     return 1;
