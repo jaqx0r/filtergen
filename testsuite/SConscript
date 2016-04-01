@@ -9,16 +9,22 @@ for d in ('filtergen', 'fg-parse.dg', 'fg-scan.dg', 'fg-emit.dg', 'ipts-parse.dg
 
 f = env.DejaGnu('filtergen')
 env.Depends(f, '#filtergen')
+env.Depends(f, env.Glob('filtergen/*.filter'))
 fgp = env.DejaGnu('fg-parse')
 env.Depends(fgp, '#input/filtergen/t/parse')
+env.Depends(fgp, env.Glob('fg-parse.dg/*in'))
 fgs = env.DejaGnu('fg-scan')
 env.Depends(fgs, '#input/filtergen/t/scan')
+env.Depends(fgs, env.Glob('fg-scan.dg/*.in'))
 fge = env.DejaGnu('fg-emit')
 env.Depends(fge, '#input/filtergen/t/emit')
+env.Depends(fge, env.Glob('fg-emit.dg/*.in'))
 iptsp = env.DejaGnu('ipts-parse')
 env.Depends(iptsp, '#input/iptables-save/t/parse')
+env.Depends(iptsp, env.Glob('ipts-parse.dg/*.in'))
 iptss = env.DejaGnu('ipts-scan')
 env.Depends(iptss, '#input/iptables-save/t/scan')
+env.Depends(iptss, env.Glob('ipts-scan.dg/*.in'))
 
 suites = [f, fgp, fgs, fge, iptsp, iptss]
 
@@ -28,4 +34,4 @@ env.Depends(suites, env.Glob('config/*.exp'))
 env.Depends(suites, env.Glob('lib/*.exp'))
 
 env.Alias('check', suites)
-env.AlwaysBuild(suites)
+#env.AlwaysBuild(suites)
