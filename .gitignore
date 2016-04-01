@@ -73,3 +73,4 @@ ylwrap
 **/*.sum
 /filtergen-*.tar.gz
 /filtergen-*/
+/testsuite/fg-emit.dg/*.out
