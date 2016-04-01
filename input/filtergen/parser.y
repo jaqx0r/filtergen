@@ -710,6 +710,10 @@ struct sourceposition *make_sourcepos(YYLTYPE loc) {
   pos->first_column = loc.first_column;
   pos->last_line = loc.last_line;
   pos->last_column = loc.last_column;
-  pos->filename = loc.srcfile->pathname;
+  if (loc.srcfile) {
+    pos->filename = loc.srcfile->pathname;
+  } else {
+    pos->filename = NULL;
+  }
   return pos;
 }
