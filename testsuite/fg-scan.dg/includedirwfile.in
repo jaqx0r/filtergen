@@ -1,3 +1,4 @@
+# test that directory inclusion works with files
 include testsuite/fg-scan.dg/includedirwfile.d
 # { dg-warning "kind = dport" "" { target *-*-* } 1 }
 # { dg-warning "kind = identifier" "" { target *-*-* } 1 }

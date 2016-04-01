@@ -1,1 +1,2 @@
+# test that directory inclusion works
 include testsuite/fg-scan.dg/includedir.d
