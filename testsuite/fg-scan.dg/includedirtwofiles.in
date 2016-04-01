@@ -1,0 +1,6 @@
+# test that directory inclusion works with multiple files
+include testsuite/fg-scan.dg/includedirtwofiles.d
+# { dg-warning "kind = dest" "" { target *-*-* } 1 }
+# { dg-warning "spelling = \"unknown\"" "" { target *-*-* } 1 }
+# { dg-warning "kind = dport" "" { target *-*-* } 1 }
+# { dg-warning "spelling = \"pants\"" "" { target *-*-* } 1 }
