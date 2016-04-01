@@ -2,10 +2,47 @@ load_lib dg.exp
 
 set tool fg-emit
 
+proc compare-files { file1 file2 } {
+    try {
+        verbose "Comparing `$file1' and `$file2'..."
+        set compare [exec -ignorestderr -- cmp "$file1" "$file2"]
+        set status 0
+    } trap CHILDSTATUS {results options} {
+        set status [lindex [dict get $options -errorcode] 2]
+    }
+    switch -- $status {
+        0 { return "" }
+        1 {
+            verbose "Diffing $file1 against $file2"
+            set diff [exec diff -u "$file1" "$file2"]
+            return diff
+        }
+        default {
+           error "unknown compare result: \"$status\""
+        }
+    }
+}
+
+proc exec-and-compare {input_file output_file golden_file} {
+    verbose "Emitting ast into `$output_file'..."
+    set output [exec -ignorestderr -- input/filtergen/t/emit "$input_file" > "$output_file"]
+    set diff [compare-files "$golden_file" "$output_file"]
+    if {$diff != ""} {
+        set output [concat $output $diff]
+    }
+    return $output
+}
+
 proc fg-emit-dg-test { filter do_what extra_tool_flags } {
     set output_file "[file rootname $filter].out"
+    set golden_file "[file rootname $filter].golden"
 
-    set comp_output [exec input/filtergen/t/emit - < $filter > $output_file 2>@stdout]
+    set comp_output [exec-and-compare $filter $output_file $golden_file]
+
+    set output2_file "[file rootname $filter].out.out"
+    set comp_output \
+        [concat $comp_output \
+             [exec-and-compare $output_file $output2_file $golden_file] ]
 
     return [list $comp_output $output_file]
 }
