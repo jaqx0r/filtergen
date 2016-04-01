@@ -1,0 +1,3 @@
+# test that include paths don't start at root
+include /  # { dg-warning "cannot include / path" }
+include // # { dg-warning "cannot include / path" }
