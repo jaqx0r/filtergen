@@ -1,0 +1,11 @@
+load_lib dg.exp
+
+set tool fg-emit
+
+proc fg-emit-dg-test { filter do_what extra_tool_flags } {
+    set output_file "[file rootname $filter].out"
+
+    set comp_output [exec input/filtergen/t/emit - < $filter > $output_file 2>@stdout]
+
+    return [list $comp_output $output_file]
+}

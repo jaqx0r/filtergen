@@ -1,0 +1,7 @@
+load_lib fg-emit-dg.exp
+
+dg-init
+
+dg-runtest [lsort [glob -nocomplain $srcdir/$subdir/*.in]] "" ""
+
+dg-finish

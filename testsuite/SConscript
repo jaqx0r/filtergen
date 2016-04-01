@@ -3,7 +3,7 @@ Import('env')
 
 env.Tar(env['TARBALL'], ['SConscript', 'config', 'lib'])
 
-for d in ('filtergen', 'fg-parse.dg', 'fg-scan.dg', 'ipts-parse.dg', 'ipts-scan.dg'):
+for d in ('filtergen', 'fg-parse.dg', 'fg-scan.dg', 'fg-emit.dg', 'ipts-parse.dg', 'ipts-scan.dg'):
   # Exclude log and sum which are generated files when running the suite.
   env.Tar(env['TARBALL'], [f for f in env.Glob(d + '/*') if not f.path.endswith('.log') and not f.path.endswith('.sum')])
 
@@ -13,12 +13,14 @@ fgp = env.DejaGnu('fg-parse')
 env.Depends(fgp, '#input/filtergen/t/parse')
 fgs = env.DejaGnu('fg-scan')
 env.Depends(fgs, '#input/filtergen/t/scan')
+fge = env.DejaGnu('fg-emit')
+env.Depends(fge, '#input/filtergen/t/emit')
 iptsp = env.DejaGnu('ipts-parse')
 env.Depends(iptsp, '#input/iptables-save/t/parse')
 iptss = env.DejaGnu('ipts-scan')
 env.Depends(iptss, '#input/iptables-save/t/scan')
 
-suites = [f, fgp, fgs, iptsp, iptss]
+suites = [f, fgp, fgs, fge, iptsp, iptss]
 
 env.Depends(suites, '#site.exp')
 env.Depends(suites, env.Glob('config/*.exp'))
