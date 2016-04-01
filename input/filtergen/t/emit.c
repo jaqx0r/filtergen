@@ -8,6 +8,7 @@
 #include "input/filtergen/parser.h"
 #include "input/filtergen/scanner.h"
 
+extern int yycolumn;
 int emittrace = 0;
 
 #define EMIT(x) void emit_##x(struct x##_s *n)
@@ -307,14 +308,25 @@ EMIT(ast) {
   }
 }
 
-int main(int argc __attribute__((unused)),
-         char **argv __attribute__((unused))) {
+int main(int argc, char **argv) {
+  char *YYDEBUGTRACE;
   char *EMITTRACE;
   struct ast_s ast;
   int res;
 
+  YYDEBUGTRACE = getenv("YYDEBUGTRACE");
+  filtergen_debug = YYDEBUGTRACE ? atoi(YYDEBUGTRACE) : 0;
   EMITTRACE = getenv("EMITTRACE");
   emittrace = EMITTRACE ? atoi(EMITTRACE) : 0;
+
+  if (argc > 1) {
+    sourcefile_push(argv[1]);
+  } else {
+    sourcefile_push("-");
+  }
+  filtergen_in = current_srcfile->f;
+  filtergen_lineno = current_srcfile->lineno;
+  yycolumn = current_srcfile->column;
 
   res = filtergen_parse(&ast);
 
