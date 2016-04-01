@@ -117,7 +117,8 @@ pkgexdir = ARGUMENTS.get('PKGEXDIR', pkgdocdir + '/examples')
 
 # Add the top level directory to the include path
 env.AppendUnique(CPPPATH=['#'],
-                 LIBPATH=['#input',
+                 LIBPATH=['#',
+                          '#input',
                           '#input/filtergen',
                           '#input/iptables-save',
                           '#output/iptables',
@@ -126,6 +127,8 @@ env.AppendUnique(CPPPATH=['#'],
                           '#output/ipfilter',
                           '#output/cisco',
                           '#output/filtergen'])
+
+env.Library('core', ['filter.c', 'icmpent.c', 'fg-util.c'])
 
 fg_env = env.Clone()
 fg_env.AppendUnique(
@@ -137,17 +140,16 @@ fg_env.AppendUnique(
           'out_ipchains',
           'out_ipfilter',
           'out_cisco',
-          'out_filtergen'])
+          'out_filtergen',
+          'core'])
 filtergen_sources = ['filtergen.c',
                      'gen.c',
-                     'filter.c',
-                     'fg-util.c',
-                     'fg-iptrestore.c',
-                     'icmpent.c']
+                     'fg-iptrestore.c']
 filtergen = fg_env.Program('filtergen', filtergen_sources)
 
-tar = env.Tar(env['TARBALL'], filtergen_sources + ['filter.h',
-                                                   'icmpent.h',
+tar = env.Tar(env['TARBALL'], filtergen_sources + ['filter.c', 'filter.h',
+                                                   'icmpent.c', 'icmpent.h',
+                                                   'fg-util.c',
                                                    'util.h'])
 
 subst_dict = {
