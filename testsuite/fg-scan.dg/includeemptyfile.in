@@ -1,0 +1,2 @@
+# test that inclusion of empty files works
+include testsuite/fg-scan.dg/includeemptyfile.d/empty
