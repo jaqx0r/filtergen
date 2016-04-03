@@ -74,3 +74,4 @@ ylwrap
 /filtergen-*.tar.gz
 /filtergen-*/
 /testsuite/fg-emit.dg/*.out
+/input/filtergen/t/factorise

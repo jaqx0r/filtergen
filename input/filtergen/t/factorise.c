@@ -2,11 +2,13 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "ast.h"
+#include "input/filtergen/ast.h"
+#include "input/filtergen/scanner.h"
+#include "input/filtergen/parser.h"
 #include "factoriser.h"
 
-int yyparse(void *);
 int facttrace;
+extern int yycolumn;
 
 int nesting = 0;
 
@@ -197,18 +199,28 @@ void emit_ast(struct ast_s *n) {
   }
 }
 
-int main(int argc __attribute__((unused)),
-         char **argv __attribute__((unused))) {
-  char *FACTTRACE;
+int main(int argc, char **argv) {
+char *FACTTRACE, *YYDEBUGTRACE;
   struct ast_s ast;
   int r;
 
   FACTTRACE = getenv("FACTTRACE");
   facttrace = FACTTRACE ? atoi(FACTTRACE) : 0;
+  YYDEBUGTRACE = getenv("YYDEBUGTRACE");
+  filtergen_set_debug(YYDEBUGTRACE ? atoi(YYDEBUGTRACE) : 0);
 
-  r = yyparse((void *)&ast);
+  if (argc > 1) {
+    sourcefile_push(argv[1]);
+  } else {
+    sourcefile_push("-");
+  }
+  filtergen_in = current_srcfile->f;
+  filtergen_lineno = current_srcfile->lineno;
+  yycolumn = current_srcfile->column;
+
+  r = filtergen_parse(&ast);
   if (r != 0) {
-    printf("yyparse returned %d\n", r);
+    printf("parse returned %d\n", r);
     return 1;
   }
 
