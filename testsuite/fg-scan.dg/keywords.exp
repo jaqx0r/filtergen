@@ -22,6 +22,7 @@ set keywords [list "accept" "dest" "dport" "drop" \
 
 foreach keyword $keywords {
 	set test "$keyword keyword"
+    verbose "Testing the scanner recognises $keyword"
 
 	send "$keyword\r"
 
