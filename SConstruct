@@ -10,10 +10,10 @@ VERSION = '0.13'
 
 vars = Variables(None, ARGUMENTS)
 vars.AddVariables(
-    BoolVariable('debug', 'debugging compiler options', 1),
-    BoolVariable('profiler', 'enable support for profiler', 0),
-    BoolVariable('gcov', 'enable test coverage with gcov', 0),
-    BoolVariable('asan', 'enable compilation with AddressSanitizer', 0),
+    BoolVariable('debug', 'debugging compiler options', True),
+    BoolVariable('profiler', 'enable support for profiler', False),
+    BoolVariable('gcov', 'enable test coverage with gcov', False),
+    BoolVariable('asan', 'enable compilation with AddressSanitizer', False),
 )
 
 env = Environment(variables=vars, tools=['default', 'dejagnu', 'textfile'])
@@ -34,17 +34,17 @@ if not env.GetOption('clean'):
         conf.env.AppendUnique(CPPFLAGS=['-DHAVE_GETOPT_H'])
         conf.CheckLib('getopt', 'getopt')
 
-    if ARGUMENTS.get('profiler', 0):
+    if ARGUMENTS.get('profiler'):
         conf.CheckLib('profiler', 'ProfilerStart')
 
-    if ARGUMENTS.get('gcov', 0):
+    if ARGUMENTS.get('gcov'):
         if conf.CheckLib('gcov'):
             conf.env.AppendUnique(
                 CCFLAGS=['-fprofile-arcs', '-ftest-coverage'])
             conf.env.AppendUnique(
                 LINKFLAGS=['--coverage'])
 
-    if ARGUMENTS.get('asan', 0):
+    if ARGUMENTS.get('asan'):
         conf.env.AppendUnique(
             CCFLAGS=['-fsanitize=address', '-fno-omit-frame-pointer'])
         conf.env.AppendUnique(LIBS=['asan'])
@@ -55,7 +55,7 @@ if not env.GetOption('clean'):
     env = conf.Finish()
 
 # choose debugging level
-if ARGUMENTS.get('debug', 1):
+if ARGUMENTS.get('debug'):
     env.AppendUnique(CCFLAGS=['-g', '-O0'])
     env.AppendUnique(LINKFLAGS=['-g'])
 else:
