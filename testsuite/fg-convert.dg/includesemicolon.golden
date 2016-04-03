@@ -1,0 +1,19 @@
+( siblist
+  ( input eth0
+   )
+  child
+  ( siblist
+    ( siblist
+      ( proto tcp
+       )
+      child
+      ( siblist
+        ( dport ssh
+         )
+        child
+        ( accept
+         )
+       )
+     )
+   )
+ )
