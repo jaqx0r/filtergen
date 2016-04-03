@@ -23,6 +23,10 @@ fge = env.DejaGnu('fg-emit')
 env.Depends(fge, '#input/filtergen/t/emit')
 env.Depends(fge, env.Glob('fg-emit.dg/*.in'))
 env.Depends(fge, 'lib/fg-emit-dg.exp')
+fgc = env.DejaGnu('fg-convert')
+env.Depends(fgc, '#input/filtergen/t/convert')
+env.Depends(fgc, env.Glob('fg-convert.dg/*.in'))
+env.Depends(fgc, 'lib/fg-convert-dg.exp')
 iptsp = env.DejaGnu('ipts-parse')
 env.Depends(iptsp, '#input/iptables-save/t/parse')
 env.Depends(iptsp, env.Glob('ipts-parse.dg/*.in'))
@@ -32,7 +36,7 @@ env.Depends(iptss, '#input/iptables-save/t/scan')
 env.Depends(iptss, env.Glob('ipts-scan.dg/*.in'))
 env.Depends(iptss, 'lib/ipts-scan-dg.exp')
 
-suites = [f, fgp, fgs, fge, iptsp, iptss]
+suites = [f, fgp, fgs, fge, fgc, iptsp, iptss]
 
 env.Depends(suites, '#site.exp')
 env.Depends(suites, env.Glob('config/*.exp'))

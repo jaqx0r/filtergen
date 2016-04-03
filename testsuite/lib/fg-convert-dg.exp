@@ -1,0 +1,13 @@
+load_lib dg.exp
+load_lib compare.exp
+
+set tool fg-compare
+
+proc fg-compare-dg-test { filter do_what extra_tool_flags } {
+    set output_file "[file rootname $filter].out"
+    set golden_file "[file rootname $filter].golden"
+
+    set comp_output [exec-and-compare input/filtergen/t/convert $filter $output_file $golden_file]
+
+    return [list $comp_output $output_file]
+}
