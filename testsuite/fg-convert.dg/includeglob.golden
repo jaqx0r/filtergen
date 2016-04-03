@@ -1,31 +1,3 @@
-#!/bin/sh -x
-
-TEST="that glob includes generate the right order"
-
-testdir=`dirname $0`
-. $testdir/testlib
-
-cat > $work/rules <<EOF
-input eth0 {
-    proto tcp dport ssh accept;
-    include $work/d/* ;
-};
-EOF
-if test $? -ne 0 ; then no_result ; fi
-
-mkdir $work/d
-
-for i in $(seq 3 -1 1); do
-cat > $work/d/$i <<EOF
-proto tcp dport $i accept;
-EOF
-if test $? -ne 0 ; then no_result ; fi
-done
-
-$here/convert < $work/rules > $work/out
-if test $? -ne 0 ; then fail ; fi
-
-cat > $work/good <<EOF
 ( siblist
   ( input eth0
    )
@@ -84,9 +56,3 @@ cat > $work/good <<EOF
      )
    )
  )
-EOF
-
-compare $work/good $work/out
-
-# got this far?
-pass
