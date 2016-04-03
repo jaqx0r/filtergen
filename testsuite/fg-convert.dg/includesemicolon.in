@@ -1,3 +1,4 @@
+# test that include files don't include the semicolon
 input eth0 {
     proto tcp dport ssh accept;
     include testsuite/fg-convert.dg/includesemicolon.d/empty;
