@@ -15,7 +15,7 @@ before_script:
  - bison --version
  - runtest --version
 script:
- - CC=$COMPILER scons -k gcov=yes debug=yes check distcheck
+ - CC=$COMPILER scons -k coverage=yes check distcheck
 matrix:
   include:
     - compiler: gcc
