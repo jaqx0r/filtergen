@@ -17,7 +17,7 @@ def lcov_generator(source, target, env, for_signature):
   
 def generate(env):
   env['LCOV'] = 'lcov'
-  env['LCOVFLAGS'] = '--capture'
+  env['LCOVFLAGS'] = ['--capture', '--no-external']
   lcov_builder = SCons.Builder.Builder(
     generator=lcov_generator)
   env.Append(BUILDERS={'LCov': lcov_builder})
