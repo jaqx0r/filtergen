@@ -49,8 +49,11 @@ if ARGUMENTS.get('coverage'):
                     'filtergen.sum', # dummy
                     LCOVDIR='#',
                     LCOVBASEDIR='#')
+    env.AlwaysBuild(lcov)
     env.Depends(lcov, suites)
     env.Alias('check', lcov)
+    env.AlwaysBuild(suites)
     cov_html = env.Command(Dir('#coverage_html'), lcov,
                 'genhtml --output-dir ${TARGET} ${SOURCES}')
+    env.AlwaysBuild(cov_html)
     env.Alias('coverage_html', cov_html)
