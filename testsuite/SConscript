@@ -4,8 +4,9 @@ Import('env')
 env.Tar(env['TARBALL'], ['SConscript', 'config', 'lib'])
 
 for d in ('filtergen', 'fg-parse.dg', 'fg-scan.dg', 'fg-emit.dg', 'ipts-parse.dg', 'ipts-scan.dg'):
-  # Exclude log and sum which are generated files when running the suite.
-  env.Tar(env['TARBALL'], [f for f in env.Glob(d + '/*') if not f.path.endswith('.log') and not f.path.endswith('.sum')])
+    # Exclude log and sum which are generated files when running the suite.
+    env.Tar(env['TARBALL'], [f for f in env.Glob(d + '/*')
+                             if not f.path.endswith('.log') and not f.path.endswith('.sum')])
 
 f = env.DejaGnu('filtergen')
 env.Depends(f, '#filtergen')
@@ -42,4 +43,11 @@ env.Depends(suites, '#site.exp')
 env.Depends(suites, env.Glob('config/*.exp'))
 
 env.Alias('check', suites)
-#env.AlwaysBuild(suites)
+
+if ARGUMENTS.get('coverage'):
+    lcov = env.LCov('#coverage.info',
+                    'filtergen.sum',
+                    LCOVDIR='#',
+                    LCOVBASEDIR='#')
+    env.Depends(lcov, suites)
+    env.Alias('check', lcov)

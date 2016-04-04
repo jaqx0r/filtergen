@@ -16,7 +16,8 @@ vars.AddVariables(
     BoolVariable('asan', 'enable compilation with AddressSanitizer', False),
 )
 
-env = Environment(variables=vars, tools=['default', 'dejagnu', 'textfile'])
+env = Environment(variables=vars, tools=[
+                  'default', 'dejagnu', 'textfile', 'lcov'])
 
 if os.environ.get('CC', None):
     env['CC'] = os.environ['CC']
