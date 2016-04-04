@@ -167,6 +167,7 @@ int main(int argc __attribute__((unused)),
 
   YYDEBUGTRACE = getenv("YYDEBUGTRACE");
   filtergen_set_debug(YYDEBUGTRACE ? atoi(YYDEBUGTRACE) : 0);
+  filtergen_debug = YYDEBUGTRACE ? atoi(YYDEBUGTRACE) : 0;
   CONVTRACE = getenv("CONVTRACE");
   convtrace = CONVTRACE ? atoi(CONVTRACE) : 0;
 

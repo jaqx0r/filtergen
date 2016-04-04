@@ -316,6 +316,7 @@ int main(int argc, char **argv) {
 
   YYDEBUGTRACE = getenv("YYDEBUGTRACE");
   filtergen_set_debug(YYDEBUGTRACE ? atoi(YYDEBUGTRACE) : 0);
+  filtergen_debug = YYDEBUGTRACE ? atoi(YYDEBUGTRACE) : 0;
   EMITTRACE = getenv("EMITTRACE");
   emittrace = EMITTRACE ? atoi(EMITTRACE) : 0;
 

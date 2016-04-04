@@ -200,7 +200,7 @@ void emit_ast(struct ast_s *n) {
 }
 
 int main(int argc, char **argv) {
-char *FACTTRACE, *YYDEBUGTRACE;
+  char *FACTTRACE, *YYDEBUGTRACE;
   struct ast_s ast;
   int r;
 
@@ -208,6 +208,7 @@ char *FACTTRACE, *YYDEBUGTRACE;
   facttrace = FACTTRACE ? atoi(FACTTRACE) : 0;
   YYDEBUGTRACE = getenv("YYDEBUGTRACE");
   filtergen_set_debug(YYDEBUGTRACE ? atoi(YYDEBUGTRACE) : 0);
+  filtergen_debug = YYDEBUGTRACE ? atoi(YYDEBUGTRACE) : 0;
 
   if (argc > 1) {
     sourcefile_push(argv[1]);

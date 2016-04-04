@@ -11,6 +11,10 @@ int main(int argc, char **argv) {
   struct ast_s ast;
 
   YYDEBUGTRACE = getenv("YYDEBUGTRACE");
+
+  // Scanner
+  filtergen_set_debug(YYDEBUGTRACE ? atoi(YYDEBUGTRACE) : 0);
+  // Parser
   filtergen_debug = YYDEBUGTRACE ? atoi(YYDEBUGTRACE) : 0;
 
   if (argc > 1) {
