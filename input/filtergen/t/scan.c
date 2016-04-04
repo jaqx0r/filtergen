@@ -133,6 +133,9 @@ int main(int argc __attribute__((unused)),
 
   /* all output is considered a compiler message by dejagnu */
   while ((c = filtergen_lex())) {
+    if (c == TOK_UNEXPECTED) {
+      continue;
+    }
     fprintf(stderr, "%s:%d: kind = %s, spelling = \"%s\"\n",
             current_srcfile->pathname, current_srcfile->lineno, tok_map(c),
             filtergen_text);

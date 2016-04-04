@@ -51,7 +51,7 @@ int yycolumn = 1;
         yycolumn += yyleng;                                     \
     }
 
-void filtergen_error(const char * s, ...);
+void filtergen_error(struct ast_s *ast, const char *s, ...);
 void filtergen_warn(const char * s, ...);
 void include_file(const char *);
 %}
@@ -153,7 +153,7 @@ text         return TOK_TEXT;
     }
 }
 
-.  { filtergen_error("unexpected input: %s\n", yytext);
+.  { filtergen_error(NULL, "unexpected input: %s", yytext);
         return TOK_UNEXPECTED; }
 
 %%
@@ -192,7 +192,7 @@ void include_file(const char *name) {
               yylineno = current_srcfile->lineno;
               yycolumn = current_srcfile->column;
               if (!yyin) {
-                filtergen_error("failed to open %s", glob_buf.gl_pathv[n]);
+                filtergen_error(NULL, "failed to open %s", glob_buf.gl_pathv[n]);
               } else {
                 yypush_buffer_state(yy_create_buffer(yyin, YY_BUF_SIZE));
               }
@@ -227,7 +227,7 @@ void include_file(const char *name) {
             continue;
           }
           if (asprintf(&fn, "%s/%s", name, namelist[n]->d_name) < 0) {
-            filtergen_error(
+            filtergen_error(NULL,
                 "internal error: asprintf failed constructing pathname "
                 "for included file \"%s\"",
                 namelist[n]->d_name);
@@ -246,7 +246,7 @@ void include_file(const char *name) {
         yylineno = current_srcfile->lineno;
         yycolumn = current_srcfile->column;
         if (!yyin) {
-          filtergen_error("failed to open %s", name);
+          filtergen_error(NULL, "failed to open %s", name);
         } else {
           yypush_buffer_state(yy_create_buffer(yyin, YY_BUF_SIZE));
         }

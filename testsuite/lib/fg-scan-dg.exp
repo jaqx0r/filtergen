@@ -7,6 +7,8 @@ set dg-linenum-format ":%d(\.\[0-9\]+-\[0-9\]+\.\[0-9\]+)?:"
 proc fg-scan-dg-test { filter do_what extra_tool_flags } {
     set output_file "[file rootname $filter].out"
 
+    verbose "scanning $filter to $output_file..."
+
     set status [remote_exec "" input/filtergen/t/scan "$filter $output_file"]
 
     set comp_output [lindex $status 1]
