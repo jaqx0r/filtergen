@@ -5,8 +5,6 @@ before_install:
  - gem install coveralls-lcov
 addons: {apt: {packages: &native_deps [scons, bison, flex, dejagnu, lcov]}}
 after_success:
- - lcov --capture --directory . --output-file coverage.info
- - lcov --remove coverage.info "input/filtergen/t/*" "input/iptables-save/t/*" ".sconf_temp/*" "testsuite/*" -o coverage.info
  - coveralls-lcov coverage.info
 before_script:
  - $COMPILER --version
