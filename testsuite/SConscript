@@ -51,3 +51,6 @@ if ARGUMENTS.get('coverage'):
                     LCOVBASEDIR='#')
     env.Depends(lcov, suites)
     env.Alias('check', lcov)
+    cov_html = env.Command(Dir('#coverage_html'), lcov,
+                'genhtml --output-dir ${TARGET} ${SOURCES}')
+    env.Alias('coverage_html', cov_html)

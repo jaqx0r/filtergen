@@ -76,3 +76,4 @@ ylwrap
 /testsuite/fg-emit.dg/*.out
 /input/filtergen/t/factorise
 /coverage.info
+/coverage_html/
