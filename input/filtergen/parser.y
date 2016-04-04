@@ -655,51 +655,56 @@ chaingroup_specifier: TOK_LSQUARE TOK_IDENTIFIER subrule_list TOK_RSQUARE
 
 extern char * filtergen_text;
 
+// TODO(jaq): Not sure why this takes ast_s as first argument.
+void __attribute__((__format__(__printf__, 2, 3)))
+filtergen_error(struct ast_s __attribute__((__unused__)) * ast, const char *s,
+                ...) {
+  va_list ap;
+  va_start(ap, s);
 
-
-void
- __attribute__((__format__ (__printf__, 2, 3)))
-filtergen_error(struct ast_s __attribute__((__unused__)) *ast, const char *s, ...)  
-{
-    va_list ap;
-    va_start(ap, s);
-
-    if (yylloc.first_line) {
-        fprintf(stderr, "%s:%d.%d-%d.%d: error: ", yylloc.srcfile->pathname, yylloc.first_line, yylloc.first_column, yylloc.last_line, yylloc.last_column);
-    }
-    vfprintf(stderr, s, ap);
-    fprintf(stderr, "\n");
+  if (yylloc.first_line) {
+    fprintf(stderr, "%s:%d.%d-%d.%d: error: ", yylloc.srcfile->pathname,
+            yylloc.first_line, yylloc.first_column, yylloc.last_line,
+            yylloc.last_column);
+  }
+  vfprintf(stderr, s, ap);
+  va_end(ap);
+  fprintf(stderr, "\n");
 }
 
-void 
- __attribute__((__format__ (__printf__, 1, 2)))
+void __attribute__((__format__(__printf__, 1, 2)))
 filtergen_warn(const char *s, ...) {
-    va_list ap;
-    va_start(ap, s);
+  va_list ap;
+  va_start(ap, s);
 
-    if (yylloc.first_line) {
-        fprintf(stderr, "%s:%d.%d-%d.%d: warning: ", yylloc.srcfile->pathname, yylloc.first_line, yylloc.first_column, yylloc.last_line, yylloc.last_column);
-    }
-    vfprintf(stderr, s, ap);
-    fprintf(stderr, "\n");
+  if (yylloc.first_line) {
+    fprintf(stderr, "%s:%d.%d-%d.%d: warning: ", yylloc.srcfile->pathname,
+            yylloc.first_line, yylloc.first_column, yylloc.last_line,
+            yylloc.last_column);
+  }
+  vfprintf(stderr, s, ap);
+  va_end(ap);
+  fprintf(stderr, "\n");
 }
 
-void
- __attribute__((__format__ (__printf__, 3,4)))
- lyyerror(YYLTYPE t, struct ast_s __attribute__((__unused__)) *ast, char *s, ...) {
-    va_list ap;
-    va_start(ap, s);
+void __attribute__((__format__(__printf__, 3, 4)))
+lyyerror(YYLTYPE t, struct ast_s __attribute__((__unused__)) * ast, char *s,
+         ...) {
+  va_list ap;
+  va_start(ap, s);
 
-    if (t.first_line) {
-        fprintf(stderr, "%s:%d.%d-%d.%d: error: ", t.srcfile->pathname, t.first_line, t.first_column, t.last_line, t.last_column);
-    }
-    vfprintf(stderr, s, ap);
-    fprintf(stderr, "\n");
+  if (t.first_line) {
+    fprintf(stderr, "%s:%d.%d-%d.%d: error: ", t.srcfile->pathname,
+            t.first_line, t.first_column, t.last_line, t.last_column);
+  }
+  vfprintf(stderr, s, ap);
+  va_end(ap);
+  fprintf(stderr, "\n");
 }
 
-int filtergen_print(FILE * f, int type, YYSTYPE v) {
-    fprintf(f, "%d:\"%s\":%p", type, filtergen_text, (void *) &v);
-	return 0;
+int filtergen_print(FILE *f, int type, YYSTYPE v) {
+  fprintf(f, "%d:\"%s\":%p", type, filtergen_text, (void *)&v);
+  return 0;
 }
 
 struct sourceposition *make_sourcepos(YYLTYPE loc) {
