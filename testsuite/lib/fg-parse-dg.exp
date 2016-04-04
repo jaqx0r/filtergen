@@ -5,7 +5,7 @@ set tool fg-parse
 proc fg-parse-dg-test { filter do_what extra_tool_flags } {
     set output_file "[file rootname $filter].out"
 
-    set comp_output [exec input/filtergen/t/parse - < $filter > $output_file 2>@stdout]
+    set comp_output [exec input/filtergen/t/parse $filter > $output_file]
 
     return [list $comp_output $output_file]
 }
