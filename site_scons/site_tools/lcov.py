@@ -7,8 +7,6 @@ import SCons.Builder
 import SCons.Script
 
 def lcov_generator(source, target, env, for_signature):
-  env['LCOV'] = 'lcov'
-  env['LCOVFLAGS'] = '--capture'
   cmd = ['$LCOV $LCOVFLAGS']
   cmd += ['--output-file', str(target[0])]
   if 'LCOVDIR' in env:
@@ -18,6 +16,8 @@ def lcov_generator(source, target, env, for_signature):
   return ' '.join(SCons.Script.Flatten(cmd))
   
 def generate(env):
+  env['LCOV'] = 'lcov'
+  env['LCOVFLAGS'] = '--capture'
   lcov_builder = SCons.Builder.Builder(
     generator=lcov_generator)
   env.Append(BUILDERS={'LCov': lcov_builder})
