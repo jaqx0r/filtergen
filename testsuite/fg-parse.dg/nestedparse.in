@@ -1,2 +1,2 @@
 # parse a file, see how well includes cope with nested sections
-input eth0 dest { include testsuite/filtergen.parse/include.conf } accept;
+input eth0 dest { include testsuite/fg-parse.dg/include.conf } accept;
