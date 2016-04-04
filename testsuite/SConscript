@@ -46,7 +46,7 @@ env.Alias('check', suites)
 
 if ARGUMENTS.get('coverage'):
     lcov = env.LCov('#coverage.info',
-                    'filtergen.sum',
+                    'filtergen.sum', # dummy
                     LCOVDIR='#',
                     LCOVBASEDIR='#')
     env.Depends(lcov, suites)
