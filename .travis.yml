@@ -13,7 +13,7 @@ before_script:
  - bison --version
  - runtest --version
 script:
- - CC=$COMPILER scons -k coverage=$COVERAGE check distcheck
+ - CC=$COMPILER scons coverage=$COVERAGE check distcheck
 matrix:
   include:
     - compiler: gcc
