@@ -5,7 +5,7 @@ before_install:
  - gem install coveralls-lcov
 addons: {apt: {packages: &native_deps [scons, bison, flex, dejagnu, lcov]}}
 after_success:
- - [ -f coverage.info ] && coveralls-lcov coverage.info
+ - coveralls-lcov coverage.info
 before_script:
  - $COMPILER --version
  - scons --version
