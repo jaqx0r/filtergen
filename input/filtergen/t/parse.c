@@ -1,3 +1,4 @@
+/* LCOV_EXCL_START */
 #include <stdlib.h>
 #include "input/filtergen/ast.h"
 #include "input/filtergen/parser.h"
@@ -30,3 +31,4 @@ int main(int argc, char **argv) {
 
   return 0;
 }
+/* LCOV_EXCL_STOP */

@@ -1,5 +1,6 @@
 /* ast emitter
  * output should be identical (syntactically) to the input
+ * LCOV_EXCL_START
  */
 
 #include <stdio.h>
@@ -341,3 +342,4 @@ int main(int argc, char **argv) {
 
   return 0;
 }
+/* LCOV_EXCL_STOP */

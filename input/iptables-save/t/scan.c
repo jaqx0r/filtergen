@@ -1,3 +1,4 @@
+/* LCOV_EXCL_START */
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -7,7 +8,7 @@
 #include "input/iptables-save/parser.h"
 #include "input/iptables-save/scanner.h"
 
-char * ipts_filename(void);
+char *ipts_filename(void);
 
 #define tok(x)                                                                 \
   case TOK_IPTS_##x:                                                           \
@@ -83,7 +84,7 @@ int main(int argc __attribute__((unused)),
     ipts_in = fopen(argv[1], "r");
   } else {
     ipts_in = stdin;
-      }
+  }
 
   while ((c = ipts_lex())) {
     fprintf(stderr, "%s:%d: kind = %s, spelling = \"%s\"\n", ipts_filename(),
@@ -91,3 +92,4 @@ int main(int argc __attribute__((unused)),
   }
   return 0;
 }
+/* LCOV_EXCL_STOP */

@@ -1,3 +1,4 @@
+/* LCOV_EXCL_START */
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -197,3 +198,4 @@ int main(int argc __attribute__((unused)),
   emit_filter(f);
   return 0;
 }
+/* LCOV_EXCL_STOP */

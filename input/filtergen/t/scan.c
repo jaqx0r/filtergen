@@ -1,3 +1,4 @@
+/* LCOV_EXCL_START */
 #include <errno.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -142,3 +143,4 @@ int main(int argc __attribute__((unused)),
   }
   return 0;
 }
+/* LCOV_EXCL_STOP */

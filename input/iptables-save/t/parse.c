@@ -1,3 +1,4 @@
+/* LCOV_EXCL_START */
 #include <stdio.h>
 #include <stdlib.h>
 #include "input/iptables-save/ast.h"
@@ -23,3 +24,5 @@ int main(int argc __attribute__((unused)),
 
   return 0;
 }
+
+/* LCOV_EXCL_STOP */

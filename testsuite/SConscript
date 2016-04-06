@@ -49,7 +49,6 @@ if ARGUMENTS.get('coverage'):
                     'filtergen.sum', # dummy
                     LCOVDIR='#',
                     LCOVBASEDIR='#')
-    env.AddPreAction(suites, "find . -name '*.gcda' -print0 | xargs -0 -r rm")
     env.Depends(lcov, suites)
     cov_html = env.Command(Dir('#coverage_html'), lcov,
                 'genhtml --output-dir ${TARGET} ${SOURCES}')
