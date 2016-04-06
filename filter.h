@@ -206,7 +206,6 @@ int filtergen_cprod(struct filter *filter, fg_callback *cb,
 char *strapp(char *s, const char *n);
 #define strapp2(s, n1, n2) strapp(strapp(s, n1), n2)
 int str_to_int(const char *s, int *i);
-char *int_to_str_dup(int i);
 
 /** various drivers */
 typedef int filtergen(struct filter *filter, int flags);

@@ -42,10 +42,3 @@ int str_to_int(const char *s, int *i) {
   *i = m;
   return 0;
 }
-
-char *int_to_str_dup(int i) {
-  char buf[100];
-  snprintf(buf, sizeof(buf) - 1, "%d", i);
-  buf[sizeof(buf) - 1] = 0;
-  return strdup(buf);
-}

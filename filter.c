@@ -198,7 +198,13 @@ struct filter *new_filter_host(enum filtertype type, const char *matchstr,
           }
         }
         memcpy(f->u.addrs.u.inet6.mask.s6_addr, l, sizeof l);
-        f->u.addrs.maskstr = int_to_str_dup(i);
+        if (asprintf(&f->u.addrs.maskstr, "%d", i) < 0) {
+          filter_error(
+              pos,
+              "internal: asprintf allocation failed when storing netmask %s",
+              mask);
+          return NULL;
+        }
       } else {
         filter_error(pos, "can't parse netmask \"%s\"", mask);
         return NULL;
