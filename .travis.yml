@@ -5,7 +5,7 @@ before_install:
  - gem install coveralls-lcov
 addons: {apt: {packages: &native_deps [scons, bison, flex, dejagnu, lcov]}}
 after_success:
- - coveralls-lcov coverage.info
+ - [ -f coverage.info ] && coveralls-lcov coverage.info
 before_script:
  - $COMPILER --version
  - scons --version
@@ -13,7 +13,7 @@ before_script:
  - bison --version
  - runtest --version
 script:
- - CC=$COMPILER scons -k coverage=yes check distcheck
+ - CC=$COMPILER scons -k coverage=$COVERAGE check distcheck
 matrix:
   include:
     - compiler: gcc
@@ -22,14 +22,14 @@ matrix:
           sources:
             - ubuntu-toolchain-r-test
           packages: [gcc-4.9, *native_deps]
-      env: COMPILER=gcc-4.9
+      env: COMPILER=gcc-4.9 COVERAGE=yes
     - compiler: gcc
       addons:
         apt:
           sources:
             - ubuntu-toolchain-r-test
           packages: [gcc-5, *native_deps]
-      env: COMPILER=gcc-5
+      env: COMPILER=gcc-5 COVERAGE=yes
     - compiler: clang
       addons:
         apt:
@@ -37,7 +37,7 @@ matrix:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-trusty-3.6
           packages: [clang-3.6, *native_deps]
-      env: COMPILER=clang-3.6
+      env: COMPILER=clang-3.6 COVERAGE=no
     - compiler: clang
       addons:
         apt:
@@ -45,7 +45,7 @@ matrix:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-trusty-3.7
           packages: [clang-3.7, *native_deps]
-      env: COMPILER=clang-3.7
+      env: COMPILER=clang-3.7 COVERAGE=no
     - compiler: clang
       addons:
         apt:
@@ -53,7 +53,7 @@ matrix:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-trusty-3.8
           packages: [clang-3.8, *native_deps]
-      env: COMPILER=clang-3.8
+      env: COMPILER=clang-3.8 COVERAGE=no
   allow_failures:
     - env: COMPILER=clang-3.7
     - env: COMPILER=clang-3.8
