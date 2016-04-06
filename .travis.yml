@@ -55,5 +55,5 @@ matrix:
           packages: [clang-3.8, *native_deps]
       env: COMPILER=clang-3.8 COVERAGE=no
   allow_failures:
-    - env: COMPILER=clang-3.7
-    - env: COMPILER=clang-3.8
+    - env: COMPILER=clang-3.7 COVERAGE=no
+    - env: COMPILER=clang-3.8 COVERAGE=no
