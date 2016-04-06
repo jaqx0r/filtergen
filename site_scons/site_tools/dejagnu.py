@@ -85,7 +85,6 @@ def dejagnuActionGenerator(target, source, env, for_signature):
 
 def generate(env):
     dgBuilder = SCons.Builder.Builder(
-        chdir=env.Dir('#'),
         generator=dejagnuActionGenerator,
         emitter=dejagnuEmitter,
         source_factory=SCons.Node.FS.Dir)
