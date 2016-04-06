@@ -39,6 +39,7 @@
 static FILE *outfile;
 
 /** Print the program usage to stderr. */
+/* LCOV_EXCL_START */
 void usage(char *prog) {
   fprintf(stderr, "Usage: %s [-chVR] [-t backend] [-o output] input\n", prog);
   fprintf(stderr, "       %s [-chVR] [-t backend] [-o output] -F policy\n\n",
@@ -101,6 +102,7 @@ void usage(char *prog) {
   fprintf(stderr, "\t-V\t\tshow program version\n");
 #endif
 }
+/* LCOV_EXCL_STOP */
 
 /** Output a string, and appends a newline, to the target file. */
 int oputs(const char *s) {
