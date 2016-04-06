@@ -214,7 +214,7 @@ int main(int argc, char **argv) {
       } else if (!strcasecmp(optarg, "reject")) {
         flushpol = T_REJECT;
       } else {
-        fprintf(stderr, "%s: flush policy unrecofgnised: %s\n", progname,
+        fprintf(stderr, "%s: flush policy unrecognised: %s\n", progname,
                 optarg);
         usage(progname);
         exit(1);
