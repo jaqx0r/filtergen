@@ -43,20 +43,24 @@ int sourcefile_push(const char *pathname) {
   }
 
   if ((sf = malloc(sizeof(*sf))) == NULL) {
+    /* LCOV_EXCL_START */
     fprintf(stderr, "malloc failed attempting to push new sourcefile onto "
                     "stack when opening %s: %s\n",
             pathname, strerror(errno));
     return 0;
+    /* LCOV_EXCL_STOP */
   }
 
   if (pathname == NULL || strncmp(pathname, "-", 1) == 0) {
     sf->f = stdin;
     if (asprintf(&sf->pathname, "<stdin>") < 0) {
+      /* LCOV_EXCL_START */
       fprintf(stderr, "error: asprintf allocation failed when constructing "
                       "sourcefile pathname for %s\n",
               pathname);
       free(sf);
       return 0;
+      /* LCOV_EXCL_STOP */
     }
   } else {
     sf->f = fopen(pathname, "r");
@@ -67,11 +71,13 @@ int sourcefile_push(const char *pathname) {
       return 0;
     }
     if (asprintf(&sf->pathname, "%s", pathname) < 0) {
+      /* LCOV_EXCL_START */
       fprintf(stderr, "error: asprintf allocation failed when constructing "
                       "sourcefile pathname for %s\n",
               pathname);
       free(sf);
       return 0;
+      /* LCOV_EXCL_STOP */
     }
   }
   sf->next = current_srcfile;
@@ -88,9 +94,11 @@ int sourcefile_pop() {
   current_srcfile = sf->next;
 
   if (fclose(sf->f)) {
+    /* LCOV_EXCL_START */
     fprintf(stderr, "failed to close file when popping sourcefile stack: %s\n",
             strerror(errno));
     return 0;
+    /* LCOV_EXCL_STOP */
   }
   free(sf);
   srcfile_depth--;
