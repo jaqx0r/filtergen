@@ -13,6 +13,9 @@ def lcov_generator(source, target, env, for_signature):
     cmd += ['--directory', str(SCons.Script.Dir(env['LCOVDIR']))]
   if 'LCOVBASEDIR' in env:
     cmd += ['--base-directory', str(SCons.Script.Dir(env['LCOVBASEDIR']))]
+  if env['CC'].startswith('gcc-'):
+    version = env['CC'].split('-')[1]
+    cmd += ['--gcov-tool', 'gcov-' + version]
   return ' '.join(SCons.Script.Flatten(cmd))
   
 def generate(env):
