@@ -95,6 +95,7 @@ env.AppendUnique(YACCFLAGS=['-d'])
 # tell lex to create a header file and set the name in #line directives
 # correctly
 env.AppendUnique(LEXFLAGS=['--header-file=${TARGET.dir}/scanner.h',
+                           '-CF',
                            '-o$TARGET'])
 
 # Compress, zip, and transform the tar contents when creating, so that we
