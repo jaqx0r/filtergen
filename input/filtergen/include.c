@@ -1,10 +1,11 @@
 #include "include.h"
 
-#include <sys/stat.h>
+#include <dirent.h>
 #include <errno.h>
 #include <glob.h>
-#include <dirent.h>
+#include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
 
 #include "error.h"
 #include "input/filtergen/scanner.h"

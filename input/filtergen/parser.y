@@ -19,38 +19,44 @@
 
 /* prepend all functions with filtergen_ to keep the namespace separate
  * from other parsers */
-%name-prefix "filtergen_"
+%define api.prefix {filtergen_}
+
 /* verbose parser errors */
-%error-verbose
+%define parse.error verbose
 
 /* enable debugging traces */
 %define parse.trace
+
+%define api.pure true
 %locations
+%token-table
+%glr-parser
 %parse-param {struct ast_s *ast}
-%{
+
+%code top {
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#include "input/filtergen/ast.h"
-#include "input/sourcepos.h"
-
-void filtergen_error(struct ast_s *ast, const char * s, ...);
-extern int filtergen_lex(void);
-
-%}
-//#define YYPRINT(f, t, v) filtergen_print(f, t, v)
+}
 
 %code requires {
-typedef struct YYLTYPE {
+#include "error.h"
+#include "input/sourcepos.h"
+#include "input/filtergen/ast.h"
+
+
+//#define YYPRINT(f, t, v) filtergen_print(f, t, v)
+
+#define YYLTYPE FILTERGEN_LTYPE
+typedef struct FILTERGEN_LTYPE {
   int first_line;
   int first_column;
   int last_line;
   int last_column;
   struct sourcefile* srcfile;
-} YYLTYPE;
-# define YYLTYPE_IS_DECLARED 1 /* alert the parser that we have our own definition */
+} FILTERGEN_LTYPE;
+# define FILTERGEN_LTYPE_IS_DECLARED 1 /* alert the parser that we have our own definition */
 
 # define YYLLOC_DEFAULT(Current, Rhs, N)                               \
     do                                                                 \
@@ -71,6 +77,7 @@ typedef struct YYLTYPE {
           (Current).srcfile  = NULL;                        /* new */  \
         }                                                              \
     while (0)
+
 }
 
 %union {
@@ -102,6 +109,13 @@ typedef struct YYLTYPE {
     struct subrule_list_s * u_subrule_list;
     char * u_str;
 }
+
+%code {
+void filtergen_error(YYLTYPE* locp, struct ast_s *ast, const char * fmt, ...);
+extern int filtergen_lex(YYSTYPE* lvalp, YYLTYPE* locp);
+}
+
+
 %type <u_rule_list> rule_list
 %type <u_rule> rule
 %type <u_specifier_list> specifier_list
@@ -165,10 +179,10 @@ typedef struct YYLTYPE {
 %token TOK_BANG
 %token TOK_COLON
 %token TOK_STAR
-%{
+%code {
 int filtergen_print(FILE * f, int t, YYSTYPE v);
 struct sourceposition* make_sourcepos(YYLTYPE);
-%}
+}
 %start ast
 %%
 ast: rule_list
@@ -655,53 +669,13 @@ chaingroup_specifier: TOK_LSQUARE TOK_IDENTIFIER subrule_list TOK_RSQUARE
 
 %%
 
-
-// TODO(jaq): Not sure why this takes ast_s as first argument.
-void __attribute__((__format__(__printf__, 2, 3)))
-filtergen_error(struct ast_s __attribute__((__unused__)) * ast, const char *s,
+void __attribute__((__format__(__printf__, 3, 4)))
+yyerror(YYLTYPE* locp, struct ast_s __attribute__((__unused__)) * ast, const char *fmt,
                 ...) {
   va_list ap;
-  va_start(ap, s);
+  va_start(ap, fmt);
 
-  if (yylloc.first_line) {
-    fprintf(stderr, "%s:%d.%d-%d.%d: error: ", yylloc.srcfile->pathname,
-            yylloc.first_line, yylloc.first_column, yylloc.last_line,
-            yylloc.last_column);
-  }
-  vfprintf(stderr, s, ap);
-  va_end(ap);
-  fprintf(stderr, "\n");
-}
-
-void __attribute__((__format__(__printf__, 1, 2)))
-filtergen_warn(const char *s, ...) {
-  va_list ap;
-  va_start(ap, s);
-
-  if (yylloc.first_line) {
-    fprintf(stderr, "%s:%d.%d-%d.%d: warning: ", yylloc.srcfile->pathname,
-            yylloc.first_line, yylloc.first_column, yylloc.last_line,
-            yylloc.last_column);
-  }
-  vfprintf(stderr, s, ap);
-  va_end(ap);
-  fprintf(stderr, "\n");
-}
-
-void __attribute__((__format__(__printf__, 3, 4)))
-lyyerror(YYLTYPE t, struct ast_s __attribute__((__unused__)) * ast, char *s,
-         ...) {
-  va_list ap;
-  va_start(ap, s);
-
-  if (t.first_line) {
-    fprintf(stderr, "%s:%d.%d-%d.%d: error: ", t.srcfile->pathname,
-            t.first_line, t.first_column, t.last_line, t.last_column);
-  }
-  vfprintf(stderr, s, ap);
-  va_end(ap);
-  fprintf(stderr, "\n");
-
+  filter_error(make_sourcepos(*locp), fmt, ap);
 }
 
 struct sourceposition *make_sourcepos(YYLTYPE loc) {

@@ -1,12 +1,4 @@
-%option noyywrap
-%option nounput
-%option noinput
-%option prefix="filtergen_"
-%option yylineno
-%option debug
-%x include
-%x comment
-%{
+%top{
 /* input scanner for filtergen language
  *
  * Copyright (c) 2003 Jamie Wilkinson <jaq@spacepants.org>
@@ -26,34 +18,42 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <libgen.h>
-#include <string.h>
-#include <stdarg.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <dirent.h>
-#include <glob.h>
 
 #include "input/sourcepos.h"
 #include "input/filtergen/ast.h"
 #include "input/filtergen/parser.h"
 #include "input/filtergen/include.h"
 
+#define YYSTYPE FILTERGEN_STYPE
+#define YYLTYPE FILTERGEN_LTYPE
+
+}
+%option 8bit
+%option bison-bridge
+%option bison-locations
+%option nodefault
+%option noyywrap
+%option nounput
+%option noinput
+%option warn
+%option prefix="filtergen_"
+%option yylineno
+%option debug
+%x include
+%x comment
+
+%{
 int yycolumn = 1;
 
 #define YY_USER_ACTION                                          \
     {                                                           \
-        filtergen_lloc.first_line = filtergen_lloc.last_line = yylineno; \
-        filtergen_lloc.first_column = yycolumn ;                \
-        filtergen_lloc.last_column = yycolumn+yyleng-1;         \
-        filtergen_lloc.srcfile = current_srcfile;               \
+        yylloc->first_line = yylloc->last_line = yylineno; \
+        yylloc->first_column = yycolumn ;                \
+        yylloc->last_column = yycolumn+yyleng-1;         \
+        yylloc->srcfile = current_srcfile;               \
         current_srcfile->lineno = yylineno;                     \
         yycolumn += yyleng;                                     \
     }
-
-void filtergen_error(struct ast_s *ast, const char *s, ...);
-void filtergen_warn(const char * s, ...);
 %}
 
 string  \"[^\n]+\"
@@ -73,7 +73,7 @@ id      {word}|({word})?:(({word})?:)+({word})?
 \n		/* eat newlines */ { yycolumn = 1; }
 "*"+"/"		BEGIN(INITIAL);
 <<EOF>>		{
-  filtergen_warn("comment reached end of file");
+  filter_error(NULL, "comment reached end of file");
   yyterminate();
             }
 } /* end comment */
@@ -86,7 +86,7 @@ id      {word}|({word})?:(({word})?:)+({word})?
    * characters in this regex are ", otherwise there's a bug
    * in flex...  The result is somethign that is syntactically
    * identical to an identifier for our purposes. */
-  filtergen_lval.u_str = strndup(filtergen_text + 1, filtergen_leng - 2);
+  yylval->u_str = strndup(yytext + 1, yyleng - 2);
   return TOK_IDENTIFIER;
 }
 
@@ -124,7 +124,7 @@ text         return TOK_TEXT;
 "*"          return TOK_STAR;
 
 {id}(\.{id})*	{
-    filtergen_lval.u_str = strndup(filtergen_text, filtergen_leng);
+    yylval->u_str = strndup(yytext, yyleng);
     return TOK_IDENTIFIER;
 }
 
@@ -153,7 +153,7 @@ text         return TOK_TEXT;
     }
 }
 
-.  { filtergen_error(NULL, "unexpected input: %s", yytext);
+.  { filter_error(NULL, "unexpected input: %s", yytext);
         return TOK_UNEXPECTED; }
 
 %%
