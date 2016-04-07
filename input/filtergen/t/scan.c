@@ -123,10 +123,11 @@ int main(int argc __attribute__((unused)),
   YYDEBUGTRACE = getenv("YYDEBUGTRACE");
   filtergen_set_debug(YYDEBUGTRACE ? atoi(YYDEBUGTRACE) : 0);
 
+  struct sourceposition pos;
   if (argc > 1) {
-    sourcefile_push(argv[1]);
+    sourcefile_push(&pos, argv[1]);
   } else {
-    sourcefile_push("-");
+    sourcefile_push(&pos, "-");
   }
   YYSTYPE yylval;
   YYLTYPE yylloc;

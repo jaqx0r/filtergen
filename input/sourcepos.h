@@ -22,6 +22,14 @@
 
 #include <stdio.h>
 
+struct sourceposition {
+  int first_line;
+  int first_column;
+  int last_line;
+  int last_column;
+  char *filename;
+};
+
 struct sourcefile {
   FILE *f; // File handle being read
   char *pathname;
@@ -34,18 +42,10 @@ extern struct sourcefile *current_srcfile;
 
 /* sourcefile_push opens a new file and pushes a struct sourcefile onto the
  * current_srcfile stack. It returns true on success and false on error. */
-int sourcefile_push(const char *pathname);
+int sourcefile_push(struct sourceposition *pos, const char *pathname);
 
 /* sourcefile_pop removes the struct sourcefile from the top of the stack.  It
  * returns true on success and false on error. */
 int sourcefile_pop();
-
-struct sourceposition {
-  int first_line;
-  int first_column;
-  int last_line;
-  int last_column;
-  char *filename;
-};
 
 #endif /* FILTERGEN_INPUT_SOURCEPOS_H */

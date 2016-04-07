@@ -702,7 +702,8 @@ struct filter *filtergen_source_parser(const char *filename, int flags,
 
   filtergen_set_debug(0);
 
-  if (!sourcefile_push(filename)) {
+  struct sourceposition pos;
+  if (!sourcefile_push(&pos, filename)) {
     return NULL;
   }
   filtergen_in = current_srcfile->f;

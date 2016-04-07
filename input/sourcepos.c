@@ -32,11 +32,11 @@ struct sourcefile *current_srcfile = NULL;
 #define MAX_SRCFILE_DEPTH 100
 static int srcfile_depth = 0;
 
-int sourcefile_push(const char *pathname) {
+int sourcefile_push(struct sourceposition *pos, const char *pathname) {
   struct sourcefile *sf;
 
   if (srcfile_depth++ > MAX_SRCFILE_DEPTH) {
-    filter_error(NULL,
+    filter_error(pos,
                  "too many nested includes.  skipping include of file %s\n",
                  pathname);
     return 0;

@@ -73,7 +73,7 @@ id      {word}|({word})?:(({word})?:)+({word})?
 \n		/* eat newlines */ { yycolumn = 1; }
 "*"+"/"		BEGIN(INITIAL);
 <<EOF>>		{
-  filter_error(NULL, "comment reached end of file");
+  filter_error(make_sourcepos(yylloc), "comment reached end of file");
   yyterminate();
             }
 } /* end comment */
@@ -135,7 +135,7 @@ text         return TOK_TEXT;
     char * name;
 
     name = strdup(yytext);
-    include_file(name);
+    include_file(yylloc, name);
     free(name);
     
     BEGIN(INITIAL);
@@ -153,7 +153,7 @@ text         return TOK_TEXT;
     }
 }
 
-.  { filter_error(NULL, "unexpected input: %s", yytext);
+.  { filter_error(make_sourcepos(yylloc), "unexpected input: %s", yytext);
         return TOK_UNEXPECTED; }
 
 %%
