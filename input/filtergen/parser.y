@@ -36,8 +36,8 @@
 void filtergen_error(struct ast_s *ast, const char * s, ...);
 extern int filtergen_lex(void);
 
-#define YYPRINT(f, t, v) filtergen_print(f, t, v)
 %}
+//#define YYPRINT(f, t, v) filtergen_print(f, t, v)
 
 %code requires {
 typedef struct YYLTYPE {
@@ -653,7 +653,6 @@ chaingroup_specifier: TOK_LSQUARE TOK_IDENTIFIER subrule_list TOK_RSQUARE
 
 %%
 
-extern char * filtergen_text;
 
 // TODO(jaq): Not sure why this takes ast_s as first argument.
 void __attribute__((__format__(__printf__, 2, 3)))
@@ -700,11 +699,7 @@ lyyerror(YYLTYPE t, struct ast_s __attribute__((__unused__)) * ast, char *s,
   vfprintf(stderr, s, ap);
   va_end(ap);
   fprintf(stderr, "\n");
-}
 
-int filtergen_print(FILE *f, int type, YYSTYPE v) {
-  fprintf(f, "%d:\"%s\":%p", type, filtergen_text, (void *)&v);
-  return 0;
 }
 
 struct sourceposition *make_sourcepos(YYLTYPE loc) {
