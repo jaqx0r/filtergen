@@ -21,6 +21,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include "error.h"
 #include "filter.h"
 
 void applydefaults(struct filterent *e, long flags) {

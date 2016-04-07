@@ -129,7 +129,7 @@ env.AppendUnique(CPPPATH=['#'],
                           '#output/cisco',
                           '#output/filtergen'])
 
-env.Library('core', ['filter.c', 'icmpent.c', 'fg-util.c'])
+env.Library('core', ['error.c', 'filter.c', 'icmpent.c', 'fg-util.c'])
 
 fg_env = env.Clone()
 fg_env.AppendUnique(
@@ -148,7 +148,8 @@ filtergen_sources = ['filtergen.c',
                      'fg-iptrestore.c']
 filtergen = fg_env.Program('filtergen', filtergen_sources)
 
-tar = env.Tar(env['TARBALL'], filtergen_sources + ['filter.c', 'filter.h',
+tar = env.Tar(env['TARBALL'], filtergen_sources + ['error.c', 'error.h',
+                                                   'filter.c', 'filter.h',
                                                    'icmpent.c', 'icmpent.h',
                                                    'fg-util.c',
                                                    'util.h'])

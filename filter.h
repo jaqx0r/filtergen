@@ -229,6 +229,4 @@ enum flags {
 int oputs(const char *s);
 int oprintf(const char *fmt, ...) _PRINTF_ATTR(1, 2);
 
-void filter_error(struct sourceposition *pos, const char *fmt, ...);
-
 #endif /* _FK_FILTER_H */

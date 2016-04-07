@@ -20,6 +20,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include "error.h"
 #include "filter.h"
 #include "input/filtergen/ast.h"
 #include "input/filtergen/parser.h"
