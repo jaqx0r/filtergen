@@ -31,7 +31,6 @@
 %option 8bit
 %option bison-bridge
 %option bison-locations
-%option nodefault
 %option noyywrap
 %option nounput
 %option noinput
