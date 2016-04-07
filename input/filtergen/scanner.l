@@ -38,6 +38,7 @@
 %option prefix="filtergen_"
 %option yylineno
 %option debug
+%option nointeractive
 %x include
 %x comment
 
