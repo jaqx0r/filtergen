@@ -17,11 +17,13 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include "sourcepos.h"
+
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "sourcepos.h"
+#include "error.h"
 
 /* Top of source file stack during parse. */
 struct sourcefile *current_srcfile = NULL;
@@ -30,15 +32,13 @@ struct sourcefile *current_srcfile = NULL;
 #define MAX_SRCFILE_DEPTH 100
 static int srcfile_depth = 0;
 
-extern void filtergen_error(const char *s, ...);
-extern void filtergen_warn(const char *s, ...);
-
 int sourcefile_push(const char *pathname) {
   struct sourcefile *sf;
 
   if (srcfile_depth++ > MAX_SRCFILE_DEPTH) {
-    filtergen_warn("too many nested includes.  skipping include of file %s\n",
-                   pathname);
+    filter_error(NULL,
+                 "too many nested includes.  skipping include of file %s\n",
+                 pathname);
     return 0;
   }
 

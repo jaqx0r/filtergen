@@ -1,5 +1,14 @@
 #include "include.h"
 
+#include <sys/stat.h>
+#include <errno.h>
+#include <glob.h>
+#include <dirent.h>
+#include <string.h>
+
+#include "error.h"
+#include "input/filtergen/scanner.h"
+
 /* include a file or directory */
 void include_file(const char *name) {
   struct stat st;
@@ -14,7 +23,7 @@ void include_file(const char *name) {
       /* Globbing fiesta! */
       glob_t glob_buf;
       if (glob(name, 0, NULL, &glob_buf) != 0) {
-        filtergen_error("failed to glob \"%s\": %s", name, strerror(errno));
+        filter_error(NULL, "failed to glob \"%s\": %s", name, strerror(errno));
       } else {
         /* We go through the list of files backwards, because
          * step_into_include_file() creates a stack of all the
@@ -26,18 +35,18 @@ void include_file(const char *name) {
          */
         for (n = glob_buf.gl_pathc - 1; n >= 0; n--) {
           if (stat(glob_buf.gl_pathv[n], &st)) {
-            filtergen_warn("stat failed on globbed \"%s\": %s",
-                           glob_buf.gl_pathv[n], strerror(errno));
+            filter_error(NULL, "stat failed on globbed \"%s\": %s",
+                         glob_buf.gl_pathv[n], strerror(errno));
           } else if (S_ISREG(st.st_mode) || S_ISLNK(st.st_mode)) {
             if (sourcefile_push(glob_buf.gl_pathv[n])) {
-              yyin = current_srcfile->f;
-              yylineno = current_srcfile->lineno;
-              yycolumn = current_srcfile->column;
-              if (!yyin) {
-                filtergen_error(NULL, "failed to open %s",
-                                glob_buf.gl_pathv[n]);
+              filtergen_in = current_srcfile->f;
+              filtergen_lineno = current_srcfile->lineno;
+              // yycolumn = current_srcfile->column;
+              if (!filtergen_in) {
+                filter_error(NULL, "failed to open %s", glob_buf.gl_pathv[n]);
               } else {
-                yypush_buffer_state(yy_create_buffer(yyin, YY_BUF_SIZE));
+                filtergen_push_buffer_state(
+                    filtergen__create_buffer(filtergen_in, YY_BUF_SIZE));
               }
             }
           }
@@ -46,7 +55,7 @@ void include_file(const char *name) {
 
       globfree(&glob_buf);
     } else {
-      filtergen_warn("stat failed on \"%s\": %s", name, strerror(errno));
+      filter_error(NULL, "stat failed on \"%s\": %s", name, strerror(errno));
     }
   } else {
     if (S_ISDIR(st.st_mode)) {
@@ -54,14 +63,15 @@ void include_file(const char *name) {
       char *base = basename(b);
 
       if (strcmp("/", base) == 0) {
-        filtergen_warn("cannot include / path; skipping");
+        filter_error(NULL, "cannot include / path; skipping");
         free(b);
         return;
       }
       free(b);
 
       if ((n = scandir(name, &namelist, NULL, alphasort)) < 0) {
-        filtergen_warn("scandir failed on \"%s\": %s", name, strerror(errno));
+        filter_error(NULL, "scandir failed on \"%s\": %s", name,
+                     strerror(errno));
       } else {
         while (n--) {
           /* FIXME: assumes d_name */
@@ -70,7 +80,7 @@ void include_file(const char *name) {
             continue;
           }
           if (asprintf(&fn, "%s/%s", name, namelist[n]->d_name) < 0) {
-            filtergen_error(
+            filter_error(
                 NULL, "internal error: asprintf failed constructing pathname "
                       "for included file \"%s\"",
                 namelist[n]->d_name);
@@ -85,13 +95,14 @@ void include_file(const char *name) {
       }
     } else {
       if (sourcefile_push(name)) {
-        yyin = current_srcfile->f;
-        yylineno = current_srcfile->lineno;
-        yycolumn = current_srcfile->column;
-        if (!yyin) {
-          filtergen_error(NULL, "failed to open %s", name);
+        filtergen_in = current_srcfile->f;
+        filtergen_lineno = current_srcfile->lineno;
+        //        yycolumn = current_srcfile->column;
+        if (!filtergen_in) {
+          filter_error(NULL, "failed to open %s", name);
         } else {
-          yypush_buffer_state(yy_create_buffer(yyin, YY_BUF_SIZE));
+          filtergen_push_buffer_state(
+              filtergen__create_buffer(filtergen_in, YY_BUF_SIZE));
         }
       }
     }
