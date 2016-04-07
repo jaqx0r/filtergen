@@ -3,6 +3,7 @@ Import('env')
 
 sources = ['parser.y',
            'scanner.l',
+           'include.c',
            'resolver.c',
            'glue.c']
 
@@ -13,6 +14,7 @@ env.Clean('parser.o', ['parser.c', 'parser.h'])
 env.Tar(env['TARBALL'], sources + ['SConscript',
                                    'ast.h',
                                    'resolver.h',
+                                   'include.h',
                                    # build these so users don't have to
                                    # require flex and bison
                                    'parser.c', 'parser.h', 'scanner.c', ])
