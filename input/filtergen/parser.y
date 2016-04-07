@@ -22,6 +22,9 @@
 %name-prefix "filtergen_"
 /* verbose parser errors */
 %error-verbose
+
+/* enable debugging traces */
+%define parse.trace
 %locations
 %parse-param {struct ast_s *ast}
 %{
@@ -69,7 +72,6 @@ typedef struct YYLTYPE {
         }                                                              \
     while (0)
 }
-%debug
 
 %union {
     struct rule_list_s * u_rule_list;
