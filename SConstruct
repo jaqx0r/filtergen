@@ -50,7 +50,8 @@ if not env.GetOption('clean'):
     if ARGUMENTS.get('asan'):
         conf.env.AppendUnique(
             CCFLAGS=['-fsanitize=address', '-fno-omit-frame-pointer'])
-        conf.env.AppendUnique(LIBS=['asan'])
+        conf.env.AppendUnique(
+            LINKFLAGS=['-fsanitize=address', '-fno-omit-frame-pointer'])
 
     if not confOK:
         Exit(1)
