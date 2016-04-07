@@ -12,7 +12,7 @@ vars = Variables(None, ARGUMENTS)
 vars.AddVariables(
     BoolVariable('debug', 'debugging compiler options', True),
     BoolVariable('profiler', 'enable support for profiler', False),
-    BoolVariable('coverage', 'enable test coverage reporting', False),
+    BoolVariable('coverage', 'enable test coverage reporting (implies debug)', False),
     BoolVariable('asan', 'enable compilation with AddressSanitizer', False),
 )
 
@@ -39,6 +39,8 @@ if not env.GetOption('clean'):
         conf.CheckLib('profiler', 'ProfilerStart')
 
     if ARGUMENTS.get('coverage'):
+        # Always set debug for coverage.
+        ARGUMENTS['debug'] = True
         if conf.CheckLib('gcov'):
             conf.env.AppendUnique(
                 CCFLAGS=['-fprofile-arcs', '-ftest-coverage'])
