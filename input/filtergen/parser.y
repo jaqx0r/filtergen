@@ -32,7 +32,7 @@
 %token-table
 %parse-param {struct ast_s *ast}
 
-%code top {
+%code requires {
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -114,7 +114,6 @@ typedef struct FILTERGEN_LTYPE {
 void filtergen_error(YYLTYPE* locp, struct ast_s *ast, const char * fmt, ...);
 extern int filtergen_lex(YYSTYPE* lvalp, YYLTYPE* locp);
 }
-
 
 %type <u_rule_list> rule_list
 %type <u_rule> rule
