@@ -48,9 +48,6 @@
 #include "input/sourcepos.h"
 #include "input/filtergen/ast.h"
 
-
-//#define YYPRINT(f, t, v) filtergen_print(f, t, v)
-
 #define YYLTYPE FILTERGEN_LTYPE
 typedef struct FILTERGEN_LTYPE {
   int first_line;
@@ -182,9 +179,6 @@ extern int filtergen_lex(YYSTYPE* lvalp, YYLTYPE* locp);
 %token TOK_BANG
 %token TOK_COLON
 %token TOK_STAR
-%code {
-int filtergen_print(FILE * f, int t, YYSTYPE v);
-}
 %start ast
 %%
 ast: rule_list
