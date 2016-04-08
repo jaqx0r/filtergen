@@ -26,7 +26,6 @@
 
 #define YYSTYPE FILTERGEN_STYPE
 #define YYLTYPE FILTERGEN_LTYPE
-
 }
 %option 8bit
 %option bison-bridge
@@ -43,16 +42,16 @@
 %x comment
 
 %{
-int yycolumn = 1;
+int filtergen_column = 1;
 
 #define YY_USER_ACTION                                          \
     {                                                           \
         yylloc->first_line = yylloc->last_line = yylineno; \
-        yylloc->first_column = yycolumn ;                \
-        yylloc->last_column = yycolumn+yyleng-1;         \
+        yylloc->first_column = filtergen_column ;                \
+        yylloc->last_column = filtergen_column+yyleng-1;         \
         yylloc->srcfile = current_srcfile;               \
         current_srcfile->lineno = yylineno;                     \
-        yycolumn += yyleng;                                     \
+        filtergen_column += yyleng;                                     \
     }
 %}
 
@@ -63,14 +62,14 @@ id      {word}|({word})?:(({word})?:)+({word})?
 
 %%
 
-\n		/* eat newlines */ { yycolumn = 1; }
+\n		/* eat newlines */ { filtergen_column = 1; }
 
 "/*"	BEGIN(comment);
 
 <comment>{
 [^*\n]*		/* eat anything that's not a '*' */
 "*"+[^*/\n]*	/* eat up '*'s not followed by '/'s */
-\n		/* eat newlines */ { yycolumn = 1; }
+\n		/* eat newlines */ { filtergen_column = 1; }
 "*"+"/"		BEGIN(INITIAL);
 <<EOF>>		{
   filter_error(make_sourcepos(yylloc), "comment reached end of file");
@@ -149,7 +148,7 @@ text         return TOK_TEXT;
     } else {
         yyin = current_srcfile->f;
         yylineno = current_srcfile->lineno;
-        yycolumn = current_srcfile->column;
+        filtergen_column = current_srcfile->column;
     }
 }
 

@@ -5,7 +5,7 @@
 #include "input/filtergen/scanner.h"
 #include "input/sourcepos.h"
 
-extern int yycolumn;
+extern int filtergen_column;
 
 int main(int argc, char **argv) {
   char *YYDEBUGTRACE;
@@ -26,7 +26,7 @@ int main(int argc, char **argv) {
   }
   filtergen_in = current_srcfile->f;
   filtergen_lineno = current_srcfile->lineno;
-  yycolumn = current_srcfile->column;
+  filtergen_column = current_srcfile->column;
 
   filtergen_parse(&ast);
 

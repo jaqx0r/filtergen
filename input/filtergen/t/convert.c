@@ -9,7 +9,7 @@
 
 int indent = -2;
 
-extern int yycolumn;
+extern int filtergen_column;
 extern int convtrace;
 
 struct filter *convert(struct ast_s *, struct filtergen_opts *);
@@ -180,7 +180,7 @@ int main(int argc __attribute__((unused)),
   }
   filtergen_in = current_srcfile->f;
   filtergen_lineno = current_srcfile->lineno;
-  yycolumn = current_srcfile->column;
+  filtergen_column = current_srcfile->column;
 
   r = filtergen_parse(&ast);
 

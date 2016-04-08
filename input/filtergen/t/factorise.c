@@ -10,7 +10,7 @@ LCOV_EXCL_START
 #include "factoriser.h"
 
 int facttrace;
-extern int yycolumn;
+extern int filtergen_column;
 
 int nesting = 0;
 
@@ -220,7 +220,7 @@ int main(int argc, char **argv) {
   }
   filtergen_in = current_srcfile->f;
   filtergen_lineno = current_srcfile->lineno;
-  yycolumn = current_srcfile->column;
+  filtergen_column = current_srcfile->column;
 
   r = filtergen_parse(&ast);
   if (r != 0) {

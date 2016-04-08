@@ -9,7 +9,7 @@
 #include "input/filtergen/parser.h"
 #include "input/filtergen/scanner.h"
 
-extern int yycolumn;
+extern int filtergen_column;
 int emittrace = 0;
 
 #define EMIT(x) void emit_##x(struct x##_s *n)
@@ -329,7 +329,7 @@ int main(int argc, char **argv) {
   }
   filtergen_in = current_srcfile->f;
   filtergen_lineno = current_srcfile->lineno;
-  yycolumn = current_srcfile->column;
+  filtergen_column = current_srcfile->column;
 
   res = filtergen_parse(&ast);
 

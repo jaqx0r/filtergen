@@ -111,7 +111,7 @@ char *tok_map(int c) {
 }
 
 extern FILE *filtergen_in;
-extern int yycolumn;
+extern int filtergen_column;
 extern int filtergen_lineno;
 
 int main(int argc __attribute__((unused)),
@@ -133,7 +133,7 @@ int main(int argc __attribute__((unused)),
   YYLTYPE yylloc;
   filtergen_in = current_srcfile->f;
   filtergen_lineno = current_srcfile->lineno;
-  yycolumn = current_srcfile->column;
+  filtergen_column = current_srcfile->column;
 
   /* all output is considered a compiler message by dejagnu */
   while ((c = filtergen_lex(&yylval, &yylloc))) {
