@@ -8,8 +8,6 @@
 #include "input/iptables-save/parser.h"
 #include "input/iptables-save/scanner.h"
 
-char *ipts_filename(void);
-
 #define tok(x)                                                                 \
   case TOK_IPTS_##x:                                                           \
     r = strdup(#x);                                                            \
@@ -80,14 +78,20 @@ int main(int argc __attribute__((unused)),
          char **argv __attribute__((unused))) {
   int c;
 
+  char *YYDEBUGTRACE;
+  YYDEBUGTRACE = getenv("YYDEBUGTRACE");
+  ipts_set_debug(YYDEBUGTRACE ? atoi(YYDEBUGTRACE) : 0);
+
   if (argc > 1) {
     ipts_in = fopen(argv[1], "r");
   } else {
     ipts_in = stdin;
   }
 
-  while ((c = ipts_lex())) {
-    fprintf(stderr, "%s:%d: kind = %s, spelling = \"%s\"\n", ipts_filename(),
+  YYSTYPE yylval;
+  YYLTYPE yylloc;
+  while ((c = ipts_lex(&yylval, &yylloc))) {
+    fprintf(stderr, "%s:%d: kind = %s, spelling = \"%s\"\n", argv[1],
             ipts_lineno, tok_map(c), ipts_text);
   }
   return 0;

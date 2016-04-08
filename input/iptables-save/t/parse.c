@@ -11,6 +11,10 @@ int main(int argc __attribute__((unused)),
   struct ast_s ast;
 
   YYDEBUGTRACE = getenv("YYDEBUGTRACE");
+
+  // Scanner
+  ipts_set_debug(YYDEBUGTRACE ? atoi(YYDEBUGTRACE) : 0);
+  // Parser
   ipts_debug = YYDEBUGTRACE ? atoi(YYDEBUGTRACE) : 0;
 
   if (argc > 1) {

@@ -1,10 +1,4 @@
-%option noyywrap
-%option nounput
-%option noinput
-%option prefix="ipts_"
-%option yylineno
-
-%{
+%top{
 /* input scanner for iptables-save format
  *
  * Copyright (c) 2004 Jamie Wilkinson <jaq@spacepants.org>
@@ -25,10 +19,34 @@
  */
 
 #include <string.h>
+
 #include "input/iptables-save/ast.h"
 #include "input/iptables-save/parser.h"
 
-char * ipts_filename(void);
+#define YYSTYPE IPTS_STYPE
+#define YYLTYPE IPTS_LTYPE
+}
+%option 8bit
+%option bison-bridge
+%option bison-locations
+%option noyywrap
+%option nounput
+%option noinput
+%option nostack
+%option warn
+%option prefix="ipts_"
+%option yylineno
+%option debug
+%option nointeractive
+
+%{
+int ipts_column = 1;
+#define YY_USER_ACTION \
+{ yylloc->first_line = yylloc->last_line = yylineno; \
+yylloc->first_column = ipts_column; \
+yylloc->last_column = ipts_column+yyleng-1; \
+ipts_column+=yyleng; \
+}
 %}
 
 string	\"[^\n]+\"
@@ -45,7 +63,7 @@ id	[[:alnum:]_+-\.\/~]+
 
 {space}	/* ignore */
 
-\n		/* ignore */
+\n		/* ignore */ { ipts_column = 1; }
 
 ^COMMIT		return TOK_COMMIT;
 
@@ -55,7 +73,7 @@ id	[[:alnum:]_+-\.\/~]+
                  * characters in this regex are ", otherwise there's a bug
                  * in flex...  The result is somethign that is syntactically
                  * identical to an identifier for our purposes. */
-                ipts_lval.u_str = strndup(ipts_text + 1, ipts_leng - 2);
+                yylval->u_str = strndup(yytext + 1, yyleng - 2);
                 return TOK_IDENTIFIER;
                 }
 
@@ -128,7 +146,7 @@ id	[[:alnum:]_+-\.\/~]+
 
 	/* everything else */
 {id}	{
-		ipts_lval.u_str = strndup(ipts_text, ipts_leng);
+		yylval->u_str = strndup(yytext, yyleng);
 		return TOK_IDENTIFIER;
 	}
 
@@ -140,7 +158,3 @@ id	[[:alnum:]_+-\.\/~]+
 \"	return TOK_QUOTE;
 
 %%
-
-char * ipts_filename(void) {
-	return NULL;
-}

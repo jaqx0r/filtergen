@@ -19,26 +19,31 @@
 
 /* prepend all functions with ipts_ to keep the namespace separate
  * from other parsers */
-%name-prefix "ipts_"
+%define api.prefix {ipts_}
+
 /* verbose error messages */
-%error-verbose
+%define parse.error verbose
+
+/* enable debugging traces */
+%define parse.trace
+
+%define api.pure true
+%locations
+%token-table
 %parse-param {struct ast_s *ast}
-%{
+
+%code requires {
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
+
+#include "error.h"
 #include "input/iptables-save/ast.h"
-
-void ipts_error(struct ast_s *ast, const char * msg);
-extern int ipts_lineno;
-extern int ipts_lex(void);
-
-#define YYPRINT(f, t, v) ipts_print(f, t, v)
-%}
-%debug
+}
 
 %union {
-  struct table_list_s * u_table_list;
-  struct table_s * u_table;
+    struct table_list_s *u_table_list;
+    struct table_s *u_table;
     struct rule_list_s * u_rule_list;
     struct rule_s * u_rule;
     struct option_list_s * u_option_list;
@@ -75,6 +80,12 @@ extern int ipts_lex(void);
     struct pkt_count_s * u_pkt_count;
     char * u_str;
 }
+
+%code {
+void ipts_error(YYLTYPE * locp, struct ast_s * ast, const char *fmt, ...);
+extern int ipts_lex(YYSTYPE * lvalp, YYLTYPE * locp);
+}
+
 %type <u_table_list> table_list
 %type <u_table> table
 %type <u_rule_list> rule_list
@@ -170,10 +181,6 @@ extern int ipts_lex(void);
 %token TOK_BANG
 %token TOK_QUOTE
 %token TOK_COMMIT
-
-%{
-int ipts_print(FILE * f, int t, YYSTYPE v);
-%}
 
 %start ast
 
@@ -592,14 +599,11 @@ pkt_count: TOK_LSQUARE TOK_IDENTIFIER TOK_COLON TOK_IDENTIFIER TOK_RSQUARE
 }
 
 %%
-char * ipts_filename();
-extern char * ipts_text;
 
-void ipts_error(struct ast_s __attribute__((__unused__)) *ast, const char * msg) {
-  fprintf(stderr, "%s:%d: %s\n", ipts_filename(), ipts_lineno, msg);
+void __attribute__((__format__(__printf__, 3, 4)))
+yyerror(YYLTYPE* locp __attribute__((__unused__)), struct ast_s __attribute__((__unused__)) *ast, const char * fmt, ...) {
+  va_list ap;
+  va_start(ap, fmt);
+  filter_error(NULL, fmt, ap);
 }
 
-int ipts_print(FILE * f, int type, YYSTYPE v) {
-    fprintf(f, "type=%d,spelling=\"%s\",loc=%p", type, ipts_text, &v);
-    return 0;
-}

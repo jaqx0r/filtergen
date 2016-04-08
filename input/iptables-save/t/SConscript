@@ -7,7 +7,7 @@ env.Tar(env['TARBALL'], ['SConscript',
                          'emit.c', ])
 
 env = env.Clone()
-env.AppendUnique(LIBS=['in_iptables_save'])
+env.AppendUnique(LIBS=['in_iptables_save', 'sourcepos', 'core'])
 
 env.Alias('test-binaries', [env.Program('scan.c'),
                             env.Program('parse.c'),
