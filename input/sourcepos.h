@@ -48,4 +48,6 @@ int sourcefile_push(struct sourceposition *pos, const char *pathname);
  * returns true on success and false on error. */
 int sourcefile_pop();
 
+struct sourceposition* make_sourcepos(struct sourceposition*);
+
 #endif /* FILTERGEN_INPUT_SOURCEPOS_H */

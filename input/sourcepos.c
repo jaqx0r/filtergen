@@ -104,3 +104,10 @@ int sourcefile_pop() {
   srcfile_depth--;
   return 1;
 }
+
+struct sourceposition *make_sourcepos(struct sourceposition * loc) {
+  struct sourceposition *pos;
+  pos = malloc(sizeof(struct sourceposition));
+  memcpy(pos, loc, sizeof(struct sourceposition));
+  return pos;
+}

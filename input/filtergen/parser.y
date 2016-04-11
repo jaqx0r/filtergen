@@ -39,10 +39,6 @@
 #include <string.h>
 }
 
-%code provides {
-  YYLTYPE* make_sourcepos(YYLTYPE *yylloc);
-}
-
 %code requires {
 #include "error.h"
 #include "input/sourcepos.h"
@@ -660,11 +656,4 @@ yyerror(YYLTYPE* locp, struct ast_s __attribute__((__unused__)) * ast, const cha
   va_start(ap, fmt);
 
   filter_error(make_sourcepos(locp), fmt, ap);
-}
-
- YYLTYPE *make_sourcepos(YYLTYPE *loc) {
-  struct sourceposition *pos;
-  pos = malloc(sizeof(struct sourceposition));
-  memcpy(pos, loc, sizeof(struct sourceposition));
-  return pos;
 }
