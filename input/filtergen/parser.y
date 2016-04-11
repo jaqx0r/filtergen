@@ -40,8 +40,8 @@
 }
 
 %code provides {
-  struct sourceposition* make_sourcepos(YYLTYPE *yylloc);
- }
+  YYLTYPE* make_sourcepos(YYLTYPE *yylloc);
+}
 
 %code requires {
 #include "error.h"
@@ -49,35 +49,24 @@
 #include "input/filtergen/ast.h"
 
 #define YYLTYPE FILTERGEN_LTYPE
-typedef struct FILTERGEN_LTYPE {
-  int first_line;
-  int first_column;
-  int last_line;
-  int last_column;
-  struct sourcefile* srcfile;
-} FILTERGEN_LTYPE;
+typedef struct sourceposition FILTERGEN_LTYPE;
 # define FILTERGEN_LTYPE_IS_DECLARED 1 /* alert the parser that we have our own definition */
 
-# define YYLLOC_DEFAULT(Current, Rhs, N)                               \
-    do                                                                 \
-      if (N)                                                           \
-        {                                                              \
-          (Current).first_line   = YYRHSLOC (Rhs, 1).first_line;       \
-          (Current).first_column = YYRHSLOC (Rhs, 1).first_column;     \
-          (Current).last_line    = YYRHSLOC (Rhs, N).last_line;        \
-          (Current).last_column  = YYRHSLOC (Rhs, N).last_column;      \
-          (Current).srcfile      = YYRHSLOC (Rhs, 1).srcfile;          \
-        }                                                              \
-      else                                                             \
-        { /* empty RHS */                                              \
-          (Current).first_line   = (Current).last_line   =             \
-            YYRHSLOC (Rhs, 0).last_line;                               \
-          (Current).first_column = (Current).last_column =             \
-            YYRHSLOC (Rhs, 0).last_column;                             \
-          (Current).srcfile  = NULL;                        /* new */  \
-        }                                                              \
-    while (0)
-
+#define YYLLOC_DEFAULT(Current, Rhs, N)                                        \
+  do                                                                           \
+    if (N) {                                                                   \
+      (Current).first_line = YYRHSLOC(Rhs, 1).first_line;                      \
+      (Current).first_column = YYRHSLOC(Rhs, 1).first_column;                  \
+      (Current).last_line = YYRHSLOC(Rhs, N).last_line;                        \
+      (Current).last_column = YYRHSLOC(Rhs, N).last_column;                    \
+      (Current).filename = YYRHSLOC(Rhs, 1).filename;                          \
+    } else { /* empty RHS */                                                   \
+      (Current).first_line = (Current).last_line = YYRHSLOC(Rhs, 0).last_line; \
+      (Current).first_column = (Current).last_column =                         \
+          YYRHSLOC(Rhs, 0).last_column;                                        \
+      (Current).filename = NULL; /* new */                                     \
+    }                                                                          \
+  while (0)
 }
 
 %union {
@@ -673,18 +662,9 @@ yyerror(YYLTYPE* locp, struct ast_s __attribute__((__unused__)) * ast, const cha
   filter_error(make_sourcepos(locp), fmt, ap);
 }
 
-struct sourceposition *make_sourcepos(YYLTYPE *loc) {
+ YYLTYPE *make_sourcepos(YYLTYPE *loc) {
   struct sourceposition *pos;
   pos = malloc(sizeof(struct sourceposition));
-
-  pos->first_line = loc->first_line;
-  pos->first_column = loc->first_column;
-  pos->last_line = loc->last_line;
-  pos->last_column = loc->last_column;
-  if (loc->srcfile && loc->srcfile->pathname) {
-    pos->filename = loc->srcfile->pathname;
-  } else {
-    pos->filename = NULL;
-  }
+  memcpy(pos, loc, sizeof(struct sourceposition));
   return pos;
 }

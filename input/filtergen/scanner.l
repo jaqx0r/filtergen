@@ -44,15 +44,15 @@
 %{
 int filtergen_column = 1;
 
-#define YY_USER_ACTION                                          \
-    {                                                           \
-        yylloc->first_line = yylloc->last_line = yylineno; \
-        yylloc->first_column = filtergen_column ;                \
-        yylloc->last_column = filtergen_column+yyleng-1;         \
-        yylloc->srcfile = current_srcfile;               \
-        current_srcfile->lineno = yylineno;                     \
-        filtergen_column += yyleng;                                     \
-    }
+#define YY_USER_ACTION                                                         \
+  {                                                                            \
+    yylloc->first_line = yylloc->last_line = yylineno;                         \
+    yylloc->first_column = filtergen_column;                                   \
+    yylloc->last_column = filtergen_column + yyleng - 1;                       \
+    yylloc->filename = current_srcfile->pathname;                              \
+    current_srcfile->lineno = yylineno;                                        \
+    filtergen_column += yyleng;                                                \
+  }
 %}
 
 string  \"[^\n]+\"
