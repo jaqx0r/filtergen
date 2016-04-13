@@ -41,12 +41,14 @@
 
 %{
 int ipts_column = 1;
-#define YY_USER_ACTION \
-{ yylloc->first_line = yylloc->last_line = yylineno; \
-yylloc->first_column = ipts_column; \
-yylloc->last_column = ipts_column+yyleng-1; \
-ipts_column+=yyleng; \
-}
+
+#define YY_USER_ACTION                                                         \
+  {                                                                            \
+    yylloc->first_line = yylloc->last_line = yylineno;                         \
+    yylloc->first_column = ipts_column;                                        \
+    yylloc->last_column = ipts_column + yyleng - 1;                            \
+    ipts_column += yyleng;                                                     \
+  }
 %}
 
 string	\"[^\n]+\"

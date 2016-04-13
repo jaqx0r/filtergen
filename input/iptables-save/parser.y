@@ -39,6 +39,26 @@
 
 #include "error.h"
 #include "input/iptables-save/ast.h"
+
+#define YYLTYPE IPTS_LTYPE
+typedef struct sourceposition IPTS_LTYPE;
+# define IPTS_LTYPE_IS_DECLARED 1 /* alert the parser that we have our own definition */
+
+#define YYLLOC_DEFAULT(Current, Rhs, N)                                        \
+  do                                                                           \
+    if (N) {                                                                   \
+      (Current).first_line = YYRHSLOC(Rhs, 1).first_line;                      \
+      (Current).first_column = YYRHSLOC(Rhs, 1).first_column;                  \
+      (Current).last_line = YYRHSLOC(Rhs, N).last_line;                        \
+      (Current).last_column = YYRHSLOC(Rhs, N).last_column;                    \
+      (Current).filename = YYRHSLOC(Rhs, 1).filename;                          \
+    } else { /* empty RHS */                                                   \
+      (Current).first_line = (Current).last_line = YYRHSLOC(Rhs, 0).last_line; \
+      (Current).first_column = (Current).last_column =                         \
+          YYRHSLOC(Rhs, 0).last_column;                                        \
+      (Current).filename = NULL; /* new */                                     \
+    }                                                                          \
+  while (0)
 }
 
 %union {
@@ -601,9 +621,8 @@ pkt_count: TOK_LSQUARE TOK_IDENTIFIER TOK_COLON TOK_IDENTIFIER TOK_RSQUARE
 %%
 
 void __attribute__((__format__(__printf__, 3, 4)))
-yyerror(YYLTYPE* locp __attribute__((__unused__)), struct ast_s __attribute__((__unused__)) *ast, const char * fmt, ...) {
+yyerror(YYLTYPE* locp, struct ast_s __attribute__((__unused__)) *ast, const char * fmt, ...) {
   va_list ap;
   va_start(ap, fmt);
-  filter_error(NULL, fmt, ap);
+  filter_error(locp, fmt, ap);
 }
-
