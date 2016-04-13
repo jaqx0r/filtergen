@@ -10,7 +10,10 @@ proc fg-scan-dg-test { filter do_what extra_tool_flags } {
     verbose "scanning $filter to $output_file..."
 
     set status [remote_exec "" input/filtergen/t/scan "$filter $output_file"]
-
+    if { [lindex $status 0] != 0 } {
+        verbose -log "fg-scan exited with status [lindex $status 0]";
+        fail $filter
+    }
     set comp_output [lindex $status 1]
 
     return [list $comp_output $output_file]

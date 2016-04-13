@@ -6,7 +6,10 @@ proc ipts-parse-dg-test { filter do_what extra_tool_flags } {
     set output_file "[file rootname $filter].out"
 
     set status [remote_exec "" input/iptables-save/t/parse "$filter $output_file"]
-
+    if { [lindex $status 0] != 0 } {
+        verbose -log "ipts-parse exited with status [lindex $status 0]";
+        fail $filter
+    }
     set comp_output [lindex $status 1]
 
     return [list $comp_output $output_file]
