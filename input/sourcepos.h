@@ -48,6 +48,12 @@ int sourcefile_push(struct sourceposition *pos, const char *pathname);
  * returns true on success and false on error. */
 int sourcefile_pop();
 
+/* Create newly allocated storage of a sourceposition from an existing temporary
+ * one */
 struct sourceposition *make_sourcepos(struct sourceposition *loc);
+
+/* Returns the location of the LHS of a rule whose RHS is in *rhs[1]..rhs[N} */
+void merge_sourcepos(struct sourceposition *loc,
+                     struct sourceposition const *rhs, int n);
 
 #endif /* FILTERGEN_INPUT_SOURCEPOS_H */

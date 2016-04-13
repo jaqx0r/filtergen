@@ -105,9 +105,32 @@ int sourcefile_pop() {
   return 1;
 }
 
-struct sourceposition *make_sourcepos(struct sourceposition * loc) {
+struct sourceposition *make_sourcepos(struct sourceposition *loc) {
   struct sourceposition *pos;
   pos = malloc(sizeof(struct sourceposition));
   memcpy(pos, loc, sizeof(struct sourceposition));
   return pos;
+}
+
+void merge_sourcepos(struct sourceposition *loc,
+                     struct sourceposition const *rhs, int n) {
+  if (n) {
+    loc->first_line = rhs[1].first_line;
+    loc->first_column = rhs[1].first_column;
+    loc->last_line = rhs[n].last_line;
+    loc->last_column = rhs[n].last_column;
+    if (rhs[1].filename) {
+      loc->filename = strdup(rhs[1].filename);
+    } else {
+      loc->filename = NULL;
+    }
+  } else {
+    loc->first_line = loc->last_line = rhs[0].last_line;
+    loc->first_column = loc->last_column = rhs[0].last_column;
+    if (rhs[0].filename) {
+      loc->filename = strdup(rhs[0].filename);
+    } else {
+      loc->filename = NULL;
+    }
+  }
 }
