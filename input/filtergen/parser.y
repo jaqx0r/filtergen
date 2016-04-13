@@ -650,10 +650,8 @@ chaingroup_specifier: TOK_LSQUARE TOK_IDENTIFIER subrule_list TOK_RSQUARE
 %%
 
 void __attribute__((__format__(__printf__, 3, 4)))
-yyerror(YYLTYPE* locp, struct ast_s __attribute__((__unused__)) * ast, const char *fmt,
-                ...) {
+yyerror(YYLTYPE* locp, struct ast_s __attribute__((__unused__)) * ast, const char *fmt, ...) {
   va_list ap;
   va_start(ap, fmt);
-
-  filter_error(make_sourcepos(locp), fmt, ap);
+  filter_error(locp, fmt, ap);
 }
