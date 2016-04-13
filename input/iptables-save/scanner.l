@@ -80,45 +80,45 @@ id	[[:alnum:]_+-\.\/~]+
                 }
 
 		/* chain commands */
--A		return TOK_IPTS_CHAIN_APPEND;
+-A		|
 --append	return TOK_IPTS_CHAIN_APPEND;
 
--p		return TOK_IPTS_PROTOCOL;
+-p		|
 --protocol	return TOK_IPTS_PROTOCOL;
 
--s		return TOK_IPTS_SOURCE;
+-s		|
 --source	return TOK_IPTS_SOURCE;
 
--d		return TOK_IPTS_DESTINATION;
+-d		|
 --destination	return TOK_IPTS_DESTINATION;
 
--j		return TOK_IPTS_JUMP;
+-j		|
 --jump		return TOK_IPTS_JUMP;
 
--i		return TOK_IPTS_IN_INTERFACE;
+-i		|
 --in-interface	return TOK_IPTS_IN_INTERFACE;
 
--o		return TOK_IPTS_OUT_INTERFACE;
+-o		|
 --out-interface	return TOK_IPTS_OUT_INTERFACE;
 
--f		return TOK_IPTS_FRAGMENT;
+-f		|
 --fragment	return TOK_IPTS_FRAGMENT;
 
--c		return TOK_IPTS_SET_COUNTERS;
+-c		|
 --set-counters	return TOK_IPTS_SET_COUNTERS;
 
--m		return TOK_IPTS_MATCH;
+-m		|
 --match		return TOK_IPTS_MATCH;
 
 		/* match arguments */
---dport		return TOK_IPTS_DPORT;
+--dport		|
 --destination-port	return TOK_IPTS_DPORT;
---sport		return TOK_IPTS_SPORT;
+--sport		|
 --source-port	return TOK_IPTS_SPORT;
 
---sports	return TOK_IPTS_SOURCE_PORTS;
+--sports	|
 --source-ports	return TOK_IPTS_SOURCE_PORTS;
---dports	return TOK_IPTS_DESTINATION_PORTS;
+--dports	|
 --destination-ports	return TOK_IPTS_DESTINATION_PORTS;
 --ports		return TOK_IPTS_PORTS;
 
