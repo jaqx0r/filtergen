@@ -32,7 +32,7 @@ if not env.GetOption('clean'):
         print os.environ['CC'] + ' is not executable.'
         confOK = False
     if conf.CheckCHeader('getopt.h'):
-        conf.env.AppendUnique(CPPFLAGS=['-DHAVE_GETOPT_H'])
+        conf.env.AppendUnique(CPPDEFINES=['HAVE_GETOPT_H'])
         conf.CheckLib('getopt', 'getopt')
 
     if ARGUMENTS.get('profiler'):
@@ -88,10 +88,10 @@ if 'strict-aliasing' in warnings:
     env.AppendUnique(CCFLAGS=['-fstrict-aliasing'])
 
 # set the version
-env.AppendUnique(CPPFLAGS=['-DVERSION=\\\"%s\\\"' % (VERSION,)])
+env.AppendUnique(CPPDEFINES=[('VERSION', '\\"%s\\"' % VERSION)])
 
 # compile as GNU SOURCE to get strndup
-env.AppendUnique(CPPFLAGS=['-D_GNU_SOURCE'])
+env.AppendUnique(CPPDEFINES=['_GNU_SOURCE'])
 
 # tell yacc to create a header file
 env.AppendUnique(YACCFLAGS=['-d'])
