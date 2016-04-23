@@ -237,4 +237,5 @@ env.AddPreAction(distcheck, 'tar zxf $SOURCE')
 env.AddPostAction(distcheck, 'rm -rf $TARNAME')
 env.Alias('distcheck', distcheck)
 
-env.Depends(filtergen, env.Splint('filter.c'))
+splint = env.SplintAll(filtergen)
+env.Alias('splint', splint)
