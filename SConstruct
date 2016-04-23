@@ -17,7 +17,7 @@ vars.AddVariables(
 )
 
 env = Environment(variables=vars, tools=[
-                  'default', 'dejagnu', 'textfile', 'lcov'])
+                  'default', 'dejagnu', 'textfile', 'lcov', 'splint'])
 
 if os.environ.get('CC', None):
     env['CC'] = os.environ['CC']
@@ -236,3 +236,5 @@ distcheck = env.Command('#distcheck',
 env.AddPreAction(distcheck, 'tar zxf $SOURCE')
 env.AddPostAction(distcheck, 'rm -rf $TARNAME')
 env.Alias('distcheck', distcheck)
+
+env.Depends(filtergen, env.Splint('filter.c'))
