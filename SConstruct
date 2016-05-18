@@ -81,8 +81,8 @@ warnings = ['',
             'uninitialized',
             'pointer-arith',
             'strict-aliasing',
-'no-sign-compare',
- ]
+            'no-sign-compare',
+           ]
 env.AppendUnique(CCFLAGS=['-W%s' % (w,) for w in warnings])
 
 # Paired with -Wstrict-aliasing
