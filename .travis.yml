@@ -30,6 +30,13 @@ matrix:
             - ubuntu-toolchain-r-test
           packages: [gcc-5, *native_deps]
       env: COMPILER=gcc-5 COVERAGE=yes
+    - compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages: [gcc-6, *native_deps]
+      env: COMPILER=gcc-6 COVERAGE=yes
     - compiler: clang
       addons:
         apt:
