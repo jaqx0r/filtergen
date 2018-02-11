@@ -1,5 +1,6 @@
 language: c
 sudo: false
+dist: trusty
 before_install:
  - gem install coveralls-lcov
 addons: {apt: {packages: &native_deps [scons, bison, flex, dejagnu, lcov]}}
