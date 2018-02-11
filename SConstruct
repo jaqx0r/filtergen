@@ -60,7 +60,7 @@ if not env.GetOption('clean'):
 
 # choose debugging level
 if ARGUMENTS.get('debug'):
-    env.AppendUnique(CCFLAGS=['-ggdb', '-O0'])
+    env.AppendUnique(CCFLAGS=['-ggdb', '-O0', '-fno-inline'])
     env.AppendUnique(LINKFLAGS=['-ggdb'])
 else:
     env.AppendUnique(CCFLAGS=['-O2'])
