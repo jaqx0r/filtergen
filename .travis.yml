@@ -56,6 +56,20 @@ matrix:
       addons:
         apt:
           sources:
+            - llvm-toolchain-trusty-4.0
+          packages: [clang-4.0, *native_deps]
+      env: COMPILER=clang-4.0 COVERAGE=no
+    - compiler: clang
+      addons:
+        apt:
+          sources:
+            - llvm-toolchain-trusty-3.8
+          packages: [clang-5.0, *native_deps]
+      env: COMPILER=clang-5.0 COVERAGE=no
+    - compiler: clang
+      addons:
+        apt:
+          sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-trusty-3.8
           packages: [clang-3.8, *native_deps]
@@ -63,3 +77,5 @@ matrix:
   allow_failures:
     - env: COMPILER=clang-3.7 COVERAGE=no
     - env: COMPILER=clang-3.8 COVERAGE=no
+    - env: COMPILER=clang-4.0 COVERAGE=no
+    - env: COMPILER=clang-5.0 COVERAGE=no
