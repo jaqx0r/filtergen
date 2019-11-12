@@ -21,13 +21,6 @@ matrix:
         apt:
           sources:
             - ubuntu-toolchain-r-test
-          packages: [gcc-4.9, *native_deps]
-      env: COMPILER=gcc-4.9 COVERAGE=yes
-    - compiler: gcc
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
           packages: [gcc-5, *native_deps]
       env: COMPILER=gcc-5 COVERAGE=yes
     - compiler: gcc
@@ -83,7 +76,6 @@ matrix:
           packages: [clang-3.8, *native_deps]
       env: COMPILER=clang-3.8 COVERAGE=no
   allow_failures:
-    - env: COMPILER=gcc-7 COVERAGE=yes
     - env: COMPILER=clang-3.7 COVERAGE=no
     - env: COMPILER=clang-3.8 COVERAGE=no
     - env: COMPILER=clang-4.0 COVERAGE=no
