@@ -42,14 +42,6 @@ matrix:
         apt:
           sources:
             - ubuntu-toolchain-r-test
-            - llvm-toolchain-trusty-3.6
-          packages: [clang-3.6, *native_deps]
-      env: COMPILER=clang-3.6 COVERAGE=no
-    - compiler: clang
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
             - llvm-toolchain-trusty-3.7
           packages: [clang-3.7, *native_deps]
       env: COMPILER=clang-3.7 COVERAGE=no
