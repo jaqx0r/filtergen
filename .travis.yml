@@ -6,7 +6,7 @@ addons:
     packages:
     - bison
     - flex
-script: make -f makefile check
+script: travis_wait 30m make -f makefile check
 compiler:
  - clang
  - gcc
