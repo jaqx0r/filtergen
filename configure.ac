@@ -43,6 +43,30 @@ if test "x$HAVE_GETOPT" = xyes ; then
 	AC_SUBST(GETOPT_LIBS)
 fi
 
+AC_ARG_ENABLE(gcov,
+	      AS_HELP_STRING([--enable-gcov],
+                             [enable test coverage with gcov @<:@default=no@:>@]),
+              [case "${enableval}" in
+                 yes) enable_gcov=true ;;
+                 no)  enable_gcov=false ;;
+                 *)   AC_MSG_ERROR([bad value ${enableval} for --enable-gcov]) ;;
+               esac],
+              [enable_gcov=false])
+
+if test "x$enable_gcov" = "xtrue"; then
+  GCOV_CFLAGS="-fprofile-arcs -ftest-coverage"
+  AC_SUBST(GCOV_CFLAGS)
+
+  dnl libtool 1.5.22 and lower strip -fprofile-arcs from the flags
+  dnl passed to the linker, which is a bug; -fprofile-arcs implicitly
+  dnl links in -lgcov, so we do it explicitly here for the same effect
+  GCOV_LIBS=-lgcov
+  AC_SUBST(GCOV_LIBS)
+fi
+
+AM_CONDITIONAL(ENABLE_GCOV, test x"$gcov" = "xtrue")
+
+
 # Google profiler
 AC_MSG_CHECKING([whether to enable profiler])
 AC_ARG_WITH([profiler],
@@ -84,6 +108,9 @@ AC_ARG_ENABLE(debug,
 	CFLAGS="$tmp_CFLAGS",
 	AC_MSG_RESULT(no)
 )
+
+AC_CHECK_PROGS(GCOV, gcov, false)
+AC_CHECK_PROGS(LCOV, lcov, false)
 
 dnl ------------------------------
 dnl fill in path variable expandos

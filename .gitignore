@@ -50,3 +50,6 @@ debian/autoreconf.before
 /cscope.out
 /input/libsourcepos.a
 /.sconf_temp/
+*.gcda
+*.gcno
+*.gcov

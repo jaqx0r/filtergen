@@ -19,7 +19,7 @@ filtergen_SOURCES = \
 	resolver.c \
 	icmpent.c
 
-filtergen_LDADD = @GETOPT_LIBS@ @LIBPROFILER@
+filtergen_LDADD = @GETOPT_LIBS@ @LIBPROFILER@ @GCOV_LIBS@
 
 headers = filter.h util.h ast.h resolver.h icmpent.h
 
@@ -35,6 +35,6 @@ dist_pkgdoc_DATA = $(top_srcdir)/doc/*
 
 EXTRA_DIST = HISTORY HONESTY README TODO $(headers) $(mans) filtergen.spec extras/*
 
-AM_CFLAGS = -D_GNU_SOURCE
+AM_CFLAGS = -D_GNU_SOURCE @GCOV_CFLAGS@
 AM_LDFLAGS = -g
 AM_YFLAGS = -d
