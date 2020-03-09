@@ -3,9 +3,8 @@ container:
 
 test_task:
   env:
-    - CODECOV_TOKEN:
-      ENCRYPTED[ad1fc181f1c3415471271f2d2b5a00ece0d2f14e6147f3ea028ad594109db25c54baf54e6d27cb97e73dd151e1df4ece]
-    matrix:
+    - CODECOV_TOKEN: ENCRYPTED[ad1fc181f1c3415471271f2d2b5a00ece0d2f14e6147f3ea028ad594109db25c54baf54e6d27cb97e73dd151e1df4ece]
+    - matrix:
       - CC: gcc
       - CC: clang
   setup_script:
