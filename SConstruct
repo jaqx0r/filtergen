@@ -29,7 +29,7 @@ if not env.GetOption('clean'):
     confOK = True
     conf = Configure(env)
     if not conf.CheckCC():
-        print os.environ['CC'] + ' is not executable.'
+        print('{} is not executable.'.format(os.environ['CC']))
         confOK = False
     if conf.CheckCHeader('getopt.h'):
         conf.env.AppendUnique(CPPDEFINES=['HAVE_GETOPT_H'])
@@ -168,7 +168,7 @@ subst_dict = {
 }
 
 fgadm = env.Substfile('fgadm.in', SUBST_DICT=subst_dict)
-env.AddPostAction(fgadm, Chmod('fgadm', 0755))
+env.AddPostAction(fgadm, Chmod('fgadm', 0o755))
 Default(fgadm)
 
 env.Substfile('fgadm.conf.in', SUBST_DICT=subst_dict)

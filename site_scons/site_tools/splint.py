@@ -19,7 +19,7 @@ _END = re.compile(r'End of search list\.')
 
 
 def _commandOutput(command):
-  process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
+  process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, encoding='utf8')
   return process.communicate()[0].strip().split('\n')
 
 def _cppIncludePaths():
