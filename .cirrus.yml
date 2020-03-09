@@ -1,5 +1,5 @@
 container:
-  image: debian:latest
+  image: debian:testing-slim
 
 test_task:
   env:
@@ -8,6 +8,7 @@ test_task:
     - apt-get update
     - |
       apt-get install -y \
+        curl \
         scons \
         bison \
         flex \
