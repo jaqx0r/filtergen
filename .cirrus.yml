@@ -1,10 +1,18 @@
 container:
-  image: gcc:latest
+  image: debian:latest
 
 test_task:
   env:
     - CODECOV_TOKEN: ENCRYPTED[ad1fc181f1c3415471271f2d2b5a00ece0d2f14e6147f3ea028ad594109db25c54baf54e6d27cb97e73dd151e1df4ece]
-  test_script: make -f makefile check
-  on_failure:
-    debug_script: cat t/test-suite.log
-  coverage_script: bash <(curl -s https://codecov.io/bash) 
+  setup_script:
+    - apt-get update
+    - |
+      apt-get install -y \
+        scons \
+        bison \
+        flex \
+        dejagnu \
+        lcov \
+        gcc
+  test_script: CC=gcc scons coverage=yes check distcheck
+  coverage_script: bash <(curl -s https://codecov.io/bash) -f coverage.info
