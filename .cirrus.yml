@@ -1,0 +1,7 @@
+container:
+  image: gcc:latest
+
+test_task:
+  test_script: make -f makefile check
+  on_failure:
+    debug_script: cat t/test-suite.log
