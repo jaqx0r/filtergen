@@ -16,4 +16,4 @@ test_task:
         lcov \
         gcc
   test_script: CC=gcc scons coverage=yes check distcheck
-  coverage_script: bash <(curl -s https://codecov.io/bash) -f coverage.info
+  coverage_script: ls -al && bash <(curl -s https://codecov.io/bash) -f coverage.info
