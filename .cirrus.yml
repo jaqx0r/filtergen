@@ -15,5 +15,5 @@ test_task:
         dejagnu \
         lcov \
         gcc
-  test_script: CC=gcc scons coverage=yes check distcheck
+  test_script: CC=gcc scons coverage=yes check distcheck coverage.infog
   coverage_script: ls -al && bash <(curl -s https://codecov.io/bash) -f coverage.info
