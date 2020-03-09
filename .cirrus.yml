@@ -20,4 +20,5 @@ test_task:
         gcc \
         clang
   test_script: scons coverage=yes check distcheck coverage.info
+  allow_failures: $CC == 'clang'
   coverage_script: bash <(curl -s https://codecov.io/bash) -f coverage.info
