@@ -171,6 +171,9 @@ filtergen (0.12.8-2~1.gbp7e3b7d) UNRELEASED; urgency=medium
   * Update changelog
   * release this version
 
+  [ Debian Janitor ]
+  * Trim trailing whitespace.
+
  -- Jamie Wilkinson <jaq@debian.org>  Wed, 13 Nov 2019 03:44:42 +1100
 
 filtergen (0.12.8-1) unstable; urgency=medium
@@ -183,15 +186,15 @@ filtergen (0.12.7-1) unstable; urgency=medium
 
   * New upstream release.
     - IPv6 support in the rules files, and in output formats.
-    - ip{,6}tables-restore support. 
+    - ip{,6}tables-restore support.
 
  -- Jamie Wilkinson <jaq@debian.org>  Sat, 13 Feb 2016 22:04:47 +1100
 
 filtergen (0.12.6-3) unstable; urgency=medium
 
-  * Fix the way the test suite log is printed after test failure. 
+  * Fix the way the test suite log is printed after test failure.
   * Run the tests in parallel so their output is captured.
-  * Run all tests in verbose (sh -x) mode. 
+  * Run all tests in verbose (sh -x) mode.
 
  -- Jamie Wilkinson <jaq@debian.org>  Sat, 13 Feb 2016 19:05:56 +1100
 
@@ -205,7 +208,7 @@ filtergen (0.12.6-1) unstable; urgency=medium
 
   * New upstream release.
     - Fixes return type in external declaration of yyrestart (Closes: #749636).
-  * Use dh-autoreconf to fix up the autotools blah at build time. 
+  * Use dh-autoreconf to fix up the autotools blah at build time.
 
  -- Jamie Wilkinson <jaq@debian.org>  Sat, 13 Feb 2016 04:26:16 +1100
 
@@ -221,17 +224,17 @@ filtergen (0.12.5-1) unstable; urgency=low
   * Updated watch file for googlecode.com upstream location change.
   * Bug fix: "Allow '*' as an interface name", thanks to Matthew
     Palmer (Closes: #549891).
-  * Fix build failues when using clang instead of GCC (Closes: #751443). 
+  * Fix build failues when using clang instead of GCC (Closes: #751443).
   * Support globbing in include directives (Closes: #549892).
-  * Update parser.y use of the parse-param directive to support modern bison. 
+  * Update parser.y use of the parse-param directive to support modern bison.
   * Update debhelper and debian/compat.
   * Update watch file to new location.
   * Add VCS headers to control file.
-  * Use debian/source options to build from git, add gbp.conf to debian dir. 
-  * Convert debian/rules to dh style. 
+  * Use debian/source options to build from git, add gbp.conf to debian dir.
+  * Convert debian/rules to dh style.
   * Fix compiler warnings as errors to build with modern compiler.
   * Update address of FSF.
-  * Add more example filters to examples. 
+  * Add more example filters to examples.
 
  -- Jamie Wilkinson <jaq@debian.org>  Sat, 13 Feb 2016 03:04:52 +1100
 
