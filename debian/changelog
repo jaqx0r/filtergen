@@ -72,8 +72,10 @@ filtergen (0.12.8-2~1.gbp7e3b7d) UNRELEASED; urgency=medium
   * Bump version to 0.12.6
   * Rename configure.in to configure.ac
   * Delete .bzrignore, sort and uniq .gitignore.
-  * Make yyrestart a void return type in the external declaration in glue.c, to match the real type signature.
-  * Assume correct ordering now that the globbed include sorts after readdir() iterator order.
+  * Make yyrestart a void return type in the external declaration in glue.c, to
+    match the real type signature.
+  * Assume correct ordering now that the globbed include sorts after readdir()
+    iterator order.
   * Add a test for globbing includes to match Matt Palmer's patch.
   * Add the test :(
   * New upstream.
@@ -84,7 +86,8 @@ filtergen (0.12.8-2~1.gbp7e3b7d) UNRELEASED; urgency=medium
   * Add a travis.yml to enable continuous integration.
   * Compile with both clang and gcc in travis.
   * Use local makefile bootstrap for .travis.yml.
-  * Convert .travis.yml to use container infrastructure.  Install package deps using addons config options.
+  * Convert .travis.yml to use container infrastructure.  Install package deps
+    using addons config options.
   * reformat .travis.yml
   * Reorder creation of the globbed include files.
   * Cat the test suite log after running the tests.
@@ -134,8 +137,10 @@ filtergen (0.12.8-2~1.gbp7e3b7d) UNRELEASED; urgency=medium
   * Dump the generated output in test programs so we can see what the diffs are.
   * Make the testlib always print the diff.
   * Always print the diff when a test comparison fails.
-  * The order of output should be sorted alphabetically by the full pathname, if glob truly works.
-  * Use scandir to walk the directory entries in reverse alphabetical order; a side effect of which is the files are included in alphabetical order.
+  * The order of output should be sorted alphabetically by the full pathname, if
+    glob truly works.
+  * Use scandir to walk the directory entries in reverse alphabetical order; a
+    side effect of which is the files are included in alphabetical order.
   * Cat the test suite log after failure.
   * Update HISTORY.
   * New upstream release.
@@ -144,7 +149,8 @@ filtergen (0.12.8-2~1.gbp7e3b7d) UNRELEASED; urgency=medium
   * Simplify control flow through convert_port_argument in glue.c.
   * Simplify control flow through convert_port_argument in glue.c.
   * Show which direction is unknown when aborting the switch.
-  * Check if convert_rule or convert_rule_list returns NULL before attempting to append to the return value.
+  * Check if convert_rule or convert_rule_list returns NULL before attempting to
+    append to the return value.
   * Merge branch '0.12' of https://github.com/jaqx0r/filtergen into 0.12
   * Update .gitignore with loose files from other branches.
   * Add a flag to disable resolution of hostnames, port names, or service names.
@@ -153,7 +159,9 @@ filtergen (0.12.8-2~1.gbp7e3b7d) UNRELEASED; urgency=medium
   * Normalize root paths.
   * Don't apply any flags if there are no flags to apply.
   * Don't create new filters if the subrule conversion returns NULL.
-  * Remove filter_apply_flags method as it only performs name resolution, which has already been done by the resolver module.  This extra duplication costs seconds of CPU time in the worst case.
+  * Remove filter_apply_flags method as it only performs name resolution, which
+    has already been done by the resolver module.  This extra duplication costs
+    seconds of CPU time in the worst case.
   * Check to see if the google-perftools libprofiler is available.
   * Remove filter_unroll, unused by the compilation phase.
   * Replace abort() with a message and return and error state.
@@ -161,7 +169,8 @@ filtergen (0.12.8-2~1.gbp7e3b7d) UNRELEASED; urgency=medium
   * Don't rash when invalid filter types are processed.
   * Update HISTORY
   * Free strdup'd memory.
-  * Convert filename() into a const char return and allocate the standard input name as a static.
+  * Convert filename() into a const char return and allocate the standard input
+    name as a static.
   * Free the AST after conversion to struct filter*.
   * Revert "Remove filter_unroll, unused by the compilation phase."
   * Add a test to validate the example programs.
