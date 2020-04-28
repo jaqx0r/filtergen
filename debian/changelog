@@ -178,6 +178,7 @@ filtergen (0.12.8-2~1.gbp7e3b7d) UNRELEASED; urgency=medium
   * Bump debhelper from deprecated 9 to 12.
   * Set debhelper-compat version in Build-Depends.
   * Set upstream metadata fields: Bug-Database, Bug-Submit.
+  * Drop unnecessary dependency on dh-autoreconf.
 
  -- Jamie Wilkinson <jaq@debian.org>  Wed, 13 Nov 2019 03:44:42 +1100
 
