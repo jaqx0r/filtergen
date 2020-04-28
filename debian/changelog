@@ -20,7 +20,6 @@ filtergen (0.12.8-2~1.gbp7e3b7d) UNRELEASED; urgency=medium
   * new upstream version
   * Import Matt Palmer's 0.12.4-5 debian release.
   * Import NMU from Gregor Herrmann for 0.12.4-5.1 package.
-  * new upstream version
   * debhelper and updated standards version
   * updated watch file
   * apply patch from matt palmer (plus unit test fixes)
@@ -41,7 +40,6 @@ filtergen (0.12.8-2~1.gbp7e3b7d) UNRELEASED; urgency=medium
   * Update watch file.
   * Bump debian/compat.
   * Add VCS tags to control file, update build-dep on debhelper.
-  * Update changelog.
   * Undo merge from 0.12 branch.
   * Update gitignore.
   * Add build-arch and build-indep targets to debian/rules.
@@ -57,10 +55,8 @@ filtergen (0.12.8-2~1.gbp7e3b7d) UNRELEASED; urgency=medium
   * Update gitignore.
   * Fix typo in ?: ternary.
   * Remove GNUism ?:
-  * update change log
   * Remove empty factoriser code from makefile.
   * Cast %p argument to void *.
-  * update changelog
   * Package up extras into tarball.
   * Update examples to include examples.
   * Fix date in changelog.
@@ -131,7 +127,6 @@ filtergen (0.12.8-2~1.gbp7e3b7d) UNRELEASED; urgency=medium
   * Add Michael Chapman to the list of THANKS.
   * Bump version for new release.
   * Update HISTORY.
-  * Update HISTORY.
   * clang-format-3.6 *.{c,h}
   * Add a .clang-format to maintain style.
   * Dump the generated output in test programs so we can see what the diffs are.
@@ -142,11 +137,9 @@ filtergen (0.12.8-2~1.gbp7e3b7d) UNRELEASED; urgency=medium
   * Use scandir to walk the directory entries in reverse alphabetical order; a
     side effect of which is the files are included in alphabetical order.
   * Cat the test suite log after failure.
-  * Update HISTORY.
   * New upstream release.
   * Remove debugging statements.
   * Release 0.12.7-1.
-  * Simplify control flow through convert_port_argument in glue.c.
   * Simplify control flow through convert_port_argument in glue.c.
   * Show which direction is unknown when aborting the switch.
   * Check if convert_rule or convert_rule_list returns NULL before attempting to
@@ -177,7 +170,6 @@ filtergen (0.12.8-2~1.gbp7e3b7d) UNRELEASED; urgency=medium
   * Explicit braces around if.
   * Rename icmp.filter to icmp to avoid being included in the example test.
   * Bump to version 0.12.8 and update HISTORY.
-  * Update changelog
   * release this version
 
   [ Debian Janitor ]
