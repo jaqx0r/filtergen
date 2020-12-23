@@ -8,9 +8,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
-        with:
-          python-version: '3.x'
       - name: install dependencies
         run: |
           sudo apt-get install -y \
@@ -22,7 +19,7 @@ jobs:
             lcov \
             ${{ matrix.compiler }}
       - name: test
-        run: scons coverage=yes check distcheck coverage.info
+        run: /usr/bin/env python3 $(which scons) coverage=yes check distcheck coverage.info
         env:
           CC: ${{ matrix.compiler }}
       - uses: codecov/codecov-action@v1
