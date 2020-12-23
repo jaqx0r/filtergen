@@ -3,6 +3,7 @@ import glob
 import os
 import SCons.Node.FS
 
+EnsurePythonVersion(3, 0)
 EnsureSConsVersion(2, 3)
 Decider('MD5-timestamp')
 
