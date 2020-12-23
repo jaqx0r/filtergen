@@ -1,0 +1,28 @@
+name: CI
+on: [push, pull_request]
+jobs:
+  test:
+    strategy:
+      matrix:
+        compiler: [ gcc, clang ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: install dependencies
+        run: |
+          sudo apt-get install -y \
+            curl \
+            scons \
+            bison
+            flex \
+            dejagnu \
+            lcov \
+            ${{ matrix.compiler }}
+      - name: test
+        run: scons coverage=yes check distcheck coverage.info
+        env:
+          CC: ${{ matrix.compiler }}
+        continue-on-error: ${{ matrix.compiler == 'clang' }}
+      - uses: actions/codecov-action@v1
+        with:
+          file: coverage.info
