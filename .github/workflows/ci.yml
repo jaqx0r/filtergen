@@ -22,7 +22,6 @@ jobs:
         run: scons coverage=yes check distcheck coverage.info
         env:
           CC: ${{ matrix.compiler }}
-        continue-on-error: ${{ matrix.compiler == 'clang' }}
       - uses: codecov/codecov-action@v1
         with:
           file: coverage.info
