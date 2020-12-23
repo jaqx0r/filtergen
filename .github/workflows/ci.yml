@@ -19,7 +19,7 @@ jobs:
             lcov \
             ${{ matrix.compiler }}
       - name: test
-        run: /usr/bin/env python3 $(which scons) coverage=yes check distcheck coverage.info
+        run: scons coverage=yes check distcheck coverage.info
         env:
           CC: ${{ matrix.compiler }}
       - uses: codecov/codecov-action@v1
