@@ -13,7 +13,7 @@ jobs:
           sudo apt-get install -y \
             curl \
             scons \
-            bison
+            bison \
             flex \
             dejagnu \
             lcov \
