@@ -23,6 +23,6 @@ jobs:
         env:
           CC: ${{ matrix.compiler }}
         continue-on-error: ${{ matrix.compiler == 'clang' }}
-      - uses: actions/codecov-action@v1
+      - uses: codecov/codecov-action@v1
         with:
           file: coverage.info
