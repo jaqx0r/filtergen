@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: Jamie Wilkinson <jaq@debian.org>
 Build-Depends: debhelper (>= 9), netbase, flex, bison, dh-autoreconf
 Standards-Version: 3.9.6
-Homepage: http://spacepants.org/src/filtergen/
+Homepage: https://spacepants.org/src/filtergen/
 VCS-Browser: https://github.com/jaqx0r/filtergen/tree/debian
 VCS-Git: https://github.com/jaqx0r/filtergen.git -b debian
 
