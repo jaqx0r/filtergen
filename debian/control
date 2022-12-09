@@ -5,8 +5,8 @@ Maintainer: Jamie Wilkinson <jaq@debian.org>
 Build-Depends: debhelper-compat (= 13), netbase, flex, bison
 Standards-Version: 3.9.6
 Homepage: https://spacepants.org/src/filtergen/
-VCS-Browser: https://github.com/jaqx0r/filtergen/tree/debian
-VCS-Git: https://github.com/jaqx0r/filtergen.git -b debian
+Vcs-Browser: https://github.com/jaqx0r/filtergen/tree/debian
+Vcs-Git: https://github.com/jaqx0r/filtergen.git -b debian
 
 Package: filtergen
 Architecture: any

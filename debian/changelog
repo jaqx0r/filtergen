@@ -179,6 +179,8 @@ filtergen (0.12.8-2~1.gbp7e3b7d) UNRELEASED; urgency=medium
   * Set upstream metadata fields: Repository-Browse.
   * Drop unnecessary dependency on dh-autoreconf.
   * Avoid explicitly specifying -Wl,--as-needed linker flag.
+  * Fix field name cases in debian/control (VCS-Browser ⇒ Vcs-Browser, VCS-Git ⇒
+    Vcs-Git).
 
  -- Jamie Wilkinson <jaq@debian.org>  Wed, 13 Nov 2019 03:44:42 +1100
 
