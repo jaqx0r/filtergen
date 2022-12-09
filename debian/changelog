@@ -176,6 +176,7 @@ filtergen (0.12.8-2~1.gbp7e3b7d) UNRELEASED; urgency=medium
   * Use secure URI in Homepage field.
   * Bump debhelper from deprecated 9 to 13.
   * Set debhelper-compat version in Build-Depends.
+  * Set upstream metadata fields: Repository-Browse.
 
  -- Jamie Wilkinson <jaq@debian.org>  Wed, 13 Nov 2019 03:44:42 +1100
 
