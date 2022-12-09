@@ -1,2 +1,2 @@
-version=3
+version=4
 https://github.com/jaqx0r/filtergen/tags .*/(\d[\d\.]*)\.tar\.gz
