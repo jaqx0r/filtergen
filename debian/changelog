@@ -20,7 +20,6 @@ filtergen (0.12.8-2~1.gbp7e3b7d) UNRELEASED; urgency=medium
   * new upstream version
   * Import Matt Palmer's 0.12.4-5 debian release.
   * Import NMU from Gregor Herrmann for 0.12.4-5.1 package.
-  * new upstream version
   * debhelper and updated standards version
   * updated watch file
   * apply patch from matt palmer (plus unit test fixes)
@@ -41,7 +40,6 @@ filtergen (0.12.8-2~1.gbp7e3b7d) UNRELEASED; urgency=medium
   * Update watch file.
   * Bump debian/compat.
   * Add VCS tags to control file, update build-dep on debhelper.
-  * Update changelog.
   * Undo merge from 0.12 branch.
   * Update gitignore.
   * Add build-arch and build-indep targets to debian/rules.
@@ -54,13 +52,10 @@ filtergen (0.12.8-2~1.gbp7e3b7d) UNRELEASED; urgency=medium
   * Check return code of asprintf in resolver.c
   * Check return code of chdir() in t/scan.c
   * update change log
-  * Update gitignore.
   * Fix typo in ?: ternary.
   * Remove GNUism ?:
-  * update change log
   * Remove empty factoriser code from makefile.
   * Cast %p argument to void *.
-  * update changelog
   * Package up extras into tarball.
   * Update examples to include examples.
   * Fix date in changelog.
@@ -72,8 +67,10 @@ filtergen (0.12.8-2~1.gbp7e3b7d) UNRELEASED; urgency=medium
   * Bump version to 0.12.6
   * Rename configure.in to configure.ac
   * Delete .bzrignore, sort and uniq .gitignore.
-  * Make yyrestart a void return type in the external declaration in glue.c, to match the real type signature.
-  * Assume correct ordering now that the globbed include sorts after readdir() iterator order.
+  * Make yyrestart a void return type in the external declaration in glue.c, to
+    match the real type signature.
+  * Assume correct ordering now that the globbed include sorts after readdir()
+    iterator order.
   * Add a test for globbing includes to match Matt Palmer's patch.
   * Add the test :(
   * New upstream.
@@ -84,7 +81,8 @@ filtergen (0.12.8-2~1.gbp7e3b7d) UNRELEASED; urgency=medium
   * Add a travis.yml to enable continuous integration.
   * Compile with both clang and gcc in travis.
   * Use local makefile bootstrap for .travis.yml.
-  * Convert .travis.yml to use container infrastructure.  Install package deps using addons config options.
+  * Convert .travis.yml to use container infrastructure.  Install package deps
+    using addons config options.
   * reformat .travis.yml
   * Reorder creation of the globbed include files.
   * Cat the test suite log after running the tests.
@@ -99,7 +97,6 @@ filtergen (0.12.8-2~1.gbp7e3b7d) UNRELEASED; urgency=medium
   * Add -x to print progress in each test script.
   * Run tests in parallel so that output is captured.
   * Make sure debian/rules can fail the build after catting the test-suite.log
-  * Update changelog.
 
   [ Michael Chapman ]
   * Add iptrestore backend
@@ -128,23 +125,23 @@ filtergen (0.12.8-2~1.gbp7e3b7d) UNRELEASED; urgency=medium
   * Add Michael Chapman to the list of THANKS.
   * Bump version for new release.
   * Update HISTORY.
-  * Update HISTORY.
   * clang-format-3.6 *.{c,h}
   * Add a .clang-format to maintain style.
   * Dump the generated output in test programs so we can see what the diffs are.
   * Make the testlib always print the diff.
   * Always print the diff when a test comparison fails.
-  * The order of output should be sorted alphabetically by the full pathname, if glob truly works.
-  * Use scandir to walk the directory entries in reverse alphabetical order; a side effect of which is the files are included in alphabetical order.
+  * The order of output should be sorted alphabetically by the full pathname, if
+    glob truly works.
+  * Use scandir to walk the directory entries in reverse alphabetical order; a
+    side effect of which is the files are included in alphabetical order.
   * Cat the test suite log after failure.
-  * Update HISTORY.
   * New upstream release.
   * Remove debugging statements.
   * Release 0.12.7-1.
   * Simplify control flow through convert_port_argument in glue.c.
-  * Simplify control flow through convert_port_argument in glue.c.
   * Show which direction is unknown when aborting the switch.
-  * Check if convert_rule or convert_rule_list returns NULL before attempting to append to the return value.
+  * Check if convert_rule or convert_rule_list returns NULL before attempting to
+    append to the return value.
   * Merge branch '0.12' of https://github.com/jaqx0r/filtergen into 0.12
   * Update .gitignore with loose files from other branches.
   * Add a flag to disable resolution of hostnames, port names, or service names.
@@ -153,7 +150,9 @@ filtergen (0.12.8-2~1.gbp7e3b7d) UNRELEASED; urgency=medium
   * Normalize root paths.
   * Don't apply any flags if there are no flags to apply.
   * Don't create new filters if the subrule conversion returns NULL.
-  * Remove filter_apply_flags method as it only performs name resolution, which has already been done by the resolver module.  This extra duplication costs seconds of CPU time in the worst case.
+  * Remove filter_apply_flags method as it only performs name resolution, which
+    has already been done by the resolver module.  This extra duplication costs
+    seconds of CPU time in the worst case.
   * Check to see if the google-perftools libprofiler is available.
   * Remove filter_unroll, unused by the compilation phase.
   * Replace abort() with a message and return and error state.
@@ -161,15 +160,27 @@ filtergen (0.12.8-2~1.gbp7e3b7d) UNRELEASED; urgency=medium
   * Don't rash when invalid filter types are processed.
   * Update HISTORY
   * Free strdup'd memory.
-  * Convert filename() into a const char return and allocate the standard input name as a static.
+  * Convert filename() into a const char return and allocate the standard input
+    name as a static.
   * Free the AST after conversion to struct filter*.
   * Revert "Remove filter_unroll, unused by the compilation phase."
   * Add a test to validate the example programs.
   * Explicit braces around if.
   * Rename icmp.filter to icmp to avoid being included in the example test.
   * Bump to version 0.12.8 and update HISTORY.
-  * Update changelog
   * release this version
+
+  [ Debian Janitor ]
+  * Trim trailing whitespace.
+  * Update watch file format version to 4.
+  * Use secure URI in Homepage field.
+  * Bump debhelper from deprecated 9 to 13.
+  * Set debhelper-compat version in Build-Depends.
+  * Set upstream metadata fields: Repository-Browse.
+  * Drop unnecessary dependency on dh-autoreconf.
+  * Avoid explicitly specifying -Wl,--as-needed linker flag.
+  * Fix field name cases in debian/control (VCS-Browser ⇒ Vcs-Browser, VCS-Git ⇒
+    Vcs-Git).
 
  -- Jamie Wilkinson <jaq@debian.org>  Wed, 13 Nov 2019 03:44:42 +1100
 
@@ -183,15 +194,15 @@ filtergen (0.12.7-1) unstable; urgency=medium
 
   * New upstream release.
     - IPv6 support in the rules files, and in output formats.
-    - ip{,6}tables-restore support. 
+    - ip{,6}tables-restore support.
 
  -- Jamie Wilkinson <jaq@debian.org>  Sat, 13 Feb 2016 22:04:47 +1100
 
 filtergen (0.12.6-3) unstable; urgency=medium
 
-  * Fix the way the test suite log is printed after test failure. 
+  * Fix the way the test suite log is printed after test failure.
   * Run the tests in parallel so their output is captured.
-  * Run all tests in verbose (sh -x) mode. 
+  * Run all tests in verbose (sh -x) mode.
 
  -- Jamie Wilkinson <jaq@debian.org>  Sat, 13 Feb 2016 19:05:56 +1100
 
@@ -205,7 +216,7 @@ filtergen (0.12.6-1) unstable; urgency=medium
 
   * New upstream release.
     - Fixes return type in external declaration of yyrestart (Closes: #749636).
-  * Use dh-autoreconf to fix up the autotools blah at build time. 
+  * Use dh-autoreconf to fix up the autotools blah at build time.
 
  -- Jamie Wilkinson <jaq@debian.org>  Sat, 13 Feb 2016 04:26:16 +1100
 
@@ -221,17 +232,17 @@ filtergen (0.12.5-1) unstable; urgency=low
   * Updated watch file for googlecode.com upstream location change.
   * Bug fix: "Allow '*' as an interface name", thanks to Matthew
     Palmer (Closes: #549891).
-  * Fix build failues when using clang instead of GCC (Closes: #751443). 
+  * Fix build failues when using clang instead of GCC (Closes: #751443).
   * Support globbing in include directives (Closes: #549892).
-  * Update parser.y use of the parse-param directive to support modern bison. 
+  * Update parser.y use of the parse-param directive to support modern bison.
   * Update debhelper and debian/compat.
   * Update watch file to new location.
   * Add VCS headers to control file.
-  * Use debian/source options to build from git, add gbp.conf to debian dir. 
-  * Convert debian/rules to dh style. 
+  * Use debian/source options to build from git, add gbp.conf to debian dir.
+  * Convert debian/rules to dh style.
   * Fix compiler warnings as errors to build with modern compiler.
   * Update address of FSF.
-  * Add more example filters to examples. 
+  * Add more example filters to examples.
 
  -- Jamie Wilkinson <jaq@debian.org>  Sat, 13 Feb 2016 03:04:52 +1100
 
