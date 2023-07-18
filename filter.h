@@ -35,7 +35,7 @@
  * filter type
  */
 enum filtertype {
-  YYEOF = 0,
+  F_EOF = 0, // Same as YYEOF
   F_DIRECTION,
   F_TARGET,
   F_SOURCE,
