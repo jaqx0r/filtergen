@@ -2,7 +2,7 @@ filtergen (0.12.8-3) unstable; urgency=medium
 
   * Acknowledge FTBFS bugfix, forgotten in last version.  Closes: #1037656
 
- -- Jamie Wilkinson <jaq@debian.org>  Wed, 19 Jul 2023 08:17:28 +1000
+ -- Jamie Wilkinson <jaq@debian.org>  Wed, 19 Jul 2023 08:19:53 +1000
 
 filtergen (0.12.8-2) unstable; urgency=medium
 
