@@ -1,1 +1,3 @@
 single-debian-patch
+# ignore files from git not included in release tarball
+extend-diff-ignore = "(^|/)(.*\.gcno)$"
