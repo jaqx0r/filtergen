@@ -18,7 +18,7 @@ filtergen (0.12.8-2) unstable; urgency=medium
   * Update source/options to ignore generated files.
   * Rename an enum to avoid conflicting with generated parser.h
 
- -- Jamie Wilkinson <jaq@debian.org>  Wed, 19 Jul 2023 08:10:03 +1000
+ -- Jamie Wilkinson <jaq@debian.org>  Wed, 19 Jul 2023 08:14:13 +1000
 
 filtergen (0.12.8-1) unstable; urgency=medium
 
