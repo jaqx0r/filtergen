@@ -234,12 +234,12 @@ int main(int argc, char **argv) {
   for (ft = filter_types; ft->name; ft++)
     if (!strcmp(ftn, ft->name))
       break;
-  free(ftn);
   if (!ft->name) {
     fprintf(stderr, "%s: target filter unrecognised: %s\n", progname, ftn);
     usage(progname);
     exit(1);
   }
+  free(ftn);
 
   /* What to do, then? */
   if (flags & FF_FLUSH) {
