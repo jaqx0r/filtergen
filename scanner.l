@@ -59,15 +59,15 @@ id      {word}|({word})?:(({word})?:)+({word})?
 "/*"         { /* strip c-style comments */
                 int c;
                 do {
-                    while ((c = input()) != '*' && c != EOF && c != '\n')
+                    while ((c = input()) != '*' && c != YYEOF && c != '\n')
 			;
                     while (c == '*')
                         c = input();
-                    if (c == EOF)
+                    if (c == YYEOF)
                         scan_err("comment reached end of file");
                     if (c == '\n')
                         inc_stack[inc_stackptr].lineno++;
-                } while (c != '/' && c != EOF);
+                } while (c != '/' && c != YYEOF);
              }
 
 #[^\n]*      /* strip shell style comments */
