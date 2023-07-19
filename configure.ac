@@ -1,10 +1,10 @@
-AC_PREREQ(2.50)
+AC_PREREQ([2.71])
 
-AC_INIT(filtergen, 0.12.8, jaq@spacepants.org)
+AC_INIT([filtergen],[0.12.8],[jaq@spacepants.org])
 
 AC_CONFIG_AUX_DIR(.)
-AC_CONFIG_SRCDIR(filtergen.c)
-AM_CONFIG_HEADER(config.h)
+AC_CONFIG_SRCDIR([filtergen.c])
+AC_CONFIG_HEADERS([config.h])
 
 AM_INIT_AUTOMAKE([foreign dist-bzip2 parallel-tests color-tests])
 
@@ -24,7 +24,7 @@ dnl checks for programs
 dnl -------------------
 
 AC_PROG_CC
-AM_PROG_LEX
+AC_PROG_LEX(noyywrap)
 AC_PROG_YACC
 
 dnl -------------------
