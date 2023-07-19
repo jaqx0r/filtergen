@@ -1,0 +1,33 @@
+name: CI
+on:
+  push:
+    # Filter on branch so we don't double-run this workflow on a PR's push.
+    tags:
+      - v*
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  # "none-all", which doesn't exist, but
+  # https://docs.github.com/en/actions/reference/authentication-in-a-workflow#using-the-github_token-in-a-workflow
+  # implies that the token still gets created.  Elsewhere we learn that any
+  # permission not mentioned here gets turned to `none`.  So this removes all permissions.
+  actions: none
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: install dependencies
+        run: sudo apt-get install -y flex bison
+      - name: build
+        run: ./configure --enable-gcov && make all
+      - name: test
+        run: make check
+      - uses: codecov/codecov-action@3
+        if: always()
+        with:
+          gcov: true
+          directory: .
