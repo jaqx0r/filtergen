@@ -19,9 +19,13 @@ jobs:
             lcov \
             ${{ matrix.compiler }}
       - name: test
-        run: scons coverage=yes check distcheck coverage.info
+        run: scons coverage=yes check coverage.info
         env:
           CC: ${{ matrix.compiler }}
       - uses: codecov/codecov-action@v1
         with:
           file: coverage.info
+      - name: distcheck
+        run: scons distcheck
+        env:
+          CC: ${{ matrix.compiler }}
