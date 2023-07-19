@@ -7,7 +7,7 @@ AC_CONFIG_HEADERS([config.h])
 
 AM_INIT_AUTOMAKE([foreign dist-bzip2 parallel-tests color-tests])
 
-AM_MAINTAINER_MODE
+AM_MAINTAINER_MODE([enable])
 
 AC_SUBST(PROGRAM)
 AC_SUBST(VERSION)
