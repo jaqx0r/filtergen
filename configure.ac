@@ -1,6 +1,6 @@
 AC_PREREQ([2.71])
 
-AC_INIT([filtergen],[0.12.8],[jaq@spacepants.org])
+AC_INIT([filtergen],[0.12.9],[jaq@spacepants.org])
 
 AC_CONFIG_SRCDIR([filtergen.c])
 AC_CONFIG_HEADERS([config.h])
