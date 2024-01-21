@@ -10,6 +10,7 @@ cc_library(
     ],
     hdrs = ["ast.h"],
     defines = ["_GNU_SOURCE"],
+    visibility = ["//:__subpackages__"],
     deps = ["//:core"],
 )
 
