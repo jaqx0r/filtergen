@@ -16,6 +16,7 @@ cc_library(
         "resolver.h",
     ],
     defines = ["_GNU_SOURCE"],
+    visibility = ["//:__subpackages__"],
     deps = [
         "//:core",
     ],

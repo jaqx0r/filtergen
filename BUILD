@@ -15,3 +15,9 @@ cc_library(
     ],
     deps = ["//input:sourcepos"],
 )
+
+cc_library(
+    name = "factoriser",
+    srcs = ["factoriser.c"],
+    hdrs = ["factoriser.h"],
+)
