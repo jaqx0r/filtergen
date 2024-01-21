@@ -9,4 +9,5 @@ cc_library(
         "input.h",
         "sourcepos.h",
     ],
+    defines = ["_GNU_SOURCE"],
 )
