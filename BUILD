@@ -12,6 +12,7 @@ cc_library(
         "error.h",
         "filter.h",
         "icmpent.h",
+        "util.h",
     ],
     deps = ["//input:sourcepos"],
 )
