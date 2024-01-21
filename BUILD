@@ -22,3 +22,23 @@ cc_library(
     srcs = ["factoriser.c"],
     hdrs = ["factoriser.h"],
 )
+
+cc_binary(
+    name = "filtergen",
+    srcs = [
+        "fg-iptrestore.c",
+        "filtergen.c",
+        "gen.c",
+    ],
+    defines = ["VERSION=\\\"TODO\\\""],
+    deps = [
+        "//input/filtergen:in_filtergen",
+        "//input/iptables-save:in_iptables_save",
+        "//output/cisco:out_cisco",
+        "//output/filtergen:out_filtergen",
+        "//output/ipchains:out_ipchains",
+        "//output/ipfilter:out_ipfilter",
+        "//output/iptables:out_iptables",
+        "//output/iptablesrestore:out_iptablesrestore",
+    ],
+)
