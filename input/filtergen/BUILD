@@ -17,9 +17,7 @@ cc_library(
     ],
     defines = ["_GNU_SOURCE"],
     deps = [
-        "//:error",
-        "//:filter",
-        "//:icmpent",
+        "//:core",
     ],
 )
 
