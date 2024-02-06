@@ -19,6 +19,8 @@ vars.AddVariables(
 env = Environment(variables=vars, tools=[
                   'default', 'dejagnu', 'textfile', 'lcov', 'splint'])
 
+
+
 if os.environ.get('CC', None):
     env['CC'] = os.environ['CC']
 
@@ -57,6 +59,11 @@ if not env.GetOption('clean'):
         Exit(1)
 
     env = conf.Finish()
+
+env['COMPILATIONDB_USE_ABSPATH'] = True
+env.Tool('compilation_db')
+cdb = env.CompilationDatabase()
+env.Alias('cdb', cdb)
 
 # choose debugging level
 if ARGUMENTS.get('debug'):

@@ -77,3 +77,7 @@ ylwrap
 /input/filtergen/t/factorise
 /coverage.info
 /coverage_html/
+/bazel-bin
+/bazel-filtergen
+/bazel-out
+/bazel-testlogs
