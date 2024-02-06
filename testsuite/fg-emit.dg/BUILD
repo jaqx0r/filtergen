@@ -1,15 +1,14 @@
 load("//testsuite:dejagnu.bzl", "dejagnu_test")
 
 dejagnu_test(
-    name = "filtergen",
+    name = "fg-emit",
     srcs = glob(["**/*.exp"]),
     data = glob(
         [
             "**/*.in",
-            "include*.d/**",
+            "**/*.golden",
         ],
-        exclude_directories = 0,
     ),
-    tool_exec = "//:filtergen",
-    deps = ["//testsuite/lib:filtergen-dg"],
+    tool_exec = "//input/filtergen/t:emit",
+    deps = ["//testsuite/lib:fg-emit-dg"],
 )

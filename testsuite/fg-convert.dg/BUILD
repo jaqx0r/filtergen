@@ -1,15 +1,16 @@
 load("//testsuite:dejagnu.bzl", "dejagnu_test")
 
 dejagnu_test(
-    name = "filtergen",
+    name = "fg-convert",
     srcs = glob(["**/*.exp"]),
     data = glob(
         [
             "**/*.in",
+            "**/*.golden",
             "include*.d/**",
         ],
         exclude_directories = 0,
     ),
-    tool_exec = "//:filtergen",
-    deps = ["//testsuite/lib:filtergen-dg"],
+    tool_exec = "//input/filtergen/t:convert",
+    deps = ["//testsuite/lib:fg-convert-dg"],
 )

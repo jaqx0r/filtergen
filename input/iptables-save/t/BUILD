@@ -1,3 +1,5 @@
+package(default_visibility = ["//:__subpackages__"])
+
 cc_binary(
     name = "scan",
     testonly = True,

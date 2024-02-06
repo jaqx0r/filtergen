@@ -1,7 +1,7 @@
 load("//testsuite:dejagnu.bzl", "dejagnu_test")
 
 dejagnu_test(
-    name = "filtergen",
+    name = "ipts-scan",
     srcs = glob(["**/*.exp"]),
     data = glob(
         [
@@ -10,6 +10,6 @@ dejagnu_test(
         ],
         exclude_directories = 0,
     ),
-    tool_exec = "//:filtergen",
-    deps = ["//testsuite/lib:filtergen-dg"],
+    tool_exec = "//input/iptables-save/t:scan",
+    deps = ["//testsuite/lib:ipts-scan-dg"],
 )
