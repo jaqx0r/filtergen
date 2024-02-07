@@ -100,6 +100,8 @@ if ! [ -x /bin/runtest ]; then
   exit 127
 fi
 
+/bin/runtest --version
+
 cleanup () {{
   mv $TEST_UNDECLARED_OUTPUTS_DIR/{tool}.xml $XML_OUTPUT_FILE
 }}

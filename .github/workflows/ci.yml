@@ -64,14 +64,22 @@ jobs:
       - name: install dependencies
         run: |
           sudo apt-get install -y \
-            dejagnu
-      - run: bazel test --test_output=errors //...
+            dejagnu \
+            gcc \
+            llvm
+          dpkg -S llvm-cov
+      - name: bazel test
+        run: bazel coverage --explain=explain.out -s --test_env=VERBOSE_COVERAGE=1 --test_env=DISPLAY_LCOV_CMD=1 --test_output=all --combined_report=lcov --instrument_test_targets --nocache_test_results --instrumentation_filter="^//" //...
       - name: copy test results into workspace
         if: always()
         run: cp -Lpr $(bazel info bazel-testlogs)/ test-results
-      - name: publish test results
-        uses: EnricoMi/publish-unit-test-result-action@v2
+      - run: cat explain.out
+        if: always()
+      - uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
         with:
           files: |
             test-results/**/test.xml
+      - uses: codecov/codecov-action@v4
+        with:
+          file: bazel-out/_coverage/_coverage_report.dat
