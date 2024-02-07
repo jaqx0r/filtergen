@@ -1,5 +1,21 @@
 name: CI
-on: [push, pull_request]
+
+on:
+  push:
+    tags:
+      - v*
+    branches:
+      - main
+  pull_request:
+  merge_group:
+
+  # none-all, which doesn't exist, but
+  # https://docs.github.com/en/actions/reference/authentication-in-a-workflow#using-the-github_token-in-a-workflow
+  # implies that the token still gets created.  Elsewhere we learn that any
+  # permission not mentioned here gets turned to `none`.
+permissions:
+  actions: none
+
 jobs:
   test:
     strategy:
@@ -29,3 +45,33 @@ jobs:
         run: scons distcheck
         env:
           CC: ${{ matrix.compiler }}
+
+  bazel_test:
+    runs-on: ubuntu-latest
+    permissions:
+      # publish-unit-test-result-action
+      # writes a comment to the PR
+      pull-requests: write
+      # and writes to the checks API
+      checks: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: mount bazel cache
+        uses: actions/cache@v4
+        with:
+          path: "~/.cache/bazel"
+          key: bazel
+      - name: install dependencies
+        run: |
+          sudo apt-get install -y \
+            dejagnu
+      - run: bazel test --test_output=errors //...
+      - name: copy test results into workspace
+        if: always()
+        run: cp -Lpr $(bazel info bazel-testlogs)/ test-results
+      - name: publish test results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          files: |
+            test-results/**/test.xml
