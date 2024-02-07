@@ -47,6 +47,11 @@ def _runtest(tool, srcdir):
 DEJAGNU_TEST_RUNNER_TEMPLATE = """
 set -o errexit
 
+if ! [ -x /bin/runtest ]; then
+  echo "/bin/runtest not found, install dejagnu" | tee -a $TEST_INFRASTRUCTURE_FAILURE_FILE
+  exit 127
+fi
+
 cleanup () {{
   mv $TEST_UNDECLARED_OUTPUTS_DIR/{tool}.xml $XML_OUTPUT_FILE
 }}
