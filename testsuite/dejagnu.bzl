@@ -55,7 +55,7 @@ def _dejagnu_test_impl(ctx):
             ctx,
             source_attributes = ["srcs"],
             dependency_attributes = ["deps", "data", "tool_exec"],
-            ),
+        ),
     ]
 
 dejagnu_test = rule(
@@ -69,8 +69,12 @@ dejagnu_test = rule(
         "data": attr.label_list(
             allow_files = True,
         ),
-        "tool_exec": attr.label(),
-                # Magic coverage attributes.  This is only partially documented
+        "tool_exec": attr.label(
+            executable = True,
+            doc = "Binary target under test.",
+            cfg = "exec",
+        ),
+        # Magic coverage attributes.  This is only partially documented
         # (https://bazel.build/rules/lib/coverage#output_generator), but we can
         # take over the values from
         # https://github.com/bazelbuild/bazel/blob/7.0.0-pre.20231018.3/src/main/starlark/builtins_bzl/common/python/py_test_bazel.bzl.
