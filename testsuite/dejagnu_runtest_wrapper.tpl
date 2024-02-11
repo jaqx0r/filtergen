@@ -1,7 +1,5 @@
 #/bin/sh
 
-set -e
-
 if ! [ -x /bin/runtest ]; then
   echo "/bin/runtest not found, install dejagnu" | tee -a $TEST_INFRASTRUCTURE_FAILURE_FILE
   exit 127
@@ -14,5 +12,7 @@ cleanup () {
 }
 
 trap cleanup EXIT
+
+set -e
 
 /bin/runtest --xml --status --all --debug -v -v --tool {tool} --srcdir {srcdir} --outdir $TEST_UNDECLARED_OUTPUTS_DIR
