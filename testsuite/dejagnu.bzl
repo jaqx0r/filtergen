@@ -5,13 +5,14 @@ def _dejagnu_test_impl(ctx):
     executable_path = "{name}_/{name}".format(name = ctx.label.name)
     executable = ctx.actions.declare_file(executable_path)
 
-    tool = ctx.label.name
-    srcdir = ctx.files.srcs[0].dirname
-
-    content = _runtest(tool = tool, srcdir = srcdir)
-    ctx.actions.write(
+    ctx.actions.expand_template(
+        template = ctx.file._runtest_template,
         output = executable,
-        content = content,
+        substitutions = {
+            "{tool}": ctx.label.name,
+            "{srcdir}": ctx.files.srcs[0].dirname,
+        },
+        is_executable = True,
     )
 
     # gather runfiles
@@ -74,6 +75,10 @@ dejagnu_test = rule(
             doc = "Binary target under test.",
             cfg = "exec",
         ),
+        "_runtest_template": attr.label(
+            default = ":dejagnu_runtest_wrapper.tpl",
+            allow_single_file = True,
+        ),
         # Magic coverage attributes.  This is only partially documented
         # (https://bazel.build/rules/lib/coverage#output_generator), but we can
         # take over the values from
@@ -91,26 +96,3 @@ dejagnu_test = rule(
     },
     test = True,
 )
-
-def _runtest(tool, srcdir):
-    """Generates the runtest wrapper script."""
-    return DEJAGNU_TEST_RUNNER_TEMPLATE.format(tool = tool, srcdir = srcdir)
-
-DEJAGNU_TEST_RUNNER_TEMPLATE = """
-set -o errexit
-
-if ! [ -x /bin/runtest ]; then
-  echo "/bin/runtest not found, install dejagnu" | tee -a $TEST_INFRASTRUCTURE_FAILURE_FILE
-  exit 127
-fi
-
-/bin/runtest --version
-
-cleanup () {{
-  mv $TEST_UNDECLARED_OUTPUTS_DIR/{tool}.xml $XML_OUTPUT_FILE
-}}
-
-trap cleanup EXIT
-
-/bin/runtest --xml --status -all --debug -v -v --tool {tool} --srcdir {srcdir} --outdir $TEST_UNDECLARED_OUTPUTS_DIR
-"""
