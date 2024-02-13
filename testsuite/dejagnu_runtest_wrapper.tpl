@@ -5,6 +5,8 @@ if ! [ -x /bin/runtest ]; then
   exit 127
 fi
 
+echo -n "pwd: "
+pwd
 /bin/runtest --version
 
 cleanup () {
