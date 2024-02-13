@@ -1,5 +1,7 @@
 #/bin/sh
 
+set -x
+
 if ! [ -x /bin/runtest ]; then
   echo "/bin/runtest not found, install dejagnu" | tee -a $TEST_INFRASTRUCTURE_FAILURE_FILE
   exit 127
