@@ -11,6 +11,8 @@ echo -n "pwd: "
 pwd
 /bin/runtest --version
 
+ls -laLR
+
 cleanup () {
   mv $TEST_UNDECLARED_OUTPUTS_DIR/{tool}.xml $XML_OUTPUT_FILE
 }
