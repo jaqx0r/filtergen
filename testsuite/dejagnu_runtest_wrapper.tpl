@@ -21,4 +21,10 @@ trap cleanup EXIT
 
 set -e
 
+cat >site.exp <<EOF
+set tool {tool}
+set srcdir {srcdir}
+set objdir `pwd`
+EOF
+
 /bin/runtest --xml --status --all --debug -v -v --tool {tool} --srcdir {srcdir} --outdir $TEST_UNDECLARED_OUTPUTS_DIR
