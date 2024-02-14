@@ -11,12 +11,19 @@ def _dejagnu_test_impl(ctx):
         substitutions = {
             "{tool}": ctx.label.name,
             "{srcdir}": ctx.files.srcs[0].dirname,
+            "{runtest}": ctx.executable._runtest.path,
+            "{libdir}": ctx.executable._runtest.dirname + "/dejagnu_configure/share/dejagnu",
         },
         is_executable = True,
     )
 
     # gather runfiles
-    runfiles = ctx.runfiles(files = ctx.files.srcs + ctx.files.data + ctx.files.tool_exec + ctx.files.deps)
+    runfiles = ctx.runfiles(files = ctx.files._runtest +
+                                    ctx.files._runtest_libs +
+                                    ctx.files.srcs +
+                                    ctx.files.data +
+                                    ctx.files.tool_exec +
+                                    ctx.files.deps)
 
     test_env = {}
     if ctx.configuration.coverage_enabled:
@@ -74,6 +81,15 @@ dejagnu_test = rule(
             executable = True,
             doc = "Binary target under test.",
             cfg = "exec",
+        ),
+        "_runtest": attr.label(
+            default = "@org_gnu_dejagnu//:runtest",
+            executable = True,
+            allow_single_file = True,
+            cfg = "exec",
+        ),
+        "_runtest_libs": attr.label(
+            default = "@org_gnu_dejagnu//:dejagnu_configure",
         ),
         "_runtest_template": attr.label(
             default = ":dejagnu_runtest_wrapper.tpl",
