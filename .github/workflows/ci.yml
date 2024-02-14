@@ -66,10 +66,7 @@ jobs:
       - name: install dependencies
         run: |
           sudo apt-get install -y \
-            dejagnu \
-            gcc \
-            llvm
-          dpkg -S llvm-cov
+            expect
       - name: bazel test
         run: bazel coverage --explain=explain.out -s --test_env=VERBOSE_COVERAGE=1 --test_env=DISPLAY_LCOV_CMD=1 --test_output=all --combined_report=lcov --instrument_test_targets --nocache_test_results --instrumentation_filter="^//" //...
       - name: copy test results into workspace
