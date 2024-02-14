@@ -62,7 +62,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: "~/.cache/bazel"
-          key: bazel
+          key: bazel-${{ hashFiles('WORKSPACE', 'MODULE.bazel') }}
       - name: install dependencies
         run: |
           sudo apt-get install -y \
