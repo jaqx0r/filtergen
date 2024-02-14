@@ -41,6 +41,8 @@ jobs:
       - uses: codecov/codecov-action@v4
         with:
           file: coverage.info
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       - name: distcheck
         run: scons distcheck
         env:
@@ -83,3 +85,5 @@ jobs:
       - uses: codecov/codecov-action@v4
         with:
           file: bazel-out/_coverage/_coverage_report.dat
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
