@@ -7,3 +7,15 @@
 
 bazel_dep(name = "rules_bison", version = "0.2.2")
 bazel_dep(name = "rules_flex", version = "0.2.1")
+
+http_archive = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+
+http_archive(
+    name = "org_gnu_dejagnu",
+    url = "https://ftp.gnu.org/gnu/dejagnu/dejagnu-1.6.3.tar.gz",
+    build_file = "testsuite/dejagnu.BUILD",
+    integrity = "sha256-h9rvrNeVi0pp+IxoVtvRY0JhljxBQHnQw3H1ic1mouM=",
+    strip_prefix = "dejagnu-1.6.3",
+)
+
+bazel_dep(name = "rules_foreign_cc", version = "0.10.1")

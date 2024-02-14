@@ -5,11 +5,9 @@ dejagnu_test(
     srcs = glob(["**/*.exp"]),
     data = glob(
         [
-            "**/*.in",
-            "include*.d/**",
+            "*.filter",
         ],
-        exclude_directories = 0,
-    ),
+    ) + ["//examples"],
     tool_exec = "//:filtergen",
     deps = ["//testsuite/lib:filtergen-dg"],
 )
