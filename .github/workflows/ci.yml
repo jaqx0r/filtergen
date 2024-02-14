@@ -74,9 +74,9 @@ jobs:
         run: bazel coverage --explain=explain.out -s --test_env=VERBOSE_COVERAGE=1 --test_env=DISPLAY_LCOV_CMD=1 --test_output=all --combined_report=lcov --instrument_test_targets --nocache_test_results --instrumentation_filter="^//" //...
       - name: copy test results into workspace
         if: always()
-        run: cp -Lpr $(bazel info bazel-testlogs)/ test-results
-      - run: cat explain.out
-        if: always()
+        run: |
+          cp -Lpr $(bazel info bazel-testlogs)/ test-results
+          cp -Lpr $(bazel info output_path)/_coverage/_coverage_report.dat coverage_report.dat
       - uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
         with:
@@ -84,6 +84,6 @@ jobs:
             test-results/**/test.xml
       - uses: codecov/codecov-action@v4
         with:
-          file: bazel-out/_coverage/_coverage_report.dat
+          file: coverage_report.dat
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
