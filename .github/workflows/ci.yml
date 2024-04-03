@@ -41,6 +41,8 @@ jobs:
       - uses: codecov/codecov-action@v4
         with:
           file: coverage.info
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       - name: distcheck
         run: scons distcheck
         env:
@@ -60,18 +62,25 @@ jobs:
         uses: actions/cache@v4
         with:
           path: "~/.cache/bazel"
-          key: bazel
+          key: bazel-${{ hashFiles('WORKSPACE', 'MODULE.bazel') }}
       - name: install dependencies
         run: |
           sudo apt-get install -y \
-            dejagnu
-      - run: bazel test --test_output=errors //...
+            expect
+      - name: bazel test
+        run: bazel coverage --explain=explain.out -s --test_env=VERBOSE_COVERAGE=1 --test_env=DISPLAY_LCOV_CMD=1 --test_output=all --combined_report=lcov --instrument_test_targets --nocache_test_results --instrumentation_filter="^//" //...
       - name: copy test results into workspace
         if: always()
-        run: cp -Lpr $(bazel info bazel-testlogs)/ test-results
-      - name: publish test results
-        uses: EnricoMi/publish-unit-test-result-action@v2
+        run: |
+          cp -Lpr $(bazel info bazel-testlogs)/ test-results
+          cp -Lpr $(bazel info output_path)/_coverage/_coverage_report.dat coverage_report.dat
+      - uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
         with:
           files: |
             test-results/**/test.xml
+      - uses: codecov/codecov-action@v4
+        with:
+          file: coverage_report.dat
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
