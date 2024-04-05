@@ -1,4 +1,4 @@
-load("@rules_bison//bison:bison.bzl", "bison")
+load("@rules_bison//bison:bison.bzl", "bison_cc_library")
 load("@rules_flex//flex:flex.bzl", "flex")
 
 cc_library(
@@ -6,7 +6,6 @@ cc_library(
     srcs = [
         "glue.c",
         "include.c",
-        ":parser",
         ":scanner",
     ],
     hdrs = [
@@ -16,6 +15,7 @@ cc_library(
     visibility = ["//:__subpackages__"],
     deps = [
         ":ast",
+        ":parser",
         ":resolver",
         "//:error",
     ],
@@ -27,6 +27,16 @@ cc_library(
     deps = ["//input:sourcepos"],
 )
 
+bison_cc_library(
+    name = "parser",
+    src = "parser.y",
+    deps = [
+        ":ast",
+        "//:error",
+        "//input:sourcepos",
+    ],
+)
+
 cc_library(
     name = "resolver",
     srcs = ["resolver.c"],
@@ -36,11 +46,6 @@ cc_library(
         "//:filter",
         "//:icmpent",
     ],
-)
-
-bison(
-    name = "parser",
-    src = "parser.y",
 )
 
 flex(
