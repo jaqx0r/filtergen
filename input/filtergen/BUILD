@@ -11,17 +11,23 @@ cc_library(
         ":scanner",
     ],
     hdrs = [
-        "ast.h",
         "include.h",
         "resolver.h",
     ],
     defines = ["_GNU_SOURCE"],
     visibility = ["//:__subpackages__"],
     deps = [
+        ":ast",
         "//:error",
         "//:filter",
         "//:icmpent",
     ],
+)
+
+cc_library(
+    name = "ast",
+    hdrs = ["ast.h"],
+    deps = ["//input:sourcepos"],
 )
 
 bison(
