@@ -8,22 +8,17 @@ pwd
 
 ls -laLR
 
-cleanup () {
-  mv $TEST_UNDECLARED_OUTPUTS_DIR/{tool}.xml $XML_OUTPUT_FILE
-}
-
-trap cleanup EXIT
-
 set -e
 
 cat >site.exp <<EOF
 set tool {tool}
 set srcdir {srcdir}
 set objdir `pwd`
+info exists env(COVERAGE_DIR)
 EOF
 
 cat site.exp
 
 export DEJAGNULIBS="{libdir}"
 
-{runtest} --global_init site.exp --xml --status --all --debug -v -v --tool {tool} --srcdir {srcdir} --outdir $TEST_UNDECLARED_OUTPUTS_DIR
+{runtest} --global_init site.exp --status --all --debug -v -v --tool {tool} --srcdir {srcdir} --outdir $TEST_UNDECLARED_OUTPUTS_DIR
