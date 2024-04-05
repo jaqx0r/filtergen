@@ -1,5 +1,5 @@
 {
-  "lockFileVersion": 3,
+  "lockFileVersion": 6,
   "moduleFileHash": "5175c2d156a77e0def2dd2751d75fdb247cbb1bc7608c5241e17f16755c09724",
   "flags": {
     "cmdRegistries": [
@@ -13,7 +13,7 @@
     "compatibilityMode": "ERROR"
   },
   "localOverrideHashes": {
-    "bazel_tools": "922ea6752dc9105de5af957f7a99a6933c0a6a712d23df6aad16a9c399f7e787"
+    "bazel_tools": "1ae69322ac3823527337acf02016e8ee95813d8d356f47060255b8956fa642f0"
   },
   "moduleDepGraph": {
     "<root>": {
@@ -101,10 +101,9 @@
         "local_config_platform": "local_config_platform@_"
       },
       "repoSpec": {
-        "bzlFile": "@bazel_tools//tools/build_defs/repo:http.bzl",
+        "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
         "ruleClassName": "http_archive",
         "attributes": {
-          "name": "rules_bison~0.2.2",
           "urls": [
             "https://github.com/jmillikin/rules_bison/releases/download/v0.2.2/rules_bison-v0.2.2.tar.xz"
           ],
@@ -151,10 +150,9 @@
         "local_config_platform": "local_config_platform@_"
       },
       "repoSpec": {
-        "bzlFile": "@bazel_tools//tools/build_defs/repo:http.bzl",
+        "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
         "ruleClassName": "http_archive",
         "attributes": {
-          "name": "rules_flex~0.2.1",
           "urls": [
             "https://github.com/jmillikin/rules_flex/releases/download/v0.2.1/rules_flex-v0.2.1.tar.xz"
           ],
@@ -212,15 +210,14 @@
       "deps": {
         "bazel_skylib": "bazel_skylib@1.3.0",
         "platforms": "platforms@0.0.7",
-        "rules_python": "rules_python@0.20.0",
+        "rules_python": "rules_python@0.22.1",
         "bazel_tools": "bazel_tools@_",
         "local_config_platform": "local_config_platform@_"
       },
       "repoSpec": {
-        "bzlFile": "@bazel_tools//tools/build_defs/repo:http.bzl",
+        "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
         "ruleClassName": "http_archive",
         "attributes": {
-          "name": "rules_foreign_cc~0.10.1",
           "urls": [
             "https://github.com/bazelbuild/rules_foreign_cc/releases/download/0.10.1/rules_foreign_cc-0.10.1.tar.gz"
           ],
@@ -250,7 +247,7 @@
           "usingModule": "bazel_tools@_",
           "location": {
             "file": "@@bazel_tools//:MODULE.bazel",
-            "line": 17,
+            "line": 18,
             "column": 29
           },
           "imports": {
@@ -268,7 +265,7 @@
           "usingModule": "bazel_tools@_",
           "location": {
             "file": "@@bazel_tools//:MODULE.bazel",
-            "line": 21,
+            "line": 22,
             "column": 32
           },
           "imports": {
@@ -285,7 +282,7 @@
           "usingModule": "bazel_tools@_",
           "location": {
             "file": "@@bazel_tools//:MODULE.bazel",
-            "line": 24,
+            "line": 25,
             "column": 32
           },
           "imports": {
@@ -307,7 +304,7 @@
           "usingModule": "bazel_tools@_",
           "location": {
             "file": "@@bazel_tools//:MODULE.bazel",
-            "line": 35,
+            "line": 36,
             "column": 39
           },
           "imports": {
@@ -324,7 +321,7 @@
           "usingModule": "bazel_tools@_",
           "location": {
             "file": "@@bazel_tools//:MODULE.bazel",
-            "line": 39,
+            "line": 40,
             "column": 48
           },
           "imports": {
@@ -341,7 +338,7 @@
           "usingModule": "bazel_tools@_",
           "location": {
             "file": "@@bazel_tools//:MODULE.bazel",
-            "line": 42,
+            "line": 43,
             "column": 42
           },
           "imports": {
@@ -352,14 +349,32 @@
           "tags": [],
           "hasDevUseExtension": false,
           "hasNonDevUseExtension": true
+        },
+        {
+          "extensionBzlFile": "@buildozer//:buildozer_binary.bzl",
+          "extensionName": "buildozer_binary",
+          "usingModule": "bazel_tools@_",
+          "location": {
+            "file": "@@bazel_tools//:MODULE.bazel",
+            "line": 47,
+            "column": 33
+          },
+          "imports": {
+            "buildozer_binary": "buildozer_binary"
+          },
+          "devImports": [],
+          "tags": [],
+          "hasDevUseExtension": false,
+          "hasNonDevUseExtension": true
         }
       ],
       "deps": {
         "rules_cc": "rules_cc@0.0.9",
-        "rules_java": "rules_java@7.1.0",
+        "rules_java": "rules_java@7.4.0",
         "rules_license": "rules_license@0.0.7",
         "rules_proto": "rules_proto@5.3.0-21.7",
-        "rules_python": "rules_python@0.20.0",
+        "rules_python": "rules_python@0.22.1",
+        "buildozer": "buildozer@6.4.0.2",
         "platforms": "platforms@0.0.7",
         "com_google_protobuf": "protobuf@21.7",
         "zlib": "zlib@1.3",
@@ -413,10 +428,9 @@
         "local_config_platform": "local_config_platform@_"
       },
       "repoSpec": {
-        "bzlFile": "@bazel_tools//tools/build_defs/repo:http.bzl",
+        "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
         "ruleClassName": "http_archive",
         "attributes": {
-          "name": "rules_m4~0.2.3",
           "urls": [
             "https://github.com/jmillikin/rules_m4/releases/download/v0.2.3/rules_m4-v0.2.3.tar.xz"
           ],
@@ -444,10 +458,9 @@
         "local_config_platform": "local_config_platform@_"
       },
       "repoSpec": {
-        "bzlFile": "@bazel_tools//tools/build_defs/repo:http.bzl",
+        "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
         "ruleClassName": "http_archive",
         "attributes": {
-          "name": "bazel_skylib~1.3.0",
           "urls": [
             "https://github.com/bazelbuild/bazel-skylib/releases/download/1.3.0/bazel-skylib-1.3.0.tar.gz"
           ],
@@ -472,10 +485,9 @@
         "local_config_platform": "local_config_platform@_"
       },
       "repoSpec": {
-        "bzlFile": "@bazel_tools//tools/build_defs/repo:http.bzl",
+        "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
         "ruleClassName": "http_archive",
         "attributes": {
-          "name": "platforms",
           "urls": [
             "https://github.com/bazelbuild/platforms/releases/download/0.0.7/platforms-0.0.7.tar.gz"
           ],
@@ -486,20 +498,22 @@
         }
       }
     },
-    "rules_python@0.20.0": {
+    "rules_python@0.22.1": {
       "name": "rules_python",
-      "version": "0.20.0",
-      "key": "rules_python@0.20.0",
+      "version": "0.22.1",
+      "key": "rules_python@0.22.1",
       "repoName": "rules_python",
       "executionPlatformsToRegister": [],
-      "toolchainsToRegister": [],
+      "toolchainsToRegister": [
+        "@bazel_tools//tools/python:autodetecting_toolchain"
+      ],
       "extensionUsages": [
         {
-          "extensionBzlFile": "@rules_python//python:extensions.bzl",
+          "extensionBzlFile": "@rules_python//python/extensions/private:internal_deps.bzl",
           "extensionName": "internal_deps",
-          "usingModule": "rules_python@0.20.0",
+          "usingModule": "rules_python@0.22.1",
           "location": {
-            "file": "https://bcr.bazel.build/modules/rules_python/0.20.0/MODULE.bazel",
+            "file": "https://bcr.bazel.build/modules/rules_python/0.22.1/MODULE.bazel",
             "line": 14,
             "column": 30
           },
@@ -541,12 +555,29 @@
               "attributeValues": {},
               "devDependency": false,
               "location": {
-                "file": "https://bcr.bazel.build/modules/rules_python/0.20.0/MODULE.bazel",
+                "file": "https://bcr.bazel.build/modules/rules_python/0.22.1/MODULE.bazel",
                 "line": 15,
                 "column": 22
               }
             }
           ],
+          "hasDevUseExtension": false,
+          "hasNonDevUseExtension": true
+        },
+        {
+          "extensionBzlFile": "@rules_python//python/extensions:python.bzl",
+          "extensionName": "python",
+          "usingModule": "rules_python@0.22.1",
+          "location": {
+            "file": "https://bcr.bazel.build/modules/rules_python/0.22.1/MODULE.bazel",
+            "line": 50,
+            "column": 23
+          },
+          "imports": {
+            "pythons_hub": "pythons_hub"
+          },
+          "devImports": [],
+          "tags": [],
           "hasDevUseExtension": false,
           "hasNonDevUseExtension": true
         }
@@ -560,19 +591,18 @@
         "local_config_platform": "local_config_platform@_"
       },
       "repoSpec": {
-        "bzlFile": "@bazel_tools//tools/build_defs/repo:http.bzl",
+        "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
         "ruleClassName": "http_archive",
         "attributes": {
-          "name": "rules_python~0.20.0",
           "urls": [
-            "https://github.com/bazelbuild/rules_python/releases/download/0.20.0/rules_python-0.20.0.tar.gz"
+            "https://github.com/bazelbuild/rules_python/releases/download/0.22.1/rules_python-0.22.1.tar.gz"
           ],
-          "integrity": "sha256-pkTalptoJMyH+P57GBAaimxX2l2znKplZuxhCfN9IUE=",
-          "strip_prefix": "rules_python-0.20.0",
+          "integrity": "sha256-pWQP3dS+sD6MH95e1xYMC6a9R359BIZhwwwGk2om/WM=",
+          "strip_prefix": "rules_python-0.22.1",
           "remote_patches": {
-            "https://bcr.bazel.build/modules/rules_python/0.20.0/patches/module_dot_bazel_version.patch": "sha256-LICe/Q+KxbOIQCbb59g0QHBg2KTof3wHiISxAZsoHx4="
+            "https://bcr.bazel.build/modules/rules_python/0.22.1/patches/module_dot_bazel_version.patch": "sha256-3+VLDH9gYDzNI4eOW7mABC/LKxh1xqF6NhacLbNTucs="
           },
-          "remote_patch_strip": 0
+          "remote_patch_strip": 1
         }
       }
     },
@@ -610,10 +640,9 @@
         "local_config_platform": "local_config_platform@_"
       },
       "repoSpec": {
-        "bzlFile": "@bazel_tools//tools/build_defs/repo:http.bzl",
+        "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
         "ruleClassName": "http_archive",
         "attributes": {
-          "name": "rules_cc~0.0.9",
           "urls": [
             "https://github.com/bazelbuild/rules_cc/releases/download/0.0.9/rules_cc-0.0.9.tar.gz"
           ],
@@ -626,10 +655,10 @@
         }
       }
     },
-    "rules_java@7.1.0": {
+    "rules_java@7.4.0": {
       "name": "rules_java",
-      "version": "7.1.0",
-      "key": "rules_java@7.1.0",
+      "version": "7.4.0",
+      "key": "rules_java@7.4.0",
       "repoName": "rules_java",
       "executionPlatformsToRegister": [],
       "toolchainsToRegister": [
@@ -662,9 +691,9 @@
         {
           "extensionBzlFile": "@rules_java//java:extensions.bzl",
           "extensionName": "toolchains",
-          "usingModule": "rules_java@7.1.0",
+          "usingModule": "rules_java@7.4.0",
           "location": {
-            "file": "https://bcr.bazel.build/modules/rules_java/7.1.0/MODULE.bazel",
+            "file": "https://bcr.bazel.build/modules/rules_java/7.4.0/MODULE.bazel",
             "line": 19,
             "column": 27
           },
@@ -713,14 +742,13 @@
         "local_config_platform": "local_config_platform@_"
       },
       "repoSpec": {
-        "bzlFile": "@bazel_tools//tools/build_defs/repo:http.bzl",
+        "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
         "ruleClassName": "http_archive",
         "attributes": {
-          "name": "rules_java~7.1.0",
           "urls": [
-            "https://github.com/bazelbuild/rules_java/releases/download/7.1.0/rules_java-7.1.0.tar.gz"
+            "https://github.com/bazelbuild/rules_java/releases/download/7.4.0/rules_java-7.4.0.tar.gz"
           ],
-          "integrity": "sha256-o3pOX2OrgnFuXdau75iO2EYcegC46TYnImKJn1h81OE=",
+          "integrity": "sha256-l27wi0nJKXQfIBeQ5Z44B8cq2B9CjIvJU82+/1/tFes=",
           "strip_prefix": "",
           "remote_patches": {},
           "remote_patch_strip": 0
@@ -740,10 +768,9 @@
         "local_config_platform": "local_config_platform@_"
       },
       "repoSpec": {
-        "bzlFile": "@bazel_tools//tools/build_defs/repo:http.bzl",
+        "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
         "ruleClassName": "http_archive",
         "attributes": {
-          "name": "rules_license~0.0.7",
           "urls": [
             "https://github.com/bazelbuild/rules_license/releases/download/0.0.7/rules_license-0.0.7.tar.gz"
           ],
@@ -770,10 +797,9 @@
         "local_config_platform": "local_config_platform@_"
       },
       "repoSpec": {
-        "bzlFile": "@bazel_tools//tools/build_defs/repo:http.bzl",
+        "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
         "ruleClassName": "http_archive",
         "attributes": {
-          "name": "rules_proto~5.3.0-21.7",
           "urls": [
             "https://github.com/bazelbuild/rules_proto/archive/refs/tags/5.3.0-21.7.tar.gz"
           ],
@@ -781,6 +807,72 @@
           "strip_prefix": "rules_proto-5.3.0-21.7",
           "remote_patches": {},
           "remote_patch_strip": 0
+        }
+      }
+    },
+    "buildozer@6.4.0.2": {
+      "name": "buildozer",
+      "version": "6.4.0.2",
+      "key": "buildozer@6.4.0.2",
+      "repoName": "buildozer",
+      "executionPlatformsToRegister": [],
+      "toolchainsToRegister": [],
+      "extensionUsages": [
+        {
+          "extensionBzlFile": "@buildozer//:buildozer_binary.bzl",
+          "extensionName": "buildozer_binary",
+          "usingModule": "buildozer@6.4.0.2",
+          "location": {
+            "file": "https://bcr.bazel.build/modules/buildozer/6.4.0.2/MODULE.bazel",
+            "line": 7,
+            "column": 33
+          },
+          "imports": {
+            "buildozer_binary": "buildozer_binary"
+          },
+          "devImports": [],
+          "tags": [
+            {
+              "tagName": "buildozer",
+              "attributeValues": {
+                "sha256": {
+                  "darwin-amd64": "d29e347ecd6b5673d72cb1a8de05bf1b06178dd229ff5eb67fad5100c840cc8e",
+                  "darwin-arm64": "9b9e71bdbec5e7223871e913b65d12f6d8fa026684daf991f00e52ed36a6978d",
+                  "linux-amd64": "8dfd6345da4e9042daa738d7fdf34f699c5dfce4632f7207956fceedd8494119",
+                  "linux-arm64": "6559558fded658c8fa7432a9d011f7c4dcbac6b738feae73d2d5c352e5f605fa",
+                  "windows-amd64": "e7f05bf847f7c3689dd28926460ce6e1097ae97380ac8e6ae7147b7b706ba19b"
+                },
+                "version": "6.4.0"
+              },
+              "devDependency": false,
+              "location": {
+                "file": "https://bcr.bazel.build/modules/buildozer/6.4.0.2/MODULE.bazel",
+                "line": 8,
+                "column": 27
+              }
+            }
+          ],
+          "hasDevUseExtension": false,
+          "hasNonDevUseExtension": true
+        }
+      ],
+      "deps": {
+        "bazel_tools": "bazel_tools@_",
+        "local_config_platform": "local_config_platform@_"
+      },
+      "repoSpec": {
+        "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+        "ruleClassName": "http_archive",
+        "attributes": {
+          "urls": [
+            "https://github.com/fmeum/buildozer/releases/download/v6.4.0.2/buildozer-v6.4.0.2.tar.gz"
+          ],
+          "integrity": "sha256-k7tFKQMR2AygxpmZfH0yEPnQmF3efFgD9rBPkj+Yz/8=",
+          "strip_prefix": "buildozer-6.4.0.2",
+          "remote_patches": {
+            "https://bcr.bazel.build/modules/buildozer/6.4.0.2/patches/module_dot_bazel_version.patch": "sha256-gKANF2HMilj7bWmuXs4lbBIAAansuWC4IhWGB/CerjU="
+          },
+          "remote_patch_strip": 1
         }
       }
     },
@@ -836,10 +928,10 @@
       ],
       "deps": {
         "bazel_skylib": "bazel_skylib@1.3.0",
-        "rules_python": "rules_python@0.20.0",
+        "rules_python": "rules_python@0.22.1",
         "rules_cc": "rules_cc@0.0.9",
         "rules_proto": "rules_proto@5.3.0-21.7",
-        "rules_java": "rules_java@7.1.0",
+        "rules_java": "rules_java@7.4.0",
         "rules_pkg": "rules_pkg@0.7.0",
         "com_google_abseil": "abseil-cpp@20211102.0",
         "zlib": "zlib@1.3",
@@ -850,10 +942,9 @@
         "local_config_platform": "local_config_platform@_"
       },
       "repoSpec": {
-        "bzlFile": "@bazel_tools//tools/build_defs/repo:http.bzl",
+        "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
         "ruleClassName": "http_archive",
         "attributes": {
-          "name": "protobuf~21.7",
           "urls": [
             "https://github.com/protocolbuffers/protobuf/releases/download/v21.7/protobuf-all-21.7.zip"
           ],
@@ -884,10 +975,9 @@
         "local_config_platform": "local_config_platform@_"
       },
       "repoSpec": {
-        "bzlFile": "@bazel_tools//tools/build_defs/repo:http.bzl",
+        "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
         "ruleClassName": "http_archive",
         "attributes": {
-          "name": "zlib~1.3",
           "urls": [
             "https://github.com/madler/zlib/releases/download/v1.3/zlib-1.3.tar.gz"
           ],
@@ -937,10 +1027,9 @@
         "local_config_platform": "local_config_platform@_"
       },
       "repoSpec": {
-        "bzlFile": "@bazel_tools//tools/build_defs/repo:http.bzl",
+        "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
         "ruleClassName": "http_archive",
         "attributes": {
-          "name": "apple_support~1.5.0",
           "urls": [
             "https://github.com/bazelbuild/apple_support/releases/download/1.5.0/apple_support.1.5.0.tar.gz"
           ],
@@ -960,17 +1049,16 @@
       "toolchainsToRegister": [],
       "extensionUsages": [],
       "deps": {
-        "rules_python": "rules_python@0.20.0",
+        "rules_python": "rules_python@0.22.1",
         "bazel_skylib": "bazel_skylib@1.3.0",
         "rules_license": "rules_license@0.0.7",
         "bazel_tools": "bazel_tools@_",
         "local_config_platform": "local_config_platform@_"
       },
       "repoSpec": {
-        "bzlFile": "@bazel_tools//tools/build_defs/repo:http.bzl",
+        "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
         "ruleClassName": "http_archive",
         "attributes": {
-          "name": "rules_pkg~0.7.0",
           "urls": [
             "https://github.com/bazelbuild/rules_pkg/releases/download/0.7.0/rules_pkg-0.7.0.tar.gz"
           ],
@@ -998,10 +1086,9 @@
         "local_config_platform": "local_config_platform@_"
       },
       "repoSpec": {
-        "bzlFile": "@bazel_tools//tools/build_defs/repo:http.bzl",
+        "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
         "ruleClassName": "http_archive",
         "attributes": {
-          "name": "abseil-cpp~20211102.0",
           "urls": [
             "https://github.com/abseil/abseil-cpp/archive/refs/tags/20211102.0.tar.gz"
           ],
@@ -1032,10 +1119,9 @@
         "local_config_platform": "local_config_platform@_"
       },
       "repoSpec": {
-        "bzlFile": "@bazel_tools//tools/build_defs/repo:http.bzl",
+        "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
         "ruleClassName": "http_archive",
         "attributes": {
-          "name": "upb~0.0.0-20220923-a547704",
           "urls": [
             "https://github.com/protocolbuffers/upb/archive/a5477045acaa34586420942098f5fecd3570f577.tar.gz"
           ],
@@ -1074,7 +1160,7 @@
           "hasNonDevUseExtension": true
         },
         {
-          "extensionBzlFile": ":extensions.bzl",
+          "extensionBzlFile": "@rules_jvm_external//:extensions.bzl",
           "extensionName": "maven",
           "usingModule": "rules_jvm_external@4.4.2",
           "location": {
@@ -1119,10 +1205,9 @@
         "local_config_platform": "local_config_platform@_"
       },
       "repoSpec": {
-        "bzlFile": "@bazel_tools//tools/build_defs/repo:http.bzl",
+        "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
         "ruleClassName": "http_archive",
         "attributes": {
-          "name": "rules_jvm_external~4.4.2",
           "urls": [
             "https://github.com/bazelbuild/rules_jvm_external/archive/refs/tags/4.4.2.zip"
           ],
@@ -1149,10 +1234,9 @@
         "local_config_platform": "local_config_platform@_"
       },
       "repoSpec": {
-        "bzlFile": "@bazel_tools//tools/build_defs/repo:http.bzl",
+        "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
         "ruleClassName": "http_archive",
         "attributes": {
-          "name": "googletest~1.11.0",
           "urls": [
             "https://github.com/google/googletest/archive/refs/tags/release-1.11.0.tar.gz"
           ],
@@ -1175,15 +1259,14 @@
       "extensionUsages": [],
       "deps": {
         "bazel_skylib": "bazel_skylib@1.3.0",
-        "rules_java": "rules_java@7.1.0",
+        "rules_java": "rules_java@7.4.0",
         "bazel_tools": "bazel_tools@_",
         "local_config_platform": "local_config_platform@_"
       },
       "repoSpec": {
-        "bzlFile": "@bazel_tools//tools/build_defs/repo:http.bzl",
+        "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
         "ruleClassName": "http_archive",
         "attributes": {
-          "name": "stardoc~0.5.1",
           "urls": [
             "https://github.com/bazelbuild/stardoc/releases/download/0.5.1/stardoc-0.5.1.tar.gz"
           ],
@@ -1198,51 +1281,27 @@
     }
   },
   "moduleExtensions": {
-    "//:MODULE.bazel%_repo_rules": {
-      "general": {
-        "bzlTransitiveDigest": "nSp+oEsTv5DYy1r8s+aEwKWUHoJDhXelRNB5mFkZmdU=",
-        "accumulatedFileDigests": {},
-        "envVariables": {},
-        "generatedRepoSpecs": {
-          "org_gnu_dejagnu": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_archive",
-            "attributes": {
-              "url": "https://ftp.gnu.org/gnu/dejagnu/dejagnu-1.6.3.tar.gz",
-              "build_file": "@@//:testsuite/dejagnu.BUILD",
-              "integrity": "sha256-h9rvrNeVi0pp+IxoVtvRY0JhljxBQHnQw3H1ic1mouM=",
-              "strip_prefix": "dejagnu-1.6.3",
-              "name": "_main~_repo_rules~org_gnu_dejagnu"
-            }
-          }
-        },
-        "recordedRepoMappingEntries": []
-      }
-    },
-    "@@apple_support~1.5.0//crosstool:setup.bzl%apple_cc_configure_extension": {
+    "@@apple_support~//crosstool:setup.bzl%apple_cc_configure_extension": {
       "general": {
         "bzlTransitiveDigest": "pMLFCYaRPkgXPQ8vtuNkMfiHfPmRBy6QJfnid4sWfv0=",
-        "accumulatedFileDigests": {},
+        "recordedFileInputs": {},
+        "recordedDirentsInputs": {},
         "envVariables": {},
         "generatedRepoSpecs": {
           "local_config_apple_cc": {
-            "bzlFile": "@@apple_support~1.5.0//crosstool:setup.bzl",
+            "bzlFile": "@@apple_support~//crosstool:setup.bzl",
             "ruleClassName": "_apple_cc_autoconf",
-            "attributes": {
-              "name": "apple_support~1.5.0~apple_cc_configure_extension~local_config_apple_cc"
-            }
+            "attributes": {}
           },
           "local_config_apple_cc_toolchains": {
-            "bzlFile": "@@apple_support~1.5.0//crosstool:setup.bzl",
+            "bzlFile": "@@apple_support~//crosstool:setup.bzl",
             "ruleClassName": "_apple_cc_autoconf_toolchains",
-            "attributes": {
-              "name": "apple_support~1.5.0~apple_cc_configure_extension~local_config_apple_cc_toolchains"
-            }
+            "attributes": {}
           }
         },
         "recordedRepoMappingEntries": [
           [
-            "apple_support~1.5.0",
+            "apple_support~",
             "bazel_tools",
             "bazel_tools"
           ]
@@ -1251,23 +1310,20 @@
     },
     "@@bazel_tools//tools/cpp:cc_configure.bzl%cc_configure_extension": {
       "general": {
-        "bzlTransitiveDigest": "mcsWHq3xORJexV5/4eCvNOLxFOQKV6eli3fkr+tEaqE=",
-        "accumulatedFileDigests": {},
+        "bzlTransitiveDigest": "PHpT2yqMGms2U4L3E/aZ+WcQalmZWm+ILdP3yiLsDhA=",
+        "recordedFileInputs": {},
+        "recordedDirentsInputs": {},
         "envVariables": {},
         "generatedRepoSpecs": {
           "local_config_cc": {
             "bzlFile": "@@bazel_tools//tools/cpp:cc_configure.bzl",
             "ruleClassName": "cc_autoconf",
-            "attributes": {
-              "name": "bazel_tools~cc_configure_extension~local_config_cc"
-            }
+            "attributes": {}
           },
           "local_config_cc_toolchains": {
             "bzlFile": "@@bazel_tools//tools/cpp:cc_configure.bzl",
             "ruleClassName": "cc_autoconf_toolchains",
-            "attributes": {
-              "name": "bazel_tools~cc_configure_extension~local_config_cc_toolchains"
-            }
+            "attributes": {}
           }
         },
         "recordedRepoMappingEntries": [
@@ -1282,14 +1338,14 @@
     "@@bazel_tools//tools/osx:xcode_configure.bzl%xcode_configure_extension": {
       "general": {
         "bzlTransitiveDigest": "Qh2bWTU6QW6wkrd87qrU4YeY+SG37Nvw3A0PR4Y0L2Y=",
-        "accumulatedFileDigests": {},
+        "recordedFileInputs": {},
+        "recordedDirentsInputs": {},
         "envVariables": {},
         "generatedRepoSpecs": {
           "local_config_xcode": {
             "bzlFile": "@@bazel_tools//tools/osx:xcode_configure.bzl",
             "ruleClassName": "xcode_autoconf",
             "attributes": {
-              "name": "bazel_tools~xcode_configure_extension~local_config_xcode",
               "xcode_locator": "@bazel_tools//tools/osx:xcode_locator.m",
               "remote_xcode": ""
             }
@@ -1301,60 +1357,37 @@
     "@@bazel_tools//tools/sh:sh_configure.bzl%sh_configure_extension": {
       "general": {
         "bzlTransitiveDigest": "hp4NgmNjEg5+xgvzfh6L83bt9/aiiWETuNpwNuF1MSU=",
-        "accumulatedFileDigests": {},
+        "recordedFileInputs": {},
+        "recordedDirentsInputs": {},
         "envVariables": {},
         "generatedRepoSpecs": {
           "local_config_sh": {
             "bzlFile": "@@bazel_tools//tools/sh:sh_configure.bzl",
             "ruleClassName": "sh_config",
-            "attributes": {
-              "name": "bazel_tools~sh_configure_extension~local_config_sh"
-            }
+            "attributes": {}
           }
         },
         "recordedRepoMappingEntries": []
       }
     },
-    "@@bazel_tools//tools/test:extensions.bzl%remote_coverage_tools_extension": {
-      "general": {
-        "bzlTransitiveDigest": "y48q5zUu2oMiYv7yUyi7rFB0wt14eqiF/RQcWT6vP7I=",
-        "accumulatedFileDigests": {},
-        "envVariables": {},
-        "generatedRepoSpecs": {
-          "remote_coverage_tools": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_archive",
-            "attributes": {
-              "name": "bazel_tools~remote_coverage_tools_extension~remote_coverage_tools",
-              "sha256": "7006375f6756819b7013ca875eab70a541cf7d89142d9c511ed78ea4fefa38af",
-              "urls": [
-                "https://mirror.bazel.build/bazel_coverage_output_generator/releases/coverage_output_generator-v2.6.zip"
-              ]
-            }
-          }
-        },
-        "recordedRepoMappingEntries": []
-      }
-    },
-    "@@rules_bison~0.2.2//bison/internal:default_toolchain_ext.bzl%default_toolchain_ext": {
+    "@@rules_bison~//bison/internal:default_toolchain_ext.bzl%default_toolchain_ext": {
       "general": {
         "bzlTransitiveDigest": "JVWcUny48LFS9D+xz4b9u/94awfBOIGXV5iu8iY/nRc=",
-        "accumulatedFileDigests": {},
+        "recordedFileInputs": {},
+        "recordedDirentsInputs": {},
         "envVariables": {},
         "generatedRepoSpecs": {
           "bison_v3.3.2": {
-            "bzlFile": "@@rules_bison~0.2.2//bison/rules:bison_repository.bzl",
+            "bzlFile": "@@rules_bison~//bison/rules:bison_repository.bzl",
             "ruleClassName": "bison_repository",
             "attributes": {
-              "name": "rules_bison~0.2.2~default_toolchain_ext~bison_v3.3.2",
               "version": "3.3.2"
             }
           },
           "bison": {
-            "bzlFile": "@@rules_bison~0.2.2//bison/rules:bison_toolchain_repository.bzl",
+            "bzlFile": "@@rules_bison~//bison/rules:bison_toolchain_repository.bzl",
             "ruleClassName": "bison_toolchain_repository",
             "attributes": {
-              "name": "rules_bison~0.2.2~default_toolchain_ext~bison",
               "bison_repository": "@bison_v3.3.2"
             }
           }
@@ -1364,30 +1397,30 @@
             "bison"
           ],
           "explicitRootModuleDirectDevDeps": [],
-          "useAllRepos": "NO"
+          "useAllRepos": "NO",
+          "reproducible": false
         },
         "recordedRepoMappingEntries": []
       }
     },
-    "@@rules_flex~0.2.1//flex/internal:default_toolchain_ext.bzl%default_toolchain_ext": {
+    "@@rules_flex~//flex/internal:default_toolchain_ext.bzl%default_toolchain_ext": {
       "general": {
         "bzlTransitiveDigest": "fn+aX2vKsiaNLj3QtNfsRcI8fiATDtxAayRTJFGJkNI=",
-        "accumulatedFileDigests": {},
+        "recordedFileInputs": {},
+        "recordedDirentsInputs": {},
         "envVariables": {},
         "generatedRepoSpecs": {
           "flex": {
-            "bzlFile": "@@rules_flex~0.2.1//flex/rules:flex_toolchain_repository.bzl",
+            "bzlFile": "@@rules_flex~//flex/rules:flex_toolchain_repository.bzl",
             "ruleClassName": "flex_toolchain_repository",
             "attributes": {
-              "name": "rules_flex~0.2.1~default_toolchain_ext~flex",
               "flex_repository": "@flex_v2.6.4"
             }
           },
           "flex_v2.6.4": {
-            "bzlFile": "@@rules_flex~0.2.1//flex/rules:flex_repository.bzl",
+            "bzlFile": "@@rules_flex~//flex/rules:flex_repository.bzl",
             "ruleClassName": "flex_repository",
             "attributes": {
-              "name": "rules_flex~0.2.1~default_toolchain_ext~flex_v2.6.4",
               "version": "2.6.4"
             }
           }
@@ -1397,22 +1430,23 @@
             "flex"
           ],
           "explicitRootModuleDirectDevDeps": [],
-          "useAllRepos": "NO"
+          "useAllRepos": "NO",
+          "reproducible": false
         },
         "recordedRepoMappingEntries": []
       }
     },
-    "@@rules_foreign_cc~0.10.1//foreign_cc:extensions.bzl%tools": {
+    "@@rules_foreign_cc~//foreign_cc:extensions.bzl%tools": {
       "general": {
-        "bzlTransitiveDigest": "jvAsWV4VxU5lCkkz2c1t9UggMY0fpg+S5hPM4JPsKYk=",
-        "accumulatedFileDigests": {},
+        "bzlTransitiveDigest": "UEPdhQf5CZ34jRiR5yDtMgI+Xr7dttO7reC5MGURXpk=",
+        "recordedFileInputs": {},
+        "recordedDirentsInputs": {},
         "envVariables": {},
         "generatedRepoSpecs": {
           "cmake-3.23.2-linux-aarch64": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_archive",
             "attributes": {
-              "name": "rules_foreign_cc~0.10.1~tools~cmake-3.23.2-linux-aarch64",
               "urls": [
                 "https://github.com/Kitware/CMake/releases/download/v3.23.2/cmake-3.23.2-linux-aarch64.tar.gz"
               ],
@@ -1422,10 +1456,9 @@
             }
           },
           "rules_foreign_cc_framework_toolchain_macos": {
-            "bzlFile": "@@rules_foreign_cc~0.10.1//foreign_cc/private/framework:toolchain.bzl",
+            "bzlFile": "@@rules_foreign_cc~//foreign_cc/private/framework:toolchain.bzl",
             "ruleClassName": "framework_toolchain_repository",
             "attributes": {
-              "name": "rules_foreign_cc~0.10.1~tools~rules_foreign_cc_framework_toolchain_macos",
               "commands_src": "@rules_foreign_cc//foreign_cc/private/framework/toolchains:macos_commands.bzl",
               "exec_compatible_with": [
                 "@platforms//os:macos"
@@ -1436,7 +1469,6 @@
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_archive",
             "attributes": {
-              "name": "rules_foreign_cc~0.10.1~tools~gnumake_src",
               "build_file_content": "filegroup(\n    name = \"all_srcs\",\n    srcs = glob([\"**\"]),\n    visibility = [\"//visibility:public\"],\n)\n",
               "sha256": "581f4d4e872da74b3941c874215898a7d35802f03732bdccee1d4a7979105d18",
               "strip_prefix": "make-4.4",
@@ -1450,7 +1482,6 @@
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_archive",
             "attributes": {
-              "name": "rules_foreign_cc~0.10.1~tools~gettext_runtime",
               "build_file_content": "\ncc_import(\n    name = \"gettext_runtime\",\n    shared_library = \"bin/libintl-8.dll\",\n    visibility = [\"//visibility:public\"],\n)\n        ",
               "sha256": "1f4269c0e021076d60a54e98da6f978a3195013f6de21674ba0edbc339c5b079",
               "urls": [
@@ -1462,7 +1493,6 @@
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_archive",
             "attributes": {
-              "name": "rules_foreign_cc~0.10.1~tools~cmake_src",
               "build_file_content": "filegroup(\n    name = \"all_srcs\",\n    srcs = glob([\"**\"]),\n    visibility = [\"//visibility:public\"],\n)\n",
               "sha256": "f316b40053466f9a416adf981efda41b160ca859e97f6a484b447ea299ff26aa",
               "strip_prefix": "cmake-3.23.2",
@@ -1475,7 +1505,6 @@
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_archive",
             "attributes": {
-              "name": "rules_foreign_cc~0.10.1~tools~bazel_skylib",
               "urls": [
                 "https://mirror.bazel.build/github.com/bazelbuild/bazel-skylib/releases/download/1.2.1/bazel-skylib-1.2.1.tar.gz",
                 "https://github.com/bazelbuild/bazel-skylib/releases/download/1.2.1/bazel-skylib-1.2.1.tar.gz"
@@ -1487,7 +1516,6 @@
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_archive",
             "attributes": {
-              "name": "rules_foreign_cc~0.10.1~tools~cmake-3.23.2-macos-universal",
               "urls": [
                 "https://github.com/Kitware/CMake/releases/download/v3.23.2/cmake-3.23.2-macos-universal.tar.gz"
               ],
@@ -1500,17 +1528,15 @@
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_archive",
             "attributes": {
-              "name": "rules_foreign_cc~0.10.1~tools~meson_src",
               "build_file_content": "exports_files([\"meson.py\"])\n\nfilegroup(\n    name = \"runtime\",\n    srcs = glob([\"mesonbuild/**\"]),\n    visibility = [\"//visibility:public\"],\n)\n",
               "strip_prefix": "meson-1.1.1",
               "url": "https://github.com/mesonbuild/meson/releases/download/1.1.1/meson-1.1.1.tar.gz"
             }
           },
           "rules_foreign_cc_framework_toolchain_freebsd": {
-            "bzlFile": "@@rules_foreign_cc~0.10.1//foreign_cc/private/framework:toolchain.bzl",
+            "bzlFile": "@@rules_foreign_cc~//foreign_cc/private/framework:toolchain.bzl",
             "ruleClassName": "framework_toolchain_repository",
             "attributes": {
-              "name": "rules_foreign_cc~0.10.1~tools~rules_foreign_cc_framework_toolchain_freebsd",
               "commands_src": "@rules_foreign_cc//foreign_cc/private/framework/toolchains:freebsd_commands.bzl",
               "exec_compatible_with": [
                 "@platforms//os:freebsd"
@@ -1518,10 +1544,9 @@
             }
           },
           "rules_foreign_cc_framework_toolchain_linux": {
-            "bzlFile": "@@rules_foreign_cc~0.10.1//foreign_cc/private/framework:toolchain.bzl",
+            "bzlFile": "@@rules_foreign_cc~//foreign_cc/private/framework:toolchain.bzl",
             "ruleClassName": "framework_toolchain_repository",
             "attributes": {
-              "name": "rules_foreign_cc~0.10.1~tools~rules_foreign_cc_framework_toolchain_linux",
               "commands_src": "@rules_foreign_cc//foreign_cc/private/framework/toolchains:linux_commands.bzl",
               "exec_compatible_with": [
                 "@platforms//os:linux"
@@ -1532,7 +1557,6 @@
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_archive",
             "attributes": {
-              "name": "rules_foreign_cc~0.10.1~tools~rules_python",
               "sha256": "84aec9e21cc56fbc7f1335035a71c850d1b9b5cc6ff497306f84cced9a769841",
               "strip_prefix": "rules_python-0.23.1",
               "url": "https://github.com/bazelbuild/rules_python/archive/refs/tags/0.23.1.tar.gz"
@@ -1542,13 +1566,12 @@
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_archive",
             "attributes": {
-              "name": "rules_foreign_cc~0.10.1~tools~pkgconfig_src",
               "build_file_content": "filegroup(\n    name = \"all_srcs\",\n    srcs = glob([\"**\"]),\n    visibility = [\"//visibility:public\"],\n)\n",
               "sha256": "6fc69c01688c9458a57eb9a1664c9aba372ccda420a02bf4429fe610e7e7d591",
               "strip_prefix": "pkg-config-0.29.2",
               "patches": [
-                "@@rules_foreign_cc~0.10.1//toolchains:pkgconfig-detectenv.patch",
-                "@@rules_foreign_cc~0.10.1//toolchains:pkgconfig-makefile-vc.patch"
+                "@@rules_foreign_cc~//toolchains:pkgconfig-detectenv.patch",
+                "@@rules_foreign_cc~//toolchains:pkgconfig-makefile-vc.patch"
               ],
               "urls": [
                 "https://pkgconfig.freedesktop.org/releases/pkg-config-0.29.2.tar.gz"
@@ -1559,7 +1582,6 @@
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_archive",
             "attributes": {
-              "name": "rules_foreign_cc~0.10.1~tools~ninja_build_src",
               "build_file_content": "filegroup(\n    name = \"all_srcs\",\n    srcs = glob([\"**\"]),\n    visibility = [\"//visibility:public\"],\n)\n",
               "sha256": "31747ae633213f1eda3842686f83c2aa1412e0f5691d1c14dbbcc67fe7400cea",
               "strip_prefix": "ninja-1.11.1",
@@ -1572,7 +1594,6 @@
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_archive",
             "attributes": {
-              "name": "rules_foreign_cc~0.10.1~tools~ninja_1.11.1_linux",
               "urls": [
                 "https://github.com/ninja-build/ninja/releases/download/v1.11.1/ninja-linux.zip"
               ],
@@ -1585,7 +1606,6 @@
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_archive",
             "attributes": {
-              "name": "rules_foreign_cc~0.10.1~tools~glib_src",
               "build_file_content": "\ncc_import(\n    name = \"msvc_hdr\",\n    hdrs = [\"msvc_recommended_pragmas.h\"],\n    visibility = [\"//visibility:public\"],\n)\n        ",
               "sha256": "bc96f63112823b7d6c9f06572d2ad626ddac7eb452c04d762592197f6e07898e",
               "strip_prefix": "glib-2.26.1",
@@ -1598,7 +1618,6 @@
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_archive",
             "attributes": {
-              "name": "rules_foreign_cc~0.10.1~tools~cmake-3.23.2-windows-x86_64",
               "urls": [
                 "https://github.com/Kitware/CMake/releases/download/v3.23.2/cmake-3.23.2-windows-x86_64.zip"
               ],
@@ -1611,7 +1630,6 @@
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_archive",
             "attributes": {
-              "name": "rules_foreign_cc~0.10.1~tools~glib_runtime",
               "build_file_content": "\nexports_files(\n    [\n        \"bin/libgio-2.0-0.dll\",\n        \"bin/libglib-2.0-0.dll\",\n        \"bin/libgmodule-2.0-0.dll\",\n        \"bin/libgobject-2.0-0.dll\",\n        \"bin/libgthread-2.0-0.dll\",\n    ],\n    visibility = [\"//visibility:public\"],\n)\n        ",
               "sha256": "88d857087e86f16a9be651ee7021880b3f7ba050d34a1ed9f06113b8799cb973",
               "urls": [
@@ -1620,17 +1638,14 @@
             }
           },
           "rules_foreign_cc_framework_toolchains": {
-            "bzlFile": "@@rules_foreign_cc~0.10.1//foreign_cc/private/framework:toolchain.bzl",
+            "bzlFile": "@@rules_foreign_cc~//foreign_cc/private/framework:toolchain.bzl",
             "ruleClassName": "framework_toolchain_repository_hub",
-            "attributes": {
-              "name": "rules_foreign_cc~0.10.1~tools~rules_foreign_cc_framework_toolchains"
-            }
+            "attributes": {}
           },
           "glib_dev": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_archive",
             "attributes": {
-              "name": "rules_foreign_cc~0.10.1~tools~glib_dev",
               "build_file_content": "\nload(\"@rules_cc//cc:defs.bzl\", \"cc_library\")\n\ncc_import(\n    name = \"glib_dev\",\n    hdrs = glob([\"include/**\"]),\n    shared_library = \"@glib_runtime//:bin/libglib-2.0-0.dll\",\n    visibility = [\"//visibility:public\"],\n)\n        ",
               "sha256": "bdf18506df304d38be98a4b3f18055b8b8cca81beabecad0eece6ce95319c369",
               "urls": [
@@ -1642,7 +1657,6 @@
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_archive",
             "attributes": {
-              "name": "rules_foreign_cc~0.10.1~tools~ninja_1.11.1_mac",
               "urls": [
                 "https://github.com/ninja-build/ninja/releases/download/v1.11.1/ninja-mac.zip"
               ],
@@ -1652,10 +1666,9 @@
             }
           },
           "cmake_3.23.2_toolchains": {
-            "bzlFile": "@@rules_foreign_cc~0.10.1//toolchains:prebuilt_toolchains_repository.bzl",
+            "bzlFile": "@@rules_foreign_cc~//toolchains:prebuilt_toolchains_repository.bzl",
             "ruleClassName": "prebuilt_toolchains_repository",
             "attributes": {
-              "name": "rules_foreign_cc~0.10.1~tools~cmake_3.23.2_toolchains",
               "repos": {
                 "cmake-3.23.2-linux-aarch64": [
                   "@platforms//cpu:aarch64",
@@ -1681,10 +1694,9 @@
             }
           },
           "ninja_1.11.1_toolchains": {
-            "bzlFile": "@@rules_foreign_cc~0.10.1//toolchains:prebuilt_toolchains_repository.bzl",
+            "bzlFile": "@@rules_foreign_cc~//toolchains:prebuilt_toolchains_repository.bzl",
             "ruleClassName": "prebuilt_toolchains_repository",
             "attributes": {
-              "name": "rules_foreign_cc~0.10.1~tools~ninja_1.11.1_toolchains",
               "repos": {
                 "ninja_1.11.1_linux": [
                   "@platforms//cpu:x86_64",
@@ -1706,7 +1718,6 @@
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_archive",
             "attributes": {
-              "name": "rules_foreign_cc~0.10.1~tools~ninja_1.11.1_win",
               "urls": [
                 "https://github.com/ninja-build/ninja/releases/download/v1.11.1/ninja-win.zip"
               ],
@@ -1719,7 +1730,6 @@
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_archive",
             "attributes": {
-              "name": "rules_foreign_cc~0.10.1~tools~cmake-3.23.2-windows-i386",
               "urls": [
                 "https://github.com/Kitware/CMake/releases/download/v3.23.2/cmake-3.23.2-windows-i386.zip"
               ],
@@ -1732,7 +1742,6 @@
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_archive",
             "attributes": {
-              "name": "rules_foreign_cc~0.10.1~tools~cmake-3.23.2-linux-x86_64",
               "urls": [
                 "https://github.com/Kitware/CMake/releases/download/v3.23.2/cmake-3.23.2-linux-x86_64.tar.gz"
               ],
@@ -1742,10 +1751,9 @@
             }
           },
           "rules_foreign_cc_framework_toolchain_windows": {
-            "bzlFile": "@@rules_foreign_cc~0.10.1//foreign_cc/private/framework:toolchain.bzl",
+            "bzlFile": "@@rules_foreign_cc~//foreign_cc/private/framework:toolchain.bzl",
             "ruleClassName": "framework_toolchain_repository",
             "attributes": {
-              "name": "rules_foreign_cc~0.10.1~tools~rules_foreign_cc_framework_toolchain_windows",
               "commands_src": "@rules_foreign_cc//foreign_cc/private/framework/toolchains:windows_commands.bzl",
               "exec_compatible_with": [
                 "@platforms//os:windows"
@@ -1755,61 +1763,57 @@
         },
         "recordedRepoMappingEntries": [
           [
-            "rules_foreign_cc~0.10.1",
+            "rules_foreign_cc~",
             "bazel_tools",
             "bazel_tools"
           ],
           [
-            "rules_foreign_cc~0.10.1",
+            "rules_foreign_cc~",
             "rules_foreign_cc",
-            "rules_foreign_cc~0.10.1"
+            "rules_foreign_cc~"
           ]
         ]
       }
     },
-    "@@rules_java~7.1.0//java:extensions.bzl%toolchains": {
+    "@@rules_java~//java:extensions.bzl%toolchains": {
       "general": {
-        "bzlTransitiveDigest": "D02GmifxnV/IhYgspsJMDZ/aE8HxAjXgek5gi6FSto4=",
-        "accumulatedFileDigests": {},
+        "bzlTransitiveDigest": "tJHbmWnq7m+9eUBnUdv7jZziQ26FmcGL9C5/hU3Q9UQ=",
+        "recordedFileInputs": {},
+        "recordedDirentsInputs": {},
         "envVariables": {},
         "generatedRepoSpecs": {
           "remotejdk21_linux_toolchain_config_repo": {
-            "bzlFile": "@@rules_java~7.1.0//toolchains:remote_java_repository.bzl",
+            "bzlFile": "@@rules_java~//toolchains:remote_java_repository.bzl",
             "ruleClassName": "_toolchain_config",
             "attributes": {
-              "name": "rules_java~7.1.0~toolchains~remotejdk21_linux_toolchain_config_repo",
               "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"remotejdk_21\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"21\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [\"@platforms//os:linux\", \"@platforms//cpu:x86_64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@remotejdk21_linux//:jdk\",\n)\ntoolchain(\n    name = \"bootstrap_runtime_toolchain\",\n    # These constraints are not required for correctness, but prevent fetches of remote JDK for\n    # different architectures. As every Java compilation toolchain depends on a bootstrap runtime in\n    # the same configuration, this constraint will not result in toolchain resolution failures.\n    exec_compatible_with = [\"@platforms//os:linux\", \"@platforms//cpu:x86_64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:bootstrap_runtime_toolchain_type\",\n    toolchain = \"@remotejdk21_linux//:jdk\",\n)\n"
             }
           },
           "remotejdk17_linux_s390x_toolchain_config_repo": {
-            "bzlFile": "@@rules_java~7.1.0//toolchains:remote_java_repository.bzl",
+            "bzlFile": "@@rules_java~//toolchains:remote_java_repository.bzl",
             "ruleClassName": "_toolchain_config",
             "attributes": {
-              "name": "rules_java~7.1.0~toolchains~remotejdk17_linux_s390x_toolchain_config_repo",
               "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"remotejdk_17\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"17\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [\"@platforms//os:linux\", \"@platforms//cpu:s390x\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@remotejdk17_linux_s390x//:jdk\",\n)\ntoolchain(\n    name = \"bootstrap_runtime_toolchain\",\n    # These constraints are not required for correctness, but prevent fetches of remote JDK for\n    # different architectures. As every Java compilation toolchain depends on a bootstrap runtime in\n    # the same configuration, this constraint will not result in toolchain resolution failures.\n    exec_compatible_with = [\"@platforms//os:linux\", \"@platforms//cpu:s390x\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:bootstrap_runtime_toolchain_type\",\n    toolchain = \"@remotejdk17_linux_s390x//:jdk\",\n)\n"
             }
           },
           "remotejdk17_macos_toolchain_config_repo": {
-            "bzlFile": "@@rules_java~7.1.0//toolchains:remote_java_repository.bzl",
+            "bzlFile": "@@rules_java~//toolchains:remote_java_repository.bzl",
             "ruleClassName": "_toolchain_config",
             "attributes": {
-              "name": "rules_java~7.1.0~toolchains~remotejdk17_macos_toolchain_config_repo",
               "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"remotejdk_17\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"17\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [\"@platforms//os:macos\", \"@platforms//cpu:x86_64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@remotejdk17_macos//:jdk\",\n)\ntoolchain(\n    name = \"bootstrap_runtime_toolchain\",\n    # These constraints are not required for correctness, but prevent fetches of remote JDK for\n    # different architectures. As every Java compilation toolchain depends on a bootstrap runtime in\n    # the same configuration, this constraint will not result in toolchain resolution failures.\n    exec_compatible_with = [\"@platforms//os:macos\", \"@platforms//cpu:x86_64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:bootstrap_runtime_toolchain_type\",\n    toolchain = \"@remotejdk17_macos//:jdk\",\n)\n"
             }
           },
           "remotejdk21_macos_aarch64_toolchain_config_repo": {
-            "bzlFile": "@@rules_java~7.1.0//toolchains:remote_java_repository.bzl",
+            "bzlFile": "@@rules_java~//toolchains:remote_java_repository.bzl",
             "ruleClassName": "_toolchain_config",
             "attributes": {
-              "name": "rules_java~7.1.0~toolchains~remotejdk21_macos_aarch64_toolchain_config_repo",
               "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"remotejdk_21\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"21\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [\"@platforms//os:macos\", \"@platforms//cpu:aarch64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@remotejdk21_macos_aarch64//:jdk\",\n)\ntoolchain(\n    name = \"bootstrap_runtime_toolchain\",\n    # These constraints are not required for correctness, but prevent fetches of remote JDK for\n    # different architectures. As every Java compilation toolchain depends on a bootstrap runtime in\n    # the same configuration, this constraint will not result in toolchain resolution failures.\n    exec_compatible_with = [\"@platforms//os:macos\", \"@platforms//cpu:aarch64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:bootstrap_runtime_toolchain_type\",\n    toolchain = \"@remotejdk21_macos_aarch64//:jdk\",\n)\n"
             }
           },
           "remotejdk17_linux_aarch64_toolchain_config_repo": {
-            "bzlFile": "@@rules_java~7.1.0//toolchains:remote_java_repository.bzl",
+            "bzlFile": "@@rules_java~//toolchains:remote_java_repository.bzl",
             "ruleClassName": "_toolchain_config",
             "attributes": {
-              "name": "rules_java~7.1.0~toolchains~remotejdk17_linux_aarch64_toolchain_config_repo",
               "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"remotejdk_17\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"17\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [\"@platforms//os:linux\", \"@platforms//cpu:aarch64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@remotejdk17_linux_aarch64//:jdk\",\n)\ntoolchain(\n    name = \"bootstrap_runtime_toolchain\",\n    # These constraints are not required for correctness, but prevent fetches of remote JDK for\n    # different architectures. As every Java compilation toolchain depends on a bootstrap runtime in\n    # the same configuration, this constraint will not result in toolchain resolution failures.\n    exec_compatible_with = [\"@platforms//os:linux\", \"@platforms//cpu:aarch64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:bootstrap_runtime_toolchain_type\",\n    toolchain = \"@remotejdk17_linux_aarch64//:jdk\",\n)\n"
             }
           },
@@ -1817,21 +1821,19 @@
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_archive",
             "attributes": {
-              "name": "rules_java~7.1.0~toolchains~remotejdk21_macos_aarch64",
               "build_file_content": "load(\"@rules_java//java:defs.bzl\", \"java_runtime\")\n\npackage(default_visibility = [\"//visibility:public\"])\n\nexports_files([\"WORKSPACE\", \"BUILD.bazel\"])\n\nfilegroup(\n    name = \"jre\",\n    srcs = glob(\n        [\n            \"jre/bin/**\",\n            \"jre/lib/**\",\n        ],\n        allow_empty = True,\n        # In some configurations, Java browser plugin is considered harmful and\n        # common antivirus software blocks access to npjp2.dll interfering with Bazel,\n        # so do not include it in JRE on Windows.\n        exclude = [\"jre/bin/plugin2/**\"],\n    ),\n)\n\nfilegroup(\n    name = \"jdk-bin\",\n    srcs = glob(\n        [\"bin/**\"],\n        # The JDK on Windows sometimes contains a directory called\n        # \"%systemroot%\", which is not a valid label.\n        exclude = [\"**/*%*/**\"],\n    ),\n)\n\n# This folder holds security policies.\nfilegroup(\n    name = \"jdk-conf\",\n    srcs = glob(\n        [\"conf/**\"],\n        allow_empty = True,\n    ),\n)\n\nfilegroup(\n    name = \"jdk-include\",\n    srcs = glob(\n        [\"include/**\"],\n        allow_empty = True,\n    ),\n)\n\nfilegroup(\n    name = \"jdk-lib\",\n    srcs = glob(\n        [\"lib/**\", \"release\"],\n        allow_empty = True,\n        exclude = [\n            \"lib/missioncontrol/**\",\n            \"lib/visualvm/**\",\n        ],\n    ),\n)\n\njava_runtime(\n    name = \"jdk\",\n    srcs = [\n        \":jdk-bin\",\n        \":jdk-conf\",\n        \":jdk-include\",\n        \":jdk-lib\",\n        \":jre\",\n    ],\n    # Provide the 'java` binary explicitly so that the correct path is used by\n    # Bazel even when the host platform differs from the execution platform.\n    # Exactly one of the two globs will be empty depending on the host platform.\n    # When --incompatible_disallow_empty_glob is enabled, each individual empty\n    # glob will fail without allow_empty = True, even if the overall result is\n    # non-empty.\n    java = glob([\"bin/java.exe\", \"bin/java\"], allow_empty = True)[0],\n    version = 21,\n)\n",
-              "sha256": "2a7a99a3ea263dbd8d32a67d1e6e363ba8b25c645c826f5e167a02bbafaff1fa",
-              "strip_prefix": "zulu21.28.85-ca-jdk21.0.0-macosx_aarch64",
+              "sha256": "e8260516de8b60661422a725f1df2c36ef888f6fb35393566b00e7325db3d04e",
+              "strip_prefix": "zulu21.32.17-ca-jdk21.0.2-macosx_aarch64",
               "urls": [
-                "https://mirror.bazel.build/cdn.azul.com/zulu/bin/zulu21.28.85-ca-jdk21.0.0-macosx_aarch64.tar.gz",
-                "https://cdn.azul.com/zulu/bin/zulu21.28.85-ca-jdk21.0.0-macosx_aarch64.tar.gz"
+                "https://mirror.bazel.build/cdn.azul.com/zulu/bin/zulu21.32.17-ca-jdk21.0.2-macosx_aarch64.tar.gz",
+                "https://cdn.azul.com/zulu/bin/zulu21.32.17-ca-jdk21.0.2-macosx_aarch64.tar.gz"
               ]
             }
           },
           "remotejdk17_linux_toolchain_config_repo": {
-            "bzlFile": "@@rules_java~7.1.0//toolchains:remote_java_repository.bzl",
+            "bzlFile": "@@rules_java~//toolchains:remote_java_repository.bzl",
             "ruleClassName": "_toolchain_config",
             "attributes": {
-              "name": "rules_java~7.1.0~toolchains~remotejdk17_linux_toolchain_config_repo",
               "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"remotejdk_17\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"17\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [\"@platforms//os:linux\", \"@platforms//cpu:x86_64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@remotejdk17_linux//:jdk\",\n)\ntoolchain(\n    name = \"bootstrap_runtime_toolchain\",\n    # These constraints are not required for correctness, but prevent fetches of remote JDK for\n    # different architectures. As every Java compilation toolchain depends on a bootstrap runtime in\n    # the same configuration, this constraint will not result in toolchain resolution failures.\n    exec_compatible_with = [\"@platforms//os:linux\", \"@platforms//cpu:x86_64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:bootstrap_runtime_toolchain_type\",\n    toolchain = \"@remotejdk17_linux//:jdk\",\n)\n"
             }
           },
@@ -1839,7 +1841,6 @@
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_archive",
             "attributes": {
-              "name": "rules_java~7.1.0~toolchains~remotejdk17_macos_aarch64",
               "build_file_content": "load(\"@rules_java//java:defs.bzl\", \"java_runtime\")\n\npackage(default_visibility = [\"//visibility:public\"])\n\nexports_files([\"WORKSPACE\", \"BUILD.bazel\"])\n\nfilegroup(\n    name = \"jre\",\n    srcs = glob(\n        [\n            \"jre/bin/**\",\n            \"jre/lib/**\",\n        ],\n        allow_empty = True,\n        # In some configurations, Java browser plugin is considered harmful and\n        # common antivirus software blocks access to npjp2.dll interfering with Bazel,\n        # so do not include it in JRE on Windows.\n        exclude = [\"jre/bin/plugin2/**\"],\n    ),\n)\n\nfilegroup(\n    name = \"jdk-bin\",\n    srcs = glob(\n        [\"bin/**\"],\n        # The JDK on Windows sometimes contains a directory called\n        # \"%systemroot%\", which is not a valid label.\n        exclude = [\"**/*%*/**\"],\n    ),\n)\n\n# This folder holds security policies.\nfilegroup(\n    name = \"jdk-conf\",\n    srcs = glob(\n        [\"conf/**\"],\n        allow_empty = True,\n    ),\n)\n\nfilegroup(\n    name = \"jdk-include\",\n    srcs = glob(\n        [\"include/**\"],\n        allow_empty = True,\n    ),\n)\n\nfilegroup(\n    name = \"jdk-lib\",\n    srcs = glob(\n        [\"lib/**\", \"release\"],\n        allow_empty = True,\n        exclude = [\n            \"lib/missioncontrol/**\",\n            \"lib/visualvm/**\",\n        ],\n    ),\n)\n\njava_runtime(\n    name = \"jdk\",\n    srcs = [\n        \":jdk-bin\",\n        \":jdk-conf\",\n        \":jdk-include\",\n        \":jdk-lib\",\n        \":jre\",\n    ],\n    # Provide the 'java` binary explicitly so that the correct path is used by\n    # Bazel even when the host platform differs from the execution platform.\n    # Exactly one of the two globs will be empty depending on the host platform.\n    # When --incompatible_disallow_empty_glob is enabled, each individual empty\n    # glob will fail without allow_empty = True, even if the overall result is\n    # non-empty.\n    java = glob([\"bin/java.exe\", \"bin/java\"], allow_empty = True)[0],\n    version = 17,\n)\n",
               "sha256": "314b04568ec0ae9b36ba03c9cbd42adc9e1265f74678923b19297d66eb84dcca",
               "strip_prefix": "zulu17.44.53-ca-jdk17.0.8.1-macosx_aarch64",
@@ -1853,11 +1854,10 @@
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_archive",
             "attributes": {
-              "name": "rules_java~7.1.0~toolchains~remote_java_tools_windows",
-              "sha256": "c5c70c214a350f12cbf52da8270fa43ba629b795f3dd328028a38f8f0d39c2a1",
+              "sha256": "fe2f88169696d6c6fc6e90ba61bb46be7d0ae3693cbafdf336041bf56679e8d1",
               "urls": [
-                "https://mirror.bazel.build/bazel_java_tools/releases/java/v13.1/java_tools_windows-v13.1.zip",
-                "https://github.com/bazelbuild/java_tools/releases/download/java_v13.1/java_tools_windows-v13.1.zip"
+                "https://mirror.bazel.build/bazel_java_tools/releases/java/v13.4/java_tools_windows-v13.4.zip",
+                "https://github.com/bazelbuild/java_tools/releases/download/java_v13.4/java_tools_windows-v13.4.zip"
               ]
             }
           },
@@ -1865,7 +1865,6 @@
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_archive",
             "attributes": {
-              "name": "rules_java~7.1.0~toolchains~remotejdk11_win",
               "build_file_content": "load(\"@rules_java//java:defs.bzl\", \"java_runtime\")\n\npackage(default_visibility = [\"//visibility:public\"])\n\nexports_files([\"WORKSPACE\", \"BUILD.bazel\"])\n\nfilegroup(\n    name = \"jre\",\n    srcs = glob(\n        [\n            \"jre/bin/**\",\n            \"jre/lib/**\",\n        ],\n        allow_empty = True,\n        # In some configurations, Java browser plugin is considered harmful and\n        # common antivirus software blocks access to npjp2.dll interfering with Bazel,\n        # so do not include it in JRE on Windows.\n        exclude = [\"jre/bin/plugin2/**\"],\n    ),\n)\n\nfilegroup(\n    name = \"jdk-bin\",\n    srcs = glob(\n        [\"bin/**\"],\n        # The JDK on Windows sometimes contains a directory called\n        # \"%systemroot%\", which is not a valid label.\n        exclude = [\"**/*%*/**\"],\n    ),\n)\n\n# This folder holds security policies.\nfilegroup(\n    name = \"jdk-conf\",\n    srcs = glob(\n        [\"conf/**\"],\n        allow_empty = True,\n    ),\n)\n\nfilegroup(\n    name = \"jdk-include\",\n    srcs = glob(\n        [\"include/**\"],\n        allow_empty = True,\n    ),\n)\n\nfilegroup(\n    name = \"jdk-lib\",\n    srcs = glob(\n        [\"lib/**\", \"release\"],\n        allow_empty = True,\n        exclude = [\n            \"lib/missioncontrol/**\",\n            \"lib/visualvm/**\",\n        ],\n    ),\n)\n\njava_runtime(\n    name = \"jdk\",\n    srcs = [\n        \":jdk-bin\",\n        \":jdk-conf\",\n        \":jdk-include\",\n        \":jdk-lib\",\n        \":jre\",\n    ],\n    # Provide the 'java` binary explicitly so that the correct path is used by\n    # Bazel even when the host platform differs from the execution platform.\n    # Exactly one of the two globs will be empty depending on the host platform.\n    # When --incompatible_disallow_empty_glob is enabled, each individual empty\n    # glob will fail without allow_empty = True, even if the overall result is\n    # non-empty.\n    java = glob([\"bin/java.exe\", \"bin/java\"], allow_empty = True)[0],\n    version = 11,\n)\n",
               "sha256": "43408193ce2fa0862819495b5ae8541085b95660153f2adcf91a52d3a1710e83",
               "strip_prefix": "zulu11.66.15-ca-jdk11.0.20-win_x64",
@@ -1876,10 +1875,9 @@
             }
           },
           "remotejdk11_win_toolchain_config_repo": {
-            "bzlFile": "@@rules_java~7.1.0//toolchains:remote_java_repository.bzl",
+            "bzlFile": "@@rules_java~//toolchains:remote_java_repository.bzl",
             "ruleClassName": "_toolchain_config",
             "attributes": {
-              "name": "rules_java~7.1.0~toolchains~remotejdk11_win_toolchain_config_repo",
               "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"remotejdk_11\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"11\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [\"@platforms//os:windows\", \"@platforms//cpu:x86_64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@remotejdk11_win//:jdk\",\n)\ntoolchain(\n    name = \"bootstrap_runtime_toolchain\",\n    # These constraints are not required for correctness, but prevent fetches of remote JDK for\n    # different architectures. As every Java compilation toolchain depends on a bootstrap runtime in\n    # the same configuration, this constraint will not result in toolchain resolution failures.\n    exec_compatible_with = [\"@platforms//os:windows\", \"@platforms//cpu:x86_64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:bootstrap_runtime_toolchain_type\",\n    toolchain = \"@remotejdk11_win//:jdk\",\n)\n"
             }
           },
@@ -1887,7 +1885,6 @@
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_archive",
             "attributes": {
-              "name": "rules_java~7.1.0~toolchains~remotejdk11_linux_aarch64",
               "build_file_content": "load(\"@rules_java//java:defs.bzl\", \"java_runtime\")\n\npackage(default_visibility = [\"//visibility:public\"])\n\nexports_files([\"WORKSPACE\", \"BUILD.bazel\"])\n\nfilegroup(\n    name = \"jre\",\n    srcs = glob(\n        [\n            \"jre/bin/**\",\n            \"jre/lib/**\",\n        ],\n        allow_empty = True,\n        # In some configurations, Java browser plugin is considered harmful and\n        # common antivirus software blocks access to npjp2.dll interfering with Bazel,\n        # so do not include it in JRE on Windows.\n        exclude = [\"jre/bin/plugin2/**\"],\n    ),\n)\n\nfilegroup(\n    name = \"jdk-bin\",\n    srcs = glob(\n        [\"bin/**\"],\n        # The JDK on Windows sometimes contains a directory called\n        # \"%systemroot%\", which is not a valid label.\n        exclude = [\"**/*%*/**\"],\n    ),\n)\n\n# This folder holds security policies.\nfilegroup(\n    name = \"jdk-conf\",\n    srcs = glob(\n        [\"conf/**\"],\n        allow_empty = True,\n    ),\n)\n\nfilegroup(\n    name = \"jdk-include\",\n    srcs = glob(\n        [\"include/**\"],\n        allow_empty = True,\n    ),\n)\n\nfilegroup(\n    name = \"jdk-lib\",\n    srcs = glob(\n        [\"lib/**\", \"release\"],\n        allow_empty = True,\n        exclude = [\n            \"lib/missioncontrol/**\",\n            \"lib/visualvm/**\",\n        ],\n    ),\n)\n\njava_runtime(\n    name = \"jdk\",\n    srcs = [\n        \":jdk-bin\",\n        \":jdk-conf\",\n        \":jdk-include\",\n        \":jdk-lib\",\n        \":jre\",\n    ],\n    # Provide the 'java` binary explicitly so that the correct path is used by\n    # Bazel even when the host platform differs from the execution platform.\n    # Exactly one of the two globs will be empty depending on the host platform.\n    # When --incompatible_disallow_empty_glob is enabled, each individual empty\n    # glob will fail without allow_empty = True, even if the overall result is\n    # non-empty.\n    java = glob([\"bin/java.exe\", \"bin/java\"], allow_empty = True)[0],\n    version = 11,\n)\n",
               "sha256": "54174439f2b3fddd11f1048c397fe7bb45d4c9d66d452d6889b013d04d21c4de",
               "strip_prefix": "zulu11.66.15-ca-jdk11.0.20-linux_aarch64",
@@ -1901,7 +1898,6 @@
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_archive",
             "attributes": {
-              "name": "rules_java~7.1.0~toolchains~remotejdk17_linux",
               "build_file_content": "load(\"@rules_java//java:defs.bzl\", \"java_runtime\")\n\npackage(default_visibility = [\"//visibility:public\"])\n\nexports_files([\"WORKSPACE\", \"BUILD.bazel\"])\n\nfilegroup(\n    name = \"jre\",\n    srcs = glob(\n        [\n            \"jre/bin/**\",\n            \"jre/lib/**\",\n        ],\n        allow_empty = True,\n        # In some configurations, Java browser plugin is considered harmful and\n        # common antivirus software blocks access to npjp2.dll interfering with Bazel,\n        # so do not include it in JRE on Windows.\n        exclude = [\"jre/bin/plugin2/**\"],\n    ),\n)\n\nfilegroup(\n    name = \"jdk-bin\",\n    srcs = glob(\n        [\"bin/**\"],\n        # The JDK on Windows sometimes contains a directory called\n        # \"%systemroot%\", which is not a valid label.\n        exclude = [\"**/*%*/**\"],\n    ),\n)\n\n# This folder holds security policies.\nfilegroup(\n    name = \"jdk-conf\",\n    srcs = glob(\n        [\"conf/**\"],\n        allow_empty = True,\n    ),\n)\n\nfilegroup(\n    name = \"jdk-include\",\n    srcs = glob(\n        [\"include/**\"],\n        allow_empty = True,\n    ),\n)\n\nfilegroup(\n    name = \"jdk-lib\",\n    srcs = glob(\n        [\"lib/**\", \"release\"],\n        allow_empty = True,\n        exclude = [\n            \"lib/missioncontrol/**\",\n            \"lib/visualvm/**\",\n        ],\n    ),\n)\n\njava_runtime(\n    name = \"jdk\",\n    srcs = [\n        \":jdk-bin\",\n        \":jdk-conf\",\n        \":jdk-include\",\n        \":jdk-lib\",\n        \":jre\",\n    ],\n    # Provide the 'java` binary explicitly so that the correct path is used by\n    # Bazel even when the host platform differs from the execution platform.\n    # Exactly one of the two globs will be empty depending on the host platform.\n    # When --incompatible_disallow_empty_glob is enabled, each individual empty\n    # glob will fail without allow_empty = True, even if the overall result is\n    # non-empty.\n    java = glob([\"bin/java.exe\", \"bin/java\"], allow_empty = True)[0],\n    version = 17,\n)\n",
               "sha256": "b9482f2304a1a68a614dfacddcf29569a72f0fac32e6c74f83dc1b9a157b8340",
               "strip_prefix": "zulu17.44.53-ca-jdk17.0.8.1-linux_x64",
@@ -1912,18 +1908,16 @@
             }
           },
           "remotejdk11_linux_s390x_toolchain_config_repo": {
-            "bzlFile": "@@rules_java~7.1.0//toolchains:remote_java_repository.bzl",
+            "bzlFile": "@@rules_java~//toolchains:remote_java_repository.bzl",
             "ruleClassName": "_toolchain_config",
             "attributes": {
-              "name": "rules_java~7.1.0~toolchains~remotejdk11_linux_s390x_toolchain_config_repo",
               "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"remotejdk_11\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"11\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [\"@platforms//os:linux\", \"@platforms//cpu:s390x\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@remotejdk11_linux_s390x//:jdk\",\n)\ntoolchain(\n    name = \"bootstrap_runtime_toolchain\",\n    # These constraints are not required for correctness, but prevent fetches of remote JDK for\n    # different architectures. As every Java compilation toolchain depends on a bootstrap runtime in\n    # the same configuration, this constraint will not result in toolchain resolution failures.\n    exec_compatible_with = [\"@platforms//os:linux\", \"@platforms//cpu:s390x\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:bootstrap_runtime_toolchain_type\",\n    toolchain = \"@remotejdk11_linux_s390x//:jdk\",\n)\n"
             }
           },
           "remotejdk11_linux_toolchain_config_repo": {
-            "bzlFile": "@@rules_java~7.1.0//toolchains:remote_java_repository.bzl",
+            "bzlFile": "@@rules_java~//toolchains:remote_java_repository.bzl",
             "ruleClassName": "_toolchain_config",
             "attributes": {
-              "name": "rules_java~7.1.0~toolchains~remotejdk11_linux_toolchain_config_repo",
               "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"remotejdk_11\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"11\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [\"@platforms//os:linux\", \"@platforms//cpu:x86_64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@remotejdk11_linux//:jdk\",\n)\ntoolchain(\n    name = \"bootstrap_runtime_toolchain\",\n    # These constraints are not required for correctness, but prevent fetches of remote JDK for\n    # different architectures. As every Java compilation toolchain depends on a bootstrap runtime in\n    # the same configuration, this constraint will not result in toolchain resolution failures.\n    exec_compatible_with = [\"@platforms//os:linux\", \"@platforms//cpu:x86_64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:bootstrap_runtime_toolchain_type\",\n    toolchain = \"@remotejdk11_linux//:jdk\",\n)\n"
             }
           },
@@ -1931,7 +1925,6 @@
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_archive",
             "attributes": {
-              "name": "rules_java~7.1.0~toolchains~remotejdk11_macos",
               "build_file_content": "load(\"@rules_java//java:defs.bzl\", \"java_runtime\")\n\npackage(default_visibility = [\"//visibility:public\"])\n\nexports_files([\"WORKSPACE\", \"BUILD.bazel\"])\n\nfilegroup(\n    name = \"jre\",\n    srcs = glob(\n        [\n            \"jre/bin/**\",\n            \"jre/lib/**\",\n        ],\n        allow_empty = True,\n        # In some configurations, Java browser plugin is considered harmful and\n        # common antivirus software blocks access to npjp2.dll interfering with Bazel,\n        # so do not include it in JRE on Windows.\n        exclude = [\"jre/bin/plugin2/**\"],\n    ),\n)\n\nfilegroup(\n    name = \"jdk-bin\",\n    srcs = glob(\n        [\"bin/**\"],\n        # The JDK on Windows sometimes contains a directory called\n        # \"%systemroot%\", which is not a valid label.\n        exclude = [\"**/*%*/**\"],\n    ),\n)\n\n# This folder holds security policies.\nfilegroup(\n    name = \"jdk-conf\",\n    srcs = glob(\n        [\"conf/**\"],\n        allow_empty = True,\n    ),\n)\n\nfilegroup(\n    name = \"jdk-include\",\n    srcs = glob(\n        [\"include/**\"],\n        allow_empty = True,\n    ),\n)\n\nfilegroup(\n    name = \"jdk-lib\",\n    srcs = glob(\n        [\"lib/**\", \"release\"],\n        allow_empty = True,\n        exclude = [\n            \"lib/missioncontrol/**\",\n            \"lib/visualvm/**\",\n        ],\n    ),\n)\n\njava_runtime(\n    name = \"jdk\",\n    srcs = [\n        \":jdk-bin\",\n        \":jdk-conf\",\n        \":jdk-include\",\n        \":jdk-lib\",\n        \":jre\",\n    ],\n    # Provide the 'java` binary explicitly so that the correct path is used by\n    # Bazel even when the host platform differs from the execution platform.\n    # Exactly one of the two globs will be empty depending on the host platform.\n    # When --incompatible_disallow_empty_glob is enabled, each individual empty\n    # glob will fail without allow_empty = True, even if the overall result is\n    # non-empty.\n    java = glob([\"bin/java.exe\", \"bin/java\"], allow_empty = True)[0],\n    version = 11,\n)\n",
               "sha256": "bcaab11cfe586fae7583c6d9d311c64384354fb2638eb9a012eca4c3f1a1d9fd",
               "strip_prefix": "zulu11.66.15-ca-jdk11.0.20-macosx_x64",
@@ -1945,7 +1938,6 @@
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_archive",
             "attributes": {
-              "name": "rules_java~7.1.0~toolchains~remotejdk11_win_arm64",
               "build_file_content": "load(\"@rules_java//java:defs.bzl\", \"java_runtime\")\n\npackage(default_visibility = [\"//visibility:public\"])\n\nexports_files([\"WORKSPACE\", \"BUILD.bazel\"])\n\nfilegroup(\n    name = \"jre\",\n    srcs = glob(\n        [\n            \"jre/bin/**\",\n            \"jre/lib/**\",\n        ],\n        allow_empty = True,\n        # In some configurations, Java browser plugin is considered harmful and\n        # common antivirus software blocks access to npjp2.dll interfering with Bazel,\n        # so do not include it in JRE on Windows.\n        exclude = [\"jre/bin/plugin2/**\"],\n    ),\n)\n\nfilegroup(\n    name = \"jdk-bin\",\n    srcs = glob(\n        [\"bin/**\"],\n        # The JDK on Windows sometimes contains a directory called\n        # \"%systemroot%\", which is not a valid label.\n        exclude = [\"**/*%*/**\"],\n    ),\n)\n\n# This folder holds security policies.\nfilegroup(\n    name = \"jdk-conf\",\n    srcs = glob(\n        [\"conf/**\"],\n        allow_empty = True,\n    ),\n)\n\nfilegroup(\n    name = \"jdk-include\",\n    srcs = glob(\n        [\"include/**\"],\n        allow_empty = True,\n    ),\n)\n\nfilegroup(\n    name = \"jdk-lib\",\n    srcs = glob(\n        [\"lib/**\", \"release\"],\n        allow_empty = True,\n        exclude = [\n            \"lib/missioncontrol/**\",\n            \"lib/visualvm/**\",\n        ],\n    ),\n)\n\njava_runtime(\n    name = \"jdk\",\n    srcs = [\n        \":jdk-bin\",\n        \":jdk-conf\",\n        \":jdk-include\",\n        \":jdk-lib\",\n        \":jre\",\n    ],\n    # Provide the 'java` binary explicitly so that the correct path is used by\n    # Bazel even when the host platform differs from the execution platform.\n    # Exactly one of the two globs will be empty depending on the host platform.\n    # When --incompatible_disallow_empty_glob is enabled, each individual empty\n    # glob will fail without allow_empty = True, even if the overall result is\n    # non-empty.\n    java = glob([\"bin/java.exe\", \"bin/java\"], allow_empty = True)[0],\n    version = 11,\n)\n",
               "sha256": "b8a28e6e767d90acf793ea6f5bed0bb595ba0ba5ebdf8b99f395266161e53ec2",
               "strip_prefix": "jdk-11.0.13+8",
@@ -1958,7 +1950,6 @@
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_archive",
             "attributes": {
-              "name": "rules_java~7.1.0~toolchains~remotejdk17_macos",
               "build_file_content": "load(\"@rules_java//java:defs.bzl\", \"java_runtime\")\n\npackage(default_visibility = [\"//visibility:public\"])\n\nexports_files([\"WORKSPACE\", \"BUILD.bazel\"])\n\nfilegroup(\n    name = \"jre\",\n    srcs = glob(\n        [\n            \"jre/bin/**\",\n            \"jre/lib/**\",\n        ],\n        allow_empty = True,\n        # In some configurations, Java browser plugin is considered harmful and\n        # common antivirus software blocks access to npjp2.dll interfering with Bazel,\n        # so do not include it in JRE on Windows.\n        exclude = [\"jre/bin/plugin2/**\"],\n    ),\n)\n\nfilegroup(\n    name = \"jdk-bin\",\n    srcs = glob(\n        [\"bin/**\"],\n        # The JDK on Windows sometimes contains a directory called\n        # \"%systemroot%\", which is not a valid label.\n        exclude = [\"**/*%*/**\"],\n    ),\n)\n\n# This folder holds security policies.\nfilegroup(\n    name = \"jdk-conf\",\n    srcs = glob(\n        [\"conf/**\"],\n        allow_empty = True,\n    ),\n)\n\nfilegroup(\n    name = \"jdk-include\",\n    srcs = glob(\n        [\"include/**\"],\n        allow_empty = True,\n    ),\n)\n\nfilegroup(\n    name = \"jdk-lib\",\n    srcs = glob(\n        [\"lib/**\", \"release\"],\n        allow_empty = True,\n        exclude = [\n            \"lib/missioncontrol/**\",\n            \"lib/visualvm/**\",\n        ],\n    ),\n)\n\njava_runtime(\n    name = \"jdk\",\n    srcs = [\n        \":jdk-bin\",\n        \":jdk-conf\",\n        \":jdk-include\",\n        \":jdk-lib\",\n        \":jre\",\n    ],\n    # Provide the 'java` binary explicitly so that the correct path is used by\n    # Bazel even when the host platform differs from the execution platform.\n    # Exactly one of the two globs will be empty depending on the host platform.\n    # When --incompatible_disallow_empty_glob is enabled, each individual empty\n    # glob will fail without allow_empty = True, even if the overall result is\n    # non-empty.\n    java = glob([\"bin/java.exe\", \"bin/java\"], allow_empty = True)[0],\n    version = 17,\n)\n",
               "sha256": "640453e8afe8ffe0fb4dceb4535fb50db9c283c64665eebb0ba68b19e65f4b1f",
               "strip_prefix": "zulu17.44.53-ca-jdk17.0.8.1-macosx_x64",
@@ -1972,29 +1963,26 @@
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_archive",
             "attributes": {
-              "name": "rules_java~7.1.0~toolchains~remotejdk21_macos",
               "build_file_content": "load(\"@rules_java//java:defs.bzl\", \"java_runtime\")\n\npackage(default_visibility = [\"//visibility:public\"])\n\nexports_files([\"WORKSPACE\", \"BUILD.bazel\"])\n\nfilegroup(\n    name = \"jre\",\n    srcs = glob(\n        [\n            \"jre/bin/**\",\n            \"jre/lib/**\",\n        ],\n        allow_empty = True,\n        # In some configurations, Java browser plugin is considered harmful and\n        # common antivirus software blocks access to npjp2.dll interfering with Bazel,\n        # so do not include it in JRE on Windows.\n        exclude = [\"jre/bin/plugin2/**\"],\n    ),\n)\n\nfilegroup(\n    name = \"jdk-bin\",\n    srcs = glob(\n        [\"bin/**\"],\n        # The JDK on Windows sometimes contains a directory called\n        # \"%systemroot%\", which is not a valid label.\n        exclude = [\"**/*%*/**\"],\n    ),\n)\n\n# This folder holds security policies.\nfilegroup(\n    name = \"jdk-conf\",\n    srcs = glob(\n        [\"conf/**\"],\n        allow_empty = True,\n    ),\n)\n\nfilegroup(\n    name = \"jdk-include\",\n    srcs = glob(\n        [\"include/**\"],\n        allow_empty = True,\n    ),\n)\n\nfilegroup(\n    name = \"jdk-lib\",\n    srcs = glob(\n        [\"lib/**\", \"release\"],\n        allow_empty = True,\n        exclude = [\n            \"lib/missioncontrol/**\",\n            \"lib/visualvm/**\",\n        ],\n    ),\n)\n\njava_runtime(\n    name = \"jdk\",\n    srcs = [\n        \":jdk-bin\",\n        \":jdk-conf\",\n        \":jdk-include\",\n        \":jdk-lib\",\n        \":jre\",\n    ],\n    # Provide the 'java` binary explicitly so that the correct path is used by\n    # Bazel even when the host platform differs from the execution platform.\n    # Exactly one of the two globs will be empty depending on the host platform.\n    # When --incompatible_disallow_empty_glob is enabled, each individual empty\n    # glob will fail without allow_empty = True, even if the overall result is\n    # non-empty.\n    java = glob([\"bin/java.exe\", \"bin/java\"], allow_empty = True)[0],\n    version = 21,\n)\n",
-              "sha256": "9639b87db586d0c89f7a9892ae47f421e442c64b97baebdff31788fbe23265bd",
-              "strip_prefix": "zulu21.28.85-ca-jdk21.0.0-macosx_x64",
+              "sha256": "3ad8fe288eb57d975c2786ae453a036aa46e47ab2ac3d81538ebae2a54d3c025",
+              "strip_prefix": "zulu21.32.17-ca-jdk21.0.2-macosx_x64",
               "urls": [
-                "https://mirror.bazel.build/cdn.azul.com/zulu/bin/zulu21.28.85-ca-jdk21.0.0-macosx_x64.tar.gz",
-                "https://cdn.azul.com/zulu/bin/zulu21.28.85-ca-jdk21.0.0-macosx_x64.tar.gz"
+                "https://mirror.bazel.build/cdn.azul.com/zulu/bin/zulu21.32.17-ca-jdk21.0.2-macosx_x64.tar.gz",
+                "https://cdn.azul.com/zulu/bin/zulu21.32.17-ca-jdk21.0.2-macosx_x64.tar.gz"
               ]
             }
           },
           "remotejdk21_macos_toolchain_config_repo": {
-            "bzlFile": "@@rules_java~7.1.0//toolchains:remote_java_repository.bzl",
+            "bzlFile": "@@rules_java~//toolchains:remote_java_repository.bzl",
             "ruleClassName": "_toolchain_config",
             "attributes": {
-              "name": "rules_java~7.1.0~toolchains~remotejdk21_macos_toolchain_config_repo",
               "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"remotejdk_21\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"21\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [\"@platforms//os:macos\", \"@platforms//cpu:x86_64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@remotejdk21_macos//:jdk\",\n)\ntoolchain(\n    name = \"bootstrap_runtime_toolchain\",\n    # These constraints are not required for correctness, but prevent fetches of remote JDK for\n    # different architectures. As every Java compilation toolchain depends on a bootstrap runtime in\n    # the same configuration, this constraint will not result in toolchain resolution failures.\n    exec_compatible_with = [\"@platforms//os:macos\", \"@platforms//cpu:x86_64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:bootstrap_runtime_toolchain_type\",\n    toolchain = \"@remotejdk21_macos//:jdk\",\n)\n"
             }
           },
           "remotejdk17_macos_aarch64_toolchain_config_repo": {
-            "bzlFile": "@@rules_java~7.1.0//toolchains:remote_java_repository.bzl",
+            "bzlFile": "@@rules_java~//toolchains:remote_java_repository.bzl",
             "ruleClassName": "_toolchain_config",
             "attributes": {
-              "name": "rules_java~7.1.0~toolchains~remotejdk17_macos_aarch64_toolchain_config_repo",
               "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"remotejdk_17\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"17\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [\"@platforms//os:macos\", \"@platforms//cpu:aarch64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@remotejdk17_macos_aarch64//:jdk\",\n)\ntoolchain(\n    name = \"bootstrap_runtime_toolchain\",\n    # These constraints are not required for correctness, but prevent fetches of remote JDK for\n    # different architectures. As every Java compilation toolchain depends on a bootstrap runtime in\n    # the same configuration, this constraint will not result in toolchain resolution failures.\n    exec_compatible_with = [\"@platforms//os:macos\", \"@platforms//cpu:aarch64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:bootstrap_runtime_toolchain_type\",\n    toolchain = \"@remotejdk17_macos_aarch64//:jdk\",\n)\n"
             }
           },
@@ -2002,7 +1990,6 @@
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_archive",
             "attributes": {
-              "name": "rules_java~7.1.0~toolchains~remotejdk17_win",
               "build_file_content": "load(\"@rules_java//java:defs.bzl\", \"java_runtime\")\n\npackage(default_visibility = [\"//visibility:public\"])\n\nexports_files([\"WORKSPACE\", \"BUILD.bazel\"])\n\nfilegroup(\n    name = \"jre\",\n    srcs = glob(\n        [\n            \"jre/bin/**\",\n            \"jre/lib/**\",\n        ],\n        allow_empty = True,\n        # In some configurations, Java browser plugin is considered harmful and\n        # common antivirus software blocks access to npjp2.dll interfering with Bazel,\n        # so do not include it in JRE on Windows.\n        exclude = [\"jre/bin/plugin2/**\"],\n    ),\n)\n\nfilegroup(\n    name = \"jdk-bin\",\n    srcs = glob(\n        [\"bin/**\"],\n        # The JDK on Windows sometimes contains a directory called\n        # \"%systemroot%\", which is not a valid label.\n        exclude = [\"**/*%*/**\"],\n    ),\n)\n\n# This folder holds security policies.\nfilegroup(\n    name = \"jdk-conf\",\n    srcs = glob(\n        [\"conf/**\"],\n        allow_empty = True,\n    ),\n)\n\nfilegroup(\n    name = \"jdk-include\",\n    srcs = glob(\n        [\"include/**\"],\n        allow_empty = True,\n    ),\n)\n\nfilegroup(\n    name = \"jdk-lib\",\n    srcs = glob(\n        [\"lib/**\", \"release\"],\n        allow_empty = True,\n        exclude = [\n            \"lib/missioncontrol/**\",\n            \"lib/visualvm/**\",\n        ],\n    ),\n)\n\njava_runtime(\n    name = \"jdk\",\n    srcs = [\n        \":jdk-bin\",\n        \":jdk-conf\",\n        \":jdk-include\",\n        \":jdk-lib\",\n        \":jre\",\n    ],\n    # Provide the 'java` binary explicitly so that the correct path is used by\n    # Bazel even when the host platform differs from the execution platform.\n    # Exactly one of the two globs will be empty depending on the host platform.\n    # When --incompatible_disallow_empty_glob is enabled, each individual empty\n    # glob will fail without allow_empty = True, even if the overall result is\n    # non-empty.\n    java = glob([\"bin/java.exe\", \"bin/java\"], allow_empty = True)[0],\n    version = 17,\n)\n",
               "sha256": "192f2afca57701de6ec496234f7e45d971bf623ff66b8ee4a5c81582054e5637",
               "strip_prefix": "zulu17.44.53-ca-jdk17.0.8.1-win_x64",
@@ -2013,18 +2000,16 @@
             }
           },
           "remotejdk11_macos_aarch64_toolchain_config_repo": {
-            "bzlFile": "@@rules_java~7.1.0//toolchains:remote_java_repository.bzl",
+            "bzlFile": "@@rules_java~//toolchains:remote_java_repository.bzl",
             "ruleClassName": "_toolchain_config",
             "attributes": {
-              "name": "rules_java~7.1.0~toolchains~remotejdk11_macos_aarch64_toolchain_config_repo",
               "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"remotejdk_11\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"11\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [\"@platforms//os:macos\", \"@platforms//cpu:aarch64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@remotejdk11_macos_aarch64//:jdk\",\n)\ntoolchain(\n    name = \"bootstrap_runtime_toolchain\",\n    # These constraints are not required for correctness, but prevent fetches of remote JDK for\n    # different architectures. As every Java compilation toolchain depends on a bootstrap runtime in\n    # the same configuration, this constraint will not result in toolchain resolution failures.\n    exec_compatible_with = [\"@platforms//os:macos\", \"@platforms//cpu:aarch64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:bootstrap_runtime_toolchain_type\",\n    toolchain = \"@remotejdk11_macos_aarch64//:jdk\",\n)\n"
             }
           },
           "remotejdk11_linux_ppc64le_toolchain_config_repo": {
-            "bzlFile": "@@rules_java~7.1.0//toolchains:remote_java_repository.bzl",
+            "bzlFile": "@@rules_java~//toolchains:remote_java_repository.bzl",
             "ruleClassName": "_toolchain_config",
             "attributes": {
-              "name": "rules_java~7.1.0~toolchains~remotejdk11_linux_ppc64le_toolchain_config_repo",
               "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"remotejdk_11\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"11\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [\"@platforms//os:linux\", \"@platforms//cpu:ppc\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@remotejdk11_linux_ppc64le//:jdk\",\n)\ntoolchain(\n    name = \"bootstrap_runtime_toolchain\",\n    # These constraints are not required for correctness, but prevent fetches of remote JDK for\n    # different architectures. As every Java compilation toolchain depends on a bootstrap runtime in\n    # the same configuration, this constraint will not result in toolchain resolution failures.\n    exec_compatible_with = [\"@platforms//os:linux\", \"@platforms//cpu:ppc\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:bootstrap_runtime_toolchain_type\",\n    toolchain = \"@remotejdk11_linux_ppc64le//:jdk\",\n)\n"
             }
           },
@@ -2032,13 +2017,12 @@
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_archive",
             "attributes": {
-              "name": "rules_java~7.1.0~toolchains~remotejdk21_linux",
               "build_file_content": "load(\"@rules_java//java:defs.bzl\", \"java_runtime\")\n\npackage(default_visibility = [\"//visibility:public\"])\n\nexports_files([\"WORKSPACE\", \"BUILD.bazel\"])\n\nfilegroup(\n    name = \"jre\",\n    srcs = glob(\n        [\n            \"jre/bin/**\",\n            \"jre/lib/**\",\n        ],\n        allow_empty = True,\n        # In some configurations, Java browser plugin is considered harmful and\n        # common antivirus software blocks access to npjp2.dll interfering with Bazel,\n        # so do not include it in JRE on Windows.\n        exclude = [\"jre/bin/plugin2/**\"],\n    ),\n)\n\nfilegroup(\n    name = \"jdk-bin\",\n    srcs = glob(\n        [\"bin/**\"],\n        # The JDK on Windows sometimes contains a directory called\n        # \"%systemroot%\", which is not a valid label.\n        exclude = [\"**/*%*/**\"],\n    ),\n)\n\n# This folder holds security policies.\nfilegroup(\n    name = \"jdk-conf\",\n    srcs = glob(\n        [\"conf/**\"],\n        allow_empty = True,\n    ),\n)\n\nfilegroup(\n    name = \"jdk-include\",\n    srcs = glob(\n        [\"include/**\"],\n        allow_empty = True,\n    ),\n)\n\nfilegroup(\n    name = \"jdk-lib\",\n    srcs = glob(\n        [\"lib/**\", \"release\"],\n        allow_empty = True,\n        exclude = [\n            \"lib/missioncontrol/**\",\n            \"lib/visualvm/**\",\n        ],\n    ),\n)\n\njava_runtime(\n    name = \"jdk\",\n    srcs = [\n        \":jdk-bin\",\n        \":jdk-conf\",\n        \":jdk-include\",\n        \":jdk-lib\",\n        \":jre\",\n    ],\n    # Provide the 'java` binary explicitly so that the correct path is used by\n    # Bazel even when the host platform differs from the execution platform.\n    # Exactly one of the two globs will be empty depending on the host platform.\n    # When --incompatible_disallow_empty_glob is enabled, each individual empty\n    # glob will fail without allow_empty = True, even if the overall result is\n    # non-empty.\n    java = glob([\"bin/java.exe\", \"bin/java\"], allow_empty = True)[0],\n    version = 21,\n)\n",
-              "sha256": "0c0eadfbdc47a7ca64aeab51b9c061f71b6e4d25d2d87674512e9b6387e9e3a6",
-              "strip_prefix": "zulu21.28.85-ca-jdk21.0.0-linux_x64",
+              "sha256": "5ad730fbee6bb49bfff10bf39e84392e728d89103d3474a7e5def0fd134b300a",
+              "strip_prefix": "zulu21.32.17-ca-jdk21.0.2-linux_x64",
               "urls": [
-                "https://mirror.bazel.build/cdn.azul.com/zulu/bin/zulu21.28.85-ca-jdk21.0.0-linux_x64.tar.gz",
-                "https://cdn.azul.com/zulu/bin/zulu21.28.85-ca-jdk21.0.0-linux_x64.tar.gz"
+                "https://mirror.bazel.build/cdn.azul.com/zulu/bin/zulu21.32.17-ca-jdk21.0.2-linux_x64.tar.gz",
+                "https://cdn.azul.com/zulu/bin/zulu21.32.17-ca-jdk21.0.2-linux_x64.tar.gz"
               ]
             }
           },
@@ -2046,11 +2030,10 @@
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_archive",
             "attributes": {
-              "name": "rules_java~7.1.0~toolchains~remote_java_tools_linux",
-              "sha256": "d134da9b04c9023fb6e56a5d4bffccee73f7bc9572ddc4e747778dacccd7a5a7",
+              "sha256": "ba10f09a138cf185d04cbc807d67a3da42ab13d618c5d1ce20d776e199c33a39",
               "urls": [
-                "https://mirror.bazel.build/bazel_java_tools/releases/java/v13.1/java_tools_linux-v13.1.zip",
-                "https://github.com/bazelbuild/java_tools/releases/download/java_v13.1/java_tools_linux-v13.1.zip"
+                "https://mirror.bazel.build/bazel_java_tools/releases/java/v13.4/java_tools_linux-v13.4.zip",
+                "https://github.com/bazelbuild/java_tools/releases/download/java_v13.4/java_tools_linux-v13.4.zip"
               ]
             }
           },
@@ -2058,13 +2041,12 @@
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_archive",
             "attributes": {
-              "name": "rules_java~7.1.0~toolchains~remotejdk21_win",
               "build_file_content": "load(\"@rules_java//java:defs.bzl\", \"java_runtime\")\n\npackage(default_visibility = [\"//visibility:public\"])\n\nexports_files([\"WORKSPACE\", \"BUILD.bazel\"])\n\nfilegroup(\n    name = \"jre\",\n    srcs = glob(\n        [\n            \"jre/bin/**\",\n            \"jre/lib/**\",\n        ],\n        allow_empty = True,\n        # In some configurations, Java browser plugin is considered harmful and\n        # common antivirus software blocks access to npjp2.dll interfering with Bazel,\n        # so do not include it in JRE on Windows.\n        exclude = [\"jre/bin/plugin2/**\"],\n    ),\n)\n\nfilegroup(\n    name = \"jdk-bin\",\n    srcs = glob(\n        [\"bin/**\"],\n        # The JDK on Windows sometimes contains a directory called\n        # \"%systemroot%\", which is not a valid label.\n        exclude = [\"**/*%*/**\"],\n    ),\n)\n\n# This folder holds security policies.\nfilegroup(\n    name = \"jdk-conf\",\n    srcs = glob(\n        [\"conf/**\"],\n        allow_empty = True,\n    ),\n)\n\nfilegroup(\n    name = \"jdk-include\",\n    srcs = glob(\n        [\"include/**\"],\n        allow_empty = True,\n    ),\n)\n\nfilegroup(\n    name = \"jdk-lib\",\n    srcs = glob(\n        [\"lib/**\", \"release\"],\n        allow_empty = True,\n        exclude = [\n            \"lib/missioncontrol/**\",\n            \"lib/visualvm/**\",\n        ],\n    ),\n)\n\njava_runtime(\n    name = \"jdk\",\n    srcs = [\n        \":jdk-bin\",\n        \":jdk-conf\",\n        \":jdk-include\",\n        \":jdk-lib\",\n        \":jre\",\n    ],\n    # Provide the 'java` binary explicitly so that the correct path is used by\n    # Bazel even when the host platform differs from the execution platform.\n    # Exactly one of the two globs will be empty depending on the host platform.\n    # When --incompatible_disallow_empty_glob is enabled, each individual empty\n    # glob will fail without allow_empty = True, even if the overall result is\n    # non-empty.\n    java = glob([\"bin/java.exe\", \"bin/java\"], allow_empty = True)[0],\n    version = 21,\n)\n",
-              "sha256": "e9959d500a0d9a7694ac243baf657761479da132f0f94720cbffd092150bd802",
-              "strip_prefix": "zulu21.28.85-ca-jdk21.0.0-win_x64",
+              "sha256": "f7cc15ca17295e69c907402dfe8db240db446e75d3b150da7bf67243cded93de",
+              "strip_prefix": "zulu21.32.17-ca-jdk21.0.2-win_x64",
               "urls": [
-                "https://mirror.bazel.build/cdn.azul.com/zulu/bin/zulu21.28.85-ca-jdk21.0.0-win_x64.zip",
-                "https://cdn.azul.com/zulu/bin/zulu21.28.85-ca-jdk21.0.0-win_x64.zip"
+                "https://mirror.bazel.build/cdn.azul.com/zulu/bin/zulu21.32.17-ca-jdk21.0.2-win_x64.zip",
+                "https://cdn.azul.com/zulu/bin/zulu21.32.17-ca-jdk21.0.2-win_x64.zip"
               ]
             }
           },
@@ -2072,21 +2054,19 @@
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_archive",
             "attributes": {
-              "name": "rules_java~7.1.0~toolchains~remotejdk21_linux_aarch64",
               "build_file_content": "load(\"@rules_java//java:defs.bzl\", \"java_runtime\")\n\npackage(default_visibility = [\"//visibility:public\"])\n\nexports_files([\"WORKSPACE\", \"BUILD.bazel\"])\n\nfilegroup(\n    name = \"jre\",\n    srcs = glob(\n        [\n            \"jre/bin/**\",\n            \"jre/lib/**\",\n        ],\n        allow_empty = True,\n        # In some configurations, Java browser plugin is considered harmful and\n        # common antivirus software blocks access to npjp2.dll interfering with Bazel,\n        # so do not include it in JRE on Windows.\n        exclude = [\"jre/bin/plugin2/**\"],\n    ),\n)\n\nfilegroup(\n    name = \"jdk-bin\",\n    srcs = glob(\n        [\"bin/**\"],\n        # The JDK on Windows sometimes contains a directory called\n        # \"%systemroot%\", which is not a valid label.\n        exclude = [\"**/*%*/**\"],\n    ),\n)\n\n# This folder holds security policies.\nfilegroup(\n    name = \"jdk-conf\",\n    srcs = glob(\n        [\"conf/**\"],\n        allow_empty = True,\n    ),\n)\n\nfilegroup(\n    name = \"jdk-include\",\n    srcs = glob(\n        [\"include/**\"],\n        allow_empty = True,\n    ),\n)\n\nfilegroup(\n    name = \"jdk-lib\",\n    srcs = glob(\n        [\"lib/**\", \"release\"],\n        allow_empty = True,\n        exclude = [\n            \"lib/missioncontrol/**\",\n            \"lib/visualvm/**\",\n        ],\n    ),\n)\n\njava_runtime(\n    name = \"jdk\",\n    srcs = [\n        \":jdk-bin\",\n        \":jdk-conf\",\n        \":jdk-include\",\n        \":jdk-lib\",\n        \":jre\",\n    ],\n    # Provide the 'java` binary explicitly so that the correct path is used by\n    # Bazel even when the host platform differs from the execution platform.\n    # Exactly one of the two globs will be empty depending on the host platform.\n    # When --incompatible_disallow_empty_glob is enabled, each individual empty\n    # glob will fail without allow_empty = True, even if the overall result is\n    # non-empty.\n    java = glob([\"bin/java.exe\", \"bin/java\"], allow_empty = True)[0],\n    version = 21,\n)\n",
-              "sha256": "1fb64b8036c5d463d8ab59af06bf5b6b006811e6012e3b0eb6bccf57f1c55835",
-              "strip_prefix": "zulu21.28.85-ca-jdk21.0.0-linux_aarch64",
+              "sha256": "ce7df1af5d44a9f455617c4b8891443fbe3e4b269c777d8b82ed66f77167cfe0",
+              "strip_prefix": "zulu21.32.17-ca-jdk21.0.2-linux_aarch64",
               "urls": [
-                "https://mirror.bazel.build/cdn.azul.com/zulu/bin/zulu21.28.85-ca-jdk21.0.0-linux_aarch64.tar.gz",
-                "https://cdn.azul.com/zulu/bin/zulu21.28.85-ca-jdk21.0.0-linux_aarch64.tar.gz"
+                "https://cdn.azul.com/zulu/bin/zulu21.32.17-ca-jdk21.0.2-linux_aarch64.tar.gz",
+                "https://mirror.bazel.build/cdn.azul.com/zulu/bin/zulu21.32.17-ca-jdk21.0.2-linux_aarch64.tar.gz"
               ]
             }
           },
           "remotejdk11_linux_aarch64_toolchain_config_repo": {
-            "bzlFile": "@@rules_java~7.1.0//toolchains:remote_java_repository.bzl",
+            "bzlFile": "@@rules_java~//toolchains:remote_java_repository.bzl",
             "ruleClassName": "_toolchain_config",
             "attributes": {
-              "name": "rules_java~7.1.0~toolchains~remotejdk11_linux_aarch64_toolchain_config_repo",
               "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"remotejdk_11\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"11\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [\"@platforms//os:linux\", \"@platforms//cpu:aarch64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@remotejdk11_linux_aarch64//:jdk\",\n)\ntoolchain(\n    name = \"bootstrap_runtime_toolchain\",\n    # These constraints are not required for correctness, but prevent fetches of remote JDK for\n    # different architectures. As every Java compilation toolchain depends on a bootstrap runtime in\n    # the same configuration, this constraint will not result in toolchain resolution failures.\n    exec_compatible_with = [\"@platforms//os:linux\", \"@platforms//cpu:aarch64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:bootstrap_runtime_toolchain_type\",\n    toolchain = \"@remotejdk11_linux_aarch64//:jdk\",\n)\n"
             }
           },
@@ -2094,7 +2074,6 @@
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_archive",
             "attributes": {
-              "name": "rules_java~7.1.0~toolchains~remotejdk11_linux_s390x",
               "build_file_content": "load(\"@rules_java//java:defs.bzl\", \"java_runtime\")\n\npackage(default_visibility = [\"//visibility:public\"])\n\nexports_files([\"WORKSPACE\", \"BUILD.bazel\"])\n\nfilegroup(\n    name = \"jre\",\n    srcs = glob(\n        [\n            \"jre/bin/**\",\n            \"jre/lib/**\",\n        ],\n        allow_empty = True,\n        # In some configurations, Java browser plugin is considered harmful and\n        # common antivirus software blocks access to npjp2.dll interfering with Bazel,\n        # so do not include it in JRE on Windows.\n        exclude = [\"jre/bin/plugin2/**\"],\n    ),\n)\n\nfilegroup(\n    name = \"jdk-bin\",\n    srcs = glob(\n        [\"bin/**\"],\n        # The JDK on Windows sometimes contains a directory called\n        # \"%systemroot%\", which is not a valid label.\n        exclude = [\"**/*%*/**\"],\n    ),\n)\n\n# This folder holds security policies.\nfilegroup(\n    name = \"jdk-conf\",\n    srcs = glob(\n        [\"conf/**\"],\n        allow_empty = True,\n    ),\n)\n\nfilegroup(\n    name = \"jdk-include\",\n    srcs = glob(\n        [\"include/**\"],\n        allow_empty = True,\n    ),\n)\n\nfilegroup(\n    name = \"jdk-lib\",\n    srcs = glob(\n        [\"lib/**\", \"release\"],\n        allow_empty = True,\n        exclude = [\n            \"lib/missioncontrol/**\",\n            \"lib/visualvm/**\",\n        ],\n    ),\n)\n\njava_runtime(\n    name = \"jdk\",\n    srcs = [\n        \":jdk-bin\",\n        \":jdk-conf\",\n        \":jdk-include\",\n        \":jdk-lib\",\n        \":jre\",\n    ],\n    # Provide the 'java` binary explicitly so that the correct path is used by\n    # Bazel even when the host platform differs from the execution platform.\n    # Exactly one of the two globs will be empty depending on the host platform.\n    # When --incompatible_disallow_empty_glob is enabled, each individual empty\n    # glob will fail without allow_empty = True, even if the overall result is\n    # non-empty.\n    java = glob([\"bin/java.exe\", \"bin/java\"], allow_empty = True)[0],\n    version = 11,\n)\n",
               "sha256": "a58fc0361966af0a5d5a31a2d8a208e3c9bb0f54f345596fd80b99ea9a39788b",
               "strip_prefix": "jdk-11.0.15+10",
@@ -2108,7 +2087,6 @@
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_archive",
             "attributes": {
-              "name": "rules_java~7.1.0~toolchains~remotejdk17_linux_aarch64",
               "build_file_content": "load(\"@rules_java//java:defs.bzl\", \"java_runtime\")\n\npackage(default_visibility = [\"//visibility:public\"])\n\nexports_files([\"WORKSPACE\", \"BUILD.bazel\"])\n\nfilegroup(\n    name = \"jre\",\n    srcs = glob(\n        [\n            \"jre/bin/**\",\n            \"jre/lib/**\",\n        ],\n        allow_empty = True,\n        # In some configurations, Java browser plugin is considered harmful and\n        # common antivirus software blocks access to npjp2.dll interfering with Bazel,\n        # so do not include it in JRE on Windows.\n        exclude = [\"jre/bin/plugin2/**\"],\n    ),\n)\n\nfilegroup(\n    name = \"jdk-bin\",\n    srcs = glob(\n        [\"bin/**\"],\n        # The JDK on Windows sometimes contains a directory called\n        # \"%systemroot%\", which is not a valid label.\n        exclude = [\"**/*%*/**\"],\n    ),\n)\n\n# This folder holds security policies.\nfilegroup(\n    name = \"jdk-conf\",\n    srcs = glob(\n        [\"conf/**\"],\n        allow_empty = True,\n    ),\n)\n\nfilegroup(\n    name = \"jdk-include\",\n    srcs = glob(\n        [\"include/**\"],\n        allow_empty = True,\n    ),\n)\n\nfilegroup(\n    name = \"jdk-lib\",\n    srcs = glob(\n        [\"lib/**\", \"release\"],\n        allow_empty = True,\n        exclude = [\n            \"lib/missioncontrol/**\",\n            \"lib/visualvm/**\",\n        ],\n    ),\n)\n\njava_runtime(\n    name = \"jdk\",\n    srcs = [\n        \":jdk-bin\",\n        \":jdk-conf\",\n        \":jdk-include\",\n        \":jdk-lib\",\n        \":jre\",\n    ],\n    # Provide the 'java` binary explicitly so that the correct path is used by\n    # Bazel even when the host platform differs from the execution platform.\n    # Exactly one of the two globs will be empty depending on the host platform.\n    # When --incompatible_disallow_empty_glob is enabled, each individual empty\n    # glob will fail without allow_empty = True, even if the overall result is\n    # non-empty.\n    java = glob([\"bin/java.exe\", \"bin/java\"], allow_empty = True)[0],\n    version = 17,\n)\n",
               "sha256": "6531cef61e416d5a7b691555c8cf2bdff689201b8a001ff45ab6740062b44313",
               "strip_prefix": "zulu17.44.53-ca-jdk17.0.8.1-linux_aarch64",
@@ -2119,10 +2097,9 @@
             }
           },
           "remotejdk17_win_arm64_toolchain_config_repo": {
-            "bzlFile": "@@rules_java~7.1.0//toolchains:remote_java_repository.bzl",
+            "bzlFile": "@@rules_java~//toolchains:remote_java_repository.bzl",
             "ruleClassName": "_toolchain_config",
             "attributes": {
-              "name": "rules_java~7.1.0~toolchains~remotejdk17_win_arm64_toolchain_config_repo",
               "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"remotejdk_17\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"17\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [\"@platforms//os:windows\", \"@platforms//cpu:arm64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@remotejdk17_win_arm64//:jdk\",\n)\ntoolchain(\n    name = \"bootstrap_runtime_toolchain\",\n    # These constraints are not required for correctness, but prevent fetches of remote JDK for\n    # different architectures. As every Java compilation toolchain depends on a bootstrap runtime in\n    # the same configuration, this constraint will not result in toolchain resolution failures.\n    exec_compatible_with = [\"@platforms//os:windows\", \"@platforms//cpu:arm64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:bootstrap_runtime_toolchain_type\",\n    toolchain = \"@remotejdk17_win_arm64//:jdk\",\n)\n"
             }
           },
@@ -2130,7 +2107,6 @@
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_archive",
             "attributes": {
-              "name": "rules_java~7.1.0~toolchains~remotejdk11_linux",
               "build_file_content": "load(\"@rules_java//java:defs.bzl\", \"java_runtime\")\n\npackage(default_visibility = [\"//visibility:public\"])\n\nexports_files([\"WORKSPACE\", \"BUILD.bazel\"])\n\nfilegroup(\n    name = \"jre\",\n    srcs = glob(\n        [\n            \"jre/bin/**\",\n            \"jre/lib/**\",\n        ],\n        allow_empty = True,\n        # In some configurations, Java browser plugin is considered harmful and\n        # common antivirus software blocks access to npjp2.dll interfering with Bazel,\n        # so do not include it in JRE on Windows.\n        exclude = [\"jre/bin/plugin2/**\"],\n    ),\n)\n\nfilegroup(\n    name = \"jdk-bin\",\n    srcs = glob(\n        [\"bin/**\"],\n        # The JDK on Windows sometimes contains a directory called\n        # \"%systemroot%\", which is not a valid label.\n        exclude = [\"**/*%*/**\"],\n    ),\n)\n\n# This folder holds security policies.\nfilegroup(\n    name = \"jdk-conf\",\n    srcs = glob(\n        [\"conf/**\"],\n        allow_empty = True,\n    ),\n)\n\nfilegroup(\n    name = \"jdk-include\",\n    srcs = glob(\n        [\"include/**\"],\n        allow_empty = True,\n    ),\n)\n\nfilegroup(\n    name = \"jdk-lib\",\n    srcs = glob(\n        [\"lib/**\", \"release\"],\n        allow_empty = True,\n        exclude = [\n            \"lib/missioncontrol/**\",\n            \"lib/visualvm/**\",\n        ],\n    ),\n)\n\njava_runtime(\n    name = \"jdk\",\n    srcs = [\n        \":jdk-bin\",\n        \":jdk-conf\",\n        \":jdk-include\",\n        \":jdk-lib\",\n        \":jre\",\n    ],\n    # Provide the 'java` binary explicitly so that the correct path is used by\n    # Bazel even when the host platform differs from the execution platform.\n    # Exactly one of the two globs will be empty depending on the host platform.\n    # When --incompatible_disallow_empty_glob is enabled, each individual empty\n    # glob will fail without allow_empty = True, even if the overall result is\n    # non-empty.\n    java = glob([\"bin/java.exe\", \"bin/java\"], allow_empty = True)[0],\n    version = 11,\n)\n",
               "sha256": "a34b404f87a08a61148b38e1416d837189e1df7a040d949e743633daf4695a3c",
               "strip_prefix": "zulu11.66.15-ca-jdk11.0.20-linux_x64",
@@ -2141,18 +2117,16 @@
             }
           },
           "remotejdk11_macos_toolchain_config_repo": {
-            "bzlFile": "@@rules_java~7.1.0//toolchains:remote_java_repository.bzl",
+            "bzlFile": "@@rules_java~//toolchains:remote_java_repository.bzl",
             "ruleClassName": "_toolchain_config",
             "attributes": {
-              "name": "rules_java~7.1.0~toolchains~remotejdk11_macos_toolchain_config_repo",
               "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"remotejdk_11\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"11\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [\"@platforms//os:macos\", \"@platforms//cpu:x86_64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@remotejdk11_macos//:jdk\",\n)\ntoolchain(\n    name = \"bootstrap_runtime_toolchain\",\n    # These constraints are not required for correctness, but prevent fetches of remote JDK for\n    # different architectures. As every Java compilation toolchain depends on a bootstrap runtime in\n    # the same configuration, this constraint will not result in toolchain resolution failures.\n    exec_compatible_with = [\"@platforms//os:macos\", \"@platforms//cpu:x86_64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:bootstrap_runtime_toolchain_type\",\n    toolchain = \"@remotejdk11_macos//:jdk\",\n)\n"
             }
           },
           "remotejdk17_linux_ppc64le_toolchain_config_repo": {
-            "bzlFile": "@@rules_java~7.1.0//toolchains:remote_java_repository.bzl",
+            "bzlFile": "@@rules_java~//toolchains:remote_java_repository.bzl",
             "ruleClassName": "_toolchain_config",
             "attributes": {
-              "name": "rules_java~7.1.0~toolchains~remotejdk17_linux_ppc64le_toolchain_config_repo",
               "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"remotejdk_17\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"17\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [\"@platforms//os:linux\", \"@platforms//cpu:ppc\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@remotejdk17_linux_ppc64le//:jdk\",\n)\ntoolchain(\n    name = \"bootstrap_runtime_toolchain\",\n    # These constraints are not required for correctness, but prevent fetches of remote JDK for\n    # different architectures. As every Java compilation toolchain depends on a bootstrap runtime in\n    # the same configuration, this constraint will not result in toolchain resolution failures.\n    exec_compatible_with = [\"@platforms//os:linux\", \"@platforms//cpu:ppc\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:bootstrap_runtime_toolchain_type\",\n    toolchain = \"@remotejdk17_linux_ppc64le//:jdk\",\n)\n"
             }
           },
@@ -2160,7 +2134,6 @@
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_archive",
             "attributes": {
-              "name": "rules_java~7.1.0~toolchains~remotejdk17_win_arm64",
               "build_file_content": "load(\"@rules_java//java:defs.bzl\", \"java_runtime\")\n\npackage(default_visibility = [\"//visibility:public\"])\n\nexports_files([\"WORKSPACE\", \"BUILD.bazel\"])\n\nfilegroup(\n    name = \"jre\",\n    srcs = glob(\n        [\n            \"jre/bin/**\",\n            \"jre/lib/**\",\n        ],\n        allow_empty = True,\n        # In some configurations, Java browser plugin is considered harmful and\n        # common antivirus software blocks access to npjp2.dll interfering with Bazel,\n        # so do not include it in JRE on Windows.\n        exclude = [\"jre/bin/plugin2/**\"],\n    ),\n)\n\nfilegroup(\n    name = \"jdk-bin\",\n    srcs = glob(\n        [\"bin/**\"],\n        # The JDK on Windows sometimes contains a directory called\n        # \"%systemroot%\", which is not a valid label.\n        exclude = [\"**/*%*/**\"],\n    ),\n)\n\n# This folder holds security policies.\nfilegroup(\n    name = \"jdk-conf\",\n    srcs = glob(\n        [\"conf/**\"],\n        allow_empty = True,\n    ),\n)\n\nfilegroup(\n    name = \"jdk-include\",\n    srcs = glob(\n        [\"include/**\"],\n        allow_empty = True,\n    ),\n)\n\nfilegroup(\n    name = \"jdk-lib\",\n    srcs = glob(\n        [\"lib/**\", \"release\"],\n        allow_empty = True,\n        exclude = [\n            \"lib/missioncontrol/**\",\n            \"lib/visualvm/**\",\n        ],\n    ),\n)\n\njava_runtime(\n    name = \"jdk\",\n    srcs = [\n        \":jdk-bin\",\n        \":jdk-conf\",\n        \":jdk-include\",\n        \":jdk-lib\",\n        \":jre\",\n    ],\n    # Provide the 'java` binary explicitly so that the correct path is used by\n    # Bazel even when the host platform differs from the execution platform.\n    # Exactly one of the two globs will be empty depending on the host platform.\n    # When --incompatible_disallow_empty_glob is enabled, each individual empty\n    # glob will fail without allow_empty = True, even if the overall result is\n    # non-empty.\n    java = glob([\"bin/java.exe\", \"bin/java\"], allow_empty = True)[0],\n    version = 17,\n)\n",
               "sha256": "6802c99eae0d788e21f52d03cab2e2b3bf42bc334ca03cbf19f71eb70ee19f85",
               "strip_prefix": "zulu17.44.53-ca-jdk17.0.8.1-win_aarch64",
@@ -2174,11 +2147,10 @@
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_archive",
             "attributes": {
-              "name": "rules_java~7.1.0~toolchains~remote_java_tools_darwin_arm64",
-              "sha256": "dab5bb87ec43e980faea6e1cec14bafb217b8e2f5346f53aa784fd715929a930",
+              "sha256": "076a7e198ad077f8c7d997986ef5102427fae6bbfce7a7852d2e080ed8767528",
               "urls": [
-                "https://mirror.bazel.build/bazel_java_tools/releases/java/v13.1/java_tools_darwin_arm64-v13.1.zip",
-                "https://github.com/bazelbuild/java_tools/releases/download/java_v13.1/java_tools_darwin_arm64-v13.1.zip"
+                "https://mirror.bazel.build/bazel_java_tools/releases/java/v13.4/java_tools_darwin_arm64-v13.4.zip",
+                "https://github.com/bazelbuild/java_tools/releases/download/java_v13.4/java_tools_darwin_arm64-v13.4.zip"
               ]
             }
           },
@@ -2186,7 +2158,6 @@
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_archive",
             "attributes": {
-              "name": "rules_java~7.1.0~toolchains~remotejdk17_linux_ppc64le",
               "build_file_content": "load(\"@rules_java//java:defs.bzl\", \"java_runtime\")\n\npackage(default_visibility = [\"//visibility:public\"])\n\nexports_files([\"WORKSPACE\", \"BUILD.bazel\"])\n\nfilegroup(\n    name = \"jre\",\n    srcs = glob(\n        [\n            \"jre/bin/**\",\n            \"jre/lib/**\",\n        ],\n        allow_empty = True,\n        # In some configurations, Java browser plugin is considered harmful and\n        # common antivirus software blocks access to npjp2.dll interfering with Bazel,\n        # so do not include it in JRE on Windows.\n        exclude = [\"jre/bin/plugin2/**\"],\n    ),\n)\n\nfilegroup(\n    name = \"jdk-bin\",\n    srcs = glob(\n        [\"bin/**\"],\n        # The JDK on Windows sometimes contains a directory called\n        # \"%systemroot%\", which is not a valid label.\n        exclude = [\"**/*%*/**\"],\n    ),\n)\n\n# This folder holds security policies.\nfilegroup(\n    name = \"jdk-conf\",\n    srcs = glob(\n        [\"conf/**\"],\n        allow_empty = True,\n    ),\n)\n\nfilegroup(\n    name = \"jdk-include\",\n    srcs = glob(\n        [\"include/**\"],\n        allow_empty = True,\n    ),\n)\n\nfilegroup(\n    name = \"jdk-lib\",\n    srcs = glob(\n        [\"lib/**\", \"release\"],\n        allow_empty = True,\n        exclude = [\n            \"lib/missioncontrol/**\",\n            \"lib/visualvm/**\",\n        ],\n    ),\n)\n\njava_runtime(\n    name = \"jdk\",\n    srcs = [\n        \":jdk-bin\",\n        \":jdk-conf\",\n        \":jdk-include\",\n        \":jdk-lib\",\n        \":jre\",\n    ],\n    # Provide the 'java` binary explicitly so that the correct path is used by\n    # Bazel even when the host platform differs from the execution platform.\n    # Exactly one of the two globs will be empty depending on the host platform.\n    # When --incompatible_disallow_empty_glob is enabled, each individual empty\n    # glob will fail without allow_empty = True, even if the overall result is\n    # non-empty.\n    java = glob([\"bin/java.exe\", \"bin/java\"], allow_empty = True)[0],\n    version = 17,\n)\n",
               "sha256": "00a4c07603d0218cd678461b5b3b7e25b3253102da4022d31fc35907f21a2efd",
               "strip_prefix": "jdk-17.0.8.1+1",
@@ -2197,26 +2168,23 @@
             }
           },
           "remotejdk21_linux_aarch64_toolchain_config_repo": {
-            "bzlFile": "@@rules_java~7.1.0//toolchains:remote_java_repository.bzl",
+            "bzlFile": "@@rules_java~//toolchains:remote_java_repository.bzl",
             "ruleClassName": "_toolchain_config",
             "attributes": {
-              "name": "rules_java~7.1.0~toolchains~remotejdk21_linux_aarch64_toolchain_config_repo",
               "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"remotejdk_21\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"21\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [\"@platforms//os:linux\", \"@platforms//cpu:aarch64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@remotejdk21_linux_aarch64//:jdk\",\n)\ntoolchain(\n    name = \"bootstrap_runtime_toolchain\",\n    # These constraints are not required for correctness, but prevent fetches of remote JDK for\n    # different architectures. As every Java compilation toolchain depends on a bootstrap runtime in\n    # the same configuration, this constraint will not result in toolchain resolution failures.\n    exec_compatible_with = [\"@platforms//os:linux\", \"@platforms//cpu:aarch64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:bootstrap_runtime_toolchain_type\",\n    toolchain = \"@remotejdk21_linux_aarch64//:jdk\",\n)\n"
             }
           },
           "remotejdk11_win_arm64_toolchain_config_repo": {
-            "bzlFile": "@@rules_java~7.1.0//toolchains:remote_java_repository.bzl",
+            "bzlFile": "@@rules_java~//toolchains:remote_java_repository.bzl",
             "ruleClassName": "_toolchain_config",
             "attributes": {
-              "name": "rules_java~7.1.0~toolchains~remotejdk11_win_arm64_toolchain_config_repo",
               "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"remotejdk_11\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"11\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [\"@platforms//os:windows\", \"@platforms//cpu:arm64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@remotejdk11_win_arm64//:jdk\",\n)\ntoolchain(\n    name = \"bootstrap_runtime_toolchain\",\n    # These constraints are not required for correctness, but prevent fetches of remote JDK for\n    # different architectures. As every Java compilation toolchain depends on a bootstrap runtime in\n    # the same configuration, this constraint will not result in toolchain resolution failures.\n    exec_compatible_with = [\"@platforms//os:windows\", \"@platforms//cpu:arm64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:bootstrap_runtime_toolchain_type\",\n    toolchain = \"@remotejdk11_win_arm64//:jdk\",\n)\n"
             }
           },
           "local_jdk": {
-            "bzlFile": "@@rules_java~7.1.0//toolchains:local_java_repository.bzl",
+            "bzlFile": "@@rules_java~//toolchains:local_java_repository.bzl",
             "ruleClassName": "_local_java_repository_rule",
             "attributes": {
-              "name": "rules_java~7.1.0~toolchains~local_jdk",
               "java_home": "",
               "version": "",
               "build_file_content": "load(\"@rules_java//java:defs.bzl\", \"java_runtime\")\n\npackage(default_visibility = [\"//visibility:public\"])\n\nexports_files([\"WORKSPACE\", \"BUILD.bazel\"])\n\nfilegroup(\n    name = \"jre\",\n    srcs = glob(\n        [\n            \"jre/bin/**\",\n            \"jre/lib/**\",\n        ],\n        allow_empty = True,\n        # In some configurations, Java browser plugin is considered harmful and\n        # common antivirus software blocks access to npjp2.dll interfering with Bazel,\n        # so do not include it in JRE on Windows.\n        exclude = [\"jre/bin/plugin2/**\"],\n    ),\n)\n\nfilegroup(\n    name = \"jdk-bin\",\n    srcs = glob(\n        [\"bin/**\"],\n        # The JDK on Windows sometimes contains a directory called\n        # \"%systemroot%\", which is not a valid label.\n        exclude = [\"**/*%*/**\"],\n    ),\n)\n\n# This folder holds security policies.\nfilegroup(\n    name = \"jdk-conf\",\n    srcs = glob(\n        [\"conf/**\"],\n        allow_empty = True,\n    ),\n)\n\nfilegroup(\n    name = \"jdk-include\",\n    srcs = glob(\n        [\"include/**\"],\n        allow_empty = True,\n    ),\n)\n\nfilegroup(\n    name = \"jdk-lib\",\n    srcs = glob(\n        [\"lib/**\", \"release\"],\n        allow_empty = True,\n        exclude = [\n            \"lib/missioncontrol/**\",\n            \"lib/visualvm/**\",\n        ],\n    ),\n)\n\njava_runtime(\n    name = \"jdk\",\n    srcs = [\n        \":jdk-bin\",\n        \":jdk-conf\",\n        \":jdk-include\",\n        \":jdk-lib\",\n        \":jre\",\n    ],\n    # Provide the 'java` binary explicitly so that the correct path is used by\n    # Bazel even when the host platform differs from the execution platform.\n    # Exactly one of the two globs will be empty depending on the host platform.\n    # When --incompatible_disallow_empty_glob is enabled, each individual empty\n    # glob will fail without allow_empty = True, even if the overall result is\n    # non-empty.\n    java = glob([\"bin/java.exe\", \"bin/java\"], allow_empty = True)[0],\n    version = {RUNTIME_VERSION},\n)\n"
@@ -2226,11 +2194,10 @@
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_archive",
             "attributes": {
-              "name": "rules_java~7.1.0~toolchains~remote_java_tools_darwin_x86_64",
-              "sha256": "0db40d8505a2b65ef0ed46e4256757807db8162f7acff16225be57c1d5726dbc",
+              "sha256": "4523aec4d09c587091a2dae6f5c9bc6922c220f3b6030e5aba9c8f015913cc65",
               "urls": [
-                "https://mirror.bazel.build/bazel_java_tools/releases/java/v13.1/java_tools_darwin_x86_64-v13.1.zip",
-                "https://github.com/bazelbuild/java_tools/releases/download/java_v13.1/java_tools_darwin_x86_64-v13.1.zip"
+                "https://mirror.bazel.build/bazel_java_tools/releases/java/v13.4/java_tools_darwin_x86_64-v13.4.zip",
+                "https://github.com/bazelbuild/java_tools/releases/download/java_v13.4/java_tools_darwin_x86_64-v13.4.zip"
               ]
             }
           },
@@ -2238,11 +2205,10 @@
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_archive",
             "attributes": {
-              "name": "rules_java~7.1.0~toolchains~remote_java_tools",
-              "sha256": "286bdbbd66e616fc4ed3f90101418729a73baa7e8c23a98ffbef558f74c0ad14",
+              "sha256": "e025fd260ac39b47c111f5212d64ec0d00d85dec16e49368aae82fc626a940cf",
               "urls": [
-                "https://mirror.bazel.build/bazel_java_tools/releases/java/v13.1/java_tools-v13.1.zip",
-                "https://github.com/bazelbuild/java_tools/releases/download/java_v13.1/java_tools-v13.1.zip"
+                "https://mirror.bazel.build/bazel_java_tools/releases/java/v13.4/java_tools-v13.4.zip",
+                "https://github.com/bazelbuild/java_tools/releases/download/java_v13.4/java_tools-v13.4.zip"
               ]
             }
           },
@@ -2250,7 +2216,6 @@
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_archive",
             "attributes": {
-              "name": "rules_java~7.1.0~toolchains~remotejdk17_linux_s390x",
               "build_file_content": "load(\"@rules_java//java:defs.bzl\", \"java_runtime\")\n\npackage(default_visibility = [\"//visibility:public\"])\n\nexports_files([\"WORKSPACE\", \"BUILD.bazel\"])\n\nfilegroup(\n    name = \"jre\",\n    srcs = glob(\n        [\n            \"jre/bin/**\",\n            \"jre/lib/**\",\n        ],\n        allow_empty = True,\n        # In some configurations, Java browser plugin is considered harmful and\n        # common antivirus software blocks access to npjp2.dll interfering with Bazel,\n        # so do not include it in JRE on Windows.\n        exclude = [\"jre/bin/plugin2/**\"],\n    ),\n)\n\nfilegroup(\n    name = \"jdk-bin\",\n    srcs = glob(\n        [\"bin/**\"],\n        # The JDK on Windows sometimes contains a directory called\n        # \"%systemroot%\", which is not a valid label.\n        exclude = [\"**/*%*/**\"],\n    ),\n)\n\n# This folder holds security policies.\nfilegroup(\n    name = \"jdk-conf\",\n    srcs = glob(\n        [\"conf/**\"],\n        allow_empty = True,\n    ),\n)\n\nfilegroup(\n    name = \"jdk-include\",\n    srcs = glob(\n        [\"include/**\"],\n        allow_empty = True,\n    ),\n)\n\nfilegroup(\n    name = \"jdk-lib\",\n    srcs = glob(\n        [\"lib/**\", \"release\"],\n        allow_empty = True,\n        exclude = [\n            \"lib/missioncontrol/**\",\n            \"lib/visualvm/**\",\n        ],\n    ),\n)\n\njava_runtime(\n    name = \"jdk\",\n    srcs = [\n        \":jdk-bin\",\n        \":jdk-conf\",\n        \":jdk-include\",\n        \":jdk-lib\",\n        \":jre\",\n    ],\n    # Provide the 'java` binary explicitly so that the correct path is used by\n    # Bazel even when the host platform differs from the execution platform.\n    # Exactly one of the two globs will be empty depending on the host platform.\n    # When --incompatible_disallow_empty_glob is enabled, each individual empty\n    # glob will fail without allow_empty = True, even if the overall result is\n    # non-empty.\n    java = glob([\"bin/java.exe\", \"bin/java\"], allow_empty = True)[0],\n    version = 17,\n)\n",
               "sha256": "ffacba69c6843d7ca70d572489d6cc7ab7ae52c60f0852cedf4cf0d248b6fc37",
               "strip_prefix": "jdk-17.0.8.1+1",
@@ -2261,10 +2226,9 @@
             }
           },
           "remotejdk17_win_toolchain_config_repo": {
-            "bzlFile": "@@rules_java~7.1.0//toolchains:remote_java_repository.bzl",
+            "bzlFile": "@@rules_java~//toolchains:remote_java_repository.bzl",
             "ruleClassName": "_toolchain_config",
             "attributes": {
-              "name": "rules_java~7.1.0~toolchains~remotejdk17_win_toolchain_config_repo",
               "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"remotejdk_17\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"17\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [\"@platforms//os:windows\", \"@platforms//cpu:x86_64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@remotejdk17_win//:jdk\",\n)\ntoolchain(\n    name = \"bootstrap_runtime_toolchain\",\n    # These constraints are not required for correctness, but prevent fetches of remote JDK for\n    # different architectures. As every Java compilation toolchain depends on a bootstrap runtime in\n    # the same configuration, this constraint will not result in toolchain resolution failures.\n    exec_compatible_with = [\"@platforms//os:windows\", \"@platforms//cpu:x86_64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:bootstrap_runtime_toolchain_type\",\n    toolchain = \"@remotejdk17_win//:jdk\",\n)\n"
             }
           },
@@ -2272,7 +2236,6 @@
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_archive",
             "attributes": {
-              "name": "rules_java~7.1.0~toolchains~remotejdk11_linux_ppc64le",
               "build_file_content": "load(\"@rules_java//java:defs.bzl\", \"java_runtime\")\n\npackage(default_visibility = [\"//visibility:public\"])\n\nexports_files([\"WORKSPACE\", \"BUILD.bazel\"])\n\nfilegroup(\n    name = \"jre\",\n    srcs = glob(\n        [\n            \"jre/bin/**\",\n            \"jre/lib/**\",\n        ],\n        allow_empty = True,\n        # In some configurations, Java browser plugin is considered harmful and\n        # common antivirus software blocks access to npjp2.dll interfering with Bazel,\n        # so do not include it in JRE on Windows.\n        exclude = [\"jre/bin/plugin2/**\"],\n    ),\n)\n\nfilegroup(\n    name = \"jdk-bin\",\n    srcs = glob(\n        [\"bin/**\"],\n        # The JDK on Windows sometimes contains a directory called\n        # \"%systemroot%\", which is not a valid label.\n        exclude = [\"**/*%*/**\"],\n    ),\n)\n\n# This folder holds security policies.\nfilegroup(\n    name = \"jdk-conf\",\n    srcs = glob(\n        [\"conf/**\"],\n        allow_empty = True,\n    ),\n)\n\nfilegroup(\n    name = \"jdk-include\",\n    srcs = glob(\n        [\"include/**\"],\n        allow_empty = True,\n    ),\n)\n\nfilegroup(\n    name = \"jdk-lib\",\n    srcs = glob(\n        [\"lib/**\", \"release\"],\n        allow_empty = True,\n        exclude = [\n            \"lib/missioncontrol/**\",\n            \"lib/visualvm/**\",\n        ],\n    ),\n)\n\njava_runtime(\n    name = \"jdk\",\n    srcs = [\n        \":jdk-bin\",\n        \":jdk-conf\",\n        \":jdk-include\",\n        \":jdk-lib\",\n        \":jre\",\n    ],\n    # Provide the 'java` binary explicitly so that the correct path is used by\n    # Bazel even when the host platform differs from the execution platform.\n    # Exactly one of the two globs will be empty depending on the host platform.\n    # When --incompatible_disallow_empty_glob is enabled, each individual empty\n    # glob will fail without allow_empty = True, even if the overall result is\n    # non-empty.\n    java = glob([\"bin/java.exe\", \"bin/java\"], allow_empty = True)[0],\n    version = 11,\n)\n",
               "sha256": "a8fba686f6eb8ae1d1a9566821dbd5a85a1108b96ad857fdbac5c1e4649fc56f",
               "strip_prefix": "jdk-11.0.15+10",
@@ -2286,7 +2249,6 @@
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_archive",
             "attributes": {
-              "name": "rules_java~7.1.0~toolchains~remotejdk11_macos_aarch64",
               "build_file_content": "load(\"@rules_java//java:defs.bzl\", \"java_runtime\")\n\npackage(default_visibility = [\"//visibility:public\"])\n\nexports_files([\"WORKSPACE\", \"BUILD.bazel\"])\n\nfilegroup(\n    name = \"jre\",\n    srcs = glob(\n        [\n            \"jre/bin/**\",\n            \"jre/lib/**\",\n        ],\n        allow_empty = True,\n        # In some configurations, Java browser plugin is considered harmful and\n        # common antivirus software blocks access to npjp2.dll interfering with Bazel,\n        # so do not include it in JRE on Windows.\n        exclude = [\"jre/bin/plugin2/**\"],\n    ),\n)\n\nfilegroup(\n    name = \"jdk-bin\",\n    srcs = glob(\n        [\"bin/**\"],\n        # The JDK on Windows sometimes contains a directory called\n        # \"%systemroot%\", which is not a valid label.\n        exclude = [\"**/*%*/**\"],\n    ),\n)\n\n# This folder holds security policies.\nfilegroup(\n    name = \"jdk-conf\",\n    srcs = glob(\n        [\"conf/**\"],\n        allow_empty = True,\n    ),\n)\n\nfilegroup(\n    name = \"jdk-include\",\n    srcs = glob(\n        [\"include/**\"],\n        allow_empty = True,\n    ),\n)\n\nfilegroup(\n    name = \"jdk-lib\",\n    srcs = glob(\n        [\"lib/**\", \"release\"],\n        allow_empty = True,\n        exclude = [\n            \"lib/missioncontrol/**\",\n            \"lib/visualvm/**\",\n        ],\n    ),\n)\n\njava_runtime(\n    name = \"jdk\",\n    srcs = [\n        \":jdk-bin\",\n        \":jdk-conf\",\n        \":jdk-include\",\n        \":jdk-lib\",\n        \":jre\",\n    ],\n    # Provide the 'java` binary explicitly so that the correct path is used by\n    # Bazel even when the host platform differs from the execution platform.\n    # Exactly one of the two globs will be empty depending on the host platform.\n    # When --incompatible_disallow_empty_glob is enabled, each individual empty\n    # glob will fail without allow_empty = True, even if the overall result is\n    # non-empty.\n    java = glob([\"bin/java.exe\", \"bin/java\"], allow_empty = True)[0],\n    version = 11,\n)\n",
               "sha256": "7632bc29f8a4b7d492b93f3bc75a7b61630894db85d136456035ab2a24d38885",
               "strip_prefix": "zulu11.66.15-ca-jdk11.0.20-macosx_aarch64",
@@ -2297,47 +2259,45 @@
             }
           },
           "remotejdk21_win_toolchain_config_repo": {
-            "bzlFile": "@@rules_java~7.1.0//toolchains:remote_java_repository.bzl",
+            "bzlFile": "@@rules_java~//toolchains:remote_java_repository.bzl",
             "ruleClassName": "_toolchain_config",
             "attributes": {
-              "name": "rules_java~7.1.0~toolchains~remotejdk21_win_toolchain_config_repo",
               "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"remotejdk_21\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"21\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [\"@platforms//os:windows\", \"@platforms//cpu:x86_64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@remotejdk21_win//:jdk\",\n)\ntoolchain(\n    name = \"bootstrap_runtime_toolchain\",\n    # These constraints are not required for correctness, but prevent fetches of remote JDK for\n    # different architectures. As every Java compilation toolchain depends on a bootstrap runtime in\n    # the same configuration, this constraint will not result in toolchain resolution failures.\n    exec_compatible_with = [\"@platforms//os:windows\", \"@platforms//cpu:x86_64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:bootstrap_runtime_toolchain_type\",\n    toolchain = \"@remotejdk21_win//:jdk\",\n)\n"
             }
           }
         },
         "recordedRepoMappingEntries": [
           [
-            "rules_java~7.1.0",
+            "rules_java~",
             "bazel_tools",
             "bazel_tools"
           ],
           [
-            "rules_java~7.1.0",
+            "rules_java~",
             "remote_java_tools",
-            "rules_java~7.1.0~toolchains~remote_java_tools"
+            "rules_java~~toolchains~remote_java_tools"
           ]
         ]
       }
     },
-    "@@rules_m4~0.2.3//m4/internal:default_toolchain_ext.bzl%default_toolchain_ext": {
+    "@@rules_m4~//m4/internal:default_toolchain_ext.bzl%default_toolchain_ext": {
       "general": {
         "bzlTransitiveDigest": "rm6OAtIMR6n0t1X9wBVXucwCa6wqpIoqqh+kSzHNOg4=",
-        "accumulatedFileDigests": {},
+        "recordedFileInputs": {},
+        "recordedDirentsInputs": {},
         "envVariables": {},
         "generatedRepoSpecs": {
           "m4_v1.4.18": {
-            "bzlFile": "@@rules_m4~0.2.3//m4/rules:m4_repository.bzl",
+            "bzlFile": "@@rules_m4~//m4/rules:m4_repository.bzl",
             "ruleClassName": "m4_repository",
             "attributes": {
-              "name": "rules_m4~0.2.3~default_toolchain_ext~m4_v1.4.18",
               "version": "1.4.18"
             }
           },
           "m4": {
-            "bzlFile": "@@rules_m4~0.2.3//m4/rules:m4_toolchain_repository.bzl",
+            "bzlFile": "@@rules_m4~//m4/rules:m4_toolchain_repository.bzl",
             "ruleClassName": "m4_toolchain_repository",
             "attributes": {
-              "name": "rules_m4~0.2.3~default_toolchain_ext~m4",
               "m4_repository": "@m4_v1.4.18"
             }
           }
@@ -2347,7 +2307,8 @@
             "m4"
           ],
           "explicitRootModuleDirectDevDeps": [],
-          "useAllRepos": "NO"
+          "useAllRepos": "NO",
+          "reproducible": false
         },
         "recordedRepoMappingEntries": []
       }
