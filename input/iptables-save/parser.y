@@ -197,7 +197,7 @@ ast: table_list
     ast->list = $1;
 }
 
-table_list: /* empty */
+table_list: %empty
 {
   $$ = NULL;
 }
@@ -215,7 +215,7 @@ table: TOK_IPTS_TABLE TOK_IDENTIFIER rule_list TOK_COMMIT
   $$->rule_list = $3;
 }
 
-rule_list: /* empty */
+rule_list: %empty
 {
     $$ = NULL;
 }
@@ -250,7 +250,7 @@ rule_specification: option_list
     $$ = $1;
 }
 
-option_list: /* empty */
+option_list: %empty
 {
   $$ = NULL;
 }
@@ -588,7 +588,7 @@ identifier: TOK_IDENTIFIER
     $$->string = $2;
 }
 
-opt_pkt_count: /* empty */
+opt_pkt_count: %empty
 {
     $$ = NULL;
 }
