@@ -1,3 +1,5 @@
+load("@buildifier_prebuilt//:rules.bzl", "buildifier")
+
 package(default_visibility = [":__subpackages__"])
 
 cc_library(
@@ -41,4 +43,13 @@ cc_binary(
         "//output/iptables:out_iptables",
         "//output/iptablesrestore:out_iptablesrestore",
     ],
+)
+
+buildifier(
+    name = "buildifier",
+    exclude_patterns = [
+        "./.git/*",
+    ],
+    lint_mode = "fix",
+    mode = "fix",
 )
