@@ -6,13 +6,21 @@ cc_library(
     name = "core",
     srcs = [
         "fg-util.c",
-        "filter.c",
     ],
     hdrs = [
-        "filter.h",
         "util.h",
     ],
     deps = ["//input:sourcepos"],
+)
+
+cc_library(
+    name = "filter",
+    srcs = ["filter.c"],
+    hdrs = ["filter.h"],
+    deps = [
+        "//:core",
+        "//input:sourcepos",
+    ],
 )
 
 cc_library(

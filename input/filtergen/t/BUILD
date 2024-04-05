@@ -39,6 +39,7 @@ cc_binary(
     srcs = ["convert.c"],
     deps = [
         "//:core",
+        "//:filter",
         "//input:sourcepos",
         "//input/filtergen:in_filtergen",
     ],

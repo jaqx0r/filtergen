@@ -29,6 +29,7 @@
 
 #include "error.h"
 #include "input/sourcepos.h"
+#include "util.h"
 
 static struct filter *__new_filter(enum filtertype type,
                                    struct sourceposition *pos) {

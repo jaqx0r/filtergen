@@ -2,5 +2,8 @@ cc_library(
     name = "out_iptablesrestore",
     srcs = ["fg-iptablesrestore.c"],
     visibility = ["//:__subpackages__"],
-    deps = ["//:core"],
+    deps = [
+        "//:core",
+        "//:filter",
+    ],
 )

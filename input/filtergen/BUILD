@@ -18,8 +18,8 @@ cc_library(
     defines = ["_GNU_SOURCE"],
     visibility = ["//:__subpackages__"],
     deps = [
-        "//:core",
         "//:error",
+        "//:filter",
         "//:icmpent",
     ],
 )
