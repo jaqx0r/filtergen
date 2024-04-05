@@ -158,7 +158,7 @@ ast: rule_list
         ast->pos = make_sourcepos(&yylloc);
     }
 
-rule_list: /* empty */
+rule_list: %empty
 	{
 	    $$ = NULL;
 	}
@@ -179,7 +179,7 @@ rule:	  specifier_list TOK_SEMICOLON
 	}
 	;
 
-specifier_list: /* empty */
+specifier_list: %empty
 	{
 	    $$ = NULL;
 	}
@@ -307,7 +307,7 @@ direction_argument_list: direction_argument_list_
 	}
 	;
 
-direction_argument_list_: /* empty */
+direction_argument_list_: %empty
 	{
 	    $$ = NULL;
 	}
@@ -392,7 +392,7 @@ host_argument_list: host_argument_list_
 	}
 	;
 
-host_argument_list_: /* empty */
+host_argument_list_: %empty
 	{
 	    $$ = NULL;
 	}
@@ -496,7 +496,7 @@ protocol_argument_list: protocol_argument_list_
 	}
 	;
 
-protocol_argument_list_: /* empty */
+protocol_argument_list_: %empty
 	{
 	    $$ = NULL;
 	}
@@ -535,7 +535,7 @@ icmptype_argument_list: icmptype_argument_list_
 	}
 	;
 
-icmptype_argument_list_: /* empty */
+icmptype_argument_list_: %empty
 	{
 	    $$ = NULL;
 	}
