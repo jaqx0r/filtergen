@@ -3,7 +3,7 @@ cc_library(
     srcs = ["emit.c"],
     visibility = ["//:__subpackages__"],
     deps = [
-        "//:core",
         "//:filter",
+        "//:util",
     ],
 )

@@ -3,7 +3,7 @@ cc_library(
     srcs = ["fg-iptables.c"],
     visibility = ["//:__subpackages__"],
     deps = [
-        "//:core",
         "//:filter",
+        "//:util",
     ],
 )

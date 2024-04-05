@@ -3,23 +3,11 @@ load("@buildifier_prebuilt//:rules.bzl", "buildifier")
 package(default_visibility = [":__subpackages__"])
 
 cc_library(
-    name = "core",
-    srcs = [
-        "fg-util.c",
-    ],
-    hdrs = [
-        "fg-util.h",
-        "util.h",
-    ],
-    deps = ["//input:sourcepos"],
-)
-
-cc_library(
     name = "filter",
     srcs = ["filter.c"],
     hdrs = ["filter.h"],
     deps = [
-        "//:core",
+        "//:util",
         "//input:sourcepos",
     ],
 )
@@ -41,6 +29,17 @@ cc_library(
     name = "icmpent",
     srcs = ["icmpent.c"],
     hdrs = ["icmpent.h"],
+)
+
+cc_library(
+    name = "util",
+    srcs = [
+        "fg-util.c",
+    ],
+    hdrs = [
+        "fg-util.h",
+        "util.h",
+    ],
 )
 
 cc_binary(
