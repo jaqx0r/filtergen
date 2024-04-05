@@ -221,7 +221,7 @@ specifier: compound_specifier
 	    memset($$, 0, sizeof(struct specifier_s));
 	    $$->direction = $1;
         $$->pos = make_sourcepos(&yylloc);
-	}		
+	}
 	| target_specifier
 	{
 	    $$ = malloc(sizeof(struct specifier_s));
@@ -586,7 +586,7 @@ option_specifier: TOK_LOCAL
 	}
 	| TOK_LOG
 	{
-	    $$ = malloc(sizeof(struct option_specifier_s));	
+	    $$ = malloc(sizeof(struct option_specifier_s));
 	    $$->type = TOK_LOG;
 	    $$->logmsg = 0;
         $$->pos = make_sourcepos(&yylloc);
