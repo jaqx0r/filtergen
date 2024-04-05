@@ -8,6 +8,7 @@ cc_library(
         "fg-util.c",
     ],
     hdrs = [
+        "fg-util.h",
         "util.h",
     ],
     deps = ["//input:sourcepos"],

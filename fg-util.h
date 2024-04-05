@@ -17,30 +17,14 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#ifndef FILTERGEN_FG_UTIL_H_
+#define FILTERGEN_FG_UTIL_H_
 
-#include "fg-util.h"
+// Append n to s, returning a new string.
+char *strapp(char *s, const char *n);
 
-char *strapp(char *s, const char *n) {
-  size_t l;
-  if (!n)
-    return s;
-  if (!s)
-    return strdup(n);
-  l = strlen(s) + strlen(n) + 1;
-  s = realloc(s, l);
-  return strcat(s, n);
-}
+// Convert a string to an integer, returning zero for success and non-zero if an
+// error occurred.
+int str_to_int(const char *s, int *i);
 
-int str_to_int(const char *s, int *i) {
-  long m;
-  char *e;
-
-  m = strtol(s, &e, 10);
-  if (*e)
-    return -1;
-  *i = m;
-  return 0;
-}
+#endif // FILTERGEN_FG_UTIL_H_
