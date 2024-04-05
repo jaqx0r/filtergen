@@ -19,6 +19,7 @@ cc_library(
     visibility = ["//:__subpackages__"],
     deps = [
         "//:core",
+        "//:error",
     ],
 )
 
