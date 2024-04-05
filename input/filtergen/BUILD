@@ -6,21 +6,18 @@ cc_library(
     srcs = [
         "glue.c",
         "include.c",
-        "resolver.c",
         ":parser",
         ":scanner",
     ],
     hdrs = [
         "include.h",
-        "resolver.h",
     ],
     defines = ["_GNU_SOURCE"],
     visibility = ["//:__subpackages__"],
     deps = [
         ":ast",
+        ":resolver",
         "//:error",
-        "//:filter",
-        "//:icmpent",
     ],
 )
 
@@ -28,6 +25,17 @@ cc_library(
     name = "ast",
     hdrs = ["ast.h"],
     deps = ["//input:sourcepos"],
+)
+
+cc_library(
+    name = "resolver",
+    srcs = ["resolver.c"],
+    hdrs = ["resolver.h"],
+    deps = [
+        ":ast",
+        "//:filter",
+        "//:icmpent",
+    ],
 )
 
 bison(
