@@ -7,11 +7,9 @@ cc_library(
     srcs = [
         "fg-util.c",
         "filter.c",
-        "icmpent.c",
     ],
     hdrs = [
         "filter.h",
-        "icmpent.h",
         "util.h",
     ],
     deps = ["//input:sourcepos"],
@@ -28,6 +26,12 @@ cc_library(
     name = "factoriser",
     srcs = ["factoriser.c"],
     hdrs = ["factoriser.h"],
+)
+
+cc_library(
+    name = "icmpent",
+    srcs = ["icmpent.c"],
+    hdrs = ["icmpent.h"],
 )
 
 cc_binary(

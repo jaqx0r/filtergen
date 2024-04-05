@@ -20,6 +20,7 @@ cc_library(
     deps = [
         "//:core",
         "//:error",
+        "//:icmpent",
     ],
 )
 
