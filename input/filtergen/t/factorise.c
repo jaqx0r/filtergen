@@ -4,10 +4,11 @@ LCOV_EXCL_START
 
 #include <stdio.h>
 #include <stdlib.h>
+
 #include "input/filtergen/ast.h"
 #include "input/filtergen/scanner.h"
 #include "input/filtergen/parser.h"
-#include "factoriser.h"
+#include "input/sourcepos.h"
 
 int facttrace;
 extern int filtergen_column;

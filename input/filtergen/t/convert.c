@@ -1,11 +1,13 @@
 /* LCOV_EXCL_START */
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/socket.h>
 
 #include "filter.h"
 #include "input/filtergen/ast.h"
 #include "input/filtergen/parser.h"
 #include "input/filtergen/scanner.h"
+#include "input/sourcepos.h"
 
 int indent = -2;
 

@@ -1,11 +1,8 @@
 /* LCOV_EXCL_START */
-#include <errno.h>
-#include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
-#include "input/filtergen/ast.h"
 #include "input/filtergen/parser.h"
 #include "input/filtergen/scanner.h"
 #include "input/sourcepos.h"

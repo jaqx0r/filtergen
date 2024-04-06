@@ -1,10 +1,8 @@
 /* LCOV_EXCL_START */
-#include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
-#include "input/iptables-save/ast.h"
 #include "input/iptables-save/parser.h"
 #include "input/iptables-save/scanner.h"
 

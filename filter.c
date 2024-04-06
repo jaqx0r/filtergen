@@ -20,16 +20,14 @@
 #include "filter.h"
 
 #include <arpa/inet.h>
-#include <errno.h>
 #include <netdb.h>
-#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
+#include <sys/socket.h>
 
-#include "error.h"
 #include "input/sourcepos.h"
-#include "util.h"
 
 static struct filter *__new_filter(enum filtertype type,
                                    struct sourceposition *pos) {

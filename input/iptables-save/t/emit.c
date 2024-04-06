@@ -6,9 +6,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
 #include "input/iptables-save/ast.h"
 #include "input/iptables-save/parser.h"
-#include "input/iptables-save/scanner.h"
 
 int emittrace = 0;
 

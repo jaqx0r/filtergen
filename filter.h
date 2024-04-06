@@ -20,9 +20,8 @@
 #ifndef _FK_FILTER_H
 #define _FK_FILTER_H
 
-#include <sys/types.h>
-#include <sys/socket.h>
 #include <netinet/in.h>
+#include <sys/un.h>
 
 #include "input/sourcepos.h"
 

@@ -23,8 +23,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "error.h"
-
 /* Top of source file stack during parse. */
 struct sourcefile *current_srcfile = NULL;
 

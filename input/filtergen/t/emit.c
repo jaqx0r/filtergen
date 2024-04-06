@@ -5,9 +5,11 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+
 #include "input/filtergen/ast.h"
 #include "input/filtergen/parser.h"
 #include "input/filtergen/scanner.h"
+#include "input/sourcepos.h"
 
 extern int filtergen_column;
 int emittrace = 0;

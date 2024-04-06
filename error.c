@@ -1,6 +1,7 @@
 #include "error.h"
 
 #include <stdarg.h>
+#include <stdio.h>
 
 void filter_error(struct sourceposition *pos, const char *fmt, ...);
 
