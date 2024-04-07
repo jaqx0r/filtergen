@@ -1,44 +1,51 @@
+load("//testsuite:dejagnu.bzl", "dejagnu_library")
+
 package(
     default_visibility = ["//:__subpackages__"],
 )
 
-filegroup(
+dejagnu_library(
     name = "filtergen-dg",
     srcs = ["filtergen-dg.exp"],
 )
 
-filegroup(
+dejagnu_library(
     name = "fg-scan-dg",
     srcs = ["fg-scan-dg.exp"],
 )
 
-filegroup(
+dejagnu_library(
     name = "fg-parse-dg",
     srcs = ["fg-parse-dg.exp"],
 )
 
-filegroup(
+dejagnu_library(
+    name = "compare",
+    srcs = ["compare.exp"],
+)
+
+dejagnu_library(
     name = "fg-emit-dg",
     srcs = [
-        "compare.exp",
         "fg-emit-dg.exp",
     ],
+    deps = [":compare"],
 )
 
-filegroup(
+dejagnu_library(
     name = "fg-convert-dg",
     srcs = [
-        "compare.exp",
         "fg-convert-dg.exp",
     ],
+    deps = [":compare"],
 )
 
-filegroup(
+dejagnu_library(
     name = "ipts-scan-dg",
     srcs = ["ipts-scan-dg.exp"],
 )
 
-filegroup(
+dejagnu_library(
     name = "ipts-parse-dg",
     srcs = ["ipts-parse-dg.exp"],
 )

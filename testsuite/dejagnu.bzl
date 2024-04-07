@@ -1,5 +1,32 @@
 """Dejagnu test runner."""
 
+DejaGNULibraryInfo = provider(
+    doc = "DejaGNU Provider",
+)
+
+def _dejagnu_lib_impl(ctx):
+    """Implementation of dejagnu lib."""
+    runfiles = ctx.runfiles(files = ctx.files.srcs)
+    runfiles = runfiles.merge_all([
+        dep[DefaultInfo].default_runfiles
+        for dep in ctx.attr.deps
+    ])
+    return [
+        DefaultInfo(runfiles = runfiles),
+        DejaGNULibraryInfo(),
+    ]
+
+dejagnu_library = rule(
+    implementation = _dejagnu_lib_impl,
+    attrs = {
+        "srcs": attr.label_list(
+            doc = "Sources for this library.",
+            allow_files = [".exp"],
+        ),
+        "deps": attr.label_list(providers = [DejaGNULibraryInfo]),
+    },
+)
+
 def _dejagnu_test_impl(ctx):
     """Implementation of dejagnu test suite."""
     executable_path = "{name}_/{name}".format(name = ctx.label.name)
@@ -18,12 +45,18 @@ def _dejagnu_test_impl(ctx):
     )
 
     # gather runfiles
-    runfiles = ctx.runfiles(files = ctx.files._runtest +
-                                    ctx.files._runtest_libs +
-                                    ctx.files.srcs +
-                                    ctx.files.data +
-                                    ctx.files.tool_exec +
-                                    ctx.files.deps)
+    files = [
+        ctx.file._runtest,
+        ctx.file.tool_exec,
+    ]
+    files.extend(ctx.files._runtest_libs)
+    files.extend(ctx.files.srcs)
+    files.extend(ctx.files.data)
+    runfiles = ctx.runfiles(files = files)
+    runfiles = runfiles.merge_all([
+        dep[DefaultInfo].default_runfiles
+        for dep in ctx.attr.deps
+    ])
 
     test_env = {}
     if ctx.configuration.coverage_enabled:
@@ -73,7 +106,7 @@ dejagnu_test = rule(
             allow_files = [".exp"],
             doc = "Main test file for dejagnu runtests.",
         ),
-        "deps": attr.label_list(allow_files = True),
+        "deps": attr.label_list(providers = [DejaGNULibraryInfo]),
         "data": attr.label_list(
             allow_files = True,
         ),
@@ -81,6 +114,7 @@ dejagnu_test = rule(
             executable = True,
             doc = "Binary target under test.",
             cfg = "exec",
+            allow_single_file = True,
         ),
         "_runtest": attr.label(
             default = "@org_gnu_dejagnu//:runtest",

@@ -16,8 +16,3 @@ configure_make(
     ],
     visibility = ["//visibility:public"],
 )
-
-# filegroup(name = "dejagnu_runtest",
-#           srcs = [":dejagnu_configure"],
-
-#           output_group = "runtest")
