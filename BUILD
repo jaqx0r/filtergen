@@ -47,7 +47,6 @@ cc_library(
 cc_binary(
     name = "filtergen",
     srcs = [
-        "fg-iptrestore.c",
         "filtergen.c",
         "gen.c",
     ],

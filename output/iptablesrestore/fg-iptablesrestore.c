@@ -2,6 +2,8 @@
  *
  * Copyright (c) 2002 Matthew Kirkwood
  * 		 2006 Oliver Hookins
+ * Copyright (c) 2009 Anchor Systems (written by Matt Palmer
+ *<matt@anchor.net.au>)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,10 +42,12 @@
  * three rules -- nat, in and out.
  */
 
+#include <netinet/in.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <netinet/in.h>
+#include <sys/socket.h>
+#include <sys/un.h>
 
 #include "filter.h"
 #include "util.h"
@@ -53,48 +57,9 @@
 #define A_TCP 0x10
 #define A_UDP 0x20
 
-/* a simple linked list for the nat table */
-struct llnode {
-  char *data;
-  struct llnode *next;
-};
-
-/* head of the list and the current node */
-struct llnode *head = NULL;
-struct llnode *curr = NULL;
-
-/* addnode: add another list node to the end of the llist */
-static void addnode(const char *data_in) {
-  struct llnode *tmp;
-
-  if ((tmp = malloc(sizeof(*tmp))) == NULL) {
-    fprintf(stderr, "unable to allocate memory for nat table processing\n");
-    abort();
-  }
-
-  tmp->data = strdup(data_in);
-  tmp->next = NULL;
-
-  if (head == NULL) {
-    head = curr = tmp;
-    curr->next = NULL;
-  } else {
-    curr->next = tmp;
-    tmp->next = NULL;
-  }
-
-  curr = tmp;
-}
-
-/* freelist: free the memory allocations used by the llist */
-static void freelist() {
-  struct llnode *tmp;
-
-  for (curr = tmp = head; curr != NULL; tmp = curr) {
-    curr = curr->next;
-    free(tmp);
-  }
-}
+/* full path to ip{,6}tables-restore executables */
+#define IPTABLES_RESTORE "/sbin/iptables-restore"
+#define IP6TABLES_RESTORE "/sbin/ip6tables-restore"
 
 static char *appip(char *r, const struct addr_spec *h) {
   APPS(r, h->addrstr);
@@ -114,8 +79,8 @@ static char *appport(char *r, const struct port_spec *h) {
 #define APPPORT(r, h) (r = appport(r, h))
 #define APPPORT2(f, r, h) (APPS(r, f), APPPORT(r, h))
 
-static int cb_iptablesrestore_rule(const struct filterent *ent,
-                                   struct fg_misc *misc) {
+static int cb_iptrestore_rule_common(const struct filterent *ent,
+                                     struct fg_misc *misc, sa_family_t family) {
   char *rulechain = NULL, *revchain = NULL, *natchain = NULL;
   char *ruletarget = NULL, *revtarget = NULL, *nattarget = NULL;
   char *natrule = NULL, *rule = NULL, *rule_r = NULL;
@@ -132,6 +97,10 @@ static int cb_iptablesrestore_rule(const struct filterent *ent,
   /* nat rule? */
   if ((target == MASQ) || (target == REDIRECT)) {
     neednat = 1;
+    if (family == AF_INET6) {
+      fprintf(stderr, "can't NAT with IPv6\n");
+      return -1;
+    }
     if ((target == MASQ) && (ent->direction == INPUT)) {
       fprintf(stderr, "can't masquerade on input\n");
       return -1;
@@ -160,7 +129,7 @@ static int cb_iptablesrestore_rule(const struct filterent *ent,
     revchain = strdup("OUTPUT");
     forchain = strdup("FORWARD");
     forrevchain = strdup("FORW_OUT");
-    if (ent->iface) {
+    if (ent->iface && strcmp(ent->iface, "*")) {
       if (NEG(DIRECTION)) {
         APPS(natrule, "!");
         APPS(rule, "!");
@@ -177,7 +146,7 @@ static int cb_iptablesrestore_rule(const struct filterent *ent,
     revchain = strdup("INPUT");
     forchain = strdup("FORW_OUT");
     forrevchain = strdup("FORWARD");
-    if (ent->iface) {
+    if (ent->iface && strcmp(ent->iface, "*")) {
       if (NEG(DIRECTION)) {
         APPS(natrule, "!");
         APPS(rule, "!");
@@ -189,8 +158,8 @@ static int cb_iptablesrestore_rule(const struct filterent *ent,
     }
     break;
   default:
-    fprintf(stderr, "unknown direction\n");
-    abort();
+    fprintf(stderr, "invalid direction: %d\n", ent->direction);
+    return -1;
   }
 
   /* state and reverse rules here */
@@ -216,8 +185,8 @@ static int cb_iptablesrestore_rule(const struct filterent *ent,
       break;
     }
     if (needstate) {
-      APPS(rule, "-m state --state NEW,ESTABLISHED");
-      APPS(rule_r, "-m state --state ESTABLISHED");
+      APPS(rule, "-m conntrack --ctstate NEW,ESTABLISHED");
+      APPS(rule_r, "-m conntrack --ctstate ESTABLISHED");
     }
   }
 
@@ -268,8 +237,7 @@ static int cb_iptablesrestore_rule(const struct filterent *ent,
       APPSS2(rule, "--icmp-type", ent->u.icmp);
     }
     break;
-  default:
-    ;
+  default:;
   }
 
   APPS(natrule, "-j");
@@ -311,7 +279,8 @@ static int cb_iptablesrestore_rule(const struct filterent *ent,
       nattarget = strdup("REDIRECT");
       break;
     default:
-      abort();
+      fprintf(stderr, "invalid target: %d\n", target);
+      return -1;
     }
   }
 
@@ -328,35 +297,16 @@ static int cb_iptablesrestore_rule(const struct filterent *ent,
       forrevtarget = strdup("FORW_OUT");
       break;
     default:
-      abort();
+      fprintf(stderr, "invalid direction: %d\n", ent->direction);
+      return -1;
     }
     break;
   case DROP:
     ruletarget = fortarget = strdup("DROP");
-    switch (ent->direction) {
-    case INPUT:
-      fortarget = strdup("FORW_OUT");
-      break;
-    case OUTPUT:
-      /* nothing, fortarget is already DROP */
-      break;
-    default:
-      abort();
-    }
     needret = 0;
     break;
   case T_REJECT:
     ruletarget = fortarget = strdup("REJECT");
-    switch (ent->direction) {
-    case INPUT:
-      fortarget = strdup("FORW_OUT");
-      break;
-    case OUTPUT:
-      /* nothing, fortarget is already DROP */
-      break;
-    default:
-      abort();
-    }
     needret = 0;
     *feat |= T_REJECT;
     break;
@@ -375,11 +325,13 @@ static int cb_iptablesrestore_rule(const struct filterent *ent,
       forrevtarget = strdup("FORWARD");
       break;
     default:
-      abort();
+      fprintf(stderr, "invalid direction: %d\n", ent->direction);
+      return -1;
     }
     break;
   default:
-    abort();
+    fprintf(stderr, "invalid target: %d\n", target);
+    return -1;
   }
 
   if ((misc->flags & FF_LSTATE) && (target != T_REJECT))
@@ -389,11 +341,13 @@ static int cb_iptablesrestore_rule(const struct filterent *ent,
     needret = 0;
 
   if (neednat) {
-    char tmp[1000];
-    snprintf(tmp, (sizeof(tmp) - 1), "-A %s%s %s %s%s", subchain, natchain,
-             natrule + 1, subtarget, nattarget);
-    addnode(tmp);
     orules++;
+    oputs("COMMIT\n");
+    oprintf("*nat\n");
+    oprintf("-A %s%s %s %s%s\n", subchain, natchain, natrule + 1, subtarget,
+            nattarget);
+    oputs("COMMIT\n");
+    oprintf("*filter\n");
   }
   if (islocal)
     orules++, oprintf("-A %s%s %s %s%s\n", subchain, rulechain, rule + 1,
@@ -417,7 +371,17 @@ static int cb_iptablesrestore_rule(const struct filterent *ent,
   return orules;
 }
 
-static int cb_iptablesrestore_group(const char *name) {
+static int cb_iptrestore_rule(const struct filterent *ent,
+                              struct fg_misc *misc) {
+  return cb_iptrestore_rule_common(ent, misc, AF_INET);
+}
+
+static int cb_ip6trestore_rule(const struct filterent *ent,
+                               struct fg_misc *misc) {
+  return cb_iptrestore_rule_common(ent, misc, AF_INET6);
+}
+
+static int cb_iptrestore_group_common(const char *name) {
   oprintf("-N %s-INPUT\n", name);
   oprintf("-N %s-OUTPUT\n", name);
   oprintf("-N %s-FORWARD\n", name);
@@ -425,95 +389,88 @@ static int cb_iptablesrestore_group(const char *name) {
   return 4;
 }
 
-int fg_iptablesrestore(struct filter *filter, int flags) {
+static int cb_iptrestore_group(const char *name) {
+  return cb_iptrestore_group_common(name);
+}
+
+static int cb_ip6trestore_group(const char *name) {
+  return cb_iptrestore_group_common(name);
+}
+
+static int fg_iptrestore_common(struct filter *filter, int flags,
+                                sa_family_t family,
+                                const char *iptables_restore) {
   long feat = 0;
   int r = 0;
   struct fg_misc misc = {flags, &feat};
-  fg_callback cb_iptablesrestore = {
-    .rule = cb_iptablesrestore_rule,
-    .group = cb_iptablesrestore_group,
+  fg_callback cb_iptrestore = {
+      .rule = family == AF_INET ? cb_iptrestore_rule : cb_ip6trestore_rule,
+      .group = family == AF_INET ? cb_iptrestore_group : cb_ip6trestore_group,
   };
   const int nchains = 3;
 
   filter_unroll(&filter);
 
   if (!(flags & FF_NOSKEL)) {
-    /* Add the nat table headers to the llist, to be
-     * followed up by optional real rules
-     */
-    addnode("*nat");
-    addnode(":PREROUTING ACCEPT [0:0]");
-    addnode(":POSTROUTING ACCEPT [0:0]");
-    addnode(":OUTPUT ACCEPT [0:0]");
-    /* No COMMIT, that is done after rule output */
-
+    oprintf("%s <<EOF\n", iptables_restore);
     oputs("*filter");
-    oputs(":FORW_OUT - [0:0]");
     oputs(":INPUT DROP [0:0]");
-    oputs(":FORWARD DROP [0:0]");
-    oputs(":INVALID - [0:0]");
     oputs(":OUTPUT DROP [0:0]");
+    oputs(":FORWARD DROP [0:0]");
+    oputs("");
 
-#if 0
-	oputs("-A INVALID -j LOG --log-prefix \"invalid \"");
-#endif
+    oputs("-N FORW_OUT");
+    oputs("");
+
+    oputs("-N INVALID");
     oputs("-A INVALID -j DROP");
-    oputs("-A INPUT -m state --state INVALID -j INVALID");
-    oputs("-A OUTPUT -m state --state INVALID -j INVALID");
-    oputs("-A FORWARD -m state --state INVALID -j INVALID");
+
+    oputs("-I INPUT -m conntrack --ctstate INVALID -j INVALID");
+    oputs("-I OUTPUT -m conntrack --ctstate INVALID -j INVALID");
+    oputs("-I FORWARD -m conntrack --ctstate INVALID -j INVALID");
+    oputs("");
     r += nchains;
   }
-  if ((r = filtergen_cprod(filter, &cb_iptablesrestore, &misc)) < 0)
+  if ((r = filtergen_cprod(filter, &cb_iptrestore, &misc)) < 0)
     return r;
   if (!(flags & FF_NOSKEL)) {
     if ((flags & FF_LSTATE) && (feat & (A_TCP | A_UDP))) {
       if (feat & A_TCP) {
         r += nchains;
-        oputs("-I INPUT -p tcp ! --syn -m state --state ESTABLISHED -j ACCEPT");
-        oputs(
-            "-I OUTPUT -p tcp ! --syn -m state --state ESTABLISHED -j ACCEPT");
-        oputs(
-            "-I FORWARD -p tcp ! --syn -m state --state ESTABLISHED -j ACCEPT");
+        oputs("-I INPUT -p tcp ! --syn -m conntrack --ctstate ESTABLISHED -j "
+              "ACCEPT");
+        oputs("-I OUTPUT -p tcp ! --syn -m conntrack --ctstate ESTABLISHED -j "
+              "ACCEPT");
+        oputs("-I FORWARD -p tcp ! --syn -m conntrack --ctstate ESTABLISHED -j "
+              "ACCEPT");
       }
       if (feat & A_UDP) {
         r += nchains;
-        oputs("-I INPUT -p udp -m state --state ESTABLISHED -j ACCEPT");
-        oputs("-I OUTPUT -p udp -m state --state ESTABLISHED -j ACCEPT");
-        oputs("-I FORWARD -p udp -m state --state ESTABLISHED -j ACCEPT");
+        oputs("-I INPUT -p udp -m conntrack --ctstate ESTABLISHED -j ACCEPT");
+        oputs("-I OUTPUT -p udp -m conntrack --ctstate ESTABLISHED -j ACCEPT");
+        oputs("-I FORWARD -p udp -m conntrack --ctstate ESTABLISHED -j ACCEPT");
       }
     }
-#if 0
-	oputs("-A INPUT -j LOG");
-	oputs("-A OUTPUT -j LOG");
-	oputs("-A FORWARD -j LOG");
-	r += nchains;
-#endif
   }
   oputs("COMMIT");
-
-  /* Dump contents of the llist which contains the NAT tabl rules */
-  for (curr = head; curr != NULL; curr = curr->next)
-    oputs(curr->data);
-
-  oputs("COMMIT");
-  freelist();
-
+  oputs("EOF");
   return r;
 }
 
+int fg_iptrestore(struct filter *filter, int flags) {
+  return fg_iptrestore_common(filter, flags, AF_INET, IPTABLES_RESTORE);
+}
+
+int fg_ip6trestore(struct filter *filter, int flags) {
+  return fg_iptrestore_common(filter, flags, AF_INET6, IP6TABLES_RESTORE);
+}
+
 /* Rules which just flush the packet filter */
-int flush_iptablesrestore(enum filtertype policy) {
+static int flush_iptrestore_common(enum filtertype policy) {
   char *ostr;
 
-  // FIXME: Should the nat table always have a default ACCEPT policy?
-  oputs("*nat");
-  oputs(":PREROUTING ACCEPT [0:0]");
-  oputs(":POSTROUTING ACCEPT [0:0]");
-  oputs(":OUTPUT ACCEPT [0:0]");
-  oputs("COMMIT");
-
-  // filter table
-  oputs("*filter");
+  oputs("CHAINS=\"INPUT OUTPUT FORWARD\"");
+  oputs("");
 
   switch (policy) {
   case T_ACCEPT:
@@ -527,12 +484,19 @@ int flush_iptablesrestore(enum filtertype policy) {
     break;
   default:
     fprintf(stderr, "invalid filtertype %d\n", policy);
-    abort();
+    return -1;
   }
   oprintf(":INPUT %s [0:0]\n", ostr);
   oprintf(":OUTPUT %s [0:0]\n", ostr);
   oprintf(":FORWARD %s [0:0]\n", ostr);
-  oputs("COMMIT");
 
   return 0;
+}
+
+int flush_iptrestore(enum filtertype policy) {
+  return flush_iptrestore_common(policy);
+}
+
+int flush_ip6trestore(enum filtertype policy) {
+  return flush_iptrestore_common(policy);
 }
