@@ -17,8 +17,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "error.h"
 #include "filter.h"
@@ -27,6 +27,7 @@
 #include "input/filtergen/resolver.h"
 #include "input/filtergen/scanner.h"
 #include "input/input.h"
+#include "input/sourcefile.h"
 #include "input/sourcepos.h"
 
 int convtrace = 0;

@@ -20,6 +20,7 @@
 
 
 #include "input/sourcepos.h"
+#include "input/sourcefile.h"
 #include "input/filtergen/ast.h"
 #include "input/filtergen/parser.h"
 #include "input/filtergen/include.h"

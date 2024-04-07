@@ -3,6 +3,8 @@
 #include <stdarg.h>
 #include <stdio.h>
 
+#include "input/sourcepos.h"
+
 void filter_error(struct sourceposition *pos, const char *fmt, ...);
 
 void __attribute__((__format__(__printf__, 2, 3)))

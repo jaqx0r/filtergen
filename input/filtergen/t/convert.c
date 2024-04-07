@@ -7,6 +7,7 @@
 #include "input/filtergen/ast.h"
 #include "input/filtergen/parser.h"
 #include "input/filtergen/scanner.h"
+#include "input/sourcefile.h"
 #include "input/sourcepos.h"
 
 int indent = -2;

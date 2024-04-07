@@ -1,4 +1,4 @@
-/* source position functions
+/* source file stack
  *
  * Copyright (c) 2013 Jamie Wilkinson <jaq@spacepants.org>
  *
@@ -17,23 +17,28 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef FILTERGEN_INPUT_SOURCEPOS_H
-#define FILTERGEN_INPUT_SOURCEPOS_H
+#ifndef FILTERGEN_INPUT_SOURCEFILE_H
+#define FILTERGEN_INPUT_SOURCEFILE_H
 
-struct sourceposition {
-  int first_line;
-  int first_column;
-  int last_line;
-  int last_column;
-  char *filename;
+#include "input/sourcepos.h"
+#include <stdio.h>
+
+struct sourcefile {
+  FILE *f; // File handle being read
+  char *pathname;
+  int lineno;
+  int column;
+  struct sourcefile *next; // next on stack
 };
 
-/* Create newly allocated storage of a sourceposition from an existing temporary
- * one */
-struct sourceposition *make_sourcepos(struct sourceposition *loc);
+extern struct sourcefile *current_srcfile;
 
-/* Returns the location of the LHS of a rule whose RHS is in *rhs[1]..rhs[N} */
-void merge_sourcepos(struct sourceposition *loc,
-                     struct sourceposition const *rhs, int n);
+/* sourcefile_push opens a new file and pushes a struct sourcefile onto the
+ * current_srcfile stack. It returns true on success and false on error. */
+int sourcefile_push(struct sourceposition *pos, const char *pathname);
+
+/* sourcefile_pop removes the struct sourcefile from the top of the stack.  It
+ * returns true on success and false on error. */
+int sourcefile_pop();
 
 #endif /* FILTERGEN_INPUT_SOURCEPOS_H */

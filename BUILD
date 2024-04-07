@@ -7,7 +7,9 @@ cc_library(
     srcs = ["filter.c"],
     hdrs = ["filter.h"],
     deps = [
-        "//:util",
+        ":error",
+        ":util",
+        "//input:sourcefile",
         "//input:sourcepos",
     ],
 )

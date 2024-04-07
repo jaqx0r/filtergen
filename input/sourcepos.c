@@ -19,89 +19,8 @@
 
 #include "sourcepos.h"
 
-#include <errno.h>
 #include <stdlib.h>
 #include <string.h>
-
-/* Top of source file stack during parse. */
-struct sourcefile *current_srcfile = NULL;
-
-/* Limit infinite recursion. */
-#define MAX_SRCFILE_DEPTH 100
-static int srcfile_depth = 0;
-
-int sourcefile_push(struct sourceposition *pos, const char *pathname) {
-  struct sourcefile *sf;
-
-  if (srcfile_depth++ > MAX_SRCFILE_DEPTH) {
-    filter_error(pos,
-                 "too many nested includes.  skipping include of file %s\n",
-                 pathname);
-    return 0;
-  }
-
-  if ((sf = malloc(sizeof(*sf))) == NULL) {
-    /* LCOV_EXCL_START */
-    fprintf(stderr, "malloc failed attempting to push new sourcefile onto "
-                    "stack when opening %s: %s\n",
-            pathname, strerror(errno));
-    return 0;
-    /* LCOV_EXCL_STOP */
-  }
-
-  if (pathname == NULL || strncmp(pathname, "-", 1) == 0) {
-    sf->f = stdin;
-    if (asprintf(&sf->pathname, "<stdin>") < 0) {
-      /* LCOV_EXCL_START */
-      fprintf(stderr, "error: asprintf allocation failed when constructing "
-                      "sourcefile pathname for %s\n",
-              pathname);
-      free(sf);
-      return 0;
-      /* LCOV_EXCL_STOP */
-    }
-  } else {
-    sf->f = fopen(pathname, "r");
-    if (!sf->f) {
-      fprintf(stderr, "fopen failed reading %s: %s\n", pathname,
-              strerror(errno));
-      free(sf);
-      return 0;
-    }
-    if (asprintf(&sf->pathname, "%s", pathname) < 0) {
-      /* LCOV_EXCL_START */
-      fprintf(stderr, "error: asprintf allocation failed when constructing "
-                      "sourcefile pathname for %s\n",
-              pathname);
-      free(sf);
-      return 0;
-      /* LCOV_EXCL_STOP */
-    }
-  }
-  sf->next = current_srcfile;
-  sf->lineno = 1;
-  sf->column = 1;
-
-  current_srcfile = sf;
-  return 1;
-}
-
-int sourcefile_pop() {
-  struct sourcefile *sf = current_srcfile;
-
-  current_srcfile = sf->next;
-
-  if (fclose(sf->f)) {
-    /* LCOV_EXCL_START */
-    fprintf(stderr, "failed to close file when popping sourcefile stack: %s\n",
-            strerror(errno));
-    return 0;
-    /* LCOV_EXCL_STOP */
-  }
-  free(sf);
-  srcfile_depth--;
-  return 1;
-}
 
 struct sourceposition *make_sourcepos(struct sourceposition *loc) {
   struct sourceposition *pos;

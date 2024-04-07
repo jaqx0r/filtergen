@@ -5,6 +5,7 @@ cc_binary(
     testonly = True,
     srcs = ["scan.c"],
     deps = [
+        "//input:sourcefile",
         "//input:sourcepos",
         "//input/filtergen:in_filtergen",
     ],
@@ -15,6 +16,7 @@ cc_binary(
     testonly = True,
     srcs = ["parse.c"],
     deps = [
+        "//input:sourcefile",
         "//input:sourcepos",
         "//input/filtergen:in_filtergen",
     ],
@@ -25,6 +27,7 @@ cc_binary(
     testonly = True,
     srcs = ["emit.c"],
     deps = [
+        "//input:sourcefile",
         "//input:sourcepos",
         "//input/filtergen:in_filtergen",
     ],

@@ -1,10 +1,11 @@
 /* LCOV_EXCL_START */
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "input/filtergen/parser.h"
 #include "input/filtergen/scanner.h"
+#include "input/sourcefile.h"
 #include "input/sourcepos.h"
 
 char *tok_map(int c) {

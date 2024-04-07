@@ -4,14 +4,15 @@
 #include <errno.h>
 #include <glob.h>
 #include <libgen.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/stat.h>
-#include <stdio.h>
 #include <strings.h>
+#include <sys/stat.h>
 
 #include "error.h"
 #include "input/filtergen/scanner.h"
+#include "input/sourcefile.h"
 #include "input/sourcepos.h"
 
 /* include a file or directory */
