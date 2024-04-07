@@ -4,6 +4,9 @@ set -x
 
 echo -n "pwd: "
 pwd
+
+export DEJAGNULIBS="{libdir}"
+
 {runtest} --version
 
 ls -laLR
@@ -19,6 +22,9 @@ EOF
 
 cat site.exp
 
-export DEJAGNULIBS="{libdir}"
 
 {runtest} --global_init site.exp --status --all --debug -v -v --tool {tool} --srcdir {srcdir} --outdir $TEST_UNDECLARED_OUTPUTS_DIR
+
+
+echo "post run directory"
+ls -laLR
