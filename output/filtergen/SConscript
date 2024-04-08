@@ -1,9 +1,0 @@
-# -*- mode: python -*-
-Import('env')
-
-env.Library('out_filtergen',
-            source=['emit.c'],
-            CPPPATH='../..')
-
-env.Tar(env['TARBALL'], ['SConscript',
-                         'emit.c', ])

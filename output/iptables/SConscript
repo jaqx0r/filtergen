@@ -1,8 +1,0 @@
-# -*- mode: python -*-
-Import('env')
-
-sources = ['fg-iptables.c']
-
-env.Library('out_iptables', source=sources, CPPPATH='../..')
-
-env.Tar(env['TARBALL'], ['SConscript', ] + sources)

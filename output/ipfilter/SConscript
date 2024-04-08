@@ -1,9 +1,0 @@
-# -*- mode: python -*-
-Import('env')
-
-env.Library('out_ipfilter',
-            source=['fg-ipfilter.c'],
-            CPPPATH='../..')
-
-env.Tar(env['TARBALL'], ['SConscript',
-                         'fg-ipfilter.c'])

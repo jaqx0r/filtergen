@@ -1,9 +1,0 @@
-# -*- mode: python -*-
-Import('env')
-
-env.Library('out_ipchains',
-            source=['fg-ipchains.c'],
-            CPPPATH='../..')
-
-env.Tar(env['TARBALL'], ['SConscript',
-                         'fg-ipchains.c', ])
