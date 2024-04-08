@@ -32,15 +32,17 @@ def _dejagnu_test_impl(ctx):
     executable_path = "{name}_/{name}".format(name = ctx.label.name)
     executable = ctx.actions.declare_file(executable_path)
 
+    substitutions = {
+        "{tool}": ctx.label.name,
+        "{srcdir}": ctx.files.srcs[0].dirname,
+        "{runtest}": ctx.executable._runtest.short_path.replace("../", ""),
+        "{libdir}": ctx.executable._runtest.dirname + "/dejagnu_configure/share/dejagnu",
+    }
+
     ctx.actions.expand_template(
         template = ctx.file._runtest_template,
         output = executable,
-        substitutions = {
-            "{tool}": ctx.label.name,
-            "{srcdir}": ctx.files.srcs[0].dirname,
-            "{runtest}": ctx.executable._runtest.path,
-            "{libdir}": ctx.executable._runtest.dirname + "/dejagnu_configure/share/dejagnu",
-        },
+        substitutions = substitutions,
         is_executable = True,
     )
 
@@ -48,6 +50,7 @@ def _dejagnu_test_impl(ctx):
     files = [
         ctx.file._runtest,
         ctx.file.tool_exec,
+        ctx.file._bash_runfile_helper,
     ]
     files.extend(ctx.files._runtest_libs)
     files.extend(ctx.files.srcs)
@@ -127,6 +130,13 @@ dejagnu_test = rule(
         ),
         "_runtest_template": attr.label(
             default = ":dejagnu_runtest_wrapper.tpl",
+            allow_single_file = True,
+        ),
+        # Bazel ships with a useful bash function for querying the absolute path to runfiles at
+        # runtime.
+        "_bash_runfile_helper": attr.label(
+            default = "@bazel_tools//tools/bash/runfiles",
+            doc = "Label pointing to bash runfile helper",
             allow_single_file = True,
         ),
         # Magic coverage attributes.  This is only partially documented
