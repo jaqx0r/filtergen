@@ -1,2 +1,0 @@
-set srcdir ${srcdir}/testsuite
-set objdir `pwd`
