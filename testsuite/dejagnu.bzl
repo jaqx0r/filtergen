@@ -18,7 +18,7 @@ def _dejagnu_lib_impl(ctx):
             ctx,
             source_attributes = ["srcs"],
             dependency_attributes = ["deps"],
-            ),
+        ),
     ]
 
 dejagnu_library = rule(
@@ -67,12 +67,13 @@ def _dejagnu_test_impl(ctx):
     ])
 
     test_env = {}
+
     # Are this rule's sources or any of the sources for its direct dependencies
     # in deps instrumented?
     if (ctx.configuration.coverage_enabled and
         (ctx.coverage_instrumented() or
-         any([ctx.coverage_instrumented(dep) for dep in ctx.attr.deps])
-         or ctx.coverage_instrumented(ctx.attr.tool_exec))):
+         any([ctx.coverage_instrumented(dep) for dep in ctx.attr.deps]) or
+         ctx.coverage_instrumented(ctx.attr.tool_exec))):
         # Bazel’s coverage runner
         # (https://github.com/bazelbuild/bazel/blob/6.4.0/tools/test/collect_coverage.sh)
         # needs a binary called “lcov_merge.”  Its location is passed in the
