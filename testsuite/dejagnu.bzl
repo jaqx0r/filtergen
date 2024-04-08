@@ -14,6 +14,11 @@ def _dejagnu_lib_impl(ctx):
     return [
         DefaultInfo(runfiles = runfiles),
         DejaGNULibraryInfo(),
+        coverage_common.instrumented_files_info(
+            ctx,
+            source_attributes = ["srcs"],
+            dependency_attributes = ["deps"],
+            ),
     ]
 
 dejagnu_library = rule(
@@ -62,7 +67,12 @@ def _dejagnu_test_impl(ctx):
     ])
 
     test_env = {}
-    if ctx.configuration.coverage_enabled:
+    # Are this rule's sources or any of the sources for its direct dependencies
+    # in deps instrumented?
+    if (ctx.configuration.coverage_enabled and
+        (ctx.coverage_instrumented() or
+         any([ctx.coverage_instrumented(dep) for dep in ctx.attr.deps])
+         or ctx.coverage_instrumented(ctx.attr.tool_exec))):
         # Bazel’s coverage runner
         # (https://github.com/bazelbuild/bazel/blob/6.4.0/tools/test/collect_coverage.sh)
         # needs a binary called “lcov_merge.”  Its location is passed in the
@@ -107,7 +117,7 @@ dejagnu_test = rule(
     attrs = {
         "srcs": attr.label_list(
             allow_files = [".exp"],
-            doc = "Main test file for dejagnu runtests.",
+            doc = "Test sources for dejagnu runtests.",
         ),
         "deps": attr.label_list(providers = [DejaGNULibraryInfo]),
         "data": attr.label_list(
@@ -116,7 +126,7 @@ dejagnu_test = rule(
         "tool_exec": attr.label(
             executable = True,
             doc = "Binary target under test.",
-            cfg = "exec",
+            cfg = "target",
             allow_single_file = True,
         ),
         "_runtest": attr.label(
