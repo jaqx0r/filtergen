@@ -1,6 +1,9 @@
 load("@buildifier_prebuilt//:rules.bzl", "buildifier")
+load("//:subst.bzl", "subst_template")
 
 package(default_visibility = [":__subpackages__"])
+
+VERSION = "0.13"
 
 cc_library(
     name = "filter",
@@ -61,6 +64,37 @@ cc_binary(
         "//output/iptables:out_iptables",
         "//output/iptablesrestore:out_iptablesrestore",
     ],
+)
+
+SUBSTITUTIONS = {
+    "@sysconfdir@": "/etc",
+    "@pkgexdir@": "/usr/share/doc/filergen/examples",
+    "@sbindir@": "/usr/sbin",
+    "@VERSION@": VERSION,
+}
+
+subst_template(
+    name = "fgadm",
+    src = "fgadm.in",
+    substitutions = SUBSTITUTIONS,
+)
+
+subst_template(
+    name = "fgadm.conf",
+    src = "fgadm.conf.in",
+    substitutions = SUBSTITUTIONS,
+)
+
+subst_template(
+    name = "rules.filter",
+    src = "rules.filter.in",
+    substitutions = SUBSTITUTIONS,
+)
+
+subst_template(
+    name = "filtergen.spec",
+    src = "filtergen.spec.in",
+    substitutions = SUBSTITUTIONS,
 )
 
 buildifier(
