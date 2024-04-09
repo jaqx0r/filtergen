@@ -8,10 +8,9 @@ def _install_impl(ctx):
 
     # Like https://www.gnu.org/prep/standards/html_node/DESTDIR.html#DESTDIR
     output = ctx.actions.declare_file("install_script")
-    commands = "#!/usr/bin/env bash\nexport RUNFILES_LIB_DEBUG=1\ncat $0\n" + RUNFILES_BOILERPLATE
+    commands = "#!/usr/bin/env bash\n" + RUNFILES_BOILERPLATE
     runfiles = ctx.runfiles(files = [ctx.file._bash_runfile_helper])
     for target in ctx.attr.targets:
-        print(target)
         target_dir = ctx.attr.prefix + ctx.attr.targets.get(target)
         commands += "install -d {}\n".format(target_dir)
         mode = "-m 644"
@@ -19,7 +18,6 @@ def _install_impl(ctx):
         # Like https://www.gnu.org/prep/standards/html_node/Command-Variables.html#Command-Variables
         if target[DefaultInfo].files_to_run and target[DefaultInfo].files_to_run.executable:
             mode = ""
-        print(target, target[DefaultInfo].files.to_list())
         installables = ["$(rlocation _main/{})".format(x.short_path) for x in target[DefaultInfo].files.to_list()]
         commands += "install {mode} {target} {dest}\n".format(mode = mode, target = " ".join(installables), dest = target_dir)
         runfiles = runfiles.merge_all([
