@@ -8,9 +8,22 @@ def _subst_template_impl(ctx):
         output = output,
         substitutions = ctx.attr.substitutions,
     )
-    return [
-        DefaultInfo(files = depset([output])),
-    ]
+    runfiles = ctx.runfiles(files = [output])
+    files = depset([output])
+    if ctx.attr.executable:
+        return [
+            DefaultInfo(
+                executable = output,
+                runfiles = runfiles,
+            ),
+        ]
+    else:
+        return [
+            DefaultInfo(
+                files = files,
+                runfiles = runfiles,
+            ),
+        ]
 
 subst_template = rule(
     implementation = _subst_template_impl,
@@ -22,6 +35,10 @@ subst_template = rule(
         ),
         "substitutions": attr.string_dict(
             doc = "Substitutions to apply to the template",
+        ),
+        "executable": attr.bool(
+            default = False,
+            doc = "Set if the substitution is an executable.",
         ),
     },
 )

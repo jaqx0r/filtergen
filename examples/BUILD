@@ -1,5 +1,8 @@
 filegroup(
     name = "examples",
     srcs = glob(["*.filter"]),
-    visibility = ["//testsuite/filtergen:__pkg__"],
+    visibility = [
+        "//:__pkg__",
+        "//testsuite/filtergen:__pkg__",
+    ],
 )

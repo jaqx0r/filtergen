@@ -1,4 +1,5 @@
 load("@buildifier_prebuilt//:rules.bzl", "buildifier")
+load("//:install.bzl", "install")
 load("//:subst.bzl", "subst_template")
 
 package(default_visibility = [":__subpackages__"])
@@ -67,8 +68,8 @@ cc_binary(
 )
 
 SUBSTITUTIONS = {
-    "@sysconfdir@": "/etc",
-    "@pkgexdir@": "/usr/share/doc/filergen/examples",
+    "@sysconfdir@": "/etc/filtergen",
+    "@pkgexdir@": "/usr/share/doc/filtergen/examples",
     "@sbindir@": "/usr/sbin",
     "@VERSION@": VERSION,
 }
@@ -76,6 +77,7 @@ SUBSTITUTIONS = {
 subst_template(
     name = "fgadm",
     src = "fgadm.in",
+    executable = True,
     substitutions = SUBSTITUTIONS,
 )
 
@@ -95,6 +97,23 @@ subst_template(
     name = "filtergen.spec",
     src = "filtergen.spec.in",
     substitutions = SUBSTITUTIONS,
+)
+
+install(
+    name = "install",
+    prefix = "/home/jaq/fgbin",
+    targets = {
+        ":fgadm": "/sbin",
+        ":filtergen": "/sbin",
+        ":fgadm.conf": "/etc/filtergen",
+        ":rules.filter": "/etc/filtergen",
+        "filter_syntax.5": "/man/man5",
+        "filter_backends.7": "/man/man7",
+        "filtergen.8": "/man/man8",
+        "fgadm.8": "/man/man8",
+        "//examples:examples": "/doc/filtergen/examples",
+        "//doc:doc": "/doc/filtergen",
+    },
 )
 
 buildifier(
