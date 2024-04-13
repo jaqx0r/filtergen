@@ -1,3 +1,4 @@
+load("@bazel_skylib//rules:common_settings.bzl", "string_flag")
 load("@buildifier_prebuilt//:rules.bzl", "buildifier")
 load("//:install.bzl", "install")
 load("//:subst.bzl", "subst_template")
@@ -99,9 +100,14 @@ subst_template(
     substitutions = SUBSTITUTIONS,
 )
 
+string_flag(
+    name = "DESTDIR",
+    build_setting_default = "/usr/local",
+)
+
 install(
     name = "install",
-    prefix = "/home/jaq/fgbin",
+    prefix = ":DESTDIR",
     targets = {
         ":fgadm": "/sbin",
         ":filtergen": "/sbin",

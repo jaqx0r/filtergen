@@ -31,3 +31,5 @@ git_override(
     commit = "4689147cf4b1c2d507fd8bbb8eb748a7bbaad4ef",
     remote = "https://github.com/hedronvision/bazel-compile-commands-extractor.git",
 )
+
+bazel_dep(name = "bazel_skylib", version = "1.5.0")
