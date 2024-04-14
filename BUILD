@@ -65,6 +65,9 @@ cc_binary(
         "filtergen.c",
         "gen.c",
     ],
+    local_defines = [
+        "HAVE_GETOPT_H",
+    ],
     deps = [
         ":version",
         "//input/filtergen:in_filtergen",
