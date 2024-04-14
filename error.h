@@ -1,8 +1,8 @@
-#ifndef __ERROR_H__
-#define __ERROR_H__
+#ifndef FILTERGEN_ERROR_H
+#define FILTERGEN_ERROR_H
 
 #include "input/sourcepos.h"
 
 void filter_error(struct sourceposition *pos, const char *fmt, ...);
 
-#endif /* __ERROR_H__ */
+#endif /* FILTERGEN_ERROR_H */

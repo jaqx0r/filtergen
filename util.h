@@ -17,8 +17,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef _FILTER_UTIL_H
-#define _FILTER_UTIL_H 1
+#ifndef FILTERGEN_UTIL_H
+#define FILTERGEN_UTIL_H
 
 #define APP(l, s) (l = strapp(l, s))
 #define APP2(l, s1, s2) (l = strapp2(l, s1, s2))
@@ -29,4 +29,4 @@
 #define NEG(t) (ent->whats_negated & (1 << F_##t))
 #define NEGA(l, t) (NEG(t) ? APPS(l, "!") : l)
 
-#endif /* _FILTER_UTIL_H */
+#endif /* FILTERGEN_UTIL_H */
