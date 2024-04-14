@@ -25,6 +25,9 @@ bazel_dep(
     version = "6.4.0",
     dev_dependency = True,
 )
+
+# To rebuild `compile_commands.json` for clangd:
+#   bazel run @hedron_compile_commands//:refresh_all
 bazel_dep(name = "hedron_compile_commands", dev_dependency = True)
 git_override(
     module_name = "hedron_compile_commands",
