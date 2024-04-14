@@ -40,6 +40,7 @@ static FILE *outfile;
 /** Print the program usage to stderr. */
 /* LCOV_EXCL_START */
 void usage(char *prog) {
+  fprintf(stderr, "filtergen " STABLE_GIT_DESCRIBE "\n\n");
   fprintf(stderr, "Usage: %s [-chVR] [-t backend] [-o output] input\n", prog);
   fprintf(stderr, "       %s [-chVR] [-t backend] [-o output] -F policy\n\n",
           prog);
