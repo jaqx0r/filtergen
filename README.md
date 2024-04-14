@@ -1,6 +1,6 @@
 #	PACKET FILTER GENERATOR
 
-![ci](https://github.com/jaqx0r/filtergen/workflows/CI/badge.svg)
+![ci](https://github.com/jaqx0r/filtergen/actions/workflows/ci.yml/badge.svg)
 [![codecov](https://codecov.io/gh/jaqx0r/filtergen/branch/master/graph/badge.svg)](https://codecov.io/gh/jaqx0r/filtergen)
 
 ## GENERAL
