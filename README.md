@@ -10,11 +10,17 @@ level description language.  It doesn't support all of the whizz-bang
 features of the latest and greatest packet filters, but supports a
 decent subset which is sufficient for me.
 
-It currently supports only Linux iptables and ipchains.  Cisco IOS has
-been begun, but is incomplete.  Darren Reed's ipfilter may be supported
-at some stage.  It doesn't generate optimal rulesets, and has a few
-limitations which need to be removed, but is still a useful tool.
+## FILTER SUPPORT
 
+`filtergen` currently supports generating filters for:
+
+ * Linux iptables, ipchains direct command execution
+ * Linux iptables-restore, ipchains-restore input files.
+ * Cisco IOS (experimental, incomplete)
+ * ipfliter (experimental, incomplete)
+
+Filters can be generated from `filtergen`s internal language (see USAGE below)
+or from existing `ipchains-save` or `iptables-save` output.
 
 ## WARNING!
 
@@ -24,10 +30,11 @@ ipchains or iptables drivers leak packets.
 
 ## LICENCE
 
-It was written, and is copyrighted by me <matthew@hairy.beasts.org>,
+It was written, and copyrighted by <matthew@hairy.beasts.org>
 and made available you you under the terms of the GNU General Public
 Licence.
 
+The current maintainer is Jamie Wilkinson.
 
 ## WHY?
 
@@ -71,6 +78,16 @@ around the rules that they output.  This can be disabled with "-n":
 The rulesets generated with this option may not be complete, but the
 flag is useful to allow one to see what sort of output is generated.
 
+Futher details can be found in the [`filtergen.8`](filtergen.8),
+[`filter_syntax.5`](filter_syntax.5), and
+[`filter_backends.7`](filter_backends.7) manpages.
+
+## FGADM
+
+A helpful admin tool called `fgadm` is also included which manages compilation
+and application of the generated filter.
+
+Further details can be found in the [`fgadm.8`](fgadm.8) manpage.
 
 ## SYNTAX
 
@@ -181,6 +198,3 @@ sudo apt install expect
 ```
 
 should be sufficient in order to run `bazel test //...`
-
-
-
