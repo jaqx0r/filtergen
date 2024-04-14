@@ -168,11 +168,13 @@ INSTALLING filtergen
 Installing filtergen is easy.  If you don't find it easy, that's a bug.  Send
 bug reports here in GitHub.
 
-filtergen's build system uses [`bazel`](http://bazel.build), rather than the GNU autotools or a custom
-Makefile.  To build and install, ensure you have `bazel` or `bazelisk` installed,
-installed, and type `bazel run //:install --DESTDIR=path-to-install`.
+filtergen's build system uses [`bazel`](http://bazel.build), rather than the GNU
+autotools or a custom Makefile.  To build and install, ensure you have
+[`bazelisk`](https://bazel.build/install/bazelisk) installed, and type `bazel
+run //:install --DESTDIR=path-to-install`.
 
-The test suite used [`DejaGNU`](https://www.gnu.org/software/dejagnu/) which is installed by `bazel`, but the system needs TCL `expect` installed.
+The test suite used [`DejaGNU`](https://www.gnu.org/software/dejagnu/) which is
+installed by `bazel`, but the system needs TCL `expect` installed.
 
 ```
 sudo apt install expect
