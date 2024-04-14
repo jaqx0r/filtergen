@@ -5,8 +5,6 @@ load("//:subst.bzl", "subst_template")
 
 package(default_visibility = [":__subpackages__"])
 
-VERSION = "0.13"
-
 cc_library(
     name = "filter",
     srcs = ["filter.c"],
@@ -49,14 +47,26 @@ cc_library(
     ],
 )
 
+genrule(
+    name = "gen_version",
+    outs = ["version.h"],
+    cmd = "sed -E 's/(\\S+) (\\S*)/#define \\1 \"\\2\"/' < bazel-out/stable-status.txt > $@",
+    stamp = True,
+)
+
+cc_library(
+    name = "version",
+    hdrs = ["version.h"],
+)
+
 cc_binary(
     name = "filtergen",
     srcs = [
         "filtergen.c",
         "gen.c",
     ],
-    defines = ["VERSION=\\\"TODO\\\""],
     deps = [
+        ":version",
         "//input/filtergen:in_filtergen",
         "//input/iptables-save:in_iptables_save",
         "//output/cisco:out_cisco",
@@ -72,7 +82,7 @@ SUBSTITUTIONS = {
     "@sysconfdir@": "/etc/filtergen",
     "@pkgexdir@": "/usr/share/doc/filtergen/examples",
     "@sbindir@": "/usr/sbin",
-    "@VERSION@": VERSION,
+    "@VERSION@": "TODO",
 }
 
 subst_template(

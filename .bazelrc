@@ -11,3 +11,9 @@ build:clang-tidy --output_groups=report
 
 # Shorthand for setting DESTDIR flag
 build --flag_alias=DESTDIR=//:DESTDIR
+
+# Get workspace status information
+build --workspace_status_command=build/workspace_status.sh
+
+# Enable build stamping in release config mode
+build:release --stamp

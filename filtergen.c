@@ -22,14 +22,14 @@
 #include "config.h"
 #endif
 
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
-#include <stdarg.h>
 #include <strings.h>
 #include <sys/socket.h>
 #include <sys/un.h>
+#include <unistd.h>
 
 #ifdef HAVE_GETOPT_H
 #include <getopt.h>
@@ -37,6 +37,7 @@
 
 #include "filter.h"
 #include "input/input.h"
+#include "version.h"
 
 static FILE *outfile;
 
@@ -223,7 +224,7 @@ int main(int argc, char **argv) {
       }
       break;
     case 'V':
-      printf("filtergen " VERSION "\n");
+      printf("filtergen " STABLE_GIT_DESCRIBE "\n");
       exit(0);
       break;
     default:
