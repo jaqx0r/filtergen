@@ -17,3 +17,6 @@ build --workspace_status_command=build/workspace_status.sh
 
 # Enable build stamping in release config mode
 build:release --stamp
+
+# Turn on optimisation flags.
+build:release -c opt
