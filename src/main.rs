@@ -1,5 +1,5 @@
 use std::path::PathBuf;
-use clap::{Args, Parser};
+use clap::{Args, Parser, ValueEnum};
 
 #[derive(Parser)]
 #[command(version="0.13.1")]
@@ -35,12 +35,24 @@ struct Opts {
 struct Actions {
     /// don't process input, generate flush rules
     #[arg(short='F', long, value_name="POLICY")]
-    flush: Option<String>,
+    flush: Option<Policy>,
 
     /// source input
     input: PathBuf,
 }
 
+#[derive(Clone, ValueEnum)]
+enum Policy {
+    /// Accept all
+    Accept,
+
+    /// Drop all
+    Drop,
+
+    /// Reject all
+    Reject,
+}
+
 fn main() {
     let _opts = Opts::parse();
-}!
+}
