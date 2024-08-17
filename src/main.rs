@@ -1,46 +1,46 @@
-#[allow(unused_variables)]
 use std::path::PathBuf;
-use argh::FromArgs;
+use clap::{Args, Parser};
 
-#[derive(FromArgs)]
+#[derive(Parser)]
+#[command(version="0.13.1")]
 #[allow(dead_code)]
-/// filtergen
+/// filtergen generates packet filtering rules from a high level description language
 struct Opts {
     /// compile only, no generate
-    #[argh(switch, short='c')]
+    #[arg(short, long)]
     compile: bool,
 
     /// don't resolve hostnames or portnames
-    #[argh(switch, short='R')]
+    #[arg(short='R', long="no-resolve")]
     noresolve: bool,
 
-    /// source language, default: "filtergen"
-    #[argh(option, short='s', default="String::from(\"filtergen\")")]
+    /// source language
+    #[arg(short, long, default_value_t=String::from("filtergen"))]
     source: String,
 
-    /// generate for target, default "iptables"
-    #[argh(option, short='t', default="String::from(\"iptables\")")]
+    /// generate for target
+    #[arg(short, long, default_value_t=String::from("iptables"))]
     target: String,
 
-    /// don't process input, generate flush rules
-    #[argh(option, short='F', arg_name="policy")]
-    flush: Option<String>,
-
     /// write the generated packet filter to filename
-    #[argh(option, short='o')]
+    #[arg(short, long)]
     output: Option<PathBuf>,
 
-    /// show program version
-    #[argh(switch, short='V')]
-    version: bool,
+    #[command(flatten)]
+    action: Actions,
+}
+
+#[derive(Args)]
+#[group(required = true, multiple = false)]
+struct Actions {
+    /// don't process input, generate flush rules
+    #[arg(short='F', long, value_name="POLICY")]
+    flush: Option<String>,
 
     /// source input
-    #[argh(positional)]
     input: PathBuf,
 }
 
 fn main() {
-    let _opts: Opts = argh::from_env();
-
-
-}
+    let _opts = Opts::parse();
+}!

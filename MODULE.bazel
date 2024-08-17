@@ -38,7 +38,8 @@ bazel_dep(name = "rules_rust", version = "0.49.1")
 crate = use_extension("@rules_rust//crate_universe:extension.bzl", "crate")
 crate.from_specs()
 crate.spec(
-    package = "argh",
-    version = "0.1.12",
+    package = "clap",
+    version = "4.5.16",
+    features = ["derive"],
 )
 use_repo(crate, "crates")

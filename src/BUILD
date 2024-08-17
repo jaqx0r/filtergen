@@ -16,6 +16,6 @@ rust_binary(
     name = "filtergen",
     srcs = ["main.rs"],
     deps = [
-        "@crates//:argh",
+        "@crates//:clap",
     ],
 )
