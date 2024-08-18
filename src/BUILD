@@ -16,6 +16,16 @@ rust_binary(
     name = "filtergen",
     srcs = ["main.rs"],
     deps = [
+        ":build_info",
         "@crates//:clap",
     ],
 )
+
+genrule(name = "gen_build_info",
+        outs = ["build_info.rs"],
+        cmd = "echo \"#![allow(dead_code)]\" > $@; sed -E 's/(\\S+) (\\S*)/pub const \\1: \\&str = \"\\2\";/' < bazel-out/stable-status.txt >> $@",
+        stamp=True,
+        )
+
+rust_library(name = "build_info",
+             srcs = ["build_info.rs"])

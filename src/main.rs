@@ -1,8 +1,9 @@
 use std::path::PathBuf;
 use clap::{Args, Parser, ValueEnum};
+use build_info;
 
 #[derive(Parser)]
-#[command(version="0.13.1")]
+#[command(version=build_info::STABLE_GIT_DESCRIBE)]
 #[allow(dead_code)]
 /// filtergen generates packet filtering rules from a high level description language
 struct Opts {
