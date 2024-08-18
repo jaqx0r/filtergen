@@ -1,6 +1,8 @@
-use std::path::PathBuf;
-use clap::{Args, Parser, ValueEnum};
 use build_info;
+use clap::{Args, Parser, ValueEnum};
+use std::fs::File;
+use std::io::{self, Write};
+use std::path::PathBuf;
 
 #[derive(Parser)]
 #[command(version=build_info::STABLE_GIT_DESCRIBE)]
@@ -12,7 +14,7 @@ struct Opts {
     compile: bool,
 
     /// don't resolve hostnames or portnames
-    #[arg(short='R', long="no-resolve")]
+    #[arg(short = 'R', long = "no-resolve")]
     noresolve: bool,
 
     /// source language
@@ -35,7 +37,7 @@ struct Opts {
 #[group(required = true, multiple = false)]
 struct Actions {
     /// don't process input, generate flush rules
-    #[arg(short='F', long, value_name="POLICY")]
+    #[arg(short = 'F', long, value_name = "POLICY")]
     flush: Option<Policy>,
 
     /// source input
@@ -55,5 +57,22 @@ enum Policy {
 }
 
 fn main() {
-    let _opts = Opts::parse();
+    let opts = Opts::parse();
+
+    let mut output = match opts.output {
+        Some(x) => Box::new(match File::create(x.clone()) {
+            Ok(f) => f,
+            Err(err) => {
+                eprintln!(
+                    "filtergen: can't open output file \"{}\": {}\n",
+                    x.display(),
+                    err
+                );
+                std::process::exit(1);
+            }
+        }) as Box<dyn Write>,
+        None => Box::new(io::stdout()) as Box<dyn Write>,
+    };
+
+    output.write(b"Hi\n").unwrap();
 }
