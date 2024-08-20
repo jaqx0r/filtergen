@@ -154,12 +154,12 @@ void filter_noneg(struct filter **f);
 typedef int filtergen(struct filter *filter, int flags);
 
 filtergen fg_iptables, fg_ip6tables, fg_iptrestore, fg_ip6trestore, fg_ipchains,
-    fg_ipfilter, fg_cisco, emit_filtergen;
+    fg_ipfilter, fg_cisco, emit_filtergen, fg_nftables;
 
 /** Filter flush output drivers. */
 typedef int filter_flush(enum filtertype policy);
 
 filter_flush flush_iptables, flush_ip6tables, flush_iptrestore,
-    flush_ip6trestore, flush_ipchains;
+    flush_ip6trestore, flush_ipchains, flush_nftables;
 
 #endif /* _FK_FILTER_H */

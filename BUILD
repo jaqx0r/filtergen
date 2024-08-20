@@ -103,6 +103,7 @@ cc_binary(
         "//output/iptables:out_iptables",
         "//output/iptablesrestore:out_iptablesrestore",
         "//src:lib",
+        "//src/output:nftables",
     ],
 )
 
