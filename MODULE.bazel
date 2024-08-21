@@ -33,6 +33,14 @@ git_override(
     remote = "https://github.com/erenon/bazel_clang_tidy.git",
 )
 
+# bazel build --config=iwyu //...
+bazel_dep(name = "bazel_iwyu",  dev_dependency= True)
+git_override(
+    module_name = "bazel_iwyu",
+    remote = "https://github.com/storypku/bazel_iwyu",
+    commit = "f6d684187ec4fff1863b728df99d35101c0bd2c9",
+)
+
 bazel_dep(name = "rules_rust", version = "0.49.1")
 
 crate = use_extension("@rules_rust//crate_universe:extension.bzl", "crate")
