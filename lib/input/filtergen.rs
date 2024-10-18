@@ -3,7 +3,7 @@ use nom::{
     Parser,
     branch::alt,
     bytes::complete::tag,
-    combinator::map,
+    combinator::value,
     error::VerboseError,
 };
 
@@ -40,10 +40,10 @@ pub enum Option {
 
 fn parse_option(input: &str) -> IResult<&str, Option, VerboseError<&str>> {
     alt((
-        map(tag("local"), |_| Option::Local),
-        map(tag("forward"), |_| Option::Forward),
-        map(tag("oneway"), |_| Option::OneWay),
-        map(tag("log"), |_| Option::Log),
+        value(Option::Local, tag("local")),
+        value(Option::Forward, tag("forward")),
+        value(Option::OneWay, tag("oneway")),
+        value(Option::Log, tag("log") ),
     )).parse(input)
 }
 
