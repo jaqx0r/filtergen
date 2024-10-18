@@ -1,10 +1,11 @@
 use nom::{
-    IResult,
-    Parser,
     branch::alt,
     bytes::complete::tag,
-    combinator::value,
+    character::complete::{alpha1, multispace0},
+    combinator::{map, opt, value},
     error::VerboseError,
+    sequence::{pair, preceded},
+    IResult, Parser,
 };
 
 #[derive(Debug, Eq, PartialEq, Clone, Copy)]
@@ -30,27 +31,35 @@ pub enum Keyword {
     Text,
 }
 
-#[derive(Debug, Eq, PartialEq, Clone, Copy)]
-pub enum Option {
+#[derive(Debug, Eq, PartialEq, Clone)]
+pub enum FilterOption {
     Local,
     Forward,
     OneWay,
-    Log,
+    Log(Option<String>),
 }
 
-fn parse_option(input: &str) -> IResult<&str, Option, VerboseError<&str>> {
+fn parse_option(input: &str) -> IResult<&str, FilterOption, VerboseError<&str>> {
     alt((
-        value(Option::Local, tag("local")),
-        value(Option::Forward, tag("forward")),
-        value(Option::OneWay, tag("oneway")),
-        value(Option::Log, tag("log") ),
-    )).parse(input)
+        value(FilterOption::Local, tag("local")),
+        value(FilterOption::Forward, tag("forward")),
+        value(FilterOption::OneWay, tag("oneway")),
+        map(
+            preceded(pair(tag("log"), multispace0), opt(alpha1)),
+            |s: Option<&str>| FilterOption::Log(s.map(String::from)),
+        ),
+    ))
+    .parse(input)
 }
 
 #[test]
 fn parse_option_test() {
-    assert_eq!(parse_option("local"), Ok(("", Option::Local)));
-    assert_eq!(parse_option("forward"), Ok(("", Option::Forward)));
-    assert_eq!(parse_option("oneway"), Ok(("", Option::OneWay)));
-    assert_eq!(parse_option("log"), Ok(("", Option::Log)));    
+    assert_eq!(parse_option("local"), Ok(("", FilterOption::Local)));
+    assert_eq!(parse_option("forward"), Ok(("", FilterOption::Forward)));
+    assert_eq!(parse_option("oneway"), Ok(("", FilterOption::OneWay)));
+    assert_eq!(parse_option("log"), Ok(("", FilterOption::Log(None))));
+    assert_eq!(
+        parse_option("log text"),
+        Ok(("", FilterOption::Log(Some("text".to_string()))))
+    );
 }
