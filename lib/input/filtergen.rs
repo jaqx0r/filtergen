@@ -5,7 +5,7 @@ use nom::{
     combinator::{cut, map, opt, recognize, value},
     error::{context, VerboseError},
     multi::{many0, separated_list1},
-    sequence::{delimited, pair, preceded, terminated},
+    sequence::{delimited, pair, preceded, terminated, tuple},
     IResult, Parser,
 };
 
@@ -143,17 +143,142 @@ fn parse_target_test() {
     assert_eq!(parse_target("redirect"), Ok(("", Target::Redirect)));
 }
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct Host<'a> {
+    pub host: &'a str,
+    pub mask: Option<&'a str>,
+}
+
+#[derive(Debug, Eq, PartialEq, Clone)]
+pub enum HostSpecifier<'a> {
+    Source(Vec<Host<'a>>),
+    Dest(Vec<Host<'a>>),
+}
+
+fn parse_host_argument(input: &str) -> IResult<&str, Host, VerboseError<&str>> {
+    map(
+        pair(
+            parse_identifier,
+            opt(preceded(
+                tuple((multispace0, tag("/"), multispace0)),
+                parse_identifier,
+            )),
+        ),
+        |(h, m)| Host { host: h, mask: m },
+    )
+    .parse(input)
+}
+
+#[test]
+fn parse_host_argument_test() {
+    assert_eq!(
+        parse_host_argument("hostname"),
+        Ok((
+            "",
+            Host {
+                host: "hostname",
+                mask: None
+            }
+        ))
+    );
+    assert_eq!(
+        parse_host_argument("hostname/mask"),
+        Ok((
+            "",
+            Host {
+                host: "hostname",
+                mask: Some("mask")
+            }
+        ))
+    );
+    assert_eq!(
+        parse_host_argument("hostname / mask"),
+        Ok((
+            "",
+            Host {
+                host: "hostname",
+                mask: Some("mask")
+            }
+        ))
+    );
+}
+
+fn parse_host(input: &str) -> IResult<&str, HostSpecifier, VerboseError<&str>> {
+    map(
+        pair(
+            alt((tag("source"), tag("dest"))),
+            preceded(
+                multispace0,
+                alt((
+                    argument_list(parse_host_argument),
+                    map(parse_host_argument, |h| vec![h]),
+                )),
+            ),
+        ),
+        |(h, v)| match h {
+            "source" => HostSpecifier::Source(v),
+            "dest" => HostSpecifier::Dest(v),
+            _ => unreachable!(),
+        },
+    )
+    .parse(input)
+}
+
+#[test]
+fn parse_host_test() {
+    assert_eq!(
+        parse_host("source host"),
+        Ok((
+            "",
+            HostSpecifier::Source(vec![Host {
+                host: "host",
+                mask: None
+            }])
+        ))
+    );
+
+    assert_eq!(
+        parse_host("dest host/mask"),
+        Ok((
+            "",
+            HostSpecifier::Dest(vec![Host {
+                host: "host",
+                mask: Some("mask")
+            }])
+        ))
+    );
+
+    assert_eq!(
+        parse_host("dest { host/mask host2}"),
+        Ok((
+            "",
+            HostSpecifier::Dest(vec![
+                Host {
+                    host: "host",
+                    mask: Some("mask")
+                },
+                Host {
+                    host: "host2",
+                    mask: None
+                }
+            ])
+        ))
+    );
+}
+
 #[derive(Debug, Eq, PartialEq, Clone)]
 pub enum Specifier<'a> {
     FilterOption(FilterOption<'a>),
     Negated(Box<Specifier<'a>>),
     Direction(Direction<'a>),
+    Host(HostSpecifier<'a>),
     Target(Target),
 }
 
 fn parse_specifier(input: &str) -> IResult<&str, Specifier, VerboseError<&str>> {
     alt((
         map(parse_direction, Specifier::Direction),
+        map(parse_host, Specifier::Host),
         map(parse_target, Specifier::Target),
         map(parse_option, Specifier::FilterOption),
         map(
@@ -179,10 +304,8 @@ fn parse_specifier_test() {
     );
     assert_eq!(
         parse_specifier("accept"),
-        Ok((
-            "",
-            Specifier::Target(Target::Accept),
-            )));
+        Ok(("", Specifier::Target(Target::Accept),))
+    );
 }
 
 fn parse_rule(input: &str) -> IResult<&str, Vec<Specifier>, VerboseError<&str>> {
@@ -220,6 +343,20 @@ fn parse_rule_test() {
                 Specifier::Direction(Direction::Input(vec!["eth0"])),
                 Specifier::Target(Target::Accept),
             ],
+        ))
+    );
+    assert_eq!(
+        parse_rule("input eth0 source internet accept;"),
+        Ok((
+            "",
+            vec![
+                Specifier::Direction(Direction::Input(vec!["eth0"])),
+                Specifier::Host(HostSpecifier::Source(vec![Host {
+                    host: "internet",
+                    mask: None
+                }])),
+                Specifier::Target(Target::Accept),
+            ]
         ))
     );
 }
