@@ -115,11 +115,13 @@ fn parse_direction_test() {
 pub enum Specifier<'a> {
     FilterOption(FilterOption<'a>),
     Negated(Box<Specifier<'a>>),
+    Direction(Direction<'a>),
 }
 
 fn parse_specifier(input: &str) -> IResult<&str, Specifier, VerboseError<&str>> {
     alt((
-        map(parse_option, |o| Specifier::FilterOption(o)),
+        map(parse_direction, Specifier::Direction),
+        map(parse_option, Specifier::FilterOption),
         map(
             preceded(pair(tag("!"), multispace0), parse_specifier),
             |s| Specifier::Negated(Box::new(s)),
@@ -160,6 +162,14 @@ fn parse_rule_test() {
             ]
         ))
     );
+    assert_eq!(
+        parse_rule("input eth0 forward;"),
+        Ok(("", vec![
+            Specifier::Direction(Direction::Input(vec!["eth0"])),
+            Specifier::FilterOption(FilterOption::Forward),
+        ],
+        ))
+            );
 }
 
 pub fn parse(input: &str) -> IResult<&str, Vec<Vec<Specifier>>, VerboseError<&str>> {
