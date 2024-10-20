@@ -1,7 +1,7 @@
 use nom::{
     branch::alt,
     bytes::complete::tag,
-    character::complete::{alpha1, alphanumeric1,  multispace0, multispace1},
+    character::complete::{alpha1, alphanumeric1, multispace0, multispace1},
     combinator::{cut, map, opt, recognize, value},
     error::{context, VerboseError},
     multi::{many0, separated_list1},
@@ -112,15 +112,49 @@ fn parse_direction_test() {
 }
 
 #[derive(Debug, Eq, PartialEq, Clone)]
+pub enum Target {
+    Accept,
+    Reject,
+    Drop,
+    Masq,
+    Proxy,
+    Redirect,
+}
+
+fn parse_target(input: &str) -> IResult<&str, Target, VerboseError<&str>> {
+    alt((
+        value(Target::Accept, tag("accept")),
+        value(Target::Reject, tag("reject")),
+        value(Target::Drop, tag("drop")),
+        value(Target::Masq, tag("masq")),
+        value(Target::Proxy, tag("proxy")),
+        value(Target::Redirect, tag("redirect")),
+    ))
+    .parse(input)
+}
+
+#[test]
+fn parse_target_test() {
+    assert_eq!(parse_target("accept"), Ok(("", Target::Accept)));
+    assert_eq!(parse_target("reject"), Ok(("", Target::Reject)));
+    assert_eq!(parse_target("drop"), Ok(("", Target::Drop)));
+    assert_eq!(parse_target("masq"), Ok(("", Target::Masq)));
+    assert_eq!(parse_target("proxy"), Ok(("", Target::Proxy)));
+    assert_eq!(parse_target("redirect"), Ok(("", Target::Redirect)));
+}
+
+#[derive(Debug, Eq, PartialEq, Clone)]
 pub enum Specifier<'a> {
     FilterOption(FilterOption<'a>),
     Negated(Box<Specifier<'a>>),
     Direction(Direction<'a>),
+    Target(Target),
 }
 
 fn parse_specifier(input: &str) -> IResult<&str, Specifier, VerboseError<&str>> {
     alt((
         map(parse_direction, Specifier::Direction),
+        map(parse_target, Specifier::Target),
         map(parse_option, Specifier::FilterOption),
         map(
             preceded(pair(tag("!"), multispace0), parse_specifier),
@@ -143,6 +177,12 @@ fn parse_specifier_test() {
             Specifier::Negated(Box::new(Specifier::FilterOption(FilterOption::Local)))
         ))
     );
+    assert_eq!(
+        parse_specifier("accept"),
+        Ok((
+            "",
+            Specifier::Target(Target::Accept),
+            )));
 }
 
 fn parse_rule(input: &str) -> IResult<&str, Vec<Specifier>, VerboseError<&str>> {
@@ -164,12 +204,24 @@ fn parse_rule_test() {
     );
     assert_eq!(
         parse_rule("input eth0 forward;"),
-        Ok(("", vec![
-            Specifier::Direction(Direction::Input(vec!["eth0"])),
-            Specifier::FilterOption(FilterOption::Forward),
-        ],
+        Ok((
+            "",
+            vec![
+                Specifier::Direction(Direction::Input(vec!["eth0"])),
+                Specifier::FilterOption(FilterOption::Forward),
+            ],
         ))
-            );
+    );
+    assert_eq!(
+        parse_rule("input eth0 accept;"),
+        Ok((
+            "",
+            vec![
+                Specifier::Direction(Direction::Input(vec!["eth0"])),
+                Specifier::Target(Target::Accept),
+            ],
+        ))
+    );
 }
 
 pub fn parse(input: &str) -> IResult<&str, Vec<Vec<Specifier>>, VerboseError<&str>> {
