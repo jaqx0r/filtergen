@@ -11,7 +11,7 @@ use nom::{
 
 fn parse_identifier(input: &str) -> IResult<&str, &str, VerboseError<&str>> {
     recognize(pair(
-        alt((alpha1, tag("_"))),
+        alt((alphanumeric1, tag("_"))),
         many0(alt((alphanumeric1, tag("_")))),
     ))
     .parse(input)
@@ -19,6 +19,7 @@ fn parse_identifier(input: &str) -> IResult<&str, &str, VerboseError<&str>> {
 
 #[test]
 fn parse_identifier_test() {
+    assert_eq!(parse_identifier("1"), Ok(("", "1")));
     assert_eq!(parse_identifier("foo"), Ok(("", "foo")));
     assert_eq!(parse_identifier("_foo"), Ok(("", "_foo")));
     assert_eq!(parse_identifier("foo_oo"), Ok(("", "foo_oo")));
@@ -267,11 +268,117 @@ fn parse_host_test() {
 }
 
 #[derive(Debug, Eq, PartialEq, Clone)]
+pub struct PortRange<'a> {
+    pub min: &'a str,
+    pub max: Option<&'a str>,
+}
+
+fn parse_port_argument(input: &str) -> IResult<&str, PortRange, VerboseError<&str>> {
+    map(
+        pair(
+            parse_identifier,
+            opt(preceded(
+                tuple((multispace0, tag(":"), multispace0)),
+                parse_identifier,
+            )),
+        ),
+        |(min, max)| PortRange { min, max },
+    )
+    .parse(input)
+}
+
+#[test]
+fn parse_port_argument_test() {
+    assert_eq!(
+        parse_port_argument("1"),
+        Ok((
+            "",
+            PortRange {
+                min: "1",
+                max: None
+            }
+        ))
+    );
+    assert_eq!(
+        parse_port_argument("ssh"),
+        Ok((
+            "",
+            PortRange {
+                min: "ssh",
+                max: None
+            }
+        ))
+    );
+    assert_eq!(
+        parse_port_argument("1:1024"),
+        Ok((
+            "",
+            PortRange {
+                min: "1",
+                max: Some("1024")
+            }
+        ))
+    );
+}
+
+#[derive(Debug, Eq, PartialEq, Clone)]
+pub enum Port<'a> {
+    Source(Vec<PortRange<'a>>),
+    Dest(Vec<PortRange<'a>>),
+}
+
+fn parse_port(input: &str) -> IResult<&str, Port, VerboseError<&str>> {
+    map(
+        pair(
+            alt((tag("sport"), tag("dport"))),
+            preceded(
+                multispace0,
+                alt((
+                    argument_list(parse_port_argument),
+                    map(parse_port_argument, |p| vec![p]),
+                )),
+            ),
+        ),
+        |(p, v)| match p {
+            "sport" => Port::Source(v),
+            "dport" => Port::Dest(v),
+            _ => unreachable!(),
+        },
+    )
+    .parse(input)
+}
+
+#[test]
+fn parse_port_test() {
+    assert_eq!(
+        parse_port("sport ssh"),
+        Ok((
+            "",
+            Port::Source(vec![PortRange {
+                min: "ssh",
+                max: None
+            }])
+        ))
+    );
+    assert_eq!(
+        parse_port("dport 0:1024"),
+        Ok((
+            "",
+            Port::Dest(vec![PortRange {
+                min: "0",
+                max: Some("1024")
+            }])
+        ))
+    );
+}
+
+#[derive(Debug, Eq, PartialEq, Clone)]
 pub enum Specifier<'a> {
     FilterOption(FilterOption<'a>),
     Negated(Box<Specifier<'a>>),
     Direction(Direction<'a>),
     Host(HostSpecifier<'a>),
+    Port(Port<'a>),
     Target(Target),
 }
 
@@ -279,6 +386,7 @@ fn parse_specifier(input: &str) -> IResult<&str, Specifier, VerboseError<&str>> 
     alt((
         map(parse_direction, Specifier::Direction),
         map(parse_host, Specifier::Host),
+        map(parse_port, Specifier::Port),
         map(parse_target, Specifier::Target),
         map(parse_option, Specifier::FilterOption),
         map(
@@ -305,6 +413,16 @@ fn parse_specifier_test() {
     assert_eq!(
         parse_specifier("accept"),
         Ok(("", Specifier::Target(Target::Accept),))
+    );
+    assert_eq!(
+        parse_specifier("sport ssh"),
+        Ok((
+            "",
+            Specifier::Port(Port::Source(vec![PortRange {
+                min: "ssh",
+                max: None
+            }]))
+        ))
     );
 }
 
@@ -354,6 +472,24 @@ fn parse_rule_test() {
                 Specifier::Host(HostSpecifier::Source(vec![Host {
                     host: "internet",
                     mask: None
+                }])),
+                Specifier::Target(Target::Accept),
+            ]
+        ))
+    );
+    assert_eq!(
+        parse_rule("output eth0 dest ns dport 53 accept;"),
+        Ok((
+            "",
+            vec![
+                Specifier::Direction(Direction::Output(vec!["eth0"])),
+                Specifier::Host(HostSpecifier::Dest(vec![Host {
+                    host: "ns",
+                    mask: None
+                }])),
+                Specifier::Port(Port::Dest(vec![PortRange {
+                    min: "53",
+                    max: None
                 }])),
                 Specifier::Target(Target::Accept),
             ]
