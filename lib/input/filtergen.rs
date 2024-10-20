@@ -1,43 +1,35 @@
 use nom::{
     branch::alt,
     bytes::complete::tag,
-    character::complete::{alpha1, char, multispace0},
-    combinator::{map, opt, value},
-    error::VerboseError,
-    multi::many0,
-    sequence::{pair, preceded, terminated},
+    character::complete::{alpha1, alphanumeric1,  multispace0, multispace1},
+    combinator::{cut, map, opt, recognize, value},
+    error::{context, VerboseError},
+    multi::{many0, separated_list1},
+    sequence::{delimited, pair, preceded, terminated},
     IResult, Parser,
 };
 
-#[derive(Debug, Eq, PartialEq, Clone, Copy)]
-pub enum Keyword {
-    Accept,
-    Dest,
-    DPort,
-    Drop,
-    Forward,
-    IcmpType,
-    Input,
-    Local,
-    Log,
-    Masq,
-    OneWay,
-    Output,
-    Proto,
-    Proxy,
-    Redirect,
-    Reject,
-    Source,
-    SPort,
-    Text,
+fn parse_identifier(input: &str) -> IResult<&str, &str, VerboseError<&str>> {
+    recognize(pair(
+        alt((alpha1, tag("_"))),
+        many0(alt((alphanumeric1, tag("_")))),
+    ))
+    .parse(input)
+}
+
+#[test]
+fn parse_identifier_test() {
+    assert_eq!(parse_identifier("foo"), Ok(("", "foo")));
+    assert_eq!(parse_identifier("_foo"), Ok(("", "_foo")));
+    assert_eq!(parse_identifier("foo_oo"), Ok(("", "foo_oo")));
 }
 
 #[derive(Debug, Eq, PartialEq, Clone)]
-pub enum FilterOption {
+pub enum FilterOption<'a> {
     Local,
     Forward,
     OneWay,
-    Log(Option<String>),
+    Log(Option<&'a str>),
 }
 
 fn parse_option(input: &str) -> IResult<&str, FilterOption, VerboseError<&str>> {
@@ -47,7 +39,7 @@ fn parse_option(input: &str) -> IResult<&str, FilterOption, VerboseError<&str>> 
         value(FilterOption::OneWay, tag("oneway")),
         map(
             preceded(pair(tag("log"), multispace0), opt(alpha1)),
-            |s: Option<&str>| FilterOption::Log(s.map(String::from)),
+            |s: Option<&str>| FilterOption::Log(s.to_owned()),
         ),
     ))
     .parse(input)
@@ -61,14 +53,68 @@ fn parse_option_test() {
     assert_eq!(parse_option("log"), Ok(("", FilterOption::Log(None))));
     assert_eq!(
         parse_option("log text"),
-        Ok(("", FilterOption::Log(Some("text".to_string()))))
+        Ok(("", FilterOption::Log(Some("text"))))
+    );
+}
+
+fn argument_list<'a, O, F>(arg_parser: F) -> impl Parser<&'a str, Vec<O>, VerboseError<&'a str>>
+where
+    F: Parser<&'a str, O, VerboseError<&'a str>>,
+{
+    delimited(
+        tag("{"),
+        preceded(multispace0, separated_list1(multispace1, arg_parser)),
+        context("closing brace", cut(preceded(multispace0, tag("}")))),
+    )
+}
+
+#[derive(Debug, Eq, PartialEq, Clone)]
+pub enum Direction<'a> {
+    Input(Vec<&'a str>),
+    Output(Vec<&'a str>),
+}
+
+fn parse_direction(input: &str) -> IResult<&str, Direction, VerboseError<&str>> {
+    map(
+        pair(
+            alt((tag("input"), tag("output"))),
+            preceded(
+                multispace0,
+                alt((
+                    argument_list(parse_identifier),
+                    map(parse_identifier, |i: &str| vec![i]),
+                )),
+            ),
+        ),
+        |(d, v)| match d {
+            "input" => Direction::Input(v),
+            "output" => Direction::Output(v),
+            _ => unreachable!(),
+        },
+    )
+    .parse(input)
+}
+
+#[test]
+fn parse_direction_test() {
+    assert_eq!(
+        parse_direction("input eth0"),
+        Ok(("", Direction::Input(vec!["eth0"])))
+    );
+    assert_eq!(
+        parse_direction("output lo"),
+        Ok(("", Direction::Output(vec!["lo"])))
+    );
+    assert_eq!(
+        parse_direction("input { eth0 lo }"),
+        Ok(("", Direction::Input(vec!["eth0", "lo"])))
     );
 }
 
 #[derive(Debug, Eq, PartialEq, Clone)]
-pub enum Specifier {
-    FilterOption(FilterOption),
-    Negated(Box<Specifier>),
+pub enum Specifier<'a> {
+    FilterOption(FilterOption<'a>),
+    Negated(Box<Specifier<'a>>),
 }
 
 fn parse_specifier(input: &str) -> IResult<&str, Specifier, VerboseError<&str>> {
@@ -98,7 +144,7 @@ fn parse_specifier_test() {
 }
 
 fn parse_rule(input: &str) -> IResult<&str, Vec<Specifier>, VerboseError<&str>> {
-    terminated(many0(preceded(multispace0, parse_specifier)), char(';')).parse(input)
+    terminated(many0(preceded(multispace0, parse_specifier)), tag(";")).parse(input)
 }
 
 #[test]
@@ -123,17 +169,22 @@ pub fn parse(input: &str) -> IResult<&str, Vec<Vec<Specifier>>, VerboseError<&st
 #[test]
 fn parse_test() {
     assert_eq!(
-        parse("local forward;
-forward !local;"),
-        Ok(("",
-        vec![
+        parse(
+            "local forward;
+forward !local;"
+        ),
+        Ok((
+            "",
             vec![
-                Specifier::FilterOption(FilterOption::Local),
-                Specifier::FilterOption(FilterOption::Forward),
-            ],
-            vec![
-                Specifier::FilterOption(FilterOption::Forward),
-                Specifier::Negated(Box::new(Specifier::FilterOption(FilterOption::Local))),
-            ],
-        ])))
+                vec![
+                    Specifier::FilterOption(FilterOption::Local),
+                    Specifier::FilterOption(FilterOption::Forward),
+                ],
+                vec![
+                    Specifier::FilterOption(FilterOption::Forward),
+                    Specifier::Negated(Box::new(Specifier::FilterOption(FilterOption::Local))),
+                ],
+            ]
+        ))
+    )
 }
