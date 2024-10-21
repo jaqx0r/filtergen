@@ -373,6 +373,47 @@ fn parse_port_test() {
 }
 
 #[derive(Debug, Eq, PartialEq, Clone)]
+pub enum Protocol {
+    TCP,
+    UDP,
+    ICMP,
+}
+
+fn parse_protocol_name(input: &str) -> IResult<&str, Protocol, VerboseError<&str>> {
+    alt((
+        value(Protocol::TCP, tag("tcp")),
+        value(Protocol::UDP, tag("udp")),
+        value(Protocol::ICMP, tag("icmp")),
+    ))
+    .parse(input)
+}
+
+fn parse_protocol(input: &str) -> IResult<&str, Vec<Protocol>, VerboseError<&str>> {
+    preceded(
+        tag("proto"),
+        preceded(
+            multispace0,
+            alt((
+                argument_list(parse_protocol_name),
+                map(parse_protocol_name, |p| vec![p]),
+            )),
+        ),
+    )
+    .parse(input)
+}
+
+#[test]
+fn parse_protocol_test() {
+    assert_eq!(parse_protocol("proto tcp"), Ok(("", vec![Protocol::TCP])));
+    assert_eq!(parse_protocol("proto udp"), Ok(("", vec![Protocol::UDP])));
+    assert_eq!(parse_protocol("proto icmp"), Ok(("", vec![Protocol::ICMP])));
+    assert_eq!(
+        parse_protocol("proto { tcp udp }"),
+        Ok(("", vec![Protocol::TCP, Protocol::UDP]))
+    );
+}
+
+#[derive(Debug, Eq, PartialEq, Clone)]
 pub enum Specifier<'a> {
     FilterOption(FilterOption<'a>),
     Negated(Box<Specifier<'a>>),
@@ -380,6 +421,7 @@ pub enum Specifier<'a> {
     Host(HostSpecifier<'a>),
     Port(Port<'a>),
     Target(Target),
+    Protocol(Vec<Protocol>),
 }
 
 fn parse_specifier(input: &str) -> IResult<&str, Specifier, VerboseError<&str>> {
@@ -388,6 +430,7 @@ fn parse_specifier(input: &str) -> IResult<&str, Specifier, VerboseError<&str>> 
         map(parse_host, Specifier::Host),
         map(parse_port, Specifier::Port),
         map(parse_target, Specifier::Target),
+        map(parse_protocol, Specifier::Protocol),
         map(parse_option, Specifier::FilterOption),
         map(
             preceded(pair(tag("!"), multispace0), parse_specifier),
@@ -423,6 +466,10 @@ fn parse_specifier_test() {
                 max: None
             }]))
         ))
+    );
+    assert_eq!(
+        parse_specifier("proto tcp"),
+        Ok(("", Specifier::Protocol(vec![Protocol::TCP])))
     );
 }
 
@@ -478,7 +525,7 @@ fn parse_rule_test() {
         ))
     );
     assert_eq!(
-        parse_rule("output eth0 dest ns dport 53 accept;"),
+        parse_rule("output eth0 dest ns dport 53 proto {tcp udp} accept;"),
         Ok((
             "",
             vec![
@@ -491,6 +538,7 @@ fn parse_rule_test() {
                     min: "53",
                     max: None
                 }])),
+                Specifier::Protocol(vec![Protocol::TCP, Protocol::UDP]),
                 Specifier::Target(Target::Accept),
             ]
         ))
