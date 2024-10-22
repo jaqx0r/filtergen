@@ -4,7 +4,7 @@ use nom::{
     character::complete::{alpha1, alphanumeric1, multispace0, multispace1},
     combinator::{cut, map, opt, recognize, value},
     error::{context, VerboseError},
-    multi::{many0, separated_list1},
+    multi::{many0, separated_list0, separated_list1},
     sequence::{delimited, pair, preceded, terminated, tuple},
     IResult, Parser,
 };
@@ -441,6 +441,7 @@ pub enum Specifier<'a> {
     Port(Port<'a>),
     Target(Target),
     Protocol(Vec<Protocol<'a>>),
+    Compound(Vec<Vec<Specifier<'a>>>),
 }
 
 fn parse_specifier(input: &str) -> IResult<&str, Specifier, VerboseError<&str>> {
@@ -455,6 +456,12 @@ fn parse_specifier(input: &str) -> IResult<&str, Specifier, VerboseError<&str>> 
             preceded(pair(tag("!"), multispace0), parse_specifier),
             |s| Specifier::Negated(Box::new(s)),
         ),
+        map(delimited(terminated(tag("{"), multispace0),
+                      separated_list0(tuple((multispace0, tag(";"), multispace0)),
+                                      separated_list0(multispace1, parse_specifier)),
+                      context("closing brace", cut(preceded(multispace0, tag("}"))))),
+            Specifier::Compound,
+            )
     ))
     .parse(input)
 }
@@ -490,10 +497,14 @@ fn parse_specifier_test() {
         parse_specifier("proto tcp"),
         Ok(("", Specifier::Protocol(vec![Protocol::TCP])))
     );
+    assert_eq!(
+        parse_specifier("{ proto tcp; proto udp }"),
+        Ok(("", Specifier::Compound(vec![vec![Specifier::Protocol(vec![Protocol::TCP])],
+                                         vec![Specifier::Protocol(vec![Protocol::UDP])]]))));
 }
 
 fn parse_rule(input: &str) -> IResult<&str, Vec<Specifier>, VerboseError<&str>> {
-    terminated(many0(preceded(multispace0, parse_specifier)), tag(";")).parse(input)
+    terminated(many0(preceded(multispace0, parse_specifier)), preceded(multispace0, tag(";"))).parse(input)
 }
 
 #[test]
