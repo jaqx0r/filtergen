@@ -9,6 +9,9 @@ use nom::{
     IResult, Parser,
 };
 
+#[cfg(test)]
+use pretty_assertions::assert_eq;
+
 fn parse_identifier(input: &str) -> IResult<&str, &str, VerboseError<&str>> {
     recognize(pair(
         alt((alphanumeric1, tag("_"))),
@@ -23,6 +26,24 @@ fn parse_identifier_test() {
     assert_eq!(parse_identifier("foo"), Ok(("", "foo")));
     assert_eq!(parse_identifier("_foo"), Ok(("", "_foo")));
     assert_eq!(parse_identifier("foo_oo"), Ok(("", "foo_oo")));
+}
+
+fn parse_string_literal(input: &str) -> IResult<&str, &str, VerboseError<&str>> {
+    delimited(
+        tag("\""),
+        recognize(many0(alt((multispace1, alphanumeric1, tag("_"))))),
+        tag("\""),
+    )
+    .parse(input)
+}
+
+#[test]
+fn parse_string_literal_test() {
+    assert_eq!(parse_string_literal("\"\""), Ok(("", "")));
+    assert_eq!(parse_string_literal("\"a\""), Ok(("", "a")));
+    assert_eq!(parse_string_literal("\"a1\""), Ok(("", "a1")));
+    assert_eq!(parse_string_literal("\"a 1\""), Ok(("", "a 1")));
+    assert_eq!(parse_string_literal("\"a_1\""), Ok(("", "a_1")));
 }
 
 #[derive(Debug, Eq, PartialEq, Clone)]
@@ -442,6 +463,7 @@ pub enum Specifier<'a> {
     Target(Target),
     Protocol(Vec<Protocol<'a>>),
     Compound(Vec<Vec<Specifier<'a>>>),
+    ChainGroup((Option<&'a str>, Vec<Vec<Specifier<'a>>>)),
 }
 
 fn parse_specifier(input: &str) -> IResult<&str, Specifier, VerboseError<&str>> {
@@ -456,12 +478,34 @@ fn parse_specifier(input: &str) -> IResult<&str, Specifier, VerboseError<&str>> 
             preceded(pair(tag("!"), multispace0), parse_specifier),
             |s| Specifier::Negated(Box::new(s)),
         ),
-        map(delimited(terminated(tag("{"), multispace0),
-                      separated_list0(tuple((multispace0, tag(";"), multispace0)),
-                                      separated_list0(multispace1, parse_specifier)),
-                      context("closing brace", cut(preceded(multispace0, tag("}"))))),
+        map(
+            delimited(
+                terminated(tag("{"), multispace0),
+                separated_list0(
+                    tuple((multispace0, tag(";"), multispace0)),
+                    separated_list0(multispace1, parse_specifier),
+                ),
+                context("closing brace", cut(preceded(multispace0, tag("}")))),
+            ),
             Specifier::Compound,
-            )
+        ),
+        map(
+            delimited(
+                terminated(tag("["), multispace0),
+                pair(
+                    opt(terminated(parse_string_literal, multispace1)),
+                    separated_list0(
+                        tuple((multispace0, tag(";"), multispace0)),
+                        separated_list0(multispace1, parse_specifier),
+                    ),
+                ),
+                context(
+                    "closing square bracket",
+                    cut(preceded(multispace0, tag("]"))),
+                ),
+            ),
+            Specifier::ChainGroup,
+        ),
     ))
     .parse(input)
 }
@@ -499,12 +543,42 @@ fn parse_specifier_test() {
     );
     assert_eq!(
         parse_specifier("{ proto tcp; proto udp }"),
-        Ok(("", Specifier::Compound(vec![vec![Specifier::Protocol(vec![Protocol::TCP])],
-                                         vec![Specifier::Protocol(vec![Protocol::UDP])]]))));
+        Ok((
+            "",
+            Specifier::Compound(vec![
+                vec![Specifier::Protocol(vec![Protocol::TCP])],
+                vec![Specifier::Protocol(vec![Protocol::UDP])]
+            ])
+        ))
+    );
+    assert_eq!(
+        parse_specifier("[ proto tcp dport 123 accept; drop ]"),
+        Ok((
+            "",
+            Specifier::ChainGroup((
+                None,
+                vec![
+                    vec![
+                        Specifier::Protocol(vec![Protocol::TCP]),
+                        Specifier::Port(Port::Dest(vec![PortRange {
+                            min: "123",
+                            max: None
+                        }])),
+                        Specifier::Target(Target::Accept)
+                    ],
+                    vec![Specifier::Target(Target::Drop)]
+                ]
+            ))
+        ))
+    );
 }
 
 fn parse_rule(input: &str) -> IResult<&str, Vec<Specifier>, VerboseError<&str>> {
-    terminated(many0(preceded(multispace0, parse_specifier)), preceded(multispace0, tag(";"))).parse(input)
+    terminated(
+        many0(preceded(multispace0, parse_specifier)),
+        preceded(multispace0, tag(";")),
+    )
+    .parse(input)
 }
 
 #[test]
@@ -570,6 +644,71 @@ fn parse_rule_test() {
                 }])),
                 Specifier::Protocol(vec![Protocol::TCP, Protocol::UDP]),
                 Specifier::Target(Target::Accept),
+            ]
+        ))
+    );
+    assert_eq!(
+        parse_rule(
+            "input eth0 source wwwserv dest dbserv
+ [ \"web_to_dbserv\"
+proto tcp dport 1521 accept;
+proto tcp dport appserv1 accept;
+proto tcp dport appserv2 accept;
+proto tcp dport appserv3 accept;
+drop;
+];"
+        ),
+        Ok((
+            "",
+            vec![
+                Specifier::Direction(Direction::Input(vec!["eth0"])),
+                Specifier::Host(HostSpecifier::Source(vec![Host {
+                    host: "wwwserv",
+                    mask: None
+                }])),
+                Specifier::Host(HostSpecifier::Dest(vec![Host {
+                    host: "dbserv",
+                    mask: None
+                }])),
+                Specifier::ChainGroup((
+                    Some("web_to_dbserv"),
+                    vec![
+                        vec![
+                            Specifier::Protocol(vec![Protocol::TCP]),
+                            Specifier::Port(Port::Dest(vec![PortRange {
+                                min: "1521",
+                                max: None
+                            }])),
+                            Specifier::Target(Target::Accept),
+                        ],
+                        vec![
+                            Specifier::Protocol(vec![Protocol::TCP]),
+                            Specifier::Port(Port::Dest(vec![PortRange {
+                                min: "appserv1",
+                                max: None
+                            }])),
+                            Specifier::Target(Target::Accept),
+                        ],
+                        vec![
+                            Specifier::Protocol(vec![Protocol::TCP]),
+                            Specifier::Port(Port::Dest(vec![PortRange {
+                                min: "appserv2",
+                                max: None
+                            }])),
+                            Specifier::Target(Target::Accept),
+                        ],
+                        vec![
+                            Specifier::Protocol(vec![Protocol::TCP]),
+                            Specifier::Port(Port::Dest(vec![PortRange {
+                                min: "appserv3",
+                                max: None
+                            }])),
+                            Specifier::Target(Target::Accept),
+                        ],
+                        vec![Specifier::Target(Target::Drop)],
+                        vec![],
+                    ]
+                ))
             ]
         ))
     );

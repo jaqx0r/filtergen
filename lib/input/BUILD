@@ -7,4 +7,5 @@ rust_library(name = "filtergen_lib",
 
 rust_test(name = "filtergen_test",
           crate = ":filtergen_lib",
+          deps = ["@crates//:pretty_assertions"],
           )
