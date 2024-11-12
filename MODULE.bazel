@@ -5,6 +5,8 @@
 # For more details, please check https://github.com/bazelbuild/bazel/issues/18958
 ###############################################################################
 
+module(name = "filtergen")
+
 bazel_dep(name = "rules_bison", version = "0.3")
 bazel_dep(name = "rules_flex", version = "0.2.1")
 
