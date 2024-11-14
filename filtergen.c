@@ -271,17 +271,6 @@ int main(int argc, char **argv) {
     usage(progname);
     exit(1);
   }
-
-  if (!ftn || !*ftn)
-    ftn = strdup("iptables");
-  for (ft = filter_types; ft->name; ft++)
-    if (!strcmp(ftn, ft->name))
-      break;
-  if (!ft->name) {
-    fprintf(stderr, "%s: target filter unrecognised: %s\n", progname, ftn);
-    usage(progname);
-    exit(1);
-  }
   free(ftn);
 
   /* What to do, then? */
