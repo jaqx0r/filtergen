@@ -25,12 +25,6 @@
 
 #include "input/sourcepos.h"
 
-#ifdef __GNUC__
-#define _PRINTF_ATTR(s, e) __attribute__((__format__(__printf__, (s), (e))))
-#else
-#define _PRINTF_ATTR(s, e)
-#endif
-
 /**
  * If it doesn't begin with "F_", it's a simple token, not an
  * filter type
@@ -223,9 +217,5 @@ enum flags {
   FF_NORESOLVE = (1 << 4), /* don't resolve hostnames, ports, or services */
   FF_FLUSH = (1 << 5),     /* just flush the ruleset instead */
 };
-
-/* filtergen.c */
-int oputs(const char *s);
-int oprintf(const char *fmt, ...) _PRINTF_ATTR(1, 2);
 
 #endif /* _FK_FILTER_H */

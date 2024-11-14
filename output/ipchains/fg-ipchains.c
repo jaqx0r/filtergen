@@ -21,12 +21,13 @@
  * XXX - maybe some of this could be shared with the iptables one?
  */
 
+#include <netinet/in.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <netinet/in.h>
 
 #include "filter.h"
+#include "oputs.h"
 #include "util.h"
 
 /* full path to ipchains executable */
@@ -167,8 +168,7 @@ static int cb_ipchains_rule(const struct filterent *ent,
       APPSS2(rule, "--icmp-type", ent->u.icmp);
     }
     break;
-  default:
-    ;
+  default:;
   }
 
   if (ESET(ent, LOG))
@@ -266,7 +266,8 @@ int fg_ipchains(struct filter *filter, int flags) {
   int r;
   struct fg_misc misc = {flags, NULL};
   fg_callback cb_ipchains = {
-      .rule = cb_ipchains_rule, .group = cb_ipchains_group,
+      .rule = cb_ipchains_rule,
+      .group = cb_ipchains_group,
   };
 
   filter_unroll(&filter);

@@ -22,11 +22,12 @@
  * - implement grouping
  */
 
+#include <netinet/in.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <netinet/in.h>
 
 #include "filter.h"
+#include "oputs.h"
 #include "util.h"
 
 static char *appip(char *r, const struct addr_spec *h) {

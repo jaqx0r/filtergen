@@ -21,6 +21,7 @@
 #include <stdlib.h>
 
 #include "filter.h"
+#include "oputs.h"
 #include "util.h"
 
 /** Callback for emitting filterents containing rules. */

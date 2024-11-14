@@ -47,6 +47,12 @@ cc_library(
     ],
 )
 
+cc_library(
+    name = "oputs",
+    srcs = ["oputs.c"],
+    hdrs = ["oputs.h"],
+)
+
 genrule(
     name = "gen_version",
     outs = ["version.h"],

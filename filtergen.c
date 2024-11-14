@@ -33,9 +33,8 @@
 
 #include "filter.h"
 #include "input/input.h"
+#include "oputs.h"
 #include "version.h"
-
-static FILE *outfile;
 
 /** Print the program usage to stderr. */
 /* LCOV_EXCL_START */
@@ -103,26 +102,6 @@ void usage(char *prog) {
 #endif
 }
 /* LCOV_EXCL_STOP */
-
-/** Output a string, and appends a newline, to the target file. */
-int oputs(const char *s) {
-  int r = 0;
-  if (s) {
-    r = fputs(s, outfile);
-    if (r > 0) {
-      fputc('\n', outfile);
-      r++;
-    }
-  }
-  return r;
-}
-
-/** Write a string, printf style, to the target file. */
-int oprintf(const char *fmt, ...) {
-  va_list args;
-  va_start(args, fmt);
-  return vfprintf(outfile, fmt, args);
-}
 
 /** Function pointer table containing source parsers */
 struct source_parser_s {
@@ -236,15 +215,10 @@ int main(int argc, char **argv) {
       filename = argv[optind++];
   }
 
-  if (ofn) {
-    /* XXX - open a different tempfile, and rename on success */
-    outfile = fopen(ofn, "w");
-    if (!outfile) {
-      fprintf(stderr, "%s: can't open output file \"%s\"\n", progname, ofn);
-      return 1;
-    }
-  } else
-    outfile = stdout;
+  if (!open_outfile(ofn)) {
+    fprintf(stderr, "%s: can't open output file \"%s\"\n", progname, ofn);
+    return 1;
+  }
 
   /* work out which source parser to use */
   if (!source_name || !*source_name)
@@ -290,8 +264,7 @@ int main(int argc, char **argv) {
     l = ft->compiler(f, flags);
   }
 
-  if (ofn)
-    fclose(outfile);
+  close_outfile();
 
   if (l < 0) {
     fprintf(

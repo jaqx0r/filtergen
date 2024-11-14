@@ -39,14 +39,15 @@
  * three rules -- nat, in and out.
  */
 
+#include <netinet/in.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <netinet/in.h>
 #include <sys/socket.h>
 #include <sys/un.h>
 
 #include "filter.h"
+#include "oputs.h"
 #include "util.h"
 
 /* bitfields for features used */
@@ -239,8 +240,7 @@ static int cb_iptables_rule_common(const struct filterent *ent,
       APPSS2(rule, "--icmp-type", ent->u.icmp);
     }
     break;
-  default:
-    ;
+  default:;
   }
 
   APPS(natrule, "-j");

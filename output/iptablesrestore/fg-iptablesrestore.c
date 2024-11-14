@@ -50,6 +50,7 @@
 #include <sys/un.h>
 
 #include "filter.h"
+#include "oputs.h"
 #include "util.h"
 
 /* bitfields for features used */
