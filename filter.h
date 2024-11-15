@@ -150,51 +150,6 @@ void filter_noneg(struct filter **f);
 int filter_fopen(const char *filename);
 struct filter *filter_parse_list(struct filtergen_opts *o);
 
-/* from gen.c */
-#define ESET(e, f) (e->whats_set & (1 << F_##f))
-struct filterent {
-  /* Either direction+iface or groupname must be set */
-  enum filtertype direction;
-  char *iface;
-  char *groupname;
-
-  /* One of these must be set */
-  enum filtertype target;
-  char *subgroup;
-
-  /* These may or may not be set */
-  int whats_set : F_FILTER_MAX;
-  int whats_negated : F_FILTER_MAX;
-  struct addr_spec srcaddr, dstaddr;
-
-  enum filtertype rtype;
-  struct proto_spec proto;
-  char *logmsg;
-  int oneway;
-
-  /* We need this not to be a union, for error-checking reasons */
-  struct {
-    struct {
-      struct port_spec src, dst;
-    } ports;
-    char *icmp;
-  } u;
-  struct sourceposition *pos;
-};
-
-struct fg_misc {
-  int flags;
-  void *misc;
-};
-typedef int fg_cb_rule(const struct filterent *ent, struct fg_misc *misc);
-typedef int fg_cb_group(const char *name);
-typedef struct {
-  fg_cb_rule *rule;
-  fg_cb_group *group;
-} fg_callback;
-int filtergen_cprod(struct filter *filter, fg_callback *cb,
-                    struct fg_misc *misc);
-
 /* fg-util.c */
 char *strapp(char *s, const char *n);
 #define strapp2(s, n1, n2) strapp(strapp(s, n1), n2)

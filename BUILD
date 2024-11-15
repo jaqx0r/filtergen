@@ -53,6 +53,13 @@ cc_library(
     hdrs = ["oputs.h"],
 )
 
+cc_library(
+    name = "gen",
+    srcs = ["gen.c"],
+    hdrs = ["gen.h"],
+    deps = [":filter"],
+)
+
 genrule(
     name = "gen_version",
     outs = ["version.h"],
@@ -69,12 +76,12 @@ cc_binary(
     name = "filtergen",
     srcs = [
         "filtergen.c",
-        "gen.c",
     ],
     local_defines = [
         "HAVE_GETOPT_H",
     ],
     deps = [
+        ":gen",
         ":version",
         "//input/filtergen:in_filtergen",
         "//input/iptables-save:in_iptables_save",

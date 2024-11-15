@@ -47,6 +47,7 @@
 #include <sys/un.h>
 
 #include "filter.h"
+#include "gen.h"
 #include "oputs.h"
 #include "util.h"
 
