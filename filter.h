@@ -146,10 +146,6 @@ void filter_unroll(struct filter **f);
 void filter_nogroup(struct filter *f);
 void filter_noneg(struct filter **f);
 
-/* from generated lexer and parer in filterlex.l */
-int filter_fopen(const char *filename);
-struct filter *filter_parse_list(struct filtergen_opts *o);
-
 /** various drivers */
 typedef int filtergen(struct filter *filter, int flags);
 filtergen fg_iptables, fg_ip6tables, fg_iptrestore, fg_ip6trestore, fg_ipchains,
