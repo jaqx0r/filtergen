@@ -28,6 +28,7 @@
 #include <sys/socket.h>
 
 #include "error.h"
+#include "fg-util.h"
 #include "input/sourcepos.h"
 
 static struct filter *__new_filter(enum filtertype type,
@@ -425,8 +426,7 @@ void filter_nogroup(struct filter *f) {
   case F_SIBLIST:
     filter_nogroup(f->u.sib);
     break;
-  default:
-    ;
+  default:;
   }
   filter_nogroup(f->child);
   filter_nogroup(f->next);
@@ -437,6 +437,8 @@ void filter_nogroup(struct filter *f) {
  * becomes
  *	ent->next,child,next
  */
-void filter_noneg(struct filter **f) { if (f) { };
+void filter_noneg(struct filter **f) {
+  if (f) {
+  };
   return;
 }

@@ -150,11 +150,6 @@ void filter_noneg(struct filter **f);
 int filter_fopen(const char *filename);
 struct filter *filter_parse_list(struct filtergen_opts *o);
 
-/* fg-util.c */
-char *strapp(char *s, const char *n);
-#define strapp2(s, n1, n2) strapp(strapp(s, n1), n2)
-int str_to_int(const char *s, int *i);
-
 /** various drivers */
 typedef int filtergen(struct filter *filter, int flags);
 filtergen fg_iptables, fg_ip6tables, fg_iptrestore, fg_ip6trestore, fg_ipchains,

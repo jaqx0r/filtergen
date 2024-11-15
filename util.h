@@ -20,6 +20,8 @@
 #ifndef FILTERGEN_UTIL_H
 #define FILTERGEN_UTIL_H
 
+#include "fg-util.h"
+
 #define APP(l, s) (l = strapp(l, s))
 #define APP2(l, s1, s2) (l = strapp2(l, s1, s2))
 #define APPS(l, s) APP2(l, " ", s)

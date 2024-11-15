@@ -23,6 +23,8 @@
 // Append n to s, returning a new string.
 char *strapp(char *s, const char *n);
 
+#define strapp2(s, n1, n2) strapp(strapp(s, n1), n2)
+
 // Convert a string to an integer, returning zero for success and non-zero if an
 // error occurred.
 int str_to_int(const char *s, int *i);
