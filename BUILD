@@ -57,8 +57,11 @@ cc_library(
     name = "gen",
     srcs = ["gen.c"],
     hdrs = ["gen.h"],
-    deps = [":filter"],
+    deps = [":filter", ":flags"],
 )
+
+cc_library(name = "flags",
+           hdrs = ["flags.h"])
 
 genrule(
     name = "gen_version",
@@ -83,6 +86,7 @@ cc_binary(
     deps = [
         ":gen",
         ":version",
+        ":flags",
         "//input/filtergen:in_filtergen",
         "//input/iptables-save:in_iptables_save",
         "//output/cisco:out_cisco",

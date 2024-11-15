@@ -32,6 +32,7 @@
 #endif
 
 #include "filter.h"
+#include "flags.h"
 #include "input/input.h"
 #include "oputs.h"
 #include "version.h"

@@ -25,6 +25,7 @@
 
 #include "error.h"
 #include "filter.h"
+#include "flags.h"
 
 void applydefaults(struct filterent *e, long flags) {
   if (!e->rtype) {

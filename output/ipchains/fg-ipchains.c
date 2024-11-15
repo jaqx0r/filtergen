@@ -27,6 +27,7 @@
 #include <string.h>
 
 #include "filter.h"
+#include "flags.h"
 #include "gen.h"
 #include "oputs.h"
 #include "util.h"

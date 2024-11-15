@@ -22,6 +22,7 @@
 
 #include "error.h"
 #include "filter.h"
+#include "flags.h"
 #include "input/filtergen/ast.h"
 #include "input/filtergen/parser.h"
 #include "input/filtergen/resolver.h"

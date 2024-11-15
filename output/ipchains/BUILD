@@ -7,5 +7,6 @@ cc_library(
         "//:gen",
         "//:oputs",
         "//:util",
+        "//:flags",
     ],
 )

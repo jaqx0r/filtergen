@@ -18,6 +18,7 @@ cc_library(
         ":parser",
         ":resolver",
         "//:error",
+        "//:flags",
     ],
 )
 
