@@ -2,6 +2,7 @@ load("//testsuite:dejagnu.bzl", "dejagnu_test")
 
 dejagnu_test(
     name = "fg-emit",
+    size = "small",
     srcs = glob(["**/*.exp"]),
     data = glob(
         [

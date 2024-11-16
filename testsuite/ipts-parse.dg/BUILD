@@ -2,6 +2,7 @@ load("//testsuite:dejagnu.bzl", "dejagnu_test")
 
 dejagnu_test(
     name = "ipts-parse",
+    size = "small",
     srcs = glob(["**/*.exp"]),
     data = glob(
         [

@@ -4,9 +4,9 @@ cc_library(
     visibility = ["//:__subpackages__"],
     deps = [
         "//:filter",
+        "//:flags",
         "//:gen",
         "//:oputs",
         "//:util",
-        "//:flags",
     ],
 )
