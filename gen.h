@@ -25,6 +25,7 @@
 
 #define ESET(e, f) (e->whats_set & (1 << F_##f))
 
+/** A filter output entry used for generating a single rule from the ast. */
 struct filterent {
   /* Either direction+iface or groupname must be set */
   enum filtertype direction;
@@ -52,6 +53,7 @@ struct filterent {
     } ports;
     char *icmp;
   } u;
+
   struct sourceposition *pos;
 };
 
@@ -59,12 +61,19 @@ struct fg_misc {
   int flags;
   void *misc;
 };
+
+/** callback for generating a rule */
 typedef int fg_cb_rule(const struct filterent *ent, struct fg_misc *misc);
+
+/** callback for generating a group */
 typedef int fg_cb_group(const char *name);
+
 typedef struct {
   fg_cb_rule *rule;
   fg_cb_group *group;
 } fg_callback;
+
+/** cross-product of a filter ast which calls cb on each rule */
 int filtergen_cprod(struct filter *filter, fg_callback *cb,
                     struct fg_misc *misc);
 

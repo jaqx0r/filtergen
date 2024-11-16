@@ -126,17 +126,21 @@ struct filtergen_opts {
   sa_family_t family;
 };
 
-/* from filter.c */
 typedef struct filter *filter_tctor(enum filtertype,
                                     struct sourceposition *pos);
+
 filter_tctor new_filter_target, new_filter_rtype;
+
 struct filter *new_filter_neg(struct filter *sub);
 struct filter *new_filter_siblings(struct filter *list);
 struct filter *new_filter_subgroup(char *name, struct filter *list);
+
 typedef struct filter *filter_ctor(enum filtertype, const char *,
                                    struct sourceposition *pos);
+
 filter_ctor new_filter_device, new_filter_ports, new_filter_icmp,
     new_filter_proto, new_filter_log;
+
 struct filter *new_filter_host(enum filtertype, const char *, sa_family_t,
                                struct sourceposition *pos);
 struct filter *new_filter_oneway(struct sourceposition *pos);
@@ -146,11 +150,15 @@ void filter_unroll(struct filter **f);
 void filter_nogroup(struct filter *f);
 void filter_noneg(struct filter **f);
 
-/** various drivers */
+/** Filter output drivers. */
 typedef int filtergen(struct filter *filter, int flags);
+
 filtergen fg_iptables, fg_ip6tables, fg_iptrestore, fg_ip6trestore, fg_ipchains,
     fg_ipfilter, fg_cisco, emit_filtergen;
+
+/** Filter flush output drivers. */
 typedef int filter_flush(enum filtertype policy);
+
 filter_flush flush_iptables, flush_ip6tables, flush_iptrestore,
     flush_ip6trestore, flush_ipchains;
 
