@@ -40,10 +40,10 @@ enum filtertype {
   F_ICMPTYPE,
   F_PROTO,
   F_NEG,
-  F_SIBLIST,
+  F_SIBLINGLIST,
   F_SUBGROUP,
   F_LOG,
-  F_RTYPE,
+  F_ROUTINGTYPE,
   F_ONEWAY,
   /* this must be the last real filter type */
   F_FILTER_MAX,
@@ -108,7 +108,7 @@ struct filter {
     char *icmp;
     struct proto_spec proto;
     struct filter *neg;
-    struct filter *sib;
+    struct filter *siblings;
     struct {
       char *name;
       struct filter *list;
@@ -131,7 +131,7 @@ typedef struct filter *filter_tctor(enum filtertype,
                                     struct sourceposition *pos);
 filter_tctor new_filter_target, new_filter_rtype;
 struct filter *new_filter_neg(struct filter *sub);
-struct filter *new_filter_sibs(struct filter *list);
+struct filter *new_filter_siblings(struct filter *list);
 struct filter *new_filter_subgroup(char *name, struct filter *list);
 typedef struct filter *filter_ctor(enum filtertype, const char *,
                                    struct sourceposition *pos);

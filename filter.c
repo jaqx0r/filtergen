@@ -66,7 +66,7 @@ struct filter *new_filter_log(enum filtertype type, const char *text,
 struct filter *new_filter_rtype(enum filtertype rtype,
                                 struct sourceposition *pos) {
   struct filter *f;
-  if ((f = __new_filter(F_RTYPE, pos))) {
+  if ((f = __new_filter(F_ROUTINGTYPE, pos))) {
     f->u.rtype = rtype;
   }
   return f;
@@ -82,12 +82,12 @@ struct filter *new_filter_neg(struct filter *sub) {
   return f;
 }
 
-struct filter *new_filter_sibs(struct filter *list) {
+struct filter *new_filter_siblings(struct filter *list) {
   struct filter *f;
   if (!list)
     return NULL;
-  if ((f = __new_filter(F_SIBLIST, list->pos))) {
-    f->u.sib = list;
+  if ((f = __new_filter(F_SIBLINGLIST, list->pos))) {
+    f->u.siblings = list;
   }
   return f;
 }
@@ -291,7 +291,7 @@ static void filter_append(struct filter *f, struct filter *x) {
     return;
 
   /* We have to be paranoid about making loops here */
-  while ((f->type != F_SIBLIST) && f->child) {
+  while ((f->type != F_SIBLINGLIST) && f->child) {
     if (f == x)
       return;
     f = f->child;
@@ -299,14 +299,14 @@ static void filter_append(struct filter *f, struct filter *x) {
   if (f == x)
     return;
 
-  if (f->type == F_SIBLIST) {
+  if (f->type == F_SIBLINGLIST) {
     if (f->child) {
       filter_error(
           f->pos,
           "corrupt siblist contains child node, __filter_unroll not called?");
       abort();
     }
-    for (f = f->u.sib; f; f = f->next)
+    for (f = f->u.siblings; f; f = f->next)
       filter_append(f, x);
   } else
     f->child = x;
@@ -331,8 +331,8 @@ void __filter_unroll(struct filter *f) {
 
   /* check this node */
   switch (f->type) {
-  case F_SIBLIST:
-    for (s = f->u.sib; s; s = s->next) {
+  case F_SIBLINGLIST:
+    for (s = f->u.siblings; s; s = s->next) {
       __filter_unroll(s);
       filter_append(s, c);
     }
@@ -358,12 +358,12 @@ void __filter_neg_expand(struct filter **f, int neg) {
   __filter_neg_expand(&(*f)->next, neg);
 
   switch ((*f)->type) {
-  case F_SIBLIST:
-    if (neg && (*f)->u.sib && (*f)->u.sib->next) {
+  case F_SIBLINGLIST:
+    if (neg && (*f)->u.siblings && (*f)->u.siblings->next) {
       filter_error((*f)->pos, "can't negate conjunctions");
       exit(1);
     }
-    __filter_neg_expand(&(*f)->u.sib, neg);
+    __filter_neg_expand(&(*f)->u.siblings, neg);
     break;
   case F_SUBGROUP:
     if (neg) {
@@ -420,11 +420,11 @@ void filter_nogroup(struct filter *f) {
     return;
   switch (f->type) {
   case F_SUBGROUP:
-    f->u.sib = f->u.sub.list;
-    f->type = F_SIBLIST;
+    f->u.siblings = f->u.sub.list;
+    f->type = F_SIBLINGLIST;
   /* fall through */
-  case F_SIBLIST:
-    filter_nogroup(f->u.sib);
+  case F_SIBLINGLIST:
+    filter_nogroup(f->u.siblings);
     break;
   default:;
   }

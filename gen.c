@@ -164,14 +164,14 @@ int __fg_applyone(struct filterent *e, const struct filter *f, fg_callback *cb,
     _DV(SPORT, "source port", u.ports.src.minstr, u.ports.src, ports);
     _DV(DPORT, "destination port", u.ports.src.maxstr, u.ports.dst, ports);
     DV(ICMPTYPE, u.icmp, icmp);
-    DV(RTYPE, rtype, rtype);
+    DV(ROUTINGTYPE, rtype, rtype);
 
   case F_ONEWAY:
     e->oneway = 1;
     break;
 
-  case F_SIBLIST:
-    return __fg_applylist(e, f->u.sib, cb, misc);
+  case F_SIBLINGLIST:
+    return __fg_applylist(e, f->u.siblings, cb, misc);
 
   default:
     filter_error(e->pos, "invalid filter type %d", f->type);

@@ -100,9 +100,9 @@ void emit_filter(struct filter *f) {
     printf("neg\n");
     emit_filter(f->u.neg);
     break;
-  case F_SIBLIST:
+  case F_SIBLINGLIST:
     printf("siblist\n");
-    emit_filter(f->u.sib);
+    emit_filter(f->u.siblings);
     break;
   case F_SUBGROUP:
     printf("subgroup \"%s\"\n", f->u.sub.name);
@@ -115,7 +115,7 @@ void emit_filter(struct filter *f) {
       printf("log \"\"\n");
     }
     break;
-  case F_RTYPE:
+  case F_ROUTINGTYPE:
     switch (f->u.rtype) {
     case ROUTEDONLY:
       printf("forward\n");

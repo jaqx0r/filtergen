@@ -79,7 +79,7 @@ struct filter *convert_compound_specifier(struct compound_specifier_s *r,
   if (r->list) {
     sub = convert_subrule_list(r->list, o);
     if (sub) {
-      res = new_filter_sibs(sub);
+      res = new_filter_siblings(sub);
     }
   }
   if (res)
@@ -154,7 +154,8 @@ struct filter *convert_direction(struct direction_specifier_s *n,
     break;
   }
   if (n->list) {
-    res = new_filter_sibs(convert_direction_argument_list(n->list, type, o));
+    res =
+        new_filter_siblings(convert_direction_argument_list(n->list, type, o));
   } else {
     filter_error(n->pos, "no direction argument list");
   }
@@ -242,7 +243,7 @@ struct filter *convert_host_specifier(struct host_specifier_s *n,
     break;
   }
   if (n->list) {
-    res = new_filter_sibs(convert_host_argument_list(n->list, type, o));
+    res = new_filter_siblings(convert_host_argument_list(n->list, type, o));
   } else {
     filter_error(n->pos, "no host argument list");
   }
@@ -306,7 +307,7 @@ struct filter *convert_protocol_specifier(struct protocol_specifier_s *n,
   eprint("converting protocol specifier\n");
 
   if (n->list) {
-    res = new_filter_sibs(convert_protocol_argument_list(n->list, o));
+    res = new_filter_siblings(convert_protocol_argument_list(n->list, o));
   } else {
     filter_error(n->pos, "no protocol argument list");
   }
@@ -394,7 +395,7 @@ struct filter *convert_port_specifier(struct port_specifier_s *n,
     break;
   }
   if (n->list) {
-    res = new_filter_sibs(convert_port_argument_list(n->list, type, o));
+    res = new_filter_siblings(convert_port_argument_list(n->list, type, o));
   } else {
     filter_error(n->pos, "no port argument list");
   }
@@ -458,7 +459,7 @@ struct filter *convert_icmptype_specifier(struct icmptype_specifier_s *n,
   eprint("converting icmptype specifier\n");
 
   if (n->list) {
-    res = new_filter_sibs(convert_icmptype_argument_list(n->list, o));
+    res = new_filter_siblings(convert_icmptype_argument_list(n->list, o));
   } else {
     filter_error(n->pos, "no icmptype argument list");
   }
