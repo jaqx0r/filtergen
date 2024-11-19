@@ -32,3 +32,6 @@ rust_library(
     name = "build_info",
     srcs = ["build_info.rs"],
 )
+
+rust_library(name ="output",
+             srcs = ["output.rs"])
