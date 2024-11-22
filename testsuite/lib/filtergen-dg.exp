@@ -5,6 +5,11 @@ set tool filtergen
 
 set dg-linenum-format ":%d(\.\[0-9\]+-\[0-9\]+\.\[0-9\]+)?:"
 
+# DejaGNU Test callback.  Executes `filtergen` on an input filter file
+# (testcase) with the given flags Compiler errors can be tested for with the
+# DejaGNU test directives, e.g. per
+# https://gcc.gnu.org/onlinedocs/gccint/Directives.html . Returns a tuple of the
+# compiler stdout/stderr output, and the name of the output file.
 proc filtergen-dg-test { filter do_what extra_tool_flags } {
     set output_file "[file rootname $filter].out"
 

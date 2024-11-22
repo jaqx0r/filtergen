@@ -1,3 +1,4 @@
+# compare two files and return a diff if any found.
 proc compare-files { file1 file2 } {
     try {
         verbose "Comparing `$file1' and `$file2'..."
