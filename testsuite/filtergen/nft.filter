@@ -1,0 +1,3 @@
+# { dg-options "-t nftables" }
+
+accept;

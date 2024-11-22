@@ -7,6 +7,7 @@ dejagnu_test(
     data = glob(
         [
             "*.filter",
+            "*.golden",
         ],
     ) + ["//examples"],
     tool_exec = "//:filtergen",

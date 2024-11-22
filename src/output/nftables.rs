@@ -41,7 +41,8 @@ pub enum FilterType {
 
 #[no_mangle]
 pub extern "C" fn fg_nftables(_filter: *const Filter, _flags: u32) -> i32 {
-    0
+    write("accept");
+    1
 }
 
 #[no_mangle]

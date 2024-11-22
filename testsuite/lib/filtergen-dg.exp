@@ -1,4 +1,5 @@
 load_lib dg.exp
+load_lib compare.exp
 
 set tool filtergen
 
@@ -7,12 +8,23 @@ set dg-linenum-format ":%d(\.\[0-9\]+-\[0-9\]+\.\[0-9\]+)?:"
 proc filtergen-dg-test { filter do_what extra_tool_flags } {
     set output_file "[file rootname $filter].out"
 
-    set status [remote_exec "" ./filtergen "-R -c $filter -o $output_file"]
+    set status [remote_exec "" ./filtergen "-R -c $filter $extra_tool_flags -o $output_file"]
     if { [lindex $status 0] != 0 } {
         verbose -log "filtergen exited with status [lindex $status 0]";
         fail $filter
     }
     set comp_output [lindex $status 1]
+
+    set golden_file "[file rootname $filter].golden"
+
+    if { [file exists $golden_file] } {
+        set diff [compare-files "$golden_file" "$output_file"]
+
+        if { $diff != "" } {
+            set comp_output [concat $comp_output "\nDiff:\n" $diff]
+            fail "$filter: golden output doesn't match:\n$diff"
+        }
+    }
 
     return [list $comp_output $output_file]
 }
