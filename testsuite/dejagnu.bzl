@@ -4,34 +4,6 @@ DejaGNULibraryInfo = provider(
     doc = "DejaGNU Provider",
 )
 
-def _dejagnu_lib_impl(ctx):
-    """Implementation of dejagnu lib."""
-    runfiles = ctx.runfiles(files = ctx.files.srcs)
-    runfiles = runfiles.merge_all([
-        dep[DefaultInfo].default_runfiles
-        for dep in ctx.attr.deps
-    ])
-    return [
-        DefaultInfo(runfiles = runfiles),
-        DejaGNULibraryInfo(),
-        coverage_common.instrumented_files_info(
-            ctx,
-            source_attributes = ["srcs"],
-            dependency_attributes = ["deps"],
-        ),
-    ]
-
-dejagnu_library = rule(
-    implementation = _dejagnu_lib_impl,
-    attrs = {
-        "srcs": attr.label_list(
-            doc = "Sources for this library.",
-            allow_files = [".exp"],
-        ),
-        "deps": attr.label_list(providers = [DejaGNULibraryInfo]),
-    },
-)
-
 def _dejagnu_test_impl(ctx):
     """Implementation of dejagnu test suite."""
     executable_path = "{name}_/{name}".format(name = ctx.label.name)

@@ -1,4 +1,4 @@
-load("//testsuite:dejagnu.bzl", "dejagnu_library")
+load("@rules_dejagnu//dejagnu:defs.bzl", "dejagnu_library")
 
 package(
     default_visibility = ["//:__subpackages__"],

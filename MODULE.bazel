@@ -3,17 +3,12 @@ module(name = "filtergen")
 bazel_dep(name = "rules_bison", version = "0.3")
 bazel_dep(name = "rules_flex", version = "0.3")
 
-http_archive = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
-
-http_archive(
-    name = "org_gnu_dejagnu",
-    build_file = "testsuite/dejagnu.BUILD",
-    integrity = "sha256-h9rvrNeVi0pp+IxoVtvRY0JhljxBQHnQw3H1ic1mouM=",
-    strip_prefix = "dejagnu-1.6.3",
-    url = "https://ftp.gnu.org/gnu/dejagnu/dejagnu-1.6.3.tar.gz",
+bazel_dep(name = "rules_dejagnu", version = "0.0.1", dev_dependency = True)
+git_override(
+    module_name = "rules_dejagnu",
+    commit = "8e57c675f9e3efa394588a87966b9e132216588c",
+    remote = "https://github.com/jaqx0r/rules_dejagnu.git",
 )
-
-bazel_dep(name = "rules_foreign_cc", version = "0.12.0")
 
 bazel_dep(
     name = "buildifier_prebuilt",

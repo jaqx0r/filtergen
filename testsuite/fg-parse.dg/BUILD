@@ -1,4 +1,4 @@
-load("//testsuite:dejagnu.bzl", "dejagnu_test")
+load("@rules_dejagnu//dejagnu:defs.bzl", "dejagnu_test")
 
 dejagnu_test(
     name = "fg-parse",
