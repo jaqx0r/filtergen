@@ -6,7 +6,7 @@ bazel_dep(name = "rules_flex", version = "0.3")
 bazel_dep(name = "rules_dejagnu", version = "0.0.1", dev_dependency = True)
 git_override(
     module_name = "rules_dejagnu",
-    commit = "0ebba29494c9759f069afc310df4428097cb787f",
+    commit = "0c51c6ab56d832c2e958302948484eba70b91306",
     remote = "https://github.com/jaqx0r/rules_dejagnu.git",
 )
 
