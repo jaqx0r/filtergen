@@ -30,6 +30,6 @@ bazel_dep(name = "bazel_skylib", version = "1.7.1")
 bazel_dep(name = "bazel_clang_tidy", dev_dependency = True)
 git_override(
     module_name = "bazel_clang_tidy",
-    commit = "f23d924918c581c68cd5cda5f12b4f8198ac0c35",
+    commit = "db677011c7363509a288a9fb3bf0a50830bbf791",
     remote = "https://github.com/erenon/bazel_clang_tidy.git",
 )
