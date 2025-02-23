@@ -7,7 +7,6 @@ dejagnu_test(
     data = glob(
         [
             "**/*.in",
-            "include*.d/**",
         ],
         exclude_directories = 0,
     ),
