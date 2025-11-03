@@ -12,7 +12,7 @@ git_override(
 
 bazel_dep(
     name = "buildifier_prebuilt",
-    version = "8.2.0.2",
+    version = "8.2.1",
     dev_dependency = True,
 )
 
