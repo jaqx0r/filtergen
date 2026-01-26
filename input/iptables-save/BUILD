@@ -1,4 +1,5 @@
 load("@rules_bison//bison:bison.bzl", "bison")
+load("@rules_cc//cc:cc_library.bzl", "cc_library")
 load("@rules_flex//flex:flex.bzl", "flex")
 
 cc_library(
