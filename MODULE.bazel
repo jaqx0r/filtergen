@@ -1,33 +1,30 @@
 module(name = "filtergen")
 
+bazel_dep(name = "bazel_skylib", version = "1.9.0")
 bazel_dep(name = "rules_bison", version = "0.4")
+bazel_dep(name = "rules_cc", version = "0.2.16")
 bazel_dep(name = "rules_flex", version = "0.4")
 
+bazel_dep(name = "bazel_clang_tidy", dev_dependency = True)
+bazel_dep(name = "buildifier_prebuilt", version = "8.2.1.1", dev_dependency = True)
+bazel_dep(name = "hedron_compile_commands", dev_dependency = True)
 bazel_dep(name = "rules_dejagnu", version = "0.0.1", dev_dependency = True)
+
+# Not in BCR
 git_override(
     module_name = "rules_dejagnu",
     commit = "bd23d5f35bcf432d0f8e00cd9ead530470f7587c",
     remote = "https://github.com/jaqx0r/rules_dejagnu.git",
 )
 
-bazel_dep(
-    name = "buildifier_prebuilt",
-    version = "8.2.1.1",
-    dev_dependency = True,
-)
-
 # To rebuild `compile_commands.json` for clangd:
 #   bazel run @hedron_compile_commands//:refresh_all
-bazel_dep(name = "hedron_compile_commands", dev_dependency = True)
 git_override(
     module_name = "hedron_compile_commands",
     commit = "abb61a688167623088f8768cc9264798df6a9d10",
     remote = "https://github.com/hedronvision/bazel-compile-commands-extractor.git",
 )
 
-bazel_dep(name = "bazel_skylib", version = "1.9.0")
-
-bazel_dep(name = "bazel_clang_tidy", dev_dependency = True)
 git_override(
     module_name = "bazel_clang_tidy",
     commit = "c4d35e0d0b838309358e57a2efed831780f85cd0",
