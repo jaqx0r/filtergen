@@ -12,7 +12,7 @@ def _install_impl(ctx):
     prefix = ctx.attr.prefix[BuildSettingInfo].value
     output = ctx.actions.declare_file("install_script")
     commands = "#!/usr/bin/env bash\n" + RUNFILES_BOILERPLATE
-    runfiles = ctx.runfiles(files = [ctx.file._bash_runfile_helper])
+    runfiles = ctx.runfiles(files = ctx.files._runfiles_helper)
     for target in ctx.attr.targets:
         target_dir = prefix + ctx.attr.targets.get(target)
         commands += "install -d {}\n".format(target_dir)
@@ -71,10 +71,9 @@ install = rule(
         ),
         # Bazel ships with a useful bash function for querying the absolute path to runfiles at
         # runtime.
-        "_bash_runfile_helper": attr.label(
-            default = "@bazel_tools//tools/bash/runfiles",
+        "_runfiles_helper": attr.label(
+            default = "@rules_shell//shell/runfiles",
             doc = "Label pointing to bash runfile helper",
-            allow_single_file = True,
         ),
     },
     executable = True,
