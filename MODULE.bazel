@@ -15,7 +15,7 @@ bazel_dep(name = "rules_dejagnu", version = "0.0.1", dev_dependency = True)
 # Not in BCR
 git_override(
     module_name = "rules_dejagnu",
-    commit = "bd23d5f35bcf432d0f8e00cd9ead530470f7587c",
+    commit = "2d68585306029b2726b02c78798a4aad3155ed6a",
     remote = "https://github.com/jaqx0r/rules_dejagnu.git",
 )
 
