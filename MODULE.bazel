@@ -8,7 +8,7 @@ bazel_dep(name = "rules_m4", version = "0.3")
 bazel_dep(name = "rules_shell", version = "0.6.1")
 
 bazel_dep(name = "bazel_clang_tidy", dev_dependency = True)
-bazel_dep(name = "buildifier_prebuilt", version = "8.2.1.2", dev_dependency = True)
+bazel_dep(name = "buildifier_prebuilt", version = "8.5.1", dev_dependency = True)
 bazel_dep(name = "hedron_compile_commands", dev_dependency = True)
 bazel_dep(name = "rules_dejagnu", version = "0.0.1", dev_dependency = True)
 
