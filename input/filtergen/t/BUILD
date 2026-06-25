@@ -59,8 +59,8 @@ cc_binary(
 )
 
 cc_test(
-    name = "keywords_test",
-    srcs = ["keywords_test.c"],
+    name = "tokens_test",
+    srcs = ["tokens_test.c"],
     deps = [
         "//input:sourcefile",
         "//input:sourcepos",
