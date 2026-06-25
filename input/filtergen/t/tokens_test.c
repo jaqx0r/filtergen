@@ -66,6 +66,18 @@ int main(int argc, char **argv) {
     {"37", TOK_IDENTIFIER},
     {"69", TOK_IDENTIFIER},
     {"255", TOK_IDENTIFIER},
+    {"0.0.0.0", TOK_IDENTIFIER},
+    {"http", TOK_IDENTIFIER},
+    {"127.0.0.1", TOK_IDENTIFIER},
+    {"/", TOK_SLASH},
+    {"{", TOK_LCURLY},
+    {"}", TOK_RCURLY},
+    {"[", TOK_LSQUARE},
+    {"]", TOK_RSQUARE},
+    {";", TOK_SEMICOLON},
+    {":", TOK_COLON},
+    {"!", TOK_BANG},
+    {"*", TOK_STAR},
     };
     
     int num_tests = sizeof(tests) / sizeof(tests[0]);
