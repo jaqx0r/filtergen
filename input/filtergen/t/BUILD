@@ -67,3 +67,12 @@ cc_test(
         "//input/filtergen:in_filtergen",
     ],
 )
+
+cc_test(
+    name = "comments_test",
+    srcs = ["comments_test.c"],
+    deps = [
+        "//input/filtergen:in_filtergen",
+        "//input/filtergen:parser",
+    ],
+)

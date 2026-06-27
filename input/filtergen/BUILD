@@ -13,7 +13,7 @@ cc_library(
         "include.h",
     ],
     defines = ["_GNU_SOURCE"],
-    visibility = ["//:__subpackages__"],
+    visibility = ["//visibility:public"],
     deps = [
         ":ast",
         ":parser",
@@ -32,6 +32,7 @@ cc_library(
 bison_cc_library(
     name = "parser",
     src = "parser.y",
+    visibility = ["//visibility:public"],
     deps = [
         ":ast",
         "//:error",
