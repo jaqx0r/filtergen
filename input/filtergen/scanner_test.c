@@ -220,6 +220,66 @@ int main() {
               {0, ""},
           },
       },
+
+      {
+          "identifier",
+          "foo",
+          {
+              {TOK_IDENTIFIER, "foo"},
+          },
+      },
+
+      {
+          "identifier with dots",
+          "mail.example.com",
+          {
+              {TOK_IDENTIFIER, "mail.example.com"},
+          },
+      },
+
+      // keywords
+      {"accept", "accept", {{TOK_ACCEPT, "accept"}}},
+      {"dest", "dest", {{TOK_DEST, "dest"}}},
+      {"dport", "dport", {{TOK_DPORT, "dport"}}},
+      {"drop", "drop", {{TOK_DROP, "drop"}}},
+      {"forward", "forward", {{TOK_FORWARD, "forward"}}},
+      {"icmptype", "icmptype", {{TOK_ICMPTYPE, "icmptype"}}},
+      {"input", "input", {{TOK_INPUT, "input"}}},
+      {"local", "local", {{TOK_LOCAL, "local"}}},
+      {"log", "log", {{TOK_LOG, "log"}}},
+      {"masq", "masq", {{TOK_MASQ, "masq"}}},
+      {"oneway", "oneway", {{TOK_ONEWAY, "oneway"}}},
+      {"output", "output", {{TOK_OUTPUT, "output"}}},
+      {"proto", "proto", {{TOK_PROTO, "proto"}}},
+      {"proxy", "proxy", {{TOK_PROXY, "proxy"}}},
+      {"redirect", "redirect", {{TOK_REDIRECT, "redirect"}}},
+      {"reject", "reject", {{TOK_REJECT, "reject"}}},
+      {"source", "source", {{TOK_SOURCE, "source"}}},
+      {"sport", "sport", {{TOK_SPORT, "sport"}}},
+      {"text", "text", {{TOK_TEXT, "text"}}},
+
+      {"identifiers",
+       "37 69 0.0.0.0",
+       {{TOK_IDENTIFIER, "37"},
+        {TOK_IDENTIFIER, "69"},
+        {TOK_IDENTIFIER, "0.0.0.0"}}},
+      {
+          "netmask",
+          "127.0.0.1/255.255.255.255",
+          {{TOK_IDENTIFIER, "12.0.0.1"},
+           {TOK_SLASH, "/"},
+           {TOK_IDENTIFIER, "255.255.255.255"}},
+      },
+      /* punctuation */
+      {"slash", "/", {{TOK_SLASH, "/"}}},
+      {"lcurly", "{", {{TOK_LCURLY, "{"}}},
+      {"rcurly", "}", {{TOK_RCURLY, "}"}}},
+      {"lsquare", "[", {{TOK_LSQUARE, "["}}},
+      {"rsquare", "]", {{TOK_RSQUARE, "]"}}},
+      {"semicolon", ";", {{TOK_SEMICOLON, ":"}}},
+      {"colon", ":", {{TOK_COLON, ":"}}},
+      {"exclamation", "!", {{TOK_BANG, "!"}}},
+      {"asterisk", "*", {{TOK_STAR, "*"}}},
   };
 
   int failed = 0;

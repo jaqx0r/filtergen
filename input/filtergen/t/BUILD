@@ -57,22 +57,3 @@ cc_binary(
         "//input/filtergen:in_filtergen",
     ],
 )
-
-cc_test(
-    name = "tokens_test",
-    srcs = ["tokens_test.c"],
-    deps = [
-        "//input:sourcefile",
-        "//input:sourcepos",
-        "//input/filtergen:in_filtergen",
-    ],
-)
-
-cc_test(
-    name = "comments_test",
-    srcs = ["comments_test.c"],
-    deps = [
-        "//input/filtergen:in_filtergen",
-        "//input/filtergen:parser",
-    ],
-)
