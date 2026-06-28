@@ -5,6 +5,7 @@ bazel_dep(name = "rules_bison", version = "0.4.bcr.1")
 bazel_dep(name = "rules_cc", version = "0.2.20")
 bazel_dep(name = "rules_flex", version = "0.4.1")
 bazel_dep(name = "rules_m4", version = "0.3.bcr.1")
+bazel_dep(name = "rules_rust", version = "0.71.2")
 bazel_dep(name = "rules_shell", version = "0.8.0")
 
 bazel_dep(name = "bazel_clang_tidy", dev_dependency = True)
@@ -32,3 +33,25 @@ git_override(
     commit = "c4d35e0d0b838309358e57a2efed831780f85cd0",
     remote = "https://github.com/erenon/bazel_clang_tidy.git",
 )
+
+# bazel build --config=iwyu //...
+bazel_dep(name = "bazel_iwyu", dev_dependency = True)
+git_override(
+    module_name = "bazel_iwyu",
+    commit = "f6d684187ec4fff1863b728df99d35101c0bd2c9",
+    remote = "https://github.com/storypku/bazel_iwyu",
+)
+
+rust = use_extension("@rules_rust//rust:extensions.bzl", "rust")
+rust.toolchain(
+    edition = "2024",
+    versions = ["1.85.0"],
+)
+
+crate = use_extension("@rules_rust//crate_universe:extensions.bzl", "crate")
+crate.from_cargo(
+    name = "crates",
+    cargo_lockfile = "//:Cargo.lock",
+    manifests = ["//:Cargo.toml"],
+)
+use_repo(crate, "crates")

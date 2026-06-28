@@ -128,6 +128,7 @@ struct filtyp {
     {"ipfilter", AF_INET, fg_ipfilter, NULL},
     {"cisco", AF_INET, fg_cisco, NULL},
     {"filtergen", 0, emit_filtergen, NULL},
+    {"nftables", AF_INET, fg_nftables, flush_nftables},
     {NULL, 0, NULL, NULL},
 };
 

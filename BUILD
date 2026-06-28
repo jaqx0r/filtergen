@@ -102,6 +102,8 @@ cc_binary(
         "//output/ipfilter:out_ipfilter",
         "//output/iptables:out_iptables",
         "//output/iptablesrestore:out_iptablesrestore",
+        "//src:lib",
+        "//src/output:nftables",
     ],
 )
 

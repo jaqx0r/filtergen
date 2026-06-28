@@ -7,6 +7,7 @@ package(
 dejagnu_library(
     name = "filtergen-dg",
     srcs = ["filtergen-dg.exp"],
+    deps = [":compare"],
 )
 
 dejagnu_library(
