@@ -1,4 +1,5 @@
 load("@rules_cc//cc:cc_binary.bzl", "cc_binary")
+load("@rules_cc//cc:cc_test.bzl", "cc_test")
 
 package(default_visibility = ["//:__subpackages__"])
 
@@ -51,7 +52,7 @@ cc_binary(
     testonly = True,
     srcs = ["factorise.c"],
     deps = [
-        "//:factoriser",
+        "//:filter",
         "//input:sourcepos",
         "//input/filtergen:in_filtergen",
     ],

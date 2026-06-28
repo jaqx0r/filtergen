@@ -1,5 +1,6 @@
 load("@rules_bison//bison:bison.bzl", "bison_cc_library")
 load("@rules_cc//cc:cc_library.bzl", "cc_library")
+load("@rules_cc//cc:cc_test.bzl", "cc_test")
 load("@rules_flex//flex:flex.bzl", "flex")
 
 cc_library(
@@ -13,7 +14,7 @@ cc_library(
         "include.h",
     ],
     defines = ["_GNU_SOURCE"],
-    visibility = ["//:__subpackages__"],
+    visibility = ["//visibility:public"],
     deps = [
         ":ast",
         ":parser",
@@ -32,6 +33,7 @@ cc_library(
 bison_cc_library(
     name = "parser",
     src = "parser.y",
+    visibility = ["//visibility:public"],
     deps = [
         ":ast",
         "//:error",
@@ -53,4 +55,12 @@ cc_library(
 flex(
     name = "scanner",
     src = "scanner.l",
+)
+
+cc_test(
+    name = "scanner_test",
+    srcs = ["scanner_test.c"],
+    deps = [
+        ":in_filtergen",
+    ],
 )
