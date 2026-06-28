@@ -38,14 +38,13 @@ pub enum FilterType {
     Text,
 }
 
-
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub extern "C" fn fg_nftables(_filter: *const Filter, _flags: u32) -> i32 {
     write("accept");
     1
 }
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub extern "C" fn flush_nftables(_policy: FilterType) -> i32 {
     write("#!/usr/bin/env nft -f");
     let pol_str = match _policy {

@@ -42,6 +42,12 @@ git_override(
     remote = "https://github.com/storypku/bazel_iwyu",
 )
 
+rust = use_extension("@rules_rust//rust:extensions.bzl", "rust")
+rust.toolchain(
+    edition = "2024",
+    versions = ["1.85.0"],
+)
+
 crate = use_extension("@rules_rust//crate_universe:extensions.bzl", "crate")
 crate.spec(
     features = ["derive"],

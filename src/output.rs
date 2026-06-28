@@ -1,7 +1,7 @@
 use std::ffi::CString;
 use std::os::raw::c_char;
 
-extern "C" {
+unsafe extern "C" {
     /// Output a string, and appends a newline, to the target file.
     /// The target file is a global in the called object.
     fn oputs(s: *const c_char);
