@@ -49,22 +49,9 @@ rust.toolchain(
 )
 
 crate = use_extension("@rules_rust//crate_universe:extensions.bzl", "crate")
-crate.spec(
-    features = ["derive"],
-    package = "clap",
-    version = "4.5.16",
+crate.from_cargo(
+    name = "crates",
+    cargo_lockfile = "//:Cargo.lock",
+    manifests = ["//:Cargo.toml"],
 )
-crate.spec(
-    package = "nom",
-    version = "7",
-)
-crate.spec(
-    package = "pretty_assertions",
-    version = "1.4.1",
-)
-crate.spec(
-    package = "ipnet",
-    version = "2",
-)
-crate.from_specs()
 use_repo(crate, "crates")

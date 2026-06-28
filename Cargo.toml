@@ -16,5 +16,5 @@ ipnet = "2"
 features = ["derive"]
 version = "4.5.16"
 
-[dev-dependency]
+[dev-dependencies]
 pretty_assertions = "1.4.1"
