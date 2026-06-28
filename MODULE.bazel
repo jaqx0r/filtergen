@@ -38,7 +38,7 @@ git_override(
 bazel_dep(name = "bazel_iwyu", dev_dependency = True)
 git_override(
     module_name = "bazel_iwyu",
-    commit = "f6d684187ec4fff1863b728df99d35101c0bd2c9",
+    commit = "1fe9048c30469ac506498c3c740ce47475ad3361",
     remote = "https://github.com/storypku/bazel_iwyu",
 )
 
