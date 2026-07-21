@@ -2,6 +2,7 @@ load("@rules_bison//bison:bison.bzl", "bison_cc_library")
 load("@rules_cc//cc:cc_library.bzl", "cc_library")
 load("@rules_cc//cc:cc_test.bzl", "cc_test")
 load("@rules_flex//flex:flex.bzl", "flex")
+load("@rules_rust//rust:defs.bzl", "rust_test")
 
 cc_library(
     name = "in_filtergen",
@@ -41,6 +42,14 @@ bison_cc_library(
     ],
 )
 
+rust_test(
+    name = "scanner_test",
+    srcs = ["scanner_test.rs"],
+    link_deps = [
+        ":in_filtergen",
+    ],
+)
+
 cc_library(
     name = "resolver",
     srcs = ["resolver.c"],
@@ -58,7 +67,7 @@ flex(
 )
 
 cc_test(
-    name = "scanner_test",
+    name = "scanner_c_test",
     srcs = ["scanner_test.c"],
     deps = [
         ":in_filtergen",

@@ -1,12 +1,12 @@
 [package]
 name = "filtergen"
 version = "0.14.0"
-edition = "2024"
+edition = "2021"
 authors = ["Jamie Wilkinson <jaq@spacepants.org>"]
 
 [lib]
 name = "filtergen_lib"
-path = "lib/filtergen.rs"
+path = "lib/filter.rs"
 
 [dependencies]
 nom = "7"
