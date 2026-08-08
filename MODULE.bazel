@@ -24,7 +24,7 @@ git_override(
 #   bazel run @hedron_compile_commands//:refresh_all
 git_override(
     module_name = "hedron_compile_commands",
-    commit = "1f9360db1834d115c48279d38a97f30d64d3fd4a",
+    commit = "6eb3ff1de6445355552ef4230be0caf3e1dd27e5",
     remote = "https://github.com/helly25/bazel-compile-commands-extractor.git",
 )
 
