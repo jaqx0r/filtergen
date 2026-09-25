@@ -22,3 +22,9 @@ build:release --stamp
 
 # Turn on optimisation flags.
 build:release -c opt
+
+# recommended by hermetic_cc_toolchain
+common --enable_platform_specific_config
+build:linux --sandbox_add_mount_pair=/home
+build:macos --sandbox_add_mount_pair=/Users
+build:windows --sandbox_add_mount_pair=C:\Users

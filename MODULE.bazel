@@ -1,6 +1,7 @@
 module(name = "filtergen")
 
 bazel_dep(name = "bazel_skylib", version = "1.9.2")
+bazel_dep(name = "hermetic_cc_toolchain", version = "4.3.0")
 bazel_dep(name = "rules_bison", version = "0.4.bcr.1")
 bazel_dep(name = "rules_cc", version = "0.2.25")
 bazel_dep(name = "rules_flex", version = "0.4.1")
@@ -55,3 +56,11 @@ crate.from_cargo(
     manifests = ["//:Cargo.toml"],
 )
 use_repo(crate, "crates")
+
+toolchains = use_extension("@hermetic_cc_toolchain//toolchain:ext.bzl", "toolchains")
+use_repo(toolchains, "zig_sdk")
+
+register_toolchains(
+    "@zig_sdk//toolchain/...",
+    "@zig_sdk//libc_aware/toolchain/...",
+)
