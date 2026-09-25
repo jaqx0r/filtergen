@@ -9,7 +9,7 @@ name = "filtergen_lib"
 path = "lib/filtergen.rs"
 
 [dependencies]
-nom = "7"
+nom = "8"
 ipnet = "2"
 
 [dependencies.clap]
