@@ -22,3 +22,18 @@ build:release --stamp
 
 # Turn on optimisation flags.
 build:release -c opt
+
+# recommended by hermetic_cc_toolchain
+common --enable_platform_specific_config
+build:linux --sandbox_add_mount_pair=/home
+build:macos --sandbox_add_mount_pair=/Users
+build:windows --sandbox_add_mount_pair=C:\Users
+
+# Switch Bazel's default C++ coverage from GCC-style to LLVM-style
+coverage --experimental_generate_llvm_lcov
+coverage --combined_report=lcov
+coverage --experimental_use_llvm_covmap=true
+# Ensure Clang instruments and links native LLVM profile symbols
+coverage --copt=-fprofile-instr-generate
+coverage --copt=-fcoverage-mapping
+coverage --linkopt=-fprofile-instr-generate
