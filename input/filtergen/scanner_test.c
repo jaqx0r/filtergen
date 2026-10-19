@@ -13,8 +13,6 @@ struct TestCase {
   } expected[10];
 };
 
-struct sourcefile *current_srcfile = NULL;
-
 void filter_error(YYLTYPE *locp, const char *fmt, ...) {
   va_list ap;
   va_start(ap, fmt);
@@ -22,7 +20,6 @@ void filter_error(YYLTYPE *locp, const char *fmt, ...) {
   va_end(ap);
   fprintf(stderr, "\n");
 }
-int sourcefile_pop(void) { return 0; }
 
 char *tok_map(int c) {
   char *r;
