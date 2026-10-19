@@ -37,3 +37,5 @@ coverage --experimental_use_llvm_covmap=true
 coverage --copt=-fprofile-instr-generate
 coverage --copt=-fcoverage-mapping
 coverage --linkopt=-fprofile-instr-generate
+
+build --dynamic_mode=off
