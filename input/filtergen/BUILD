@@ -69,10 +69,12 @@ cc_library(
 
 cc_test(
     name = "scanner_test",
-    srcs = ["scanner_test.c"],
+    srcs = ["scanner_test.cc"],
     deps = [
         ":parser",
         ":scanner_lib",
         "//input:sourcefile",
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
     ],
 )
