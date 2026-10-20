@@ -92,18 +92,28 @@ int sourcefile_push(struct sourceposition *pos, const char *pathname) {
 }
 
 int sourcefile_pop() {
-  struct sourcefile *sf = current_srcfile;
+    struct sourcefile *sf = current_srcfile;
 
-  current_srcfile = sf->next;
+    if (!sf) {
+        return 1;
+    }
 
-  if (fclose(sf->f)) {
-    /* LCOV_EXCL_START */
-    fprintf(stderr, "failed to close file when popping sourcefile stack: %s\n",
-            strerror(errno));
-    return 0;
-    /* LCOV_EXCL_STOP */
-  }
+    if (sf->next) {
+        current_srcfile = sf->next;
+    }
+
+    if (sf->f != NULL) {
+      if (fclose(sf->f)) {
+          /* LCOV_EXCL_START */
+          fprintf(stderr, "failed to close file when popping sourcefile stack: %s\n",
+                  strerror(errno));
+          return 0;
+          /* LCOV_EXCL_STOP */
+      }
+    }
+  
   free(sf);
   srcfile_depth--;
+  
   return 1;
 }

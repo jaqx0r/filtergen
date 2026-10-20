@@ -65,6 +65,8 @@ id      {word}|({word})?:(({word})?:)+({word})?
 
 \n		/* eat newlines */ { filtergen_column = 1; }
 
+\r		/* eat carriage returns */ 
+
 "/*"	BEGIN(comment);
 
 <comment>{

@@ -7,11 +7,6 @@ cc_library(
     name = "in_filtergen",
     srcs = [
         "glue.c",
-        "include.c",
-        ":scanner",
-    ],
-    hdrs = [
-        "include.h",
     ],
     defines = ["_GNU_SOURCE"],
     visibility = ["//visibility:public"],
@@ -19,6 +14,7 @@ cc_library(
         ":ast",
         ":parser",
         ":resolver",
+        ":scanner_lib",
         "//:error",
         "//:flags",
     ],
@@ -57,10 +53,28 @@ flex(
     src = "scanner.l",
 )
 
+cc_library(
+    name = "scanner_lib",
+    srcs = [
+        "include.c",
+        "include.h",
+        ":scanner",
+    ],
+    visibility = [":__subpackages__"],
+    deps = [
+        ":parser",
+        "//input:sourcefile",
+    ],
+)
+
 cc_test(
     name = "scanner_test",
-    srcs = ["scanner_test.c"],
+    srcs = ["scanner_test.cc"],
     deps = [
-        ":in_filtergen",
+        ":parser",
+        ":scanner_lib",
+        "//input:sourcefile",
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
     ],
 )
