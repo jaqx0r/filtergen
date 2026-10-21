@@ -135,10 +135,10 @@ char *tok_map(int c) {
 }
 
 class ScannerTestSuite : public testing::TestWithParam<TestCase> {
-    // protected:
-    //     void TearDown() override {
-    //         filtergen_lex_destroy();
-    //   }
+    protected:
+        void TearDown() override {
+            filtergen_lex_destroy();
+      }
 };
 
 TEST_P(ScannerTestSuite, Lex) {

@@ -11,6 +11,7 @@ path = "lib/filtergen.rs"
 [dependencies]
 nom = "7"
 ipnet = "2"
+winnow = "1.0.4"
 
 [dependencies.clap]
 features = ["derive"]
