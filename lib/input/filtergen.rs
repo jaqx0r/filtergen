@@ -1,6 +1,7 @@
 use winnow::{
-    ascii::{alpha1, multispace0},
-    combinator::{alt, opt, preceded},
+    ascii::{alpha1, multispace0, multispace1},
+    combinator::{alt, cut_err, delimited, opt, preceded, separated},
+    error::{ContextError, ErrMode},
     token::{literal, take_while},
     ModalResult, Parser,
 };
@@ -9,17 +10,15 @@ use winnow::{
 use pretty_assertions::assert_eq;
 
 fn parse_identifier<'s>(input: &mut &'s str) -> ModalResult<&'s str> {
-    take_while(0.., |c: char| c.is_ascii_alphanumeric() || c == '_')
-        .take()
-        .parse_next(input)
+    take_while(1.., |c: char| c.is_ascii_alphanumeric() || c == '_').parse_next(input)
 }
 
 #[test]
 fn parse_identifier_test() {
-    assert_eq!(parse_identifier.parse_peek("1"), Ok(("", "1")));
-    assert_eq!(parse_identifier.parse_peek("foo"), Ok(("", "foo")));
-    assert_eq!(parse_identifier.parse_peek("_foo"), Ok(("", "_foo")));
-    assert_eq!(parse_identifier.parse_peek("foo_oo"), Ok(("", "foo_oo")));
+    assert_eq!(Ok(("", "1")), parse_identifier.parse_peek("1"),);
+    assert_eq!(Ok(("", "foo")), parse_identifier.parse_peek("foo"),);
+    assert_eq!(Ok(("", "_foo")), parse_identifier.parse_peek("_foo"),);
+    assert_eq!(Ok(("", "foo_oo")), parse_identifier.parse_peek("foo_oo"),);
 }
 
 // fn parse_string_literal(input: &str) -> IResult<&str, &str, VerboseError<&str>> {
@@ -62,80 +61,83 @@ fn parse_option<'s>(input: &mut &'s str) -> ModalResult<FilterOption<'s>> {
 #[test]
 fn parse_option_test() {
     assert_eq!(
+        Ok(("", FilterOption::Local)),
         parse_option.parse_peek("local"),
-        Ok(("", FilterOption::Local))
     );
     assert_eq!(
+        Ok(("", FilterOption::Forward)),
         parse_option.parse_peek("forward"),
-        Ok(("", FilterOption::Forward))
     );
     assert_eq!(
+        Ok(("", FilterOption::OneWay)),
         parse_option.parse_peek("oneway"),
-        Ok(("", FilterOption::OneWay))
     );
     assert_eq!(
+        Ok(("", FilterOption::Log(None))),
         parse_option.parse_peek("log"),
-        Ok(("", FilterOption::Log(None)))
     );
     assert_eq!(
+        Ok(("", FilterOption::Log(Some("text")))),
         parse_option.parse_peek("log text"),
-        Ok(("", FilterOption::Log(Some("text"))))
     );
 }
 
-// fn argument_list<'a, O, F>(arg_parser: F) -> impl Parser<&'a str, Vec<O>, VerboseError<&'a str>>
-// where
-//     F: Parser<&'a str, O, VerboseError<&'a str>>,
-// {
-//     delimited(
-//         tag("{"),
-//         preceded(multispace0, separated_list1(multispace1, arg_parser)),
-//         context("closing brace", cut(preceded(multispace0, tag("}")))),
-//     )
-// }
+fn argument_list<'a, O, F>(arg_parser: F) -> impl Parser<&'a str, Vec<O>, ErrMode<ContextError>>
+where
+    F: Parser<&'a str, O, ErrMode<ContextError>>,
+{
+    delimited(
+        preceded('{', multispace0),
+        //alt((
+        separated(0.., arg_parser, multispace1),
+        //  preceded(peek('}'), cut_err(empty.value(Vec::new()))).context(StrContext::Expected(
+        //      StrContextValue::Description("at least one element required inside the braces"),
+        //  )),
+        //)),
+        cut_err(preceded(multispace0, '}')),
+    )
+}
 
-// #[derive(Debug, Eq, PartialEq, Clone)]
-// pub enum Direction<'a> {
-//     Input(Vec<&'a str>),
-//     Output(Vec<&'a str>),
-// }
+#[derive(Debug, Eq, PartialEq, Clone)]
+pub enum Direction<'a> {
+    Input(Vec<&'a str>),
+    Output(Vec<&'a str>),
+}
 
-// fn parse_direction(input: &str) -> IResult<&str, Direction, VerboseError<&str>> {
-//     map(
-//         pair(
-//             alt((tag("input"), tag("output"))),
-//             preceded(
-//                 multispace0,
-//                 alt((
-//                     argument_list(parse_identifier),
-//                     map(parse_identifier, |i: &str| vec![i]),
-//                 )),
-//             ),
-//         ),
-//         |(d, v)| match d {
-//             "input" => Direction::Input(v),
-//             "output" => Direction::Output(v),
-//             _ => unreachable!(),
-//         },
-//     )
-//     .parse(input)
-// }
+fn parse_direction<'s>(input: &mut &'s str) -> ModalResult<Direction<'s>> {
+    (
+        alt((literal("input"), literal("output"))),
+        preceded(
+            multispace0,
+            alt((
+                argument_list(parse_identifier),
+                parse_identifier.map(|i: &str| vec![i]),
+            )),
+        ),
+    )
+        .map(|(d, v)| match d {
+            "input" => Direction::Input(v),
+            "output" => Direction::Output(v),
+            _ => unreachable!(),
+        })
+        .parse_next(input)
+}
 
-// #[test]
-// fn parse_direction_test() {
-//     assert_eq!(
-//         parse_direction("input eth0"),
-//         Ok(("", Direction::Input(vec!["eth0"])))
-//     );
-//     assert_eq!(
-//         parse_direction("output lo"),
-//         Ok(("", Direction::Output(vec!["lo"])))
-//     );
-//     assert_eq!(
-//         parse_direction("input { eth0 lo }"),
-//         Ok(("", Direction::Input(vec!["eth0", "lo"])))
-//     );
-// }
+#[test]
+fn parse_direction_test() {
+    assert_eq!(
+        Ok(("", Direction::Input(vec!["eth0"]))),
+        parse_direction.parse_peek("input eth0"),
+    );
+    assert_eq!(
+        Ok(("", Direction::Output(vec!["lo"]))),
+        parse_direction.parse_peek("output lo"),
+    );
+    assert_eq!(
+        Ok(("", Direction::Input(vec!["eth0", "lo"]))),
+        parse_direction.parse_peek("input { eth0 lo }")
+    );
+}
 
 // #[derive(Debug, Eq, PartialEq, Clone)]
 // pub enum Target {
