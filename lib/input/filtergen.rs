@@ -2,7 +2,7 @@ use winnow::{
     ascii::{alpha1, multispace0, multispace1},
     combinator::{alt, cut_err, delimited, opt, preceded, separated},
     error::{ContextError, ErrMode},
-    token::{literal, take_while},
+    token::{literal, take_until, take_while},
     ModalResult, Parser,
 };
 
@@ -21,23 +21,18 @@ fn parse_identifier_test() {
     assert_eq!(Ok(("", "foo_oo")), parse_identifier.parse_peek("foo_oo"),);
 }
 
-// fn parse_string_literal(input: &str) -> IResult<&str, &str, VerboseError<&str>> {
-//     delimited(
-//         tag("\""),
-//         recognize(many0(alt((multispace1, alphanumeric1, tag("_"))))),
-//         tag("\""),
-//     )
-//     .parse(input)
-// }
+fn parse_string_literal<'a>(input: &mut &'a str) -> ModalResult<&'a str> {
+    delimited('"', take_until(0.., '"'), '"').parse_next(input)
+}
 
-// #[test]
-// fn parse_string_literal_test() {
-//     assert_eq!(parse_string_literal("\"\""), Ok(("", "")));
-//     assert_eq!(parse_string_literal("\"a\""), Ok(("", "a")));
-//     assert_eq!(parse_string_literal("\"a1\""), Ok(("", "a1")));
-//     assert_eq!(parse_string_literal("\"a 1\""), Ok(("", "a 1")));
-//     assert_eq!(parse_string_literal("\"a_1\""), Ok(("", "a_1")));
-// }
+#[test]
+fn parse_string_literal_test() {
+    assert_eq!(Ok(("", "")), parse_string_literal.parse_peek("\"\""));
+    assert_eq!(Ok(("", "a")), parse_string_literal.parse_peek("\"a\""));
+    assert_eq!(Ok(("", "a1")), parse_string_literal.parse_peek("\"a1\""));
+    assert_eq!(Ok(("", "a 1")), parse_string_literal.parse_peek("\"a 1\""));
+    assert_eq!(Ok(("", "a_1")), parse_string_literal.parse_peek("\"a_1\""));
+}
 
 #[derive(Debug, Eq, PartialEq, Clone)]
 pub enum FilterOption<'a> {
@@ -87,14 +82,14 @@ where
     F: Parser<&'a str, O, ErrMode<ContextError>>,
 {
     delimited(
-        preceded('{', multispace0),
+        ('{', multispace0),
         //alt((
         separated(0.., arg_parser, multispace1),
         //  preceded(peek('}'), cut_err(empty.value(Vec::new()))).context(StrContext::Expected(
         //      StrContextValue::Description("at least one element required inside the braces"),
         //  )),
         //)),
-        cut_err(preceded(multispace0, '}')),
+        cut_err((multispace0, '}')),
     )
 }
 
@@ -452,125 +447,130 @@ fn parse_protocol_test() {
     );
 }
 
-// #[derive(Debug, Eq, PartialEq, Clone)]
-// pub enum Specifier<'a> {
-//     FilterOption(FilterOption<'a>),
-//     Negated(Box<Specifier<'a>>),
-//     Direction(Direction<'a>),
-//     Host(HostSpecifier<'a>),
-//     Port(Port<'a>),
-//     Target(Target),
-//     Protocol(Vec<Protocol<'a>>),
-//     Compound(Vec<Vec<Specifier<'a>>>),
-//     ChainGroup((Option<&'a str>, Vec<Vec<Specifier<'a>>>)),
+// fn parse_chaingroup_specifier<'a>(input: &mut &'a str) -> ModalResult<(Option<&'a str>, Vec<Vec<Specifier<'a>>>)> {
+//     delimited(
+//         '[',
+//         (
+//             opt(preceded(multispace0, parse_string_literal)),
+//             preceded(multispace0, parse_specifier_list,
+//             cut_err(preceded(multispace, ']'))
+//     )
 // }
 
-// fn parse_specifier(input: &str) -> IResult<&str, Specifier, VerboseError<&str>> {
-//     alt((
-//         map(parse_direction, Specifier::Direction),
-//         map(parse_host, Specifier::Host),
-//         map(parse_port, Specifier::Port),
-//         map(parse_target, Specifier::Target),
-//         map(parse_protocol, Specifier::Protocol),
-//         map(parse_option, Specifier::FilterOption),
-//         map(
-//             preceded(pair(tag("!"), multispace0), parse_specifier),
-//             |s| Specifier::Negated(Box::new(s)),
-//         ),
-//         map(
-//             delimited(
-//                 terminated(tag("{"), multispace0),
-//                 separated_list0(
-//                     tuple((multispace0, tag(";"), multispace0)),
-//                     separated_list0(multispace1, parse_specifier),
-//                 ),
-//                 context("closing brace", cut(preceded(multispace0, tag("}")))),
-//             ),
-//             Specifier::Compound,
-//         ),
-//         map(
-//             delimited(
-//                 terminated(tag("["), multispace0),
-//                 pair(
-//                     opt(terminated(parse_string_literal, multispace1)),
-//                     separated_list0(
-//                         tuple((multispace0, tag(";"), multispace0)),
-//                         separated_list0(multispace1, parse_specifier),
-//                     ),
-//                 ),
-//                 context(
-//                     "closing square bracket",
-//                     cut(preceded(multispace0, tag("]"))),
-//                 ),
-//             ),
-//             Specifier::ChainGroup,
-//         ),
-//     ))
-//     .parse(input)
-// }
+#[derive(Debug, Eq, PartialEq, Clone)]
+pub enum Specifier<'a> {
+    FilterOption(FilterOption<'a>),
+    Negated(Box<Specifier<'a>>),
+    Direction(Direction<'a>),
+    Host(HostSpecifier<'a>),
+    Port(Port<'a>),
+    Target(Target),
+    Protocol(Vec<Protocol<'a>>),
+    Compound(Vec<Vec<Specifier<'a>>>),
+    ChainGroup((Option<&'a str>, Vec<Vec<Specifier<'a>>>)),
+}
 
-// #[test]
-// fn parse_specifier_test() {
-//     assert_eq!(
-//         parse_specifier("local"),
-//         Ok(("", Specifier::FilterOption(FilterOption::Local)))
-//     );
-//     assert_eq!(
-//         parse_specifier("!local"),
-//         Ok((
-//             "",
-//             Specifier::Negated(Box::new(Specifier::FilterOption(FilterOption::Local)))
-//         ))
-//     );
-//     assert_eq!(
-//         parse_specifier("accept"),
-//         Ok(("", Specifier::Target(Target::Accept),))
-//     );
-//     assert_eq!(
-//         parse_specifier("sport ssh"),
-//         Ok((
-//             "",
-//             Specifier::Port(Port::Source(vec![PortRange {
-//                 min: "ssh",
-//                 max: None
-//             }]))
-//         ))
-//     );
-//     assert_eq!(
-//         parse_specifier("proto tcp"),
-//         Ok(("", Specifier::Protocol(vec![Protocol::TCP])))
-//     );
-//     assert_eq!(
-//         parse_specifier("{ proto tcp; proto udp }"),
-//         Ok((
-//             "",
-//             Specifier::Compound(vec![
-//                 vec![Specifier::Protocol(vec![Protocol::TCP])],
-//                 vec![Specifier::Protocol(vec![Protocol::UDP])]
-//             ])
-//         ))
-//     );
-//     assert_eq!(
-//         parse_specifier("[ proto tcp dport 123 accept; drop ]"),
-//         Ok((
-//             "",
-//             Specifier::ChainGroup((
-//                 None,
-//                 vec![
-//                     vec![
-//                         Specifier::Protocol(vec![Protocol::TCP]),
-//                         Specifier::Port(Port::Dest(vec![PortRange {
-//                             min: "123",
-//                             max: None
-//                         }])),
-//                         Specifier::Target(Target::Accept)
-//                     ],
-//                     vec![Specifier::Target(Target::Drop)]
-//                 ]
-//             ))
-//         ))
-//     );
-// }
+fn parse_specifier<'a>(input: &mut &'a str) -> ModalResult<Specifier<'a>> {
+    preceded(
+        multispace0,
+        alt((
+            parse_direction.map(Specifier::Direction),
+            parse_host.map(Specifier::Host),
+            parse_port.map(Specifier::Port),
+            parse_target.map(Specifier::Target),
+            parse_protocol.map(Specifier::Protocol),
+            parse_option.map(Specifier::FilterOption),
+            preceded(("!", multispace0), parse_specifier).map(|s| Specifier::Negated(Box::new(s))),
+            // delimited(
+            //     ("{", multispace0),
+            //     separated(
+            //         0..,
+            //         separated(0.., parse_specifier, multispace1),
+            //         (multispace0, ";", multispace0),
+            //     ),
+            //     cut_err((multispace0, "}")),
+            // )
+            // .map(Specifier::Compound),
+            // delimited(
+            //     ("[", multispace0),
+            //     (
+            //         opt(terminated(parse_string_literal, multispace1)),
+            //         separated(
+            //             0..,
+            //             separated(0.., parse_specifier, multispace1),
+            //             (multispace0, ";", multispace0),
+            //         ),
+            //     ),
+            //     cut_err((multispace0, "]")),
+            // )
+            // .map(Specifier::ChainGroup),
+        )),
+    )
+    .parse_next(input)
+}
+
+#[test]
+fn parse_specifier_test() {
+    assert_eq!(
+        Ok(("", Specifier::FilterOption(FilterOption::Local))),
+        parse_specifier.parse_peek("local")
+    );
+    assert_eq!(
+        Ok((
+            "",
+            Specifier::Negated(Box::new(Specifier::FilterOption(FilterOption::Local)))
+        )),
+        parse_specifier.parse_peek("!local")
+    );
+    assert_eq!(
+        Ok(("", Specifier::Target(Target::Accept),)),
+        parse_specifier.parse_peek("accept")
+    );
+    assert_eq!(
+        Ok((
+            "",
+            Specifier::Port(Port::Source(vec![PortRange {
+                min: "ssh",
+                max: None
+            }]))
+        )),
+        parse_specifier.parse_peek("sport ssh")
+    );
+    assert_eq!(
+        Ok(("", Specifier::Protocol(vec![Protocol::TCP]))),
+        parse_specifier.parse_peek("proto tcp")
+    );
+    // assert_eq!(
+    //     Ok((
+    //         "",
+    //         Specifier::Compound(vec![
+    //             vec![Specifier::Protocol(vec![Protocol::TCP])],
+    //             vec![Specifier::Protocol(vec![Protocol::UDP])]
+    //         ])
+    //     )),
+    //     parse_specifier.parse_peek("{ proto tcp; proto udp }")
+    // );
+    // assert_eq!(
+    //     Ok((
+    //         "",
+    //         Specifier::ChainGroup((
+    //             None,
+    //             vec![
+    //                 vec![
+    //                     Specifier::Protocol(vec![Protocol::TCP]),
+    //                     Specifier::Port(Port::Dest(vec![PortRange {
+    //                         min: "123",
+    //                         max: None
+    //                     }])),
+    //                     Specifier::Target(Target::Accept)
+    //                 ],
+    //                 vec![Specifier::Target(Target::Drop)]
+    //             ]
+    //         ))
+    //     )),
+    //     parse_specifier.parse_peek("[ proto tcp dport 123 accept; drop ]")
+    // );
+}
 
 // fn parse_rule(input: &str) -> IResult<&str, Vec<Specifier>, VerboseError<&str>> {
 //     terminated(
