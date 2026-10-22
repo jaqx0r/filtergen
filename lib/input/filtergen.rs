@@ -139,160 +139,156 @@ fn parse_direction_test() {
     );
 }
 
-// #[derive(Debug, Eq, PartialEq, Clone)]
-// pub enum Target {
-//     Accept,
-//     Reject,
-//     Drop,
-//     Masq,
-//     Proxy,
-//     Redirect,
-// }
+#[derive(Debug, Eq, PartialEq, Clone)]
+pub enum Target {
+    Accept,
+    Reject,
+    Drop,
+    Masq,
+    Proxy,
+    Redirect,
+}
 
-// fn parse_target(input: &str) -> IResult<&str, Target, VerboseError<&str>> {
-//     alt((
-//         value(Target::Accept, tag("accept")),
-//         value(Target::Reject, tag("reject")),
-//         value(Target::Drop, tag("drop")),
-//         value(Target::Masq, tag("masq")),
-//         value(Target::Proxy, tag("proxy")),
-//         value(Target::Redirect, tag("redirect")),
-//     ))
-//     .parse(input)
-// }
+fn parse_target<'s>(input: &mut &'s str) -> ModalResult<Target> {
+    alt((
+        literal("accept").value(Target::Accept),
+        literal("reject").value(Target::Reject),
+        literal("drop").value(Target::Drop),
+        literal("masq").value(Target::Masq),
+        literal("proxy").value(Target::Proxy),
+        literal("redirect").value(Target::Redirect),
+    ))
+    .parse_next(input)
+}
 
-// #[test]
-// fn parse_target_test() {
-//     assert_eq!(parse_target("accept"), Ok(("", Target::Accept)));
-//     assert_eq!(parse_target("reject"), Ok(("", Target::Reject)));
-//     assert_eq!(parse_target("drop"), Ok(("", Target::Drop)));
-//     assert_eq!(parse_target("masq"), Ok(("", Target::Masq)));
-//     assert_eq!(parse_target("proxy"), Ok(("", Target::Proxy)));
-//     assert_eq!(parse_target("redirect"), Ok(("", Target::Redirect)));
-// }
+#[test]
+fn parse_target_test() {
+    assert_eq!(Ok(("", Target::Accept)), parse_target.parse_peek("accept"));
+    assert_eq!(Ok(("", Target::Reject)), parse_target.parse_peek("reject"));
+    assert_eq!(Ok(("", Target::Drop)), parse_target.parse_peek("drop"));
+    assert_eq!(Ok(("", Target::Masq)), parse_target.parse_peek("masq"));
+    assert_eq!(Ok(("", Target::Proxy)), parse_target.parse_peek("proxy"));
+    assert_eq!(
+        Ok(("", Target::Redirect)),
+        parse_target.parse_peek("redirect")
+    );
+}
 
-// #[derive(Clone, Copy, Debug, Eq, PartialEq)]
-// pub struct Host<'a> {
-//     pub host: &'a str,
-//     pub mask: Option<&'a str>,
-// }
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct Host<'a> {
+    pub host: &'a str,
+    pub mask: Option<&'a str>,
+}
 
-// #[derive(Debug, Eq, PartialEq, Clone)]
-// pub enum HostSpecifier<'a> {
-//     Source(Vec<Host<'a>>),
-//     Dest(Vec<Host<'a>>),
-// }
+#[derive(Debug, Eq, PartialEq, Clone)]
+pub enum HostSpecifier<'a> {
+    Source(Vec<Host<'a>>),
+    Dest(Vec<Host<'a>>),
+}
 
-// fn parse_host_argument(input: &str) -> IResult<&str, Host, VerboseError<&str>> {
-//     map(
-//         pair(
-//             parse_identifier,
-//             opt(preceded(
-//                 tuple((multispace0, tag("/"), multispace0)),
-//                 parse_identifier,
-//             )),
-//         ),
-//         |(h, m)| Host { host: h, mask: m },
-//     )
-//     .parse(input)
-// }
+fn parse_host_argument<'s>(input: &mut &'s str) -> ModalResult<Host<'s>> {
+    (
+        parse_identifier,
+        opt(preceded((multispace0, '/', multispace0), parse_identifier)),
+    )
+        .map(|(h, m)| Host { host: h, mask: m })
+        .parse_next(input)
+}
 
-// #[test]
-// fn parse_host_argument_test() {
-//     assert_eq!(
-//         parse_host_argument("hostname"),
-//         Ok((
-//             "",
-//             Host {
-//                 host: "hostname",
-//                 mask: None
-//             }
-//         ))
-//     );
-//     assert_eq!(
-//         parse_host_argument("hostname/mask"),
-//         Ok((
-//             "",
-//             Host {
-//                 host: "hostname",
-//                 mask: Some("mask")
-//             }
-//         ))
-//     );
-//     assert_eq!(
-//         parse_host_argument("hostname / mask"),
-//         Ok((
-//             "",
-//             Host {
-//                 host: "hostname",
-//                 mask: Some("mask")
-//             }
-//         ))
-//     );
-// }
+#[test]
+fn parse_host_argument_test() {
+    assert_eq!(
+        Ok((
+            "",
+            Host {
+                host: "hostname",
+                mask: None
+            }
+        )),
+        parse_host_argument.parse_peek("hostname")
+    );
+    assert_eq!(
+        Ok((
+            "",
+            Host {
+                host: "hostname",
+                mask: Some("mask")
+            }
+        )),
+        parse_host_argument.parse_peek("hostname/mask")
+    );
+    assert_eq!(
+        Ok((
+            "",
+            Host {
+                host: "hostname",
+                mask: Some("mask")
+            }
+        )),
+        parse_host_argument.parse_peek("hostname / mask")
+    );
+}
 
-// fn parse_host(input: &str) -> IResult<&str, HostSpecifier, VerboseError<&str>> {
-//     map(
-//         pair(
-//             alt((tag("source"), tag("dest"))),
-//             preceded(
-//                 multispace0,
-//                 alt((
-//                     argument_list(parse_host_argument),
-//                     map(parse_host_argument, |h| vec![h]),
-//                 )),
-//             ),
-//         ),
-//         |(h, v)| match h {
-//             "source" => HostSpecifier::Source(v),
-//             "dest" => HostSpecifier::Dest(v),
-//             _ => unreachable!(),
-//         },
-//     )
-//     .parse(input)
-// }
+fn parse_host<'a>(input: &mut &'a str) -> ModalResult<HostSpecifier<'a>> {
+    (
+        alt((literal("source"), literal("dest"))),
+        preceded(
+            multispace0,
+            alt((
+                argument_list(parse_host_argument),
+                parse_host_argument.map(|h| vec![h]),
+            )),
+        ),
+    )
+        .map(|(h, v)| match h {
+            "source" => HostSpecifier::Source(v),
+            "dest" => HostSpecifier::Dest(v),
+            _ => unreachable!(),
+        })
+        .parse_next(input)
+}
 
-// #[test]
-// fn parse_host_test() {
-//     assert_eq!(
-//         parse_host("source host"),
-//         Ok((
-//             "",
-//             HostSpecifier::Source(vec![Host {
-//                 host: "host",
-//                 mask: None
-//             }])
-//         ))
-//     );
+#[test]
+fn parse_host_test() {
+    assert_eq!(
+        Ok((
+            "",
+            HostSpecifier::Source(vec![Host {
+                host: "host",
+                mask: None
+            }])
+        )),
+        parse_host.parse_peek("source host"),
+    );
 
-//     assert_eq!(
-//         parse_host("dest host/mask"),
-//         Ok((
-//             "",
-//             HostSpecifier::Dest(vec![Host {
-//                 host: "host",
-//                 mask: Some("mask")
-//             }])
-//         ))
-//     );
+    assert_eq!(
+        Ok((
+            "",
+            HostSpecifier::Dest(vec![Host {
+                host: "host",
+                mask: Some("mask")
+            }])
+        )),
+        parse_host.parse_peek("dest host/mask")
+    );
 
-//     assert_eq!(
-//         parse_host("dest { host/mask host2}"),
-//         Ok((
-//             "",
-//             HostSpecifier::Dest(vec![
-//                 Host {
-//                     host: "host",
-//                     mask: Some("mask")
-//                 },
-//                 Host {
-//                     host: "host2",
-//                     mask: None
-//                 }
-//             ])
-//         ))
-//     );
-// }
+    assert_eq!(
+        Ok((
+            "",
+            HostSpecifier::Dest(vec![
+                Host {
+                    host: "host",
+                    mask: Some("mask")
+                },
+                Host {
+                    host: "host2",
+                    mask: None
+                }
+            ])
+        )),
+        parse_host.parse_peek("dest { host/mask host2}")
+    );
+}
 
 // #[derive(Debug, Eq, PartialEq, Clone)]
 // pub struct PortRange<'a> {
