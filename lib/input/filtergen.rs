@@ -9,7 +9,7 @@ use winnow::{
 #[cfg(test)]
 use pretty_assertions::assert_eq;
 
-fn parse_identifier<'s>(input: &mut &'s str) -> ModalResult<&'s str> {
+fn parse_identifier<'a>(input: &mut &'a str) -> ModalResult<&'a str> {
     take_while(1.., |c: char| c.is_ascii_alphanumeric() || c == '_').parse_next(input)
 }
 
@@ -47,7 +47,7 @@ pub enum FilterOption<'a> {
     Log(Option<&'a str>),
 }
 
-fn parse_option<'s>(input: &mut &'s str) -> ModalResult<FilterOption<'s>> {
+fn parse_option<'a>(input: &mut &'a str) -> ModalResult<FilterOption<'a>> {
     alt((
         literal("local").value(FilterOption::Local),
         literal("forward").value(FilterOption::Forward),
@@ -104,7 +104,7 @@ pub enum Direction<'a> {
     Output(Vec<&'a str>),
 }
 
-fn parse_direction<'s>(input: &mut &'s str) -> ModalResult<Direction<'s>> {
+fn parse_direction<'a>(input: &mut &'a str) -> ModalResult<Direction<'a>> {
     (
         alt((literal("input"), literal("output"))),
         preceded(
@@ -149,7 +149,7 @@ pub enum Target {
     Redirect,
 }
 
-fn parse_target<'s>(input: &mut &'s str) -> ModalResult<Target> {
+fn parse_target<'a>(input: &mut &'a str) -> ModalResult<Target> {
     alt((
         literal("accept").value(Target::Accept),
         literal("reject").value(Target::Reject),
@@ -186,7 +186,7 @@ pub enum HostSpecifier<'a> {
     Dest(Vec<Host<'a>>),
 }
 
-fn parse_host_argument<'s>(input: &mut &'s str) -> ModalResult<Host<'s>> {
+fn parse_host_argument<'a>(input: &mut &'a str) -> ModalResult<Host<'a>> {
     (
         parse_identifier,
         opt(preceded((multispace0, '/', multispace0), parse_identifier)),
@@ -290,110 +290,103 @@ fn parse_host_test() {
     );
 }
 
-// #[derive(Debug, Eq, PartialEq, Clone)]
-// pub struct PortRange<'a> {
-//     pub min: &'a str,
-//     pub max: Option<&'a str>,
-// }
+#[derive(Debug, Eq, PartialEq, Clone)]
+pub struct PortRange<'a> {
+    pub min: &'a str,
+    pub max: Option<&'a str>,
+}
 
-// fn parse_port_argument(input: &str) -> IResult<&str, PortRange, VerboseError<&str>> {
-//     map(
-//         pair(
-//             parse_identifier,
-//             opt(preceded(
-//                 tuple((multispace0, tag(":"), multispace0)),
-//                 parse_identifier,
-//             )),
-//         ),
-//         |(min, max)| PortRange { min, max },
-//     )
-//     .parse(input)
-// }
+fn parse_port_argument<'a>(input: &mut &'a str) -> ModalResult<PortRange<'a>> {
+    (
+        parse_identifier,
+        opt(preceded((multispace0, ':', multispace0), parse_identifier)),
+    )
+        .map(|(min, max)| PortRange { min, max })
+        .parse_next(input)
+}
 
-// #[test]
-// fn parse_port_argument_test() {
-//     assert_eq!(
-//         parse_port_argument("1"),
-//         Ok((
-//             "",
-//             PortRange {
-//                 min: "1",
-//                 max: None
-//             }
-//         ))
-//     );
-//     assert_eq!(
-//         parse_port_argument("ssh"),
-//         Ok((
-//             "",
-//             PortRange {
-//                 min: "ssh",
-//                 max: None
-//             }
-//         ))
-//     );
-//     assert_eq!(
-//         parse_port_argument("1:1024"),
-//         Ok((
-//             "",
-//             PortRange {
-//                 min: "1",
-//                 max: Some("1024")
-//             }
-//         ))
-//     );
-// }
+#[test]
+fn parse_port_argument_test() {
+    assert_eq!(
+        Ok((
+            "",
+            PortRange {
+                min: "1",
+                max: None
+            }
+        )),
+        parse_port_argument.parse_peek("1")
+    );
+    assert_eq!(
+        Ok((
+            "",
+            PortRange {
+                min: "ssh",
+                max: None
+            }
+        )),
+        parse_port_argument.parse_peek("ssh")
+    );
+    assert_eq!(
+        Ok((
+            "",
+            PortRange {
+                min: "1",
+                max: Some("1024")
+            }
+        )),
+        parse_port_argument.parse_peek("1:1024")
+    );
+}
 
-// #[derive(Debug, Eq, PartialEq, Clone)]
-// pub enum Port<'a> {
-//     Source(Vec<PortRange<'a>>),
-//     Dest(Vec<PortRange<'a>>),
-// }
+#[derive(Debug, Eq, PartialEq, Clone)]
+pub enum Port<'a> {
+    Source(Vec<PortRange<'a>>),
+    Dest(Vec<PortRange<'a>>),
+}
 
-// fn parse_port(input: &str) -> IResult<&str, Port, VerboseError<&str>> {
-//     map(
-//         pair(
-//             alt((tag("sport"), tag("dport"))),
-//             preceded(
-//                 multispace0,
-//                 alt((
-//                     argument_list(parse_port_argument),
-//                     map(parse_port_argument, |p| vec![p]),
-//                 )),
-//             ),
-//         ),
-//         |(p, v)| match p {
-//             "sport" => Port::Source(v),
-//             "dport" => Port::Dest(v),
-//             _ => unreachable!(),
-//         },
-//     )
-//     .parse(input)
-// }
+fn parse_port<'a>(input: &mut &'a str) -> ModalResult<Port<'a>> {
+    (
+        alt((literal("sport"), literal("dport"))),
+        preceded(
+            multispace0,
+            alt((
+                argument_list(parse_port_argument),
+                parse_port_argument.map(|p| vec![p]),
+            )),
+        ),
+    )
+        .map(|(p, v)| match p {
+            "sport" => Port::Source(v),
+            "dport" => Port::Dest(v),
+            _ => unreachable!(),
+        })
+        .parse_next(input)
+}
 
-// #[test]
-// fn parse_port_test() {
-//     assert_eq!(
-//         parse_port("sport ssh"),
-//         Ok((
-//             "",
-//             Port::Source(vec![PortRange {
-//                 min: "ssh",
-//                 max: None
-//             }])
-//         ))
-//     );
-//     assert_eq!(
-//         parse_port("dport 0:1024"),
-//         Ok((
-//             "",
-//             Port::Dest(vec![PortRange {
-//                 min: "0",
-//                 max: Some("1024")
-//             }])
-//         ))
-//     );
-// }
+#[test]
+fn parse_port_test() {
+    assert_eq!(
+        Ok((
+            "",
+            Port::Source(vec![PortRange {
+                min: "ssh",
+                max: None
+            }])
+        )),
+        parse_port.parse_peek("sport ssh")
+    );
+    assert_eq!(
+        Ok((
+            "",
+            Port::Dest(vec![PortRange {
+                min: "0",
+                max: Some("1024")
+            }])
+        )),
+        parse_port.parse_peek("dport 0:1024")
+    );
+}
 
 // #[derive(Debug, Eq, PartialEq, Clone)]
 // pub enum Protocol<'a> {
