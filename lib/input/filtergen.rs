@@ -695,29 +695,29 @@ drop;
     );
 }
 
-// pub fn parse(input: &str) -> IResult<&str, Vec<Vec<Specifier>>, VerboseError<&str>> {
-//     many0(preceded(multispace0, parse_rule)).parse(input)
-// }
+pub fn parse<'a>(input: &mut &'a str) -> ModalResult<Vec<Vec<Specifier<'a>>>> {
+    repeat(0.., parse_rule).parse_next(input)
+}
 
-// #[test]
-// fn parse_test() {
-//     assert_eq!(
-//         parse(
-//             "local forward;
-// forward !local;"
-//         ),
-//         Ok((
-//             "",
-//             vec![
-//                 vec![
-//                     Specifier::FilterOption(FilterOption::Local),
-//                     Specifier::FilterOption(FilterOption::Forward),
-//                 ],
-//                 vec![
-//                     Specifier::FilterOption(FilterOption::Forward),
-//                     Specifier::Negated(Box::new(Specifier::FilterOption(FilterOption::Local))),
-//                 ],
-//             ]
-//         ))
-//     )
-// }
+#[test]
+fn parse_test() {
+    assert_eq!(
+        Ok((
+            "",
+            vec![
+                vec![
+                    Specifier::FilterOption(FilterOption::Local),
+                    Specifier::FilterOption(FilterOption::Forward),
+                ],
+                vec![
+                    Specifier::FilterOption(FilterOption::Forward),
+                    Specifier::Negated(Box::new(Specifier::FilterOption(FilterOption::Local))),
+                ],
+            ]
+        )),
+        parse.parse_peek(
+            "local forward;
+forward !local;"
+        )
+    )
+}
