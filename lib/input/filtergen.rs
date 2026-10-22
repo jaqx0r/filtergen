@@ -388,65 +388,69 @@ fn parse_port_test() {
     );
 }
 
-// #[derive(Debug, Eq, PartialEq, Clone)]
-// pub enum Protocol<'a> {
-//     TCP,
-//     UDP,
-//     ICMP(Vec<&'a str>), // icmp type list
-// }
+#[derive(Debug, Eq, PartialEq, Clone)]
+pub enum Protocol<'a> {
+    TCP,
+    UDP,
+    ICMP(Vec<&'a str>), // icmp type list
+}
 
-// fn parse_protocol_name(input: &str) -> IResult<&str, Protocol, VerboseError<&str>> {
-//     alt((
-//         value(Protocol::TCP, tag("tcp")),
-//         value(Protocol::UDP, tag("udp")),
-//         map(
-//             preceded(
-//                 pair(tag("icmp"), multispace0),
-//                 opt(preceded(
-//                     pair(tag("icmptype"), multispace0),
-//                     alt((
-//                         argument_list(parse_identifier),
-//                         map(parse_identifier, |i| vec![i]),
-//                     )),
-//                 )),
-//             ),
-//             |s: Option<Vec<&str>>| Protocol::ICMP(s.unwrap_or(vec![])),
-//         ),
-//     ))
-//     .parse(input)
-// }
+fn parse_protocol_name<'a>(input: &mut &'a str) -> ModalResult<Protocol<'a>> {
+    alt((
+        literal("tcp").value(Protocol::TCP),
+        literal("udp").value(Protocol::UDP),
+        preceded(
+            (literal("icmp"), multispace0),
+            opt(preceded(
+                (literal("icmptype"), multispace0),
+                alt((
+                    argument_list(parse_identifier),
+                    parse_identifier.map(|i| vec![i]),
+                )),
+            )),
+        )
+        .map(|s: Option<Vec<&str>>| Protocol::ICMP(s.unwrap_or(vec![]))),
+    ))
+    .parse_next(input)
+}
 
-// fn parse_protocol(input: &str) -> IResult<&str, Vec<Protocol>, VerboseError<&str>> {
-//     preceded(
-//         tag("proto"),
-//         preceded(
-//             multispace0,
-//             alt((
-//                 argument_list(parse_protocol_name),
-//                 map(parse_protocol_name, |p| vec![p]),
-//             )),
-//         ),
-//     )
-//     .parse(input)
-// }
+fn parse_protocol<'a>(input: &mut &'a str) -> ModalResult<Vec<Protocol<'a>>> {
+    preceded(
+        literal("proto"),
+        preceded(
+            multispace0,
+            alt((
+                argument_list(parse_protocol_name),
+                parse_protocol_name.map(|p| vec![p]),
+            )),
+        ),
+    )
+    .parse_next(input)
+}
 
-// #[test]
-// fn parse_protocol_test() {
-//     assert_eq!(parse_protocol("proto tcp"), Ok(("", vec![Protocol::TCP])));
-//     assert_eq!(parse_protocol("proto udp"), Ok(("", vec![Protocol::UDP])));
-//     assert_eq!(
-//         parse_protocol("proto icmp"),
-//         Ok(("", vec![Protocol::ICMP(vec![])]))
-//     );
-//     assert_eq!(
-//         parse_protocol("proto { tcp udp }"),
-//         Ok(("", vec![Protocol::TCP, Protocol::UDP]))
-//     );
-//     assert_eq!(
-//         parse_protocol("proto icmp icmptype 6"),
-//         Ok(("", vec![Protocol::ICMP(vec!["6"])]))
-//     );
-// }
+#[test]
+fn parse_protocol_test() {
+    assert_eq!(
+        Ok(("", vec![Protocol::TCP])),
+        parse_protocol.parse_peek("proto tcp")
+    );
+    assert_eq!(
+        Ok(("", vec![Protocol::UDP])),
+        parse_protocol.parse_peek("proto udp")
+    );
+    assert_eq!(
+        Ok(("", vec![Protocol::ICMP(vec![])])),
+        parse_protocol.parse_peek("proto icmp")
+    );
+    assert_eq!(
+        Ok(("", vec![Protocol::TCP, Protocol::UDP])),
+        parse_protocol.parse_peek("proto { tcp udp }")
+    );
+    assert_eq!(
+        Ok(("", vec![Protocol::ICMP(vec!["6"])])),
+        parse_protocol.parse_peek("proto icmp icmptype 6")
+    );
+}
 
 // #[derive(Debug, Eq, PartialEq, Clone)]
 // pub enum Specifier<'a> {
