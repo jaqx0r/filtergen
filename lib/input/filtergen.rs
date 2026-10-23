@@ -338,17 +338,16 @@ mod tests {
         pretty_assertions::assert_eq!(parse_direction.parse_peek(input), expected);
     }
 
-    #[test]
-    fn parse_target_test() {
-        assert_eq!(Ok(("", Target::Accept)), parse_target.parse_peek("accept"));
-        assert_eq!(Ok(("", Target::Reject)), parse_target.parse_peek("reject"));
-        assert_eq!(Ok(("", Target::Drop)), parse_target.parse_peek("drop"));
-        assert_eq!(Ok(("", Target::Masq)), parse_target.parse_peek("masq"));
-        assert_eq!(Ok(("", Target::Proxy)), parse_target.parse_peek("proxy"));
-        assert_eq!(
-            Ok(("", Target::Redirect)),
-            parse_target.parse_peek("redirect")
-        );
+    #[parameterized(
+        accept = { "accept", Ok(("", Target::Accept)) },
+        reject = { "reject", Ok(("", Target::Reject)) },
+        drop = { "drop", Ok(("", Target::Drop)) },
+        masq = { "masq", Ok(("", Target::Masq)) },
+        proxy = { "proxy", Ok(("", Target::Proxy)) },
+        redirect = { "redirect", Ok(("", Target::Redirect)) },
+    )]
+    fn parse_target_test(input: &str, expected: Result<(&str, Target), RErr>) {
+        pretty_assertions::assert_eq!(parse_target.parse_peek(input), expected);
     }
 
     #[test]
