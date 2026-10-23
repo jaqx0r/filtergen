@@ -118,20 +118,25 @@ fn parse_direction<'a>(input: &mut &'a str) -> ModalResult<Direction<'a>> {
         .parse_next(input)
 }
 
-#[test]
-fn parse_direction_test() {
-    assert_eq!(
-        Ok(("", Direction::Input(vec!["eth0"]))),
-        parse_direction.parse_peek("input eth0"),
-    );
-    assert_eq!(
-        Ok(("", Direction::Output(vec!["lo"]))),
-        parse_direction.parse_peek("output lo"),
-    );
-    assert_eq!(
-        Ok(("", Direction::Input(vec!["eth0", "lo"]))),
-        parse_direction.parse_peek("input { eth0 lo }")
-    );
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use yare::parameterized;
+
+    #[parameterized(
+    input = { "input eth0", Ok(("", Direction::Input(vec!["eth0"]))) },
+    output = { "output lo", Ok(("", Direction::Output(vec!["lo"]))) },
+    two_inputs = { "input { eth0 lo }", Ok(("", Direction::Input(vec!["eth0", "lo"]))) },
+)]
+    fn parse_direction_test(
+        input: &str,
+        expected: Result<
+            (&str, Direction<'_>),
+            winnow::error::ErrMode<winnow::error::ContextError>,
+        >,
+    ) {
+        pretty_assertions::assert_eq!(expected, parse_direction.parse_peek(input));
+    }
 }
 
 #[derive(Debug, Eq, PartialEq, Clone)]

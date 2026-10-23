@@ -18,3 +18,4 @@ version = "4.5.16"
 
 [dev-dependencies]
 pretty_assertions = "1.4.1"
+yare = "3.0.0"
