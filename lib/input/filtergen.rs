@@ -276,61 +276,66 @@ mod tests {
     use super::*;
     use pretty_assertions::assert_eq;
     use yare::parameterized;
+    type RErr = winnow::error::ErrMode<winnow::error::ContextError>;
 
-    #[test]
-    fn parse_identifier_test() {
-        assert_eq!(Ok(("", "1")), parse_identifier.parse_peek("1"),);
-        assert_eq!(Ok(("", "foo")), parse_identifier.parse_peek("foo"),);
-        assert_eq!(Ok(("", "_foo")), parse_identifier.parse_peek("_foo"),);
-        assert_eq!(Ok(("", "foo_oo")), parse_identifier.parse_peek("foo_oo"),);
-    }
-
-    #[test]
-    fn parse_string_literal_test() {
-        assert_eq!(Ok(("", "")), parse_string_literal.parse_peek("\"\""));
-        assert_eq!(Ok(("", "a")), parse_string_literal.parse_peek("\"a\""));
-        assert_eq!(Ok(("", "a1")), parse_string_literal.parse_peek("\"a1\""));
-        assert_eq!(Ok(("", "a 1")), parse_string_literal.parse_peek("\"a 1\""));
-        assert_eq!(Ok(("", "a_1")), parse_string_literal.parse_peek("\"a_1\""));
-    }
-
-    #[test]
-    fn parse_option_test() {
-        assert_eq!(
-            Ok(("", FilterOption::Local)),
-            parse_option.parse_peek("local"),
-        );
-        assert_eq!(
-            Ok(("", FilterOption::Forward)),
-            parse_option.parse_peek("forward"),
-        );
-        assert_eq!(
-            Ok(("", FilterOption::OneWay)),
-            parse_option.parse_peek("oneway"),
-        );
-        assert_eq!(
-            Ok(("", FilterOption::Log(None))),
-            parse_option.parse_peek("log"),
-        );
-        assert_eq!(
-            Ok(("", FilterOption::Log(Some("text")))),
-            parse_option.parse_peek("log text"),
-        );
+    #[parameterized(
+        numeric = { "1", Ok(("", "1")) },
+        alpha = { "foo", Ok(("", "foo")) },
+        leading_under = { "_foo", Ok(("", "_foo")) },
+        contains_under = { "foo_oo", Ok(("", "foo_oo")) },
+    )]
+    fn parse_identifier_test(input: &str, expected: Result<(&str, &str), RErr>) {
+        pretty_assertions::assert_eq!(parse_identifier.parse_peek(input), expected);
     }
 
     #[parameterized(
-    input = { "input eth0", Ok(("", Direction::Input(vec!["eth0"]))) },
-    output = { "output lo", Ok(("", Direction::Output(vec!["lo"]))) },
-    two_inputs = { "input { eth0 lo }", Ok(("", Direction::Input(vec!["eth0", "lo"]))) },
-)]
-    fn parse_direction_test(
-        input: &str,
-        expected: Result<
-            (&str, Direction<'_>),
-            winnow::error::ErrMode<winnow::error::ContextError>,
-        >,
-    ) {
-        pretty_assertions::assert_eq!(expected, parse_direction.parse_peek(input));
+        empty_string = { "\"\"", Ok(("", "")) },
+        single_char = { "\"a\"", Ok(("", "a")) },
+        alphanumeric = { "\"a1\"", Ok(("", "a1")), },
+        with_space = { "\"a 1\"", Ok(("", "a 1")) },
+        with_under = { "\"a_1\"", Ok(("", "a_1")) },
+    )]
+    fn parse_string_literal_test(input: &str, expected: Result<(&str, &str), RErr>) {
+        pretty_assertions::assert_eq!(parse_string_literal.parse_peek(input), expected);
+    }
+
+    #[parameterized(
+        local = {
+            "local",
+            Ok(("", FilterOption::Local)),
+        },
+        forward = {
+            "forward",
+            Ok(("", FilterOption::Forward)),
+        },
+        oneway = {
+            "oneway",
+            Ok(("", FilterOption::OneWay)),
+        },
+        log_no_arg = {
+            "log",
+            Ok(("", FilterOption::Log(None))),
+        },
+        log_with_arg = {
+            "log text",
+            Ok(("", FilterOption::Log(Some("text")))),
+        },
+        log_arg_no_space = {
+            "logtext",
+            Ok(("", FilterOption::Log(Some("text")))),
+        },
+    )]
+    fn parse_option_test(input: &str, expected: Result<(&str, FilterOption), RErr>) {
+        pretty_assertions::assert_eq!(parse_option.parse_peek(input), expected);
+    }
+
+    #[parameterized(
+        input = { "input eth0", Ok(("", Direction::Input(vec!["eth0"]))) },
+        output = { "output lo", Ok(("", Direction::Output(vec!["lo"]))) },
+        two_inputs = { "input { eth0 lo }", Ok(("", Direction::Input(vec!["eth0", "lo"]))) },
+    )]
+    fn parse_direction_test(input: &str, expected: Result<(&str, Direction<'_>), RErr>) {
+        pretty_assertions::assert_eq!(parse_direction.parse_peek(input), expected);
     }
 
     #[test]
@@ -699,9 +704,8 @@ drop;
         );
     }
 
-    #[test]
-    fn parse_test() {
-        assert_eq!(
+    #[parameterized(
+        short_filteroptions = {
             Ok((
                 "",
                 vec![
@@ -715,10 +719,11 @@ drop;
                     ],
                 ]
             )),
-            parse.parse_peek(
                 "local forward;
 forward !local;"
-            )
-        )
+        },
+    )]
+    fn parse_test(expected: Result<(&str, Vec<Vec<Specifier>>), RErr>, input: &str) {
+        pretty_assertions::assert_eq!(expected, parse.parse_peek(input));
     }
 }
