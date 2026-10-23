@@ -9,8 +9,8 @@ name = "filtergen_lib"
 path = "lib/filtergen.rs"
 
 [dependencies]
-nom = "7"
 ipnet = "2"
+winnow = "1.0.4"
 
 [dependencies.clap]
 features = ["derive"]
@@ -18,3 +18,4 @@ version = "4.5.16"
 
 [dev-dependencies]
 pretty_assertions = "1.4.1"
+yare = "3.0.0"

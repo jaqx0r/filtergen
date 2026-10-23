@@ -1,49 +1,37 @@
-use nom::{
-    branch::alt,
-    bytes::complete::tag,
-    character::complete::{alpha1, alphanumeric1, multispace0, multispace1},
-    combinator::{cut, map, opt, recognize, value},
-    error::{context, VerboseError},
-    multi::{many0, separated_list0, separated_list1},
-    sequence::{delimited, pair, preceded, terminated, tuple},
-    IResult, Parser,
+use winnow::{
+    ascii::{alpha1, multispace0, multispace1},
+    combinator::{alt, cut_err, delimited, opt, preceded, repeat, separated, terminated},
+    error::{ContextError, ErrMode},
+    token::{literal, take_until, take_while},
+    ModalResult, Parser,
 };
 
 #[cfg(test)]
 use pretty_assertions::assert_eq;
 
-fn parse_identifier(input: &str) -> IResult<&str, &str, VerboseError<&str>> {
-    recognize(pair(
-        alt((alphanumeric1, tag("_"))),
-        many0(alt((alphanumeric1, tag("_")))),
-    ))
-    .parse(input)
+fn parse_identifier<'a>(input: &mut &'a str) -> ModalResult<&'a str> {
+    take_while(1.., |c: char| c.is_ascii_alphanumeric() || c == '_').parse_next(input)
 }
 
 #[test]
 fn parse_identifier_test() {
-    assert_eq!(parse_identifier("1"), Ok(("", "1")));
-    assert_eq!(parse_identifier("foo"), Ok(("", "foo")));
-    assert_eq!(parse_identifier("_foo"), Ok(("", "_foo")));
-    assert_eq!(parse_identifier("foo_oo"), Ok(("", "foo_oo")));
+    assert_eq!(Ok(("", "1")), parse_identifier.parse_peek("1"),);
+    assert_eq!(Ok(("", "foo")), parse_identifier.parse_peek("foo"),);
+    assert_eq!(Ok(("", "_foo")), parse_identifier.parse_peek("_foo"),);
+    assert_eq!(Ok(("", "foo_oo")), parse_identifier.parse_peek("foo_oo"),);
 }
 
-fn parse_string_literal(input: &str) -> IResult<&str, &str, VerboseError<&str>> {
-    delimited(
-        tag("\""),
-        recognize(many0(alt((multispace1, alphanumeric1, tag("_"))))),
-        tag("\""),
-    )
-    .parse(input)
+fn parse_string_literal<'a>(input: &mut &'a str) -> ModalResult<&'a str> {
+    delimited('"', take_until(0.., '"'), '"').parse_next(input)
 }
 
 #[test]
 fn parse_string_literal_test() {
-    assert_eq!(parse_string_literal("\"\""), Ok(("", "")));
-    assert_eq!(parse_string_literal("\"a\""), Ok(("", "a")));
-    assert_eq!(parse_string_literal("\"a1\""), Ok(("", "a1")));
-    assert_eq!(parse_string_literal("\"a 1\""), Ok(("", "a 1")));
-    assert_eq!(parse_string_literal("\"a_1\""), Ok(("", "a_1")));
+    assert_eq!(Ok(("", "")), parse_string_literal.parse_peek("\"\""));
+    assert_eq!(Ok(("", "a")), parse_string_literal.parse_peek("\"a\""));
+    assert_eq!(Ok(("", "a1")), parse_string_literal.parse_peek("\"a1\""));
+    assert_eq!(Ok(("", "a 1")), parse_string_literal.parse_peek("\"a 1\""));
+    assert_eq!(Ok(("", "a_1")), parse_string_literal.parse_peek("\"a_1\""));
 }
 
 #[derive(Debug, Eq, PartialEq, Clone)]
@@ -54,39 +42,54 @@ pub enum FilterOption<'a> {
     Log(Option<&'a str>),
 }
 
-fn parse_option(input: &str) -> IResult<&str, FilterOption, VerboseError<&str>> {
+fn parse_option<'a>(input: &mut &'a str) -> ModalResult<FilterOption<'a>> {
     alt((
-        value(FilterOption::Local, tag("local")),
-        value(FilterOption::Forward, tag("forward")),
-        value(FilterOption::OneWay, tag("oneway")),
-        map(
-            preceded(pair(tag("log"), multispace0), opt(alpha1)),
-            |s: Option<&str>| FilterOption::Log(s.to_owned()),
-        ),
+        literal("local").value(FilterOption::Local),
+        literal("forward").value(FilterOption::Forward),
+        literal("oneway").value(FilterOption::OneWay),
+        preceded((literal("log"), multispace0), opt(alpha1))
+            .map(|s: Option<&str>| FilterOption::Log(s.to_owned())),
     ))
-    .parse(input)
+    .parse_next(input)
 }
 
 #[test]
 fn parse_option_test() {
-    assert_eq!(parse_option("local"), Ok(("", FilterOption::Local)));
-    assert_eq!(parse_option("forward"), Ok(("", FilterOption::Forward)));
-    assert_eq!(parse_option("oneway"), Ok(("", FilterOption::OneWay)));
-    assert_eq!(parse_option("log"), Ok(("", FilterOption::Log(None))));
     assert_eq!(
-        parse_option("log text"),
-        Ok(("", FilterOption::Log(Some("text"))))
+        Ok(("", FilterOption::Local)),
+        parse_option.parse_peek("local"),
+    );
+    assert_eq!(
+        Ok(("", FilterOption::Forward)),
+        parse_option.parse_peek("forward"),
+    );
+    assert_eq!(
+        Ok(("", FilterOption::OneWay)),
+        parse_option.parse_peek("oneway"),
+    );
+    assert_eq!(
+        Ok(("", FilterOption::Log(None))),
+        parse_option.parse_peek("log"),
+    );
+    assert_eq!(
+        Ok(("", FilterOption::Log(Some("text")))),
+        parse_option.parse_peek("log text"),
     );
 }
 
-fn argument_list<'a, O, F>(arg_parser: F) -> impl Parser<&'a str, Vec<O>, VerboseError<&'a str>>
+fn argument_list<'a, O, F>(arg_parser: F) -> impl Parser<&'a str, Vec<O>, ErrMode<ContextError>>
 where
-    F: Parser<&'a str, O, VerboseError<&'a str>>,
+    F: Parser<&'a str, O, ErrMode<ContextError>>,
 {
     delimited(
-        tag("{"),
-        preceded(multispace0, separated_list1(multispace1, arg_parser)),
-        context("closing brace", cut(preceded(multispace0, tag("}")))),
+        ('{', multispace0),
+        //alt((
+        separated(0.., arg_parser, multispace1),
+        //  preceded(peek('}'), cut_err(empty.value(Vec::new()))).context(StrContext::Expected(
+        //      StrContextValue::Description("at least one element required inside the braces"),
+        //  )),
+        //)),
+        cut_err((multispace0, '}')),
     )
 }
 
@@ -96,41 +99,44 @@ pub enum Direction<'a> {
     Output(Vec<&'a str>),
 }
 
-fn parse_direction(input: &str) -> IResult<&str, Direction, VerboseError<&str>> {
-    map(
-        pair(
-            alt((tag("input"), tag("output"))),
-            preceded(
-                multispace0,
-                alt((
-                    argument_list(parse_identifier),
-                    map(parse_identifier, |i: &str| vec![i]),
-                )),
-            ),
+fn parse_direction<'a>(input: &mut &'a str) -> ModalResult<Direction<'a>> {
+    (
+        alt((literal("input"), literal("output"))),
+        preceded(
+            multispace0,
+            alt((
+                argument_list(parse_identifier),
+                parse_identifier.map(|i: &str| vec![i]),
+            )),
         ),
-        |(d, v)| match d {
+    )
+        .map(|(d, v)| match d {
             "input" => Direction::Input(v),
             "output" => Direction::Output(v),
             _ => unreachable!(),
-        },
-    )
-    .parse(input)
+        })
+        .parse_next(input)
 }
 
-#[test]
-fn parse_direction_test() {
-    assert_eq!(
-        parse_direction("input eth0"),
-        Ok(("", Direction::Input(vec!["eth0"])))
-    );
-    assert_eq!(
-        parse_direction("output lo"),
-        Ok(("", Direction::Output(vec!["lo"])))
-    );
-    assert_eq!(
-        parse_direction("input { eth0 lo }"),
-        Ok(("", Direction::Input(vec!["eth0", "lo"])))
-    );
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use yare::parameterized;
+
+    #[parameterized(
+    input = { "input eth0", Ok(("", Direction::Input(vec!["eth0"]))) },
+    output = { "output lo", Ok(("", Direction::Output(vec!["lo"]))) },
+    two_inputs = { "input { eth0 lo }", Ok(("", Direction::Input(vec!["eth0", "lo"]))) },
+)]
+    fn parse_direction_test(
+        input: &str,
+        expected: Result<
+            (&str, Direction<'_>),
+            winnow::error::ErrMode<winnow::error::ContextError>,
+        >,
+    ) {
+        pretty_assertions::assert_eq!(expected, parse_direction.parse_peek(input));
+    }
 }
 
 #[derive(Debug, Eq, PartialEq, Clone)]
@@ -143,26 +149,29 @@ pub enum Target {
     Redirect,
 }
 
-fn parse_target(input: &str) -> IResult<&str, Target, VerboseError<&str>> {
+fn parse_target<'a>(input: &mut &'a str) -> ModalResult<Target> {
     alt((
-        value(Target::Accept, tag("accept")),
-        value(Target::Reject, tag("reject")),
-        value(Target::Drop, tag("drop")),
-        value(Target::Masq, tag("masq")),
-        value(Target::Proxy, tag("proxy")),
-        value(Target::Redirect, tag("redirect")),
+        literal("accept").value(Target::Accept),
+        literal("reject").value(Target::Reject),
+        literal("drop").value(Target::Drop),
+        literal("masq").value(Target::Masq),
+        literal("proxy").value(Target::Proxy),
+        literal("redirect").value(Target::Redirect),
     ))
-    .parse(input)
+    .parse_next(input)
 }
 
 #[test]
 fn parse_target_test() {
-    assert_eq!(parse_target("accept"), Ok(("", Target::Accept)));
-    assert_eq!(parse_target("reject"), Ok(("", Target::Reject)));
-    assert_eq!(parse_target("drop"), Ok(("", Target::Drop)));
-    assert_eq!(parse_target("masq"), Ok(("", Target::Masq)));
-    assert_eq!(parse_target("proxy"), Ok(("", Target::Proxy)));
-    assert_eq!(parse_target("redirect"), Ok(("", Target::Redirect)));
+    assert_eq!(Ok(("", Target::Accept)), parse_target.parse_peek("accept"));
+    assert_eq!(Ok(("", Target::Reject)), parse_target.parse_peek("reject"));
+    assert_eq!(Ok(("", Target::Drop)), parse_target.parse_peek("drop"));
+    assert_eq!(Ok(("", Target::Masq)), parse_target.parse_peek("masq"));
+    assert_eq!(Ok(("", Target::Proxy)), parse_target.parse_peek("proxy"));
+    assert_eq!(
+        Ok(("", Target::Redirect)),
+        parse_target.parse_peek("redirect")
+    );
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -177,101 +186,93 @@ pub enum HostSpecifier<'a> {
     Dest(Vec<Host<'a>>),
 }
 
-fn parse_host_argument(input: &str) -> IResult<&str, Host, VerboseError<&str>> {
-    map(
-        pair(
-            parse_identifier,
-            opt(preceded(
-                tuple((multispace0, tag("/"), multispace0)),
-                parse_identifier,
-            )),
-        ),
-        |(h, m)| Host { host: h, mask: m },
+fn parse_host_argument<'a>(input: &mut &'a str) -> ModalResult<Host<'a>> {
+    (
+        parse_identifier,
+        opt(preceded((multispace0, '/', multispace0), parse_identifier)),
     )
-    .parse(input)
+        .map(|(h, m)| Host { host: h, mask: m })
+        .parse_next(input)
 }
 
 #[test]
 fn parse_host_argument_test() {
     assert_eq!(
-        parse_host_argument("hostname"),
         Ok((
             "",
             Host {
                 host: "hostname",
                 mask: None
             }
-        ))
+        )),
+        parse_host_argument.parse_peek("hostname")
     );
     assert_eq!(
-        parse_host_argument("hostname/mask"),
         Ok((
             "",
             Host {
                 host: "hostname",
                 mask: Some("mask")
             }
-        ))
+        )),
+        parse_host_argument.parse_peek("hostname/mask")
     );
     assert_eq!(
-        parse_host_argument("hostname / mask"),
         Ok((
             "",
             Host {
                 host: "hostname",
                 mask: Some("mask")
             }
-        ))
+        )),
+        parse_host_argument.parse_peek("hostname / mask")
     );
 }
 
-fn parse_host(input: &str) -> IResult<&str, HostSpecifier, VerboseError<&str>> {
-    map(
-        pair(
-            alt((tag("source"), tag("dest"))),
-            preceded(
-                multispace0,
-                alt((
-                    argument_list(parse_host_argument),
-                    map(parse_host_argument, |h| vec![h]),
-                )),
-            ),
+fn parse_host<'a>(input: &mut &'a str) -> ModalResult<HostSpecifier<'a>> {
+    (
+        alt((literal("source"), literal("dest"))),
+        preceded(
+            multispace0,
+            alt((
+                argument_list(parse_host_argument),
+                parse_host_argument.map(|h| vec![h]),
+            )),
         ),
-        |(h, v)| match h {
+    )
+        .map(|(h, v)| match h {
             "source" => HostSpecifier::Source(v),
             "dest" => HostSpecifier::Dest(v),
             _ => unreachable!(),
-        },
-    )
-    .parse(input)
+        })
+        .parse_next(input)
 }
 
 #[test]
 fn parse_host_test() {
     assert_eq!(
-        parse_host("source host"),
         Ok((
             "",
             HostSpecifier::Source(vec![Host {
                 host: "host",
                 mask: None
             }])
-        ))
+        )),
+        parse_host.parse_peek("source host"),
     );
 
     assert_eq!(
-        parse_host("dest host/mask"),
         Ok((
             "",
             HostSpecifier::Dest(vec![Host {
                 host: "host",
                 mask: Some("mask")
             }])
-        ))
+        )),
+        parse_host.parse_peek("dest host/mask")
     );
 
     assert_eq!(
-        parse_host("dest { host/mask host2}"),
         Ok((
             "",
             HostSpecifier::Dest(vec![
@@ -284,7 +285,8 @@ fn parse_host_test() {
                     mask: None
                 }
             ])
-        ))
+        )),
+        parse_host.parse_peek("dest { host/mask host2}")
     );
 }
 
@@ -294,51 +296,46 @@ pub struct PortRange<'a> {
     pub max: Option<&'a str>,
 }
 
-fn parse_port_argument(input: &str) -> IResult<&str, PortRange, VerboseError<&str>> {
-    map(
-        pair(
-            parse_identifier,
-            opt(preceded(
-                tuple((multispace0, tag(":"), multispace0)),
-                parse_identifier,
-            )),
-        ),
-        |(min, max)| PortRange { min, max },
+fn parse_port_argument<'a>(input: &mut &'a str) -> ModalResult<PortRange<'a>> {
+    (
+        parse_identifier,
+        opt(preceded((multispace0, ':', multispace0), parse_identifier)),
     )
-    .parse(input)
+        .map(|(min, max)| PortRange { min, max })
+        .parse_next(input)
 }
 
 #[test]
 fn parse_port_argument_test() {
     assert_eq!(
-        parse_port_argument("1"),
         Ok((
             "",
             PortRange {
                 min: "1",
                 max: None
             }
-        ))
+        )),
+        parse_port_argument.parse_peek("1")
     );
     assert_eq!(
-        parse_port_argument("ssh"),
         Ok((
             "",
             PortRange {
                 min: "ssh",
                 max: None
             }
-        ))
+        )),
+        parse_port_argument.parse_peek("ssh")
     );
     assert_eq!(
-        parse_port_argument("1:1024"),
         Ok((
             "",
             PortRange {
                 min: "1",
                 max: Some("1024")
             }
-        ))
+        )),
+        parse_port_argument.parse_peek("1:1024")
     );
 }
 
@@ -348,48 +345,46 @@ pub enum Port<'a> {
     Dest(Vec<PortRange<'a>>),
 }
 
-fn parse_port(input: &str) -> IResult<&str, Port, VerboseError<&str>> {
-    map(
-        pair(
-            alt((tag("sport"), tag("dport"))),
-            preceded(
-                multispace0,
-                alt((
-                    argument_list(parse_port_argument),
-                    map(parse_port_argument, |p| vec![p]),
-                )),
-            ),
+fn parse_port<'a>(input: &mut &'a str) -> ModalResult<Port<'a>> {
+    (
+        alt((literal("sport"), literal("dport"))),
+        preceded(
+            multispace0,
+            alt((
+                argument_list(parse_port_argument),
+                parse_port_argument.map(|p| vec![p]),
+            )),
         ),
-        |(p, v)| match p {
+    )
+        .map(|(p, v)| match p {
             "sport" => Port::Source(v),
             "dport" => Port::Dest(v),
             _ => unreachable!(),
-        },
-    )
-    .parse(input)
+        })
+        .parse_next(input)
 }
 
 #[test]
 fn parse_port_test() {
     assert_eq!(
-        parse_port("sport ssh"),
         Ok((
             "",
             Port::Source(vec![PortRange {
                 min: "ssh",
                 max: None
             }])
-        ))
+        )),
+        parse_port.parse_peek("sport ssh")
     );
     assert_eq!(
-        parse_port("dport 0:1024"),
         Ok((
             "",
             Port::Dest(vec![PortRange {
                 min: "0",
                 max: Some("1024")
             }])
-        ))
+        )),
+        parse_port.parse_peek("dport 0:1024")
     );
 }
 
@@ -400,56 +395,60 @@ pub enum Protocol<'a> {
     ICMP(Vec<&'a str>), // icmp type list
 }
 
-fn parse_protocol_name(input: &str) -> IResult<&str, Protocol, VerboseError<&str>> {
+fn parse_protocol_name<'a>(input: &mut &'a str) -> ModalResult<Protocol<'a>> {
     alt((
-        value(Protocol::TCP, tag("tcp")),
-        value(Protocol::UDP, tag("udp")),
-        map(
-            preceded(
-                pair(tag("icmp"), multispace0),
-                opt(preceded(
-                    pair(tag("icmptype"), multispace0),
-                    alt((
-                        argument_list(parse_identifier),
-                        map(parse_identifier, |i| vec![i]),
-                    )),
+        literal("tcp").value(Protocol::TCP),
+        literal("udp").value(Protocol::UDP),
+        preceded(
+            (literal("icmp"), multispace0),
+            opt(preceded(
+                (literal("icmptype"), multispace0),
+                alt((
+                    argument_list(parse_identifier),
+                    parse_identifier.map(|i| vec![i]),
                 )),
-            ),
-            |s: Option<Vec<&str>>| Protocol::ICMP(s.unwrap_or(vec![])),
-        ),
+            )),
+        )
+        .map(|s: Option<Vec<&str>>| Protocol::ICMP(s.unwrap_or(vec![]))),
     ))
-    .parse(input)
+    .parse_next(input)
 }
 
-fn parse_protocol(input: &str) -> IResult<&str, Vec<Protocol>, VerboseError<&str>> {
+fn parse_protocol<'a>(input: &mut &'a str) -> ModalResult<Vec<Protocol<'a>>> {
     preceded(
-        tag("proto"),
+        literal("proto"),
         preceded(
             multispace0,
             alt((
                 argument_list(parse_protocol_name),
-                map(parse_protocol_name, |p| vec![p]),
+                parse_protocol_name.map(|p| vec![p]),
             )),
         ),
     )
-    .parse(input)
+    .parse_next(input)
 }
 
 #[test]
 fn parse_protocol_test() {
-    assert_eq!(parse_protocol("proto tcp"), Ok(("", vec![Protocol::TCP])));
-    assert_eq!(parse_protocol("proto udp"), Ok(("", vec![Protocol::UDP])));
     assert_eq!(
-        parse_protocol("proto icmp"),
-        Ok(("", vec![Protocol::ICMP(vec![])]))
+        Ok(("", vec![Protocol::TCP])),
+        parse_protocol.parse_peek("proto tcp")
     );
     assert_eq!(
-        parse_protocol("proto { tcp udp }"),
-        Ok(("", vec![Protocol::TCP, Protocol::UDP]))
+        Ok(("", vec![Protocol::UDP])),
+        parse_protocol.parse_peek("proto udp")
     );
     assert_eq!(
-        parse_protocol("proto icmp icmptype 6"),
-        Ok(("", vec![Protocol::ICMP(vec!["6"])]))
+        Ok(("", vec![Protocol::ICMP(vec![])])),
+        parse_protocol.parse_peek("proto icmp")
+    );
+    assert_eq!(
+        Ok(("", vec![Protocol::TCP, Protocol::UDP])),
+        parse_protocol.parse_peek("proto { tcp udp }")
+    );
+    assert_eq!(
+        Ok(("", vec![Protocol::ICMP(vec!["6"])])),
+        parse_protocol.parse_peek("proto icmp icmptype 6")
     );
 }
 
@@ -466,93 +465,83 @@ pub enum Specifier<'a> {
     ChainGroup((Option<&'a str>, Vec<Vec<Specifier<'a>>>)),
 }
 
-fn parse_specifier(input: &str) -> IResult<&str, Specifier, VerboseError<&str>> {
-    alt((
-        map(parse_direction, Specifier::Direction),
-        map(parse_host, Specifier::Host),
-        map(parse_port, Specifier::Port),
-        map(parse_target, Specifier::Target),
-        map(parse_protocol, Specifier::Protocol),
-        map(parse_option, Specifier::FilterOption),
-        map(
-            preceded(pair(tag("!"), multispace0), parse_specifier),
-            |s| Specifier::Negated(Box::new(s)),
-        ),
-        map(
+fn parse_specifier_list<'a>(input: &mut &'a str) -> ModalResult<Vec<Specifier<'a>>> {
+    repeat(0.., parse_specifier).parse_next(input)
+}
+
+fn parse_subrule_list<'a>(input: &mut &'a str) -> ModalResult<Vec<Vec<Specifier<'a>>>> {
+    separated(0.., parse_specifier_list, ';').parse_next(input)
+}
+
+fn parse_specifier<'a>(input: &mut &'a str) -> ModalResult<Specifier<'a>> {
+    preceded(
+        multispace0,
+        alt((
+            parse_direction.map(Specifier::Direction),
+            parse_host.map(Specifier::Host),
+            parse_port.map(Specifier::Port),
+            parse_target.map(Specifier::Target),
+            parse_protocol.map(Specifier::Protocol),
+            parse_option.map(Specifier::FilterOption),
+            preceded(("!", multispace0), parse_specifier).map(|s| Specifier::Negated(Box::new(s))),
+            delimited('{', parse_subrule_list, cut_err((multispace0, '}')))
+                .map(Specifier::Compound),
             delimited(
-                terminated(tag("{"), multispace0),
-                separated_list0(
-                    tuple((multispace0, tag(";"), multispace0)),
-                    separated_list0(multispace1, parse_specifier),
-                ),
-                context("closing brace", cut(preceded(multispace0, tag("}")))),
-            ),
-            Specifier::Compound,
-        ),
-        map(
-            delimited(
-                terminated(tag("["), multispace0),
-                pair(
+                ("[", multispace0),
+                (
                     opt(terminated(parse_string_literal, multispace1)),
-                    separated_list0(
-                        tuple((multispace0, tag(";"), multispace0)),
-                        separated_list0(multispace1, parse_specifier),
-                    ),
+                    parse_subrule_list,
                 ),
-                context(
-                    "closing square bracket",
-                    cut(preceded(multispace0, tag("]"))),
-                ),
-            ),
-            Specifier::ChainGroup,
-        ),
-    ))
-    .parse(input)
+                cut_err((multispace0, "]")),
+            )
+            .map(Specifier::ChainGroup),
+        )),
+    )
+    .parse_next(input)
 }
 
 #[test]
 fn parse_specifier_test() {
     assert_eq!(
-        parse_specifier("local"),
-        Ok(("", Specifier::FilterOption(FilterOption::Local)))
+        Ok(("", Specifier::FilterOption(FilterOption::Local))),
+        parse_specifier.parse_peek("local")
     );
     assert_eq!(
-        parse_specifier("!local"),
         Ok((
             "",
             Specifier::Negated(Box::new(Specifier::FilterOption(FilterOption::Local)))
-        ))
+        )),
+        parse_specifier.parse_peek("!local")
     );
     assert_eq!(
-        parse_specifier("accept"),
-        Ok(("", Specifier::Target(Target::Accept),))
+        Ok(("", Specifier::Target(Target::Accept),)),
+        parse_specifier.parse_peek("accept")
     );
     assert_eq!(
-        parse_specifier("sport ssh"),
         Ok((
             "",
             Specifier::Port(Port::Source(vec![PortRange {
                 min: "ssh",
                 max: None
             }]))
-        ))
+        )),
+        parse_specifier.parse_peek("sport ssh")
     );
     assert_eq!(
-        parse_specifier("proto tcp"),
-        Ok(("", Specifier::Protocol(vec![Protocol::TCP])))
+        Ok(("", Specifier::Protocol(vec![Protocol::TCP]))),
+        parse_specifier.parse_peek("proto tcp")
     );
     assert_eq!(
-        parse_specifier("{ proto tcp; proto udp }"),
         Ok((
             "",
             Specifier::Compound(vec![
                 vec![Specifier::Protocol(vec![Protocol::TCP])],
                 vec![Specifier::Protocol(vec![Protocol::UDP])]
             ])
-        ))
+        )),
+        parse_specifier.parse_peek("{ proto tcp; proto udp }")
     );
     assert_eq!(
-        parse_specifier("[ proto tcp dport 123 accept; drop ]"),
         Ok((
             "",
             Specifier::ChainGroup((
@@ -569,22 +558,18 @@ fn parse_specifier_test() {
                     vec![Specifier::Target(Target::Drop)]
                 ]
             ))
-        ))
+        )),
+        parse_specifier.parse_peek("[ proto tcp dport 123 accept; drop ]")
     );
 }
 
-fn parse_rule(input: &str) -> IResult<&str, Vec<Specifier>, VerboseError<&str>> {
-    terminated(
-        many0(preceded(multispace0, parse_specifier)),
-        preceded(multispace0, tag(";")),
-    )
-    .parse(input)
+fn parse_rule<'a>(input: &mut &'a str) -> ModalResult<Vec<Specifier<'a>>> {
+    terminated(parse_specifier_list, (multispace0, ';')).parse_next(input)
 }
 
 #[test]
 fn parse_rule_test() {
     assert_eq!(
-        parse_rule("local forward !local;"),
         Ok((
             "",
             vec![
@@ -592,30 +577,30 @@ fn parse_rule_test() {
                 Specifier::FilterOption(FilterOption::Forward),
                 Specifier::Negated(Box::new(Specifier::FilterOption(FilterOption::Local))),
             ]
-        ))
+        )),
+        parse_rule.parse_peek("local forward !local;")
     );
     assert_eq!(
-        parse_rule("input eth0 forward;"),
         Ok((
             "",
             vec![
                 Specifier::Direction(Direction::Input(vec!["eth0"])),
                 Specifier::FilterOption(FilterOption::Forward),
             ],
-        ))
+        )),
+        parse_rule.parse_peek("input eth0 forward;")
     );
     assert_eq!(
-        parse_rule("input eth0 accept;"),
         Ok((
             "",
             vec![
                 Specifier::Direction(Direction::Input(vec!["eth0"])),
                 Specifier::Target(Target::Accept),
             ],
-        ))
+        )),
+        parse_rule.parse_peek("input eth0 accept;")
     );
     assert_eq!(
-        parse_rule("input eth0 source internet accept;"),
         Ok((
             "",
             vec![
@@ -626,10 +611,10 @@ fn parse_rule_test() {
                 }])),
                 Specifier::Target(Target::Accept),
             ]
-        ))
+        )),
+        parse_rule.parse_peek("input eth0 source internet accept;")
     );
     assert_eq!(
-        parse_rule("output eth0 dest ns dport 53 proto {tcp udp} accept;"),
         Ok((
             "",
             vec![
@@ -645,19 +630,10 @@ fn parse_rule_test() {
                 Specifier::Protocol(vec![Protocol::TCP, Protocol::UDP]),
                 Specifier::Target(Target::Accept),
             ]
-        ))
+        )),
+        parse_rule.parse_peek("output eth0 dest ns dport 53 proto {tcp udp} accept;")
     );
     assert_eq!(
-        parse_rule(
-            "input eth0 source wwwserv dest dbserv
- [ \"web_to_dbserv\"
-proto tcp dport 1521 accept;
-proto tcp dport appserv1 accept;
-proto tcp dport appserv2 accept;
-proto tcp dport appserv3 accept;
-drop;
-];"
-        ),
         Ok((
             "",
             vec![
@@ -710,21 +686,27 @@ drop;
                     ]
                 ))
             ]
-        ))
+        )),
+        parse_rule.parse_peek(
+            "input eth0 source wwwserv dest dbserv
+ [ \"web_to_dbserv\"
+proto tcp dport 1521 accept;
+proto tcp dport appserv1 accept;
+proto tcp dport appserv2 accept;
+proto tcp dport appserv3 accept;
+drop;
+];"
+        ),
     );
 }
 
-pub fn parse(input: &str) -> IResult<&str, Vec<Vec<Specifier>>, VerboseError<&str>> {
-    many0(preceded(multispace0, parse_rule)).parse(input)
+pub fn parse<'a>(input: &mut &'a str) -> ModalResult<Vec<Vec<Specifier<'a>>>> {
+    repeat(0.., parse_rule).parse_next(input)
 }
 
 #[test]
 fn parse_test() {
     assert_eq!(
-        parse(
-            "local forward;
-forward !local;"
-        ),
         Ok((
             "",
             vec![
@@ -737,6 +719,10 @@ forward !local;"
                     Specifier::Negated(Box::new(Specifier::FilterOption(FilterOption::Local))),
                 ],
             ]
-        ))
+        )),
+        parse.parse_peek(
+            "local forward;
+forward !local;"
+        )
     )
 }
