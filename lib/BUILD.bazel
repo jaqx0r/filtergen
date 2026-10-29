@@ -1,0 +1,9 @@
+load("@rules_rust//rust:defs.bzl", "rust_library")
+
+rust_library(
+    name = "flow_lib",
+    srcs = [
+        "flow.rs",
+    ],
+    deps = ["@crates//:ipnet"],
+)
