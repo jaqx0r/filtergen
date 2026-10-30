@@ -53,7 +53,14 @@ pub struct Flow<'a> {
 
     /// Protocol.
     protocol: Protocol,
-    port: u32,
+    sport: PortRange<'a>,
+    dport: PortRange<'a>,
+}
+
+#[derive(Debug, Eq, PartialEq, Clone)]
+pub struct PortRange<'a> {
+    pub min: &'a str,
+    pub max: Option<&'a str>,
 }
 
 /// Action describes actions to take when a flow is sent or received.

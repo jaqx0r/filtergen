@@ -1,4 +1,4 @@
-use flow::*;
+use flow::PortRange;
 use winnow::{
     ascii::{alpha1, multispace0, multispace1},
     combinator::{alt, cut_err, delimited, opt, preceded, repeat, separated, terminated},
@@ -134,12 +134,6 @@ fn parse_host<'a>(input: &mut &'a str) -> ModalResult<HostSpecifier<'a>> {
             _ => unreachable!(),
         })
         .parse_next(input)
-}
-
-#[derive(Debug, Eq, PartialEq, Clone)]
-pub struct PortRange<'a> {
-    pub min: &'a str,
-    pub max: Option<&'a str>,
 }
 
 fn parse_port_argument<'a>(input: &mut &'a str) -> ModalResult<PortRange<'a>> {
